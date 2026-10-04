@@ -53,8 +53,9 @@ ldrname(void)
 {
     int i = gu.urole.ldrnum;
 
-    Sprintf(gn.nambuf, "%s%s", type_is_pname(&mons[i]) ? "" : "the ",
-            mons[i].pmnames[NEUTRAL]);
+    Sprintf(gn.nambuf, "%s", type_is_pname(&mons[i])
+                               ? mons[i].pmnames[NEUTRAL]
+                               : the(mons[i].pmnames[NEUTRAL]));
     return gn.nambuf;
 }
 
@@ -127,8 +128,9 @@ neminame(void)
 {
     int i = gu.urole.neminum;
 
-    Sprintf(gn.nambuf, "%s%s", type_is_pname(&mons[i]) ? "" : "the ",
-            mons[i].pmnames[NEUTRAL]);
+    Sprintf(gn.nambuf, "%s", type_is_pname(&mons[i])
+                               ? mons[i].pmnames[NEUTRAL]
+                               : the(mons[i].pmnames[NEUTRAL]));
     return gn.nambuf;
 }
 
@@ -189,6 +191,14 @@ stinky_nemesis(struct monst *mon)
              || (p = strstri(mesg, "toxic")) != 0)
             && (strstri(p, " gas") || strstri(p, " fumes")))
             res = 1;
+        /* version francaise du texte de quete */
+        else if ((strstri(mesg, " gaz") || strstri(mesg, " vapeurs")
+                  || strstri(mesg, " émanations")
+                  || strstri(mesg, " fumées"))
+                 && (strstri(mesg, "nocif") || strstri(mesg, "toxique")
+                     || strstri(mesg, "empoisonn")
+                     || strstri(mesg, "délétère")))
+            res = 1;
 
         free((genericptr_t) mesg);
     }
@@ -212,12 +222,17 @@ qtext_pronoun(
      * For %o, treat all artifacts as neuter; some have plural names,
      * which genders[] doesn't handle; cvt_buf[] already contains name.
      */
-    if (who == 'o'
-        && (strstri(gc.cvt_buf, "Eyes ")
-            || strcmpi(gc.cvt_buf, makesingular(gc.cvt_buf)))) {
-        pnoun = (lwhich == 'h') ? "they"
-                : (lwhich == 'i') ? "them"
-                : (lwhich == 'j') ? "their" : "?";
+    if (who == 'o') {
+        /* version francaise : genre et nombre du nom de l'artefact */
+        boolean fem = (fr_genre(gc.cvt_buf) == FR_FEM),
+                plur = (strstri(gc.cvt_buf, "Eyes ")
+                        || strstri(gc.cvt_buf, "Yeux ")
+                        || fr_pluriel(gc.cvt_buf));
+
+        pnoun = (lwhich == 'h') ? (plur ? (fem ? "elles" : "ils")
+                                        : (fem ? "elle" : "il"))
+                : (lwhich == 'i') ? (plur ? "les" : fem ? "la" : "le")
+                : (lwhich == 'j') ? (plur ? "leur" : "son") : "?";
     } else {
         godgend = (who == 'd') ? svq.quest_status.godgend
             : (who == 'l') ? svq.quest_status.ldrgend
@@ -230,7 +245,7 @@ qtext_pronoun(
     Strcpy(gc.cvt_buf, pnoun);
     /* capitalize for H,I,J */
     if (lwhich != which)
-        gc.cvt_buf[0] = highc(gc.cvt_buf[0]);
+        (void) upstart(gc.cvt_buf);
     return;
 }
 
@@ -254,10 +269,10 @@ convert_arg(char c)
         str = rank_of(MIN_QUEST_LEVEL, Role_switch, flags.female);
         break;
     case 's':
-        str = (flags.female) ? "sister" : "brother";
+        str = (flags.female) ? "sœur" : "frère";
         break;
     case 'S':
-        str = (flags.female) ? "daughter" : "son";
+        str = (flags.female) ? "fille" : "fils";
         break;
     case 'l':
         str = ldrname();
@@ -270,9 +285,18 @@ convert_arg(char c)
         str = the(artiname(gu.urole.questarti));
         if (c == 'O') {
             /* shorten "the Foo of Bar" to "the Foo"
-               (buffer returned by the() is modifiable) */
+               (buffer returned by the() is modifiable);
+               version francaise : "l'Orbe de Bar" -> "l'Orbe" */
             char *p = strstri(str, " of ");
 
+            if (!p)
+                p = strstri(str, " de ");
+            if (!p)
+                p = strstri(str, " du ");
+            if (!p)
+                p = strstri(str, " des ");
+            if (!p)
+                p = strstri(str, " d'");
             if (p)
                 *p = '\0';
         }
@@ -302,19 +326,23 @@ convert_arg(char c)
         str = align_gname(A_LAWFUL);
         break;
     case 'C':
-        str = "chaotic";
+        str = "chaotique";
         break;
     case 'N':
-        str = "neutral";
+        str = "neutre";
         break;
     case 'L':
-        str = "lawful";
+        str = "loyal";
         break;
     case 'x':
-        str = Blind ? "sense" : "see";
+        /* "vous %x" */
+        str = Blind ? "sentez" : "voyez";
         break;
     case 'Z':
-        str = svd.dungeons[0].dname;
+        /* nom interne anglais (compare ailleurs) ; affichage en francais */
+        str = !strcmp(svd.dungeons[0].dname, "The Dungeons of Doom")
+                  ? "les Donjons du Destin"
+                  : svd.dungeons[0].dname;
         break;
     case '%':
         str = "%";
@@ -356,7 +384,7 @@ convert_line(char *in_line, char *out_line)
 
                 /* capitalize */
                 case 'C':
-                    gc.cvt_buf[0] = highc(gc.cvt_buf[0]);
+                    (void) upstart(gc.cvt_buf);
                     break;
 
                 /* replace name with pronoun;
@@ -375,26 +403,37 @@ convert_line(char *in_line, char *out_line)
 
                 /* pluralize */
                 case 'P':
-                    gc.cvt_buf[0] = highc(gc.cvt_buf[0]);
+                    (void) upstart(gc.cvt_buf);
                     FALLTHROUGH;
                     /*FALLTHRU*/
                 case 'p':
                     Strcpy(gc.cvt_buf, makeplural(gc.cvt_buf));
                     break;
 
-                /* append possessive suffix */
+                /* append possessive suffix; version francaise :
+                   complement de nom "du roi", "de Pelias", "de l'Oracle"
+                   (le texte place %ls apres le nom possede) */
                 case 'S':
-                    gc.cvt_buf[0] = highc(gc.cvt_buf[0]);
-                    FALLTHROUGH;
-                    /*FALLTHRU*/
+                    Strcpy(gc.cvt_buf, Du(gc.cvt_buf));
+                    break;
                 case 's':
-                    Strcpy(gc.cvt_buf, s_suffix(gc.cvt_buf));
+                    Strcpy(gc.cvt_buf, du(gc.cvt_buf));
                     break;
 
-                /* strip any "the" prefix */
+                /* strip any "the" prefix (francais : le, la, les, l') */
                 case 't':
-                    if (!strncmpi(gc.cvt_buf, "the ", 4)) {
+                    if (!strncmpi(gc.cvt_buf, "the ", 4)
+                        || !strncmpi(gc.cvt_buf, "les ", 4)) {
                         Strcat(cc, &gc.cvt_buf[4]);
+                        cc += strlen(cc);
+                        continue; /* for */
+                    } else if (!strncmpi(gc.cvt_buf, "le ", 3)
+                               || !strncmpi(gc.cvt_buf, "la ", 3)) {
+                        Strcat(cc, &gc.cvt_buf[3]);
+                        cc += strlen(cc);
+                        continue; /* for */
+                    } else if (!strncmpi(gc.cvt_buf, "l'", 2)) {
+                        Strcat(cc, &gc.cvt_buf[2]);
                         cc += strlen(cc);
                         continue; /* for */
                     }

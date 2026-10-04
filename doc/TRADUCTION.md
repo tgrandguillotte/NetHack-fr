@@ -99,10 +99,28 @@ pline("%s %s.", The(xname(obj)), otense(obj, "rouiller")); /* « L'épée rouill
 Pour un verbe pronominal : `"se briser"`, `"s'éteindre"`.
 `fr_conj(inf, personne, pluriel)` est disponible directement.
 
-`getobj()` : le mot passé en premier argument sert à construire la question
-« Que voulez-vous %s ? ». Le passer à l'infinitif français (« manger »,
-« boire », « lire ») — mais vérifier que ce mot n'est pas comparé ailleurs
-avec `strcmp` (le cas échéant, adapter les deux côtés).
+`getobj()`, `ggetobj()`, `query_objlist()`… : le mot-action passé en
+argument (« drop », « eat », « put on », « take off »…) est **un identifiant
+interne** comparé par `strcmp` dans `invent.c` et ailleurs : **ne pas le
+traduire à l'appel**. C'est `invent.c` qui le convertit à l'affichage via
+`fr_verbe_getobj(word)` (« manger », « mettre », « retirer »…), pour
+construire « Que voulez-vous manger ? ». Règle générale : une chaîne servant
+à la fois d'identifiant et de texte affiché reste en anglais dans le code
+et est traduite au moment de l'affichage.
+
+## Autres fonctions utilitaires
+
+* `exclam(dam)` renvoie `" !"` ou `"."` (espace insécable de la ponctuation
+  française déjà incluse) : écrire `"…%s%s", nom, exclam(dam)` sans espace.
+* `body_part(HAND)` renvoie un nom français sans article (« main ») ;
+  `makeplural(body_part(HAND))` → « mains » ; utiliser `the()`, `du()`,
+  « votre %s » / « vos %s » selon le nombre.
+* `hcolor(NH_BLUE)` renvoie un adjectif masculin singulier (« bleu ») ;
+  l'accorder avec `fr_adj(hcolor(NH_BLUE), FR_FEM, FALSE)` si besoin
+  (« une lueur bleue »).
+* `plur(n)` renvoie `"s"` si n ≠ 1 (convient au français dans la plupart des
+  cas) ; `ordin(n)` renvoie « er »/« e » (« 1er », « 2e »).
+* `currency(n)` renvoie « zorkmid »/« zorkmids ».
 
 ## Tampons
 

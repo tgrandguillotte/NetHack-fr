@@ -119,7 +119,7 @@ inven_inuse(boolean quietly)
         otmp2 = otmp->nobj;
         if (otmp->in_use) {
             if (!quietly)
-                pline("Finishing off %s...", xname(otmp));
+                pline("Vous finissez %s...", the(xname(otmp)));
             useup(otmp);
         }
     }
@@ -553,7 +553,7 @@ restgamestate(NHFILE *nhfp)
         if (!gc.converted_savefile_loaded)
             /* for wizard mode, issue a reminder; for others, treat it
              * as an attempt to cheat and refuse to restore this file */
-            pline("Saved game was not yours.");
+            pline("Cette partie sauvegardée n'était pas la vôtre.");
         if (wizard || gc.converted_savefile_loaded) {
             if (gc.converted_savefile_loaded)
                 gc.converted_savefile_loaded = FALSE;
@@ -639,7 +639,7 @@ restgamestate(NHFILE *nhfp)
 #endif
     if (u.uhp <= 0 && (!Upolyd || u.mh <= 0)) {
         u.ux = u.uy = 0; /* affects pline() [hence You()] */
-        You("were not healthy enough to survive restoration.");
+        You("n'étiez pas en assez bonne santé pour survivre à la restauration.");
         /* wiz1_level.dlevel is used by mklev.c to see if lots of stuff is
          * uninitialized, so we only have to set it and not the other stuff.
          */
@@ -871,15 +871,15 @@ dorecover(NHFILE *nhfp)
         clear_nhwindow(WIN_MAP);
 #endif
     clear_nhwindow(WIN_MESSAGE);
-    You("return to level %d in %s%s.", depth(&u.uz),
+    You("retournez au niveau %d de %s%s.", depth(&u.uz),
         svd.dungeons[u.uz.dnum].dname,
-        flags.debug ? " while in debug mode"
-                    : flags.explore ? " while in explore mode" : "");
+        flags.debug ? ", en mode débogage"
+                    : flags.explore ? ", en mode découverte" : "");
     curs(WIN_MAP, 1, 1);
     dotcnt = 0;
     dotrow = 2;
     if (!WINDOWPORT(X11))
-        putstr(WIN_MAP, 0, "Restoring:");
+        putstr(WIN_MAP, 0, "Restauration :");
 #endif
     restoreinfo.mread_flags = 1; /* return despite error */
     while (1) {
@@ -1062,9 +1062,9 @@ rest_levl(NHFILE *nhfp)
 void
 trickery(char *reason)
 {
-    pline("Strange, this map is not as I remember it.");
-    pline("Somebody is trying some trickery here...");
-    pline("This game is void.");
+    pline("Étrange, cette carte n'est pas comme dans mon souvenir.");
+    pline("Quelqu'un essaie de tricher ici...");
+    pline("Cette partie est annulée.");
     Strcpy(svk.killer.name, reason ? reason : "");
     done(TRICKED);
 }
@@ -1120,10 +1120,10 @@ getlev(NHFILE *nhfp, int pid, xint8 lev)
         char trickbuf[BUFSZ];
 
         if (pid && pid != hpid)
-            Sprintf(trickbuf, "PID (%d) doesn't match saved PID (%d)!", hpid,
+            Sprintf(trickbuf, "Le PID (%d) ne correspond pas au PID sauvegardé (%d) !", hpid,
                     pid);
         else
-            Sprintf(trickbuf, "This is level %d, not %d!", dlvl, lev);
+            Sprintf(trickbuf, "Ceci est le niveau %d, pas le %d !", dlvl, lev);
         if (wizard)
             pline1(trickbuf);
         trickery(trickbuf);
@@ -1625,7 +1625,7 @@ restore_menu(
                 add_menu_str(tmpwin, copyright_banner_line(k));
             add_menu_str(tmpwin, "");
         }
-        add_menu_str(tmpwin, "Select one of your saved games");
+        add_menu_str(tmpwin, "Choisissez une de vos parties sauvegardées");
         /* if all the save files have a playmode of '-' then we'll just list
            their character name-role-race-gend-algn values, but if any are
            'X' or 'D', we'll list playmode along with name-role-&c values
@@ -1651,12 +1651,12 @@ restore_menu(
                : (k <= 26 + 'N' - 'A') ? 'N' : 0;
         any.a_int = -1;                    /* not >= 0 */
         add_menu(tmpwin, &nul_glyphinfo, &any, clet, 'N', ATR_NONE, clr,
-                 "Start a new character", MENU_ITEMFLAGS_NONE);
+                 "Créer un nouveau personnage", MENU_ITEMFLAGS_NONE);
         clet = (k + 1 <= 'q' - 'a' && clet == 'n') ? 'q'  /* quit */
                : (k + 1 <= 26 + 'Q' - 'A' && clet == 'N') ? 'Q' : 0;
         any.a_int = -2;
         add_menu(tmpwin, &nul_glyphinfo, &any, clet, 'Q', ATR_NONE, clr,
-                 "Never mind (quit)", MENU_ITEMFLAGS_SELECTED);
+                 "Laisser tomber (quitter)", MENU_ITEMFLAGS_SELECTED);
         /* no prompt on end_menu, as we've done our own at the top */
         end_menu(tmpwin, (char *) 0);
         if (select_menu(tmpwin, PICK_ONE, &chosen_game) > 0) {

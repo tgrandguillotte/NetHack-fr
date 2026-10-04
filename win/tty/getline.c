@@ -25,6 +25,9 @@ extern int extcmd_via_menu(void); /* cmd.c */
 
 extern char erase_char, kill_char; /* from appropriate tty.c file */
 
+/* true for a UTF-8 continuation byte (doesn't occupy a screen column) */
+#define TTY_UTF8_CONT(c) ((((unsigned char) (c)) & 0xC0) == 0x80)
+
 /*
  * Read a line closed with '\n' into the array char bufp[BUFSZ].
  * (The '\n' is not stored. The string is closed with a '\0'.)
@@ -146,6 +149,9 @@ hooked_tty_getlin(
 
 #endif /* NEWAUTOCOMP */
                 bufp--;
+                /* erase a whole UTF-8 character, not just its last byte */
+                while (bufp != obufp && TTY_UTF8_CONT(*bufp))
+                    bufp--;
 #ifndef NEWAUTOCOMP
                 putsyms("\b \b"); /* putsym converts \b */
 #else                             /* NEWAUTOCOMP */
@@ -198,13 +204,16 @@ hooked_tty_getlin(
 #ifndef NEWAUTOCOMP
             while (bufp != obufp) {
                 bufp--;
-                putsyms("\b \b");
+                if (!TTY_UTF8_CONT(*bufp))
+                    putsyms("\b \b");
             }
 #else  /* NEWAUTOCOMP */
             for (; *bufp; ++bufp)
-                putsyms(" ");
+                if (!TTY_UTF8_CONT(*bufp))
+                    putsyms(" ");
             for (; bufp != obufp; --bufp)
-                putsyms("\b \b");
+                if (!TTY_UTF8_CONT(bufp[-1]))
+                    putsyms("\b \b");
             *bufp = 0;
 #endif /* NEWAUTOCOMP */
         } else
@@ -317,7 +326,7 @@ tty_get_ext_cmd(void)
               : extcmds_match(buf, ECM_IGNOREAC | ECM_EXACTMATCH, &ecmatches);
     if (nmatches != 1) {
         if (nmatches != -1)
-            pline("%s%.60s: unknown extended command.",
+            pline("%s%.60s : commande étendue inconnue.",
                   visctrl(extcmd_char[0]), buf);
         return -1;
     }

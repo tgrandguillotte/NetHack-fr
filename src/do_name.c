@@ -8,9 +8,12 @@
 staticfn char *nextmbuf(void);
 staticfn char *name_from_player(char *, const char *, const char *);
 staticfn void do_mgivenname(void);
+staticfn const char *fr_sans_article(const char *);
 staticfn boolean alreadynamed(struct monst *, char *, char *) NONNULLPTRS;
 staticfn void do_oname(struct obj *) NONNULLARG1;
 staticfn char *docall_xname(struct obj *) NONNULLARG1;
+staticfn char *the_xname_fr(struct obj *) NONNULLARG1;
+staticfn char *simpleonames_the(struct obj *) NONNULLARG1;
 staticfn void namefloorobj(void);
 
 #define NUMMBUF 5
@@ -151,44 +154,70 @@ christen_monst(struct monst *mtmp, const char *name)
     return mtmp;
 }
 
+/* VF : saute l'article ou le possessif initial ("le ", "la ", "l'"...) */
+staticfn const char *
+fr_sans_article(const char *s)
+{
+    static const char *const arts[] = {
+        "le ", "la ", "l'", "les ", "un ", "une ", "votre ", "vos ",
+    };
+    int i;
+
+    for (i = 0; i < SIZE(arts); ++i)
+        if (!strncmpi(s, arts[i], strlen(arts[i])))
+            return s + strlen(arts[i]);
+    return s;
+}
+
 /* check whether user-supplied name matches or nearly matches an unnameable
    monster's name, or is an attempt to delete the monster's name; if so, give
    alternate reject message for do_mgivenname() */
 staticfn boolean
 alreadynamed(struct monst *mtmp, char *monnambuf, char *usrbuf)
 {
-    char pronounbuf[10], *p;
+    char pronounbuf[10], invbuf[BUFSZ], *p;
+
+    /* "l'Orcus invisible" -> "Orcus" */
+    Strcpy(invbuf, fr_sans_article(monnambuf));
+    if ((p = strstri(invbuf, " invisible")) != 0) {
+        char *q = p + 10;
+
+        if (*q == 's')
+            ++q;
+        (void) memmove(p, q, strlen(q) + 1);
+    }
 
     if (!*usrbuf) { /* attempt to erase existing name */
         boolean name_not_title = (has_mgivenname(mtmp)
                                   || type_is_pname(mtmp->data)
                                   || mtmp->isshk);
-        pline("%s would rather keep %s existing %s.", upstart(monnambuf),
-              is_rider(mtmp->data) ? "its" : mhis(mtmp),
-              name_not_title ? "name" : "title");
+        pline("%s préfère garder son %s actuel.", upstart(monnambuf),
+              name_not_title ? "nom" : "titre");
         return TRUE;
     } else if (fuzzymatch(usrbuf, monnambuf, " -_", TRUE)
-               /* catch trying to name "the Oracle" as "Oracle" */
-               || (!strncmpi(monnambuf, "the ", 4)
-                   && fuzzymatch(usrbuf, monnambuf + 4, " -_", TRUE))
-               /* catch trying to name "invisible Orcus" as "Orcus" */
-               || ((p = strstri(monnambuf, "invisible ")) != 0
-                   && fuzzymatch(usrbuf, p + 10, " -_", TRUE))
-               /* catch trying to name "the priest of Crom" as "Crom" */
-               || ((p = strstri(monnambuf, " of ")) != 0
-                   && fuzzymatch(usrbuf, p + 4, " -_", TRUE))) {
+               /* catch trying to name "l'Oracle" as "Oracle" */
+               || fuzzymatch(usrbuf, fr_sans_article(monnambuf), " -_", TRUE)
+               /* catch trying to name "Orcus invisible" as "Orcus" */
+               || (strcmp(invbuf, fr_sans_article(monnambuf))
+                   && fuzzymatch(usrbuf, invbuf, " -_", TRUE))
+               /* catch trying to name "le prêtre de Crom" as "Crom" */
+               || ((p = strstri(monnambuf, " de ")) != 0
+                   && fuzzymatch(usrbuf, p + 4, " -_", TRUE))
+               || ((p = strstri(monnambuf, " d'")) != 0
+                   && fuzzymatch(usrbuf, p + 3, " -_", TRUE))) {
         if (is_rider(mtmp->data)) {
             /* avoid gendered pronoun for riders */
-            pline("%s is already called that.", upstart(monnambuf));
+            pline("%s s'appelle déjà ainsi.", upstart(monnambuf));
         } else {
-            pline("%s is already called %s.",
+            pline("%s s'appelle déjà %s.",
                   upstart(strcpy(pronounbuf, mhe(mtmp))), monnambuf);
         }
         return TRUE;
     } else if (mtmp->data == &mons[PM_JUIBLEX]
                && strstri(monnambuf, "Juiblex")
                && !strcmpi(usrbuf, "Jubilex")) {
-        pline("%s doesn't like being called %s.", upstart(monnambuf), usrbuf);
+        pline("%s n'aime pas qu'on l'appelle %s.", upstart(monnambuf),
+              usrbuf);
         return TRUE;
     }
     return FALSE;
@@ -205,12 +234,12 @@ do_mgivenname(void)
     boolean do_swallow = FALSE;
 
     if (Hallucination) {
-        You("would never recognize it anyway.");
+        You("ne le reconnaîtriez jamais, de toute façon.");
         return;
     }
     cc.x = u.ux;
     cc.y = u.uy;
-    if (getpos(&cc, FALSE, "the monster you want to name") < 0
+    if (getpos(&cc, FALSE, "le monstre que vous voulez nommer") < 0
         || !isok(cc.x, cc.y))
         return;
     cx = cc.x, cy = cc.y;
@@ -219,8 +248,8 @@ do_mgivenname(void)
         if (u.usteed && canspotmon(u.usteed)) {
             mtmp = u.usteed;
         } else {
-            pline("This %s creature is called %s and cannot be renamed.",
-                  beautiful(), svp.plname);
+            pline("Vous êtes %s, vous vous appelez %s et ne pouvez pas"
+                  " être renommé%s.", beautiful(), svp.plname, UE);
             return;
         }
     } else
@@ -243,11 +272,11 @@ do_mgivenname(void)
                 || M_AP_TYPE(mtmp) == M_AP_OBJECT
                 || (mtmp->minvis && !See_invisible))))) {
 
-        pline("I see no monster there.");
+        pline("Je ne vois aucun monstre ici.");
         return;
     }
     /* special case similar to the one in lookat() */
-    Sprintf(qbuf, "What do you want to call %s?",
+    Sprintf(qbuf, "Comment voulez-vous appeler %s ?",
             distant_monnam(mtmp, ARTICLE_THE, monnambuf));
     /* use getlin() to get a name string from the player */
     if (!name_from_player(buf, qbuf,
@@ -264,21 +293,35 @@ do_mgivenname(void)
      */
     if ((mtmp->data->geno & G_UNIQ) && !mtmp->ispriest) {
         if (!alreadynamed(mtmp, monnambuf, buf))
-            pline("%s doesn't like being called names!", upstart(monnambuf));
+            pline("%s n'aime pas qu'on l'affuble de surnoms !",
+                  upstart(monnambuf));
     } else if (mtmp->isshk
                && !(Deaf || helpless(mtmp)
                     || mtmp->data->msound <= MS_ANIMAL)) {
         if (!alreadynamed(mtmp, monnambuf, buf)) {
             SetVoice(mtmp, 0, 80, 0);
-            verbalize("I'm %s, not %s.", shkname(mtmp), buf);
+            verbalize("Je suis %s, pas %s.", shkname(mtmp), buf);
         }
     } else if (mtmp->ispriest || mtmp->isminion || mtmp->isshk
                || mtmp->data == &mons[PM_GHOST] || has_ebones(mtmp)) {
         if (!alreadynamed(mtmp, monnambuf, buf))
-            pline("%s will not accept the name %s.", upstart(monnambuf), buf);
+            pline("%s refuse le nom %s.", upstart(monnambuf), buf);
     } else {
         (void) christen_monst(mtmp, buf);
     }
+}
+
+/* VF : pour safe_qbuf() dans do_oname() : "l'épée", "les flèches" */
+staticfn char *
+the_xname_fr(struct obj *obj)
+{
+    return the(xname(obj));
+}
+
+staticfn char *
+simpleonames_the(struct obj *obj)
+{
+    return the(simpleonames(obj));
 }
 
 /*
@@ -295,13 +338,13 @@ do_oname(struct obj *obj)
 
     /* Do this now because there's no point in even asking for a name */
     if (obj->otyp == SPE_NOVEL) {
-        pline("%s already has a published name.", Ysimple_name2(obj));
+        pline("%s a déjà un titre publié.", Ysimple_name2(obj));
         return;
     }
 
-    Sprintf(qbuf, "What do you want to name %s ",
-            is_plural(obj) ? "these" : "this");
-    (void) safe_qbuf(qbuf, qbuf, "?", obj, xname, simpleonames, "item");
+    Strcpy(qbuf, "Comment voulez-vous nommer ");
+    (void) safe_qbuf(qbuf, qbuf, " ?", obj, the_xname_fr, simpleonames_the,
+                     "cet objet");
     /* use getlin() to get a name string from the player */
     if (!name_from_player(buf, qbuf, safe_oname(obj)))
         return;
@@ -319,10 +362,10 @@ do_oname(struct obj *obj)
     if (obj->oartifact) {
         /* this used to give "The artifact seems to resist the attempt."
            but resisting is definite, no "seems to" about it */
-        pline("%s resists the attempt.",
+        pline("%s résiste à la tentative.",
               /* any artifact should always pass the has_oname() test
                  but be careful just in case */
-              has_oname(obj) ? ONAME(obj) : "The artifact");
+              has_oname(obj) ? ONAME(obj) : "L'artefact");
         return;
     }
 
@@ -344,13 +387,14 @@ do_oname(struct obj *obj)
            because buf[] matches a valid artifact name) */
         Strcpy(bufcpy, buf);
         /* for "the Foo of Bar", only scuff "Foo of Bar" part */
-        bufp = !strncmpi(buf, "the ", 4) ? (buf + 4) : buf;
+        /* VF : "Le Cœur d'Ahriman" -> "Cœur d'Ahriman" */
+        bufp = buf + (fr_sans_article(buf) - buf);
         do {
             wipeout_text(bufp, rnd_on_display_rng(2), (unsigned) 0);
         } while (!strcmp(buf, bufcpy));
-        pline("While engraving, your %s slips.", body_part(HAND));
+        pline("Pendant que vous gravez, votre %s glisse.", body_part(HAND));
         display_nhwindow(WIN_MESSAGE, FALSE);
-        You("engrave: \"%s\".", buf);
+        You("gravez : \"%s\".", buf);
         /* violate illiteracy conduct since hero attempted to write
            a valid artifact name */
         u.uconduct.literate++;
@@ -412,11 +456,11 @@ oname(
             /* violate illiteracy conduct since successfully wrote arti-name */
             if (!u.uconduct.literate++)
                 livelog_printf(LL_CONDUCT | LL_ARTIFACT,
-                               "became literate by naming %s",
+                               "a appris à écrire en nommant %s",
                                bare_artifactname(obj));
             else
                 livelog_printf(LL_ARTIFACT,
-                               "chose %s to be named \"%s\"",
+                               "a choisi de nommer %s \"%s\"",
                                ansimpleoname(obj), bare_artifactname(obj));
         }
     }
@@ -522,32 +566,32 @@ docallcmd(void)
     any = cg.zeroany;
     any.a_char = 'm'; /* group accelerator 'C' */
     add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, 'C',
-             ATR_NONE, clr, "a monster", MENU_ITEMFLAGS_NONE);
+             ATR_NONE, clr, "un monstre", MENU_ITEMFLAGS_NONE);
     if (gi.invent) {
         /* we use y and n as accelerators so that we can accept user's
            response keyed to old "name an individual object?" prompt */
         any.a_char = 'i'; /* group accelerator 'y' */
         add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, 'y',
-                 ATR_NONE, clr, "a particular object in inventory",
+                 ATR_NONE, clr, "un objet précis de l'inventaire",
                  MENU_ITEMFLAGS_NONE);
         any.a_char = 'o'; /* group accelerator 'n' */
         add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, 'n',
-                 ATR_NONE, clr, "the type of an object in inventory",
+                 ATR_NONE, clr, "le type d'un objet de l'inventaire",
                  MENU_ITEMFLAGS_NONE);
     }
     any.a_char = 'f'; /* group accelerator ',' (or ':' instead?) */
     add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, ',',
-             ATR_NONE, clr, "the type of an object upon the floor",
+             ATR_NONE, clr, "le type d'un objet au sol",
              MENU_ITEMFLAGS_NONE);
     any.a_char = 'd'; /* group accelerator '\' */
     add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, '\\',
-             ATR_NONE, clr, "the type of an object on discoveries list",
+             ATR_NONE, clr, "le type d'un objet de la liste des découvertes",
              MENU_ITEMFLAGS_NONE);
     any.a_char = 'a'; /* group accelerator 'l' */
     add_menu(win, &nul_glyphinfo, &any, abc ? 0 : any.a_char, 'l',
-             ATR_NONE, clr, "record an annotation for the current level",
+             ATR_NONE, clr, "une annotation pour le niveau actuel",
              MENU_ITEMFLAGS_NONE);
-    end_menu(win, "What do you want to name?");
+    end_menu(win, "Que voulez-vous nommer ?");
     if (select_menu(win, PICK_ONE, &pick_list) > 0) {
         ch = pick_list[0].item.a_char;
         free((genericptr_t) pick_list);
@@ -577,10 +621,10 @@ docallcmd(void)
             (void) xname(obj);
 
             if (!obj->dknown) {
-                You("would never recognize another one.");
+                You("n'en reconnaîtriez jamais un autre.");
 #if 0
             } else if (call_ok(obj) == GETOBJ_EXCLUDE) {
-                You("know those as well as you ever will.");
+                You("les connaissez aussi bien que possible.");
 #endif
             } else {
                 docall(obj);
@@ -645,11 +689,11 @@ docall(struct obj *obj)
 
     if (obj->oclass == POTION_CLASS && obj->fromsink)
         /* fromsink: kludge, meaning it's sink water */
-        Sprintf(qbuf, "Call a stream of %s fluid:",
+        Sprintf(qbuf, "Nommer un jet de fluide %s :",
                 OBJ_DESCR(objects[obj->otyp]));
     else
-        (void) safe_qbuf(qbuf, "Call ", ":", obj,
-                         docall_xname, simpleonames, "thing");
+        (void) safe_qbuf(qbuf, "Nommer ", " :", obj,
+                         docall_xname, simpleonames, "cette chose");
     /* pointer to old name */
     uname_p = &(objects[obj->otyp].oc_uname);
     /* use getlin() to get a name string from the player */
@@ -688,9 +732,9 @@ namefloorobj(void)
     /* "dot for under/over you" only makes sense when the cursor hasn't
        been moved off the hero's '@' yet, but there's no way to adjust
        the help text once getpos() has started */
-    Sprintf(buf, "object on map (or '.' for one %s you)",
+    Sprintf(buf, "un objet sur la carte (ou '.' pour celui %s vous)",
             (u.uundetected && hides_under(gy.youmonst.data))
-              ? "over" : "under");
+              ? "au-dessus de" : "sous");
     if (getpos(&cc, FALSE, buf) < 0 || cc.x <= 0)
         return;
     if (u_at(cc.x, cc.y)) {
@@ -703,8 +747,8 @@ namefloorobj(void)
     }
     if (!obj) {
         /* "under you" is safe here since there's no object to hide under */
-        There("doesn't seem to be any object %s.",
-              u_at(cc.x, cc.y) ? "under you" : "there");
+        There("Il ne semble y avoir aucun objet %s.",
+              u_at(cc.x, cc.y) ? "sous vous" : "ici");
         return;
     }
     /* note well: 'obj' might be an instance of STRANGE_OBJECT if target
@@ -737,16 +781,17 @@ namefloorobj(void)
         /* traditional */
         unames[4] = roguename();
         /* silly */
-        unames[5] = "Wibbly Wobbly";
-        pline("%s %s to call you \"%s.\"",
-              The(buf), use_plural ? "decide" : "decides",
+        unames[5] = "Gloubi-Boulga";
+        pline("%s %s de vous appeler \"%s\".",
+              The(buf), use_plural ? "décident" : "décide",
               unames[rn2_on_display_rng(SIZE(unames))]);
     } else if (call_ok(obj) == GETOBJ_EXCLUDE) {
-        pline("%s %s can't be assigned a type name.",
-              use_plural ? "Those" : "That", buf);
+        pline("%s ne %s pas recevoir de nom de type.", The(buf),
+              use_plural ? "peuvent" : "peut");
     } else if (!obj->dknown) {
-        You("don't know %s %s well enough to name %s.",
-            use_plural ? "those" : "that", buf, use_plural ? "them" : "it");
+        You("ne connaissez pas assez bien %s pour %s nommer.",
+            the(buf), use_plural ? "les"
+                      : (fr_genre(buf) == FR_FEM) ? "la" : "le");
     } else {
         docall(obj);
     }
@@ -823,6 +868,16 @@ rndghostname(void)
  * Bug: if the monster is a priest or shopkeeper, not every one of these
  * options works, since those are special cases.
  */
+/* VF : la chaine commence-t-elle par une majuscule (ASCII ou UTF-8) ? */
+staticfn boolean
+est_majuscule(const char *s)
+{
+    const unsigned char *u = (const unsigned char *) s;
+
+    return (*u >= 'A' && *u <= 'Z')
+           || (*u == 0xC3 && u[1] >= 0x80 && u[1] <= 0x9E);
+}
+
 char *
 x_monnam(
     struct monst *mtmp,
@@ -841,7 +896,7 @@ x_monnam(
     char *bp, buf2[BUFSZ];
 
     if (mtmp == &gy.youmonst)
-        return strcpy(buf, "you"); /* ignore article, "invisible", &c */
+        return strcpy(buf, "vous"); /* ignore article, "invisible", &c */
 
     if (program_state.gameover)
         suppress |= SUPPRESS_HALLUCINATION;
@@ -877,9 +932,9 @@ x_monnam(
         /* !is_animal excludes all Y; !mindless excludes Z, M, \' */
         boolean s_one = humanoid(mdat) && !is_animal(mdat) && !mindless(mdat);
 
-        Strcpy(buf, !augment_it ? "it"
-                    : (!do_hallu ? s_one : !rn2(2)) ? "someone"
-                      : "something");
+        Strcpy(buf, !augment_it ? "il"
+                    : (!do_hallu ? s_one : !rn2(2)) ? "quelqu'un"
+                      : "quelque chose");
         return buf;
     }
 
@@ -898,8 +953,12 @@ x_monnam(
         name = priestname(mtmp, article, do_exact, buf2);
         EHalluc_resistance = save_prop;
         mtmp->minvis = save_invis;
-        if (article == ARTICLE_NONE && !strncmp(name, "the ", 4))
-            name += 4;
+        if (article == ARTICLE_NONE) {
+            if (!strncmp(name, "le ", 3) || !strncmp(name, "la ", 3))
+                name += 3;
+            else if (!strncmp(name, "l'", 2))
+                name += 2;
+        }
         return strcpy(buf, name);
     }
 
@@ -912,121 +971,128 @@ x_monnam(
     }
 
     /* Shopkeepers: use shopkeeper name.  For normal shopkeepers, just
-     * "Asidonhopo"; for unusual ones, "Asidonhopo the invisible
-     * shopkeeper" or "Asidonhopo the blue dragon".  If hallucinating,
+     * "Asidonhopo"; for unusual ones, "Asidonhopo le commerçant
+     * invisible" or "Asidonhopo le dragon bleu".  If hallucinating,
      * none of this applies.
      */
     if (mtmp->isshk && !do_hallu && !do_mappear) {
-        if (adjective && article == ARTICLE_THE) {
-            /* pathological case: "the angry Asidonhopo the blue dragon"
-               sounds silly */
-            Strcpy(buf, "the ");
-            Strcat(strcat(buf, adjective), " ");
-            Strcat(buf, shkname(mtmp));
-        } else {
-            Strcat(buf, shkname(mtmp));
-            if (mdat != &mons[PM_SHOPKEEPER] || do_invis){
-                Strcat(buf, " the ");
-                if (do_invis)
-                    Strcat(buf, "invisible ");
-                Strcat(buf, pm_name);
-            }
+        Strcpy(buf, shkname(mtmp));
+        if (adjective && article == ARTICLE_THE)
+            Sprintf(eos(buf), " %s", fr_adj(adjective, mtmp->female ? FR_FEM
+                                                                   : FR_MASC,
+                                            FALSE));
+        if (mdat != &mons[PM_SHOPKEEPER] || do_invis) {
+            Sprintf(buf2, "%s%s", pm_name,
+                    do_invis ? (fr_genre(pm_name) == FR_FEM ? " invisible"
+                                                            : " invisible")
+                             : "");
+            Sprintf(eos(buf), " %s", the(buf2));
         }
         return buf;
     }
 
-    /* Put the adjectives in the buffer */
-    if (adjective)
-        Strcat(strcat(buf, adjective), " ");
-    if (do_invis)
-        Strcat(buf, "invisible ");
-    if (do_saddle && (mtmp->misc_worn_check & W_SADDLE) && !Blind
-        && !Hallucination)
-        Strcat(buf, "saddled ");
-    has_adjectives = (buf[0] != '\0');
+    /* VF : le nom d'abord, les adjectifs ensuite (accordes) */
+    {
+        char adjbuf[BUFSZ];
+        int g;
+        boolean plur_name = FALSE;
 
-    /* Put the actual monster name or type into the buffer now.
-       Remember whether the buffer starts with a personal name. */
-    if (do_hallu) {
-        char rnamecode;
-        char *rname = rndmonnam(&rnamecode);
+        adjbuf[0] = '\0';
+        name_at_start = FALSE;
 
-        Strcat(buf, rname);
-        name_at_start = bogon_is_pname(rnamecode);
-    } else if (do_name && has_mgivenname(mtmp)) {
-        char *name = MGIVENNAME(mtmp);
+        if (do_hallu) {
+            char rnamecode;
+            char *rname = rndmonnam(&rnamecode);
 
-#if 0
-      /* hardfought */
-      if (has_ebones(mtmp)) {
-#endif
-        if (mdat == &mons[PM_GHOST]) {
-            Sprintf(eos(buf), "%s ghost", s_suffix(name));
-            name_at_start = TRUE;
-        } else if (called) {
-            Sprintf(eos(buf), "%s called %s", pm_name, name);
-            name_at_start = (boolean) type_is_pname(mdat);
-        } else if (is_mplayer(mdat) && (bp = strstri(name, " the ")) != 0) {
-            /* <name> the <adjective> <invisible> <saddled> <rank> */
+            Strcpy(buf, rname);
+            name_at_start = bogon_is_pname(rnamecode);
+        } else if (do_name && has_mgivenname(mtmp)) {
+            char *name = MGIVENNAME(mtmp);
+
+            if (mdat == &mons[PM_GHOST]) {
+                Sprintf(buf, "fantôme %s", de(name));
+                name_at_start = FALSE;
+                if (article == ARTICLE_NONE || article == ARTICLE_A)
+                    article = ARTICLE_THE;
+            } else if (called) {
+                Sprintf(buf, "%s %s %s", pm_name,
+                        fr_adj("appelé", fr_genre(pm_name), FALSE), name);
+                name_at_start = (boolean) type_is_pname(mdat);
+            } else if (is_mplayer(mdat)
+                       && ((bp = strstri(name, " the ")) != 0
+                           || (bp = strstri(name, " le ")) != 0
+                           || (bp = strstri(name, " la ")) != 0)) {
+                Strcpy(buf, name);
+                article = ARTICLE_NONE;
+                name_at_start = TRUE;
+            } else {
+                Strcpy(buf, name);
+                name_at_start = TRUE;
+            }
+        } else if (is_mplayer(mdat) && !In_endgame(&u.uz)) {
             char pbuf[BUFSZ];
 
-            Strcpy(pbuf, name);
-            pbuf[bp - name + 5] = '\0'; /* adjectives right after " the " */
-            if (has_adjectives)
-                Strcat(pbuf, buf);
-            Strcat(pbuf, bp + 5); /* append the rest of the name */
-            Strcpy(buf, pbuf);
-            article = ARTICLE_NONE;
-            name_at_start = TRUE;
+            Strcpy(pbuf, rank_of((int) mtmp->m_lev, monsndx(mdat),
+                                 (boolean) mtmp->female));
+            Strcpy(buf, lcase(pbuf));
+            name_at_start = FALSE;
         } else {
-            Strcat(buf, name);
-            name_at_start = TRUE;
+            Strcpy(buf, pm_name);
+            name_at_start = (boolean) type_is_pname(mdat);
         }
-#if 0 /* hardfought */
-      }
-#endif
-    } else if (is_mplayer(mdat) && !In_endgame(&u.uz)) {
-        char pbuf[BUFSZ];
 
-        Strcpy(pbuf, rank_of((int) mtmp->m_lev, monsndx(mdat),
-                             (boolean) mtmp->female));
-        Strcat(buf, lcase(pbuf));
-        name_at_start = FALSE;
-    } else {
-        Strcat(buf, pm_name);
-        name_at_start = (boolean) type_is_pname(mdat);
-    }
-
-    if (name_at_start && (article == ARTICLE_YOUR || !has_adjectives)) {
-        if (mdat == &mons[PM_WIZARD_OF_YENDOR])
-            article = ARTICLE_THE;
+        /* genre grammatical : celui du nom de l'espece, sauf nom propre */
+        if (name_at_start && has_mgivenname(mtmp) && !do_hallu)
+            g = mtmp->female ? FR_FEM : FR_MASC;
         else
-            article = ARTICLE_NONE;
-    } else if ((mdat->geno & G_UNIQ) != 0 && article == ARTICLE_A) {
-        article = ARTICLE_THE;
-    }
+            g = fr_genre(buf);
 
-    insertbuf2 = TRUE;
-    buf2[0] = '\0'; /* lint suppression */
-    switch (article) {
-    case ARTICLE_YOUR:
-        Strcpy(buf2, "your ");
-        break;
-    case ARTICLE_THE:
-        Strcpy(buf2, "the ");
-        break;
-    case ARTICLE_A:
-        /* avoid an() here */
-        (void) just_an(buf2, buf); /* copy "a " or "an " into buf2[] */
-        break;
-    case ARTICLE_NONE:
-    default:
-        insertbuf2 = FALSE;
-        break;
-    }
-    if (insertbuf2) {
-        Strcat(buf2, buf); /* buf2[] isn't viable to return,  */
-        Strcpy(buf, buf2); /* so transfer the result to buf[] */
+        if (adjective && *adjective)
+            Sprintf(eos(adjbuf), " %s", fr_adj(adjective, g, plur_name));
+        if (do_invis)
+            Sprintf(eos(adjbuf), " %s", fr_adj("invisible", g, plur_name));
+        if (do_saddle && (mtmp->misc_worn_check & W_SADDLE) && !Blind
+            && !Hallucination)
+            Sprintf(eos(adjbuf), " %s", fr_adj("sellé", g, plur_name));
+        has_adjectives = (adjbuf[0] != '\0');
+        if (strlen(buf) + strlen(adjbuf) < BUFSZ - 20)
+            Strcat(buf, adjbuf);
+
+        if (name_at_start && (article == ARTICLE_YOUR || !has_adjectives)) {
+            if (mdat == &mons[PM_WIZARD_OF_YENDOR])
+                article = ARTICLE_THE;
+            else
+                article = ARTICLE_NONE;
+        } else if ((mdat->geno & G_UNIQ) != 0 && article == ARTICLE_A) {
+            article = ARTICLE_THE;
+        }
+
+        insertbuf2 = TRUE;
+        buf2[0] = '\0';
+        switch (article) {
+        case ARTICLE_YOUR:
+            Strcpy(buf2, "votre ");
+            break;
+        case ARTICLE_THE:
+            if (name_at_start || est_majuscule(buf))
+                Strcpy(buf2, fr_elision(buf) ? "l'"
+                             : (g == FR_FEM) ? "la " : "le ");
+            else
+                Strcpy(buf2, fr_elision(buf) ? "l'"
+                             : (fr_genre(buf) == FR_FEM) ? "la " : "le ");
+            break;
+        case ARTICLE_A:
+            Strcpy(buf2, (g == FR_FEM) ? "une " : "un ");
+            break;
+        case ARTICLE_NONE:
+        default:
+            insertbuf2 = FALSE;
+            break;
+        }
+        if (insertbuf2) {
+            Strcat(buf2, buf); /* buf2[] isn't viable to return,  */
+            Strcpy(buf, buf2); /* so transfer the result to buf[] */
+        }
     }
     return buf;
 }
@@ -1084,7 +1150,7 @@ Monnam(struct monst *mtmp)
 {
     char *bp = mon_nam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1093,7 +1159,7 @@ noit_Monnam(struct monst *mtmp)
 {
     char *bp = noit_mon_nam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1102,7 +1168,7 @@ noit_or_your_Monnam(struct monst *mtmp)
 {
     char *bp = noit_or_your_mon_nam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1111,7 +1177,7 @@ Some_Monnam(struct monst *mtmp)
 {
     char *bp = some_mon_nam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1152,7 +1218,7 @@ YMonnam(struct monst *mtmp)
 {
     char *bp = y_monnam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1162,7 +1228,7 @@ Adjmonnam(struct monst *mtmp, const char *adj)
     char *bp = x_monnam(mtmp, ARTICLE_THE, adj,
                         has_mgivenname(mtmp) ? SUPPRESS_SADDLE : 0, FALSE);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1178,7 +1244,7 @@ Amonnam(struct monst *mtmp)
 {
     char *bp = a_monnam(mtmp);
 
-    *bp = highc(*bp);
+    (void) upstart(bp); /* VF : UTF-8 */
     return bp;
 }
 
@@ -1195,8 +1261,11 @@ distant_monnam(
        its own obfuscation) */
     if (mon->data == &mons[PM_HIGH_CLERIC] && !Hallucination
         && Is_astralevel(&u.uz) && !m_next2u(mon)) {
-        Strcpy(outbuf, article == ARTICLE_THE ? "the " : "");
-        Strcat(outbuf, mon->female ? "high priestess" : "high priest");
+        if (article == ARTICLE_THE)
+            Strcpy(outbuf, mon->female ? "la grande prêtresse"
+                                       : "le grand prêtre");
+        else
+            Strcpy(outbuf, mon->female ? "grande prêtresse" : "grand prêtre");
     } else {
         Strcpy(outbuf, x_monnam(mon, article, (char *) 0, 0, TRUE));
     }
@@ -1216,25 +1285,26 @@ mon_nam_too(struct monst *mon, struct monst *other_mon)
         outbuf = nextmbuf();
         switch (pronoun_gender(mon, PRONOUN_HALLU)) {
         case 0:
-            Strcpy(outbuf, "himself");
+            Strcpy(outbuf, "lui-même");
             break;
         case 1:
-            Strcpy(outbuf, "herself");
+            Strcpy(outbuf, "elle-même");
             break;
         default:
         case 2:
-            Strcpy(outbuf, "itself");
+            Strcpy(outbuf, "lui-même");
             break;
         case 3: /* could happen when hallucinating */
-            Strcpy(outbuf, "themselves");
+            Strcpy(outbuf, "eux-mêmes");
             break;
         }
     }
     return outbuf;
 }
 
-/* construct "<monnamtext> <verb> <othertext> {him|her|it}self" which might
-   be distorted by Hallu; if that's plural, adjust monnamtext and verb */
+/* construct "<monnamtext> se <verb> <othertext>" ("Le chien se frappe")
+   which might be distorted by Hallu; if that's plural, adjust monnamtext
+   and verb; 'verb' is a French infinitive, with or without "se " */
 char *
 monverbself(
     struct monst *mon,
@@ -1242,27 +1312,31 @@ monverbself(
     const char *verb,
     const char *othertext)
 {
-    char *verbs, selfbuf[40]; /* sizeof "themselves" suffices */
+    char infbuf[BUFSZ];
+    const char *verbs;
+    boolean plural = (pronoun_gender(mon, PRONOUN_HALLU) == 3);
 
-    /* "himself"/"herself"/"itself", maybe "themselves" if hallucinating */
-    Strcpy(selfbuf, mon_nam_too(mon, mon));
-    /* verb starts plural; this will yield singular except for "themselves" */
-    verbs = vtense(selfbuf, verb);
-    if (!strcmp(verb, verbs)) { /* a match indicates that it stayed plural */
-        monnamtext = makeplural(monnamtext);
-        /* for "it", makeplural() produces "them" but we want "they" */
-        if (!strcmpi(monnamtext, genders[3].he)) {
-            boolean capitaliz = (monnamtext[0] == highc(monnamtext[0]));
+    /* reflexive infinitive: "frapper" -> "se frapper"; fr_conj() (via
+       vtense()) elides "se" into "s'" before a vowel */
+    if (!strncmp(verb, "se ", 3) || !strncmp(verb, "s'", 2))
+        Strcpy(infbuf, verb);
+    else
+        Snprintf(infbuf, sizeof infbuf, "se %s", verb);
+    verbs = vtense(plural ? "ils" : "il", infbuf);
+    if (plural) {
+        boolean capitaliz = (monnamtext[0] == highc(monnamtext[0]));
 
-            Strcpy(monnamtext, genders[3].him);
+        if (!strcmpi(monnamtext, "il") || !strcmpi(monnamtext, "elle")) {
+            Strcpy(monnamtext, genders[3].he); /* "ils" */
             if (capitaliz)
                 monnamtext[0] = highc(monnamtext[0]);
+        } else {
+            monnamtext = makeplural(monnamtext);
         }
     }
     Strcat(strcat(monnamtext, " "), verbs);
     if (othertext && *othertext)
         Strcat(strcat(monnamtext, " "), othertext);
-    Strcat(strcat(monnamtext, " "), selfbuf);
     return monnamtext;
 }
 
@@ -1293,7 +1367,8 @@ minimal_monnam(struct monst *mon, boolean ckloc)
                 mon->mx, mon->my);
     } else {
         Sprintf(outbuf, "%s%s <%d,%d>",
-                mon->mtame ? "tame " : mon->mpeaceful ? "peaceful " : "",
+                mon->mtame ? "apprivoisé " : mon->mpeaceful ? "paisible "
+                                                            : "",
                 mon_pmname(mon), mon->mx, mon->my);
         if (mon->cham != NON_PM)
             Sprintf(eos(outbuf), "{%s}",
@@ -1373,7 +1448,7 @@ obj_pmname(struct obj *obj)
         return pmname(&mons[mndx], mgend);
     }
     impossible("obj_pmname otyp:%i,corpsenm:%i", obj->otyp, obj->corpsenm);
-    return "two-legged glorkum-seeker";
+    return "chercheur de glorkum bipède";
 }
 
 /* used by bogusmon(next) and also by init_CapMons(rumors.c);
@@ -1456,23 +1531,28 @@ roguename(void)
                   : "Glenn Wichman";
 }
 
+/* VF : adjectifs au masculin singulier ; hcolor() est accorde par
+   l'appelant avec fr_adj() si besoin */
 static NEARDATA const char *const hcolors[] = {
-    "ultraviolet", "infrared", "bluish-orange", "reddish-green", "dark white",
-    "light black", "sky blue-pink", "pinkish-cyan", "indigo-chartreuse",
-    "salty", "sweet", "sour", "bitter", "umami", /* basic tastes */
-    "striped", "spiral", "swirly", "plaid", "checkered", "argyle", "paisley",
-    "blotchy", "guernsey-spotted", "polka-dotted", "square", "round",
-    "triangular", "cabernet", "sangria", "fuchsia", "wisteria", "lemon-lime",
-    "strawberry-banana", "peppermint", "romantic", "incandescent",
+    "ultraviolet", "infrarouge", "orange bleuté", "vert rougeâtre",
+    "blanc foncé", "noir clair", "rose bleu ciel", "cyan rosé",
+    "indigo-chartreuse",
+    "salé", "sucré", "acide", "amer", "umami", /* basic tastes */
+    "rayé", "spiralé", "tourbillonnant", "écossais", "à damier",
+    "à losanges", "cachemire", "taché", "tacheté comme une vache", "à pois",
+    "carré", "rond", "triangulaire", "cabernet", "sangria", "fuchsia",
+    "glycine", "citron vert", "fraise-banane", "menthe poivrée",
+    "romantique", "incandescent",
     "octarine", /* Discworld: the Colour of Magic */
-    "excitingly dull", "mauve", "electric",
-    "neon", "fluorescent", "phosphorescent", "translucent", "opaque",
-    "psychedelic", "iridescent", "rainbow-colored", "polychromatic",
-    "colorless", "colorless green",
-    "dancing", "singing", "loving", "loudy", "noisy", "clattery", "silent",
-    "apocyan", "infra-pink", "opalescent", "violant", "tuneless",
-    "viridian", "aureolin", "cinnabar", "purpurin", "gamboge", "madder",
-    "bistre", "ecru", "fulvous", "tekhelet", "selective yellow",
+    "passionnément terne", "mauve", "électrique",
+    "néon", "fluorescent", "phosphorescent", "translucide", "opaque",
+    "psychédélique", "irisé", "arc-en-ciel", "polychrome",
+    "incolore", "vert incolore",
+    "dansant", "chantant", "affectueux", "tonitruant", "bruyant",
+    "cliquetant", "silencieux",
+    "apocyan", "infra-rose", "opalescent", "violent", "discordant",
+    "viridien", "auréolin", "cinabre", "purpurin", "gomme-gutte", "garance",
+    "bistre", "écru", "fauve", "tekhelet", "jaune sélectif",
 };
 
 const char *
@@ -1490,19 +1570,21 @@ rndcolor(void)
     int k = rn2(CLR_MAX);
 
     return Hallucination ? hcolor((char *) 0)
-                         : (k == NO_COLOR) ? "colorless"
+                         : (k == NO_COLOR) ? "incolore"
                                            : c_obj_colors[k];
 }
 
+/* VF : noms de liquides sans article */
 static NEARDATA const char *const hliquids[] = {
-    "yoghurt", "oobleck", "clotted blood", "diluted water", "purified water",
-    "instant coffee", "tea", "herbal infusion", "liquid rainbow",
-    "creamy foam", "mulled wine", "bouillon", "nectar", "grog", "flubber",
-    "ketchup", "slow light", "oil", "vinaigrette", "liquid crystal", "honey",
-    "caramel sauce", "ink", "aqueous humour", "milk substitute",
-    "fruit juice", "glowing lava", "gastric acid", "mineral water",
-    "cough syrup", "quicksilver", "sweet vitriol", "grey goo", "pink slime",
-    "cosmic latte", "bone oil", "custard", "lard", "vinegar", "creosote",
+    "yaourt", "oobleck", "sang caillé", "eau diluée", "eau purifiée",
+    "café instantané", "thé", "tisane", "arc-en-ciel liquide",
+    "mousse crémeuse", "vin chaud", "bouillon", "nectar", "grog", "flubber",
+    "ketchup", "lumière lente", "huile", "vinaigrette", "cristaux liquides",
+    "miel", "sauce caramel", "encre", "humeur aqueuse", "succédané de lait",
+    "jus de fruits", "lave incandescente", "acide gastrique", "eau minérale",
+    "sirop pour la toux", "vif-argent", "vitriol doux", "gelée grise",
+    "gelée rose", "latte cosmique", "huile animale", "crème anglaise",
+    "saindoux", "vinaigre", "créosote",
     /* "new coke (tm)", --better not */
 };
 
@@ -1581,7 +1663,7 @@ christen_orc(struct monst *mtmp, const char *gang, const char *other)
     /* rndorcname() won't return NULL */
     sz = (int) strlen(orcname);
     if (gang)
-        sz += (int) (strlen(gang) + sizeof " of " - sizeof "");
+        sz += (int) (strlen(gang) + sizeof " de " - sizeof "");
     else if (other)
         sz += (int) strlen(other);
 
@@ -1590,8 +1672,8 @@ christen_orc(struct monst *mtmp, const char *gang, const char *other)
         boolean nameit = FALSE;
 
         if (gang) {
-            Sprintf(buf, "%s of %s", upstart(orcname),
-                    upstart(strcpy(gbuf, gang)));
+            Sprintf(buf, "%s %s", upstart(orcname),
+                    de(upstart(strcpy(gbuf, gang))));
             nameit = TRUE;
         } else if (other) {
             Sprintf(buf, "%s%s", upstart(orcname), other);

@@ -24,7 +24,7 @@ ballrelease(boolean showmsg)
 {
     if (carried(uball) && !welded(uball)) {
         if (showmsg)
-            pline("Startled, you drop the iron ball.");
+            pline("Surpris%s, vous lâchez le boulet.", UE);
         if (uwep == uball)
             setuwep((struct obj *) 0);
         if (uswapwep == uball)
@@ -53,15 +53,15 @@ ballfall(void)
     if (gets_hit) {
         int dmg = rn1(7, 25);
 
-        pline_The("iron ball falls on your %s.", body_part(HEAD));
+        pline("Le boulet vous tombe sur %s.", the(body_part(HEAD)));
         if (uarmh) {
             if (hard_helmet(uarmh)) {
-                pline("Fortunately, you are wearing a hard helmet.");
+                pline("Heureusement, vous portez un casque rigide.");
                 dmg = 3;
             } else if (flags.verbose)
-                pline("%s does not protect you.", Yname2(uarmh));
+                pline("%s ne vous %s pas.", Yname2(uarmh), otense(uarmh, "protéger"));
         }
-        losehp(Maybe_Half_Phys(dmg), "crunched in the head by an iron ball",
+        losehp(Maybe_Half_Phys(dmg), "le crâne fracassé par un boulet",
                NO_KILLER_PREFIX);
     }
 }
@@ -774,8 +774,8 @@ drag_ball(coordxy x, coordxy y, int *bc_control,
  drag:
 
     if (near_capacity() > SLT_ENCUMBER && dist2(x, y, u.ux, u.uy) <= 2) {
-        You("cannot %sdrag the heavy iron ball.",
-            gi.invent ? "carry all that and also " : "");
+        You("ne pouvez pas %straîner le lourd boulet.",
+            gi.invent ? "porter tout cela et en même temps " : "");
         nomul(0);
         return FALSE;
     }
@@ -788,13 +788,13 @@ drag_ball(coordxy x, coordxy y, int *bc_control,
         || ((t = t_at(uchain->ox, uchain->oy))
             && (is_pit(t->ttyp) || is_hole(t->ttyp)))) {
         if (Levitation) {
-            You_feel("a tug from the iron ball.");
+            You_feel("sentez le boulet tirer sur vous.");
             if (t)
                 t->tseen = 1;
         } else {
             struct monst *victim;
 
-            You("are jerked back by the iron ball!");
+            You("êtes brutalement retenu%s par le boulet !", UE);
             if ((victim = m_at(uchain->ox, uchain->oy)) != 0) {
                 int tmp;
                 int dieroll = rnd(20);
@@ -893,7 +893,7 @@ drop_ball(coordxy x, coordxy y)
     }
 
     if (x != u.ux || y != u.uy) {
-        static const char pullmsg[] = "The ball pulls you out of the ";
+        static const char pullmsg[] = "Le boulet vous arrache";
         struct trap *t;
         long side;
 
@@ -901,27 +901,29 @@ drop_ball(coordxy x, coordxy y)
             && u.utraptype != TT_INFLOOR && u.utraptype != TT_BURIEDBALL) {
             switch (u.utraptype) {
             case TT_PIT:
-                pline("%s%s!", pullmsg, "pit");
+                pline("%s %s !", pullmsg, "de la fosse");
                 break;
             case TT_WEB:
-                pline("%s%s!", pullmsg, "web");
+                pline("%s %s !", pullmsg, "de la toile");
                 Soundeffect(se_destroy_web, 30);
-                pline_The("web is destroyed!");
+                pline_The("La toile est détruite !");
                 deltrap(t_at(u.ux, u.uy));
                 break;
             case TT_LAVA:
-                pline("%s%s!", pullmsg, hliquid("lava"));
+                pline("%s %s !", pullmsg, du(hliquid("lave")));
                 break;
             case TT_BEARTRAP:
                 side = rn2(3) ? LEFT_SIDE : RIGHT_SIDE;
-                pline("%s%s!", pullmsg, "bear trap");
+                pline("%s %s !", pullmsg, "du piège à ours");
                 set_wounded_legs(side, rn1(1000, 500));
                 if (!u.usteed) {
-                    Your("%s %s is severely damaged.",
-                         (side == LEFT_SIDE) ? "left" : "right",
-                         body_part(LEG));
+                    Your("%s %s est gravement %s.",
+                         body_part(LEG),
+                         (side == LEFT_SIDE) ? "gauche"
+                             : fr_adj_accord("droit", body_part(LEG)),
+                         fr_adj_accord("blessé", body_part(LEG)));
                     losehp(Maybe_Half_Phys(2),
-                           "leg damage from being pulled out of a bear trap",
+                           "une blessure à la jambe causée par un piège à ours",
                            KILLED_BY);
                 }
                 break;
@@ -976,9 +978,8 @@ litter(void)
         nextobj = otmp->nobj;
         if (otmp != uball && rnd(capacity) <= (int) otmp->owt) {
             if (canletgo(otmp, "")) {
-                You("drop %s and %s %s down the stairs with you.",
-                    yname(otmp), (otmp->quan == 1L) ? "it" : "they",
-                    otense(otmp, "fall"));
+                You("lâchez %s, qui %s dans l'escalier avec vous.",
+                    yname(otmp), otense(otmp, "tomber"));
                 setnotworn(otmp);
                 freeinv(otmp);
                 hitfloor(otmp, FALSE);
@@ -1004,31 +1005,35 @@ drag_down(void)
     forward = carried(uball) && (uwep == uball || !uwep || !rn2(3));
 
     if (carried(uball) && !welded(uball))
-        You("lose your grip on the iron ball.");
+        You("lâchez prise sur le boulet.");
 
     cls();  /* previous level is still displayed although you
                went down the stairs. Avoids bug C343-20 */
 
     if (forward) {
         if (rn2(6)) {
-            pline_The("iron ball drags you downstairs!");
+            pline_The("Le boulet vous entraîne dans l'escalier !");
             losehp(Maybe_Half_Phys(rnd(6)),
-                   "dragged downstairs by an iron ball", NO_KILLER_PREFIX);
+                   flags.female ? "entraînée dans l'escalier par un boulet"
+                                : "entraîné dans l'escalier par un boulet",
+                   NO_KILLER_PREFIX);
             litter();
         }
     } else {
         if (rn2(2)) {
             Soundeffect(se_iron_ball_hits_you, 25);
-            pline_The("iron ball smacks into you!");
-            losehp(Maybe_Half_Phys(rnd(20)), "iron ball collision",
+            pline_The("Le boulet vous percute !");
+            losehp(Maybe_Half_Phys(rnd(20)), "collision avec un boulet",
                    KILLED_BY_AN);
             exercise(A_STR, FALSE);
             dragchance -= 2;
         }
         if ((int) dragchance >= rnd(6)) {
-            pline_The("iron ball drags you downstairs!");
+            pline_The("Le boulet vous entraîne dans l'escalier !");
             losehp(Maybe_Half_Phys(rnd(3)),
-                   "dragged downstairs by an iron ball", NO_KILLER_PREFIX);
+                   flags.female ? "entraînée dans l'escalier par un boulet"
+                                : "entraîné dans l'escalier par un boulet",
+                   NO_KILLER_PREFIX);
             exercise(A_STR, FALSE);
             litter();
         }

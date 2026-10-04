@@ -113,8 +113,17 @@ ucase(char *s)
 char *
 upstart(char *s)
 {
-    if (s)
-        *s = highc(*s);
+    /* VF : gere aussi les minuscules accentuees en UTF-8 (é -> É) */
+    if (s) {
+        unsigned char *u = (unsigned char *) s;
+
+        if (*u == 0xC3 && u[1] >= 0xA0 && u[1] <= 0xBE && u[1] != 0xB7)
+            u[1] = (unsigned char) (u[1] - 0x20);
+        else if (*u == 0xC5 && u[1] == 0x93) /* œ -> Œ */
+            u[1] = 0x92;
+        else
+            *s = highc(*s);
+    }
     return s;
 }
 
@@ -624,10 +633,8 @@ findword(
 const char *
 ordin(int n)               /* note: should be non-negative */
 {
-    int dd = n % 10;
-
-    return (dd == 0 || dd > 3 || (n % 100) / 10 == 1) ? "th"
-               : (dd == 1) ? "st" : (dd == 2) ? "nd" : "rd";
+    /* VF : 1er, 2e, 3e... */
+    return (n == 1) ? "er" : "e";
 }
 
 DISABLE_WARNING_FORMAT_NONLITERAL  /* one compiler complains about

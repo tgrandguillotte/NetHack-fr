@@ -139,7 +139,8 @@ getrumor(
             if (gt.true_rumor_size == 0L) { /* if this is 1st outrumor() */
                 init_rumors(rumors);
                 if (gt.true_rumor_size < 0L) { /* init failed */
-                    Sprintf(rumor_buf, "Error reading \"%.80s\".", RUMORFILE);
+                    Sprintf(rumor_buf, "Erreur de lecture de \"%.80s\".",
+                            RUMORFILE);
                     return rumor_buf;
                 }
             }
@@ -161,7 +162,7 @@ getrumor(
                 break;
             default:
                 impossible("strange truth value for rumor");
-                return strcpy(rumor_buf, "Oops...");
+                return strcpy(rumor_buf, "Oups...");
             }
             Strcpy(rumor_buf,
                    get_rnd_line(rumors, line, (unsigned) sizeof line, rn2,
@@ -278,7 +279,7 @@ rumor_check(void)
        we didn't bother trying again this time */
     } else if (gt.true_rumor_size < 0L) {
  no_rumors: /* file could be opened but init_rumors() didn't like it */
-        pline("rumors not accessible.");
+        pline("rumeurs inaccessibles.");
         /* engravings, epitaphs, and bogus monsters will still be shown,
            and in tmpwin rather than via additional pline() calls */
         display_nhwindow(WIN_MESSAGE, TRUE); /* --more-- */
@@ -291,9 +292,9 @@ rumor_check(void)
 
     /* initial implementation of default epitaph/engraving/bogusmon
        contained an error; check those along with rumors */
-    others_check("Engravings:", ENGRAVEFILE, &tmpwin);
-    others_check("Epitaphs:", EPITAPHFILE, &tmpwin);
-    others_check("Bogus monsters:", BOGUSMONFILE, &tmpwin);
+    others_check("Gravures :", ENGRAVEFILE, &tmpwin);
+    others_check("Épitaphes :", EPITAPHFILE, &tmpwin);
+    others_check("Monstres fictifs :", BOGUSMONFILE, &tmpwin);
 
     if (tmpwin != WIN_ERR) {
         display_nhwindow(tmpwin, TRUE);
@@ -531,7 +532,7 @@ outrumor(
     int mechanism)
 {
     static const char fortune_msg[] =
-        "This cookie has a scrap of paper inside.";
+        "Ce biscuit contient un bout de papier.";
     const char *line;
     char buf[BUFSZ];
     boolean reading = (mechanism == BY_COOKIE || mechanism == BY_PAPER);
@@ -543,22 +544,22 @@ outrumor(
         } else if (Blind) {
             if (mechanism == BY_COOKIE)
                 pline(fortune_msg);
-            pline("What a pity that you cannot read it!");
+            pline("Quel dommage que vous ne puissiez pas le lire !");
             return;
         }
     }
 
     line = getrumor(truth, buf, reading ? FALSE : TRUE);
     if (!*line)
-        line = "NetHack rumors file closed for renovation.";
+        line = "Fichier des rumeurs de NetHack fermé pour travaux.";
     switch (mechanism) {
     case BY_ORACLE:
         /* Oracle delivers the rumor */
-        pline("True to her word, the Oracle %s%s: ",
-              (!rn2(4) ? "offhandedly "
-                       : (!rn2(3) ? "casually "
-                                  : (rn2(2) ? "nonchalantly " : ""))),
-              says());
+        pline("Fidèle à sa parole, l'Oracle %s%s : ",
+              says(),
+              (!rn2(4) ? " négligemment"
+                       : (!rn2(3) ? " d'un ton détaché"
+                                  : (rn2(2) ? " nonchalamment" : ""))));
         SetVoice((struct monst *) 0, 0, 80, voice_oracle);
         verbalize1(line);
         /* [WIS exercised by getrumor()] */
@@ -568,7 +569,7 @@ outrumor(
         FALLTHROUGH;
     /* FALLTHRU */
     case BY_PAPER:
-        pline("It reads:");
+        pline("On peut y lire :");
         break;
     }
     pline1(line);
@@ -672,10 +673,10 @@ outoracle(boolean special, boolean delphi)
         if (delphi)
             putstr(tmpwin, 0,
                    special
-                     ? "The Oracle scornfully takes all your gold and says:"
-                     : "The Oracle meditates for a moment and then intones:");
+                     ? "L'Oracle prend tout votre or avec mépris et dit :"
+                     : "L'Oracle médite un instant puis déclame :");
         else
-            putstr(tmpwin, 0, "The message reads:");
+            putstr(tmpwin, 0, "Le message dit :");
         putstr(tmpwin, 0, "");
 
         while (dlb_fgets(line, COLNO, oracles) && strcmp(line, "---\n")) {
@@ -705,17 +706,17 @@ doconsult(struct monst *oracl)
     umoney = money_cnt(gi.invent);
 
     if (!oracl) {
-        There("is no one here to consult.");
+        There("Il n'y a personne à consulter ici.");
         return ECMD_OK;
     } else if (!oracl->mpeaceful) {
-        pline("%s is in no mood for consultations.", Monnam(oracl));
+        pline("%s n'est pas d'humeur à donner des consultations.", Monnam(oracl));
         return ECMD_OK;
     } else if (!umoney) {
-        You("have no gold.");
+        You("n'avez pas d'or.");
         return ECMD_OK;
     }
 
-    Sprintf(qbuf, "\"Wilt thou settle for a minor consultation?\" (%d %s)",
+    Sprintf(qbuf, "\"Te contenteras-tu d'une consultation mineure ?\" (%d %s)",
             minor_cost, currency((long) minor_cost));
     switch (ynq(qbuf)) {
     default:
@@ -723,7 +724,7 @@ doconsult(struct monst *oracl)
         return ECMD_OK;
     case 'y':
         if (umoney < (long) minor_cost) {
-            You("don't even have enough gold for that!");
+            You("n'avez même pas assez d'or pour cela !");
             return ECMD_OK;
         }
         u_pay = minor_cost;
@@ -732,7 +733,7 @@ doconsult(struct monst *oracl)
         if (umoney <= (long) minor_cost /* don't even ask */
             || (svo.oracle_cnt == 1 || go.oracle_flg < 0))
             return ECMD_OK;
-        Sprintf(qbuf, "\"Then dost thou desire a major one?\" (%d %s)",
+        Sprintf(qbuf, "\"Désires-tu donc une consultation majeure ?\" (%d %s)",
                 major_cost, currency((long) major_cost));
         if (y_n(qbuf) != 'y')
             return ECMD_OK;

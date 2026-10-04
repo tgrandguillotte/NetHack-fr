@@ -1,152 +1,152 @@
 &# cmdhelp - became obsolete when 'BINDINGS=key:command' got added
-&	Tell what command a keystroke invokes
-^	Show the type of an adjacent trap
-^[	Cancel command (same as ESCape key)
+&	Indiquer la commande déclenchée par une touche
+^	Montrer le type d'un piège adjacent
+^[	Annuler la commande (comme la touche Échap)
 &? debug
-^E	Search for nearby traps, secret doors, and unseen monsters
-^F	Map level; reveals traps and secret corridors but not secret doors
-^G	Create a monster by name or class
-^I	View inventory with all items identified
-^O	List special level locations
-^V	Teleport between levels
-^W	Wish for something
+^E	Chercher pièges, portes secrètes et monstres invisibles à proximité
+^F	Carte du niveau ; révèle pièges et couloirs secrets, pas les portes
+^G	Créer un monstre par son nom ou sa classe
+^I	Voir l'inventaire avec tous les objets identifiés
+^O	Lister l'emplacement des niveaux spéciaux
+^V	Se téléporter d'un niveau à l'autre
+^W	Faire un vœu
 &: #!debug
-^E	unavailable debugging command
-^F	unavailable debugging command
-^G	unavailable debugging command
-^I	unavailable debugging command
-^O	Shortcut for '#overview': list interesting levels you have visited
-^V	unavailable debugging command
-^W	unavailable debugging command
+^E	commande de débogage indisponible
+^F	commande de débogage indisponible
+^G	commande de débogage indisponible
+^I	commande de débogage indisponible
+^O	Raccourci de '#overview' : lister les niveaux intéressants visités
+^V	commande de débogage indisponible
+^W	commande de débogage indisponible
 &. #?debug
 &? number_pad=0,-1
-b	Go southwest 1 space
-B	Go southwest until you are on top of something
-h	Go west 1 space
-H	Go west until you are on top of something
-j	Go south 1 space
-J	Go south until you are on top of something
-k	Go north 1 space
-K	Go north until you are on top of something
-l	Go east 1 space
-L	Go east until you are on top of something
-n	Go southeast 1 space
-N	Go southeast until you are on something
-u	Go northeast 1 space
-U	Go northeast until you are on top of something
+b	Avancer d'une case vers le sud-ouest
+B	Avancer vers le sud-ouest jusqu'à être sur quelque chose
+h	Avancer d'une case vers l'ouest
+H	Avancer vers l'ouest jusqu'à être sur quelque chose
+j	Avancer d'une case vers le sud
+J	Avancer vers le sud jusqu'à être sur quelque chose
+k	Avancer d'une case vers le nord
+K	Avancer vers le nord jusqu'à être sur quelque chose
+l	Avancer d'une case vers l'est
+L	Avancer vers l'est jusqu'à être sur quelque chose
+n	Avancer d'une case vers le sud-est
+N	Avancer vers le sud-est jusqu'à être sur quelque chose
+u	Avancer d'une case vers le nord-est
+U	Avancer vers le nord-est jusqu'à être sur quelque chose
 &# y,Y handled below
 &: #number_pad=1,2,3,4
-h	Help: synonym for '?'
-j	Jump: shortcut for '#jump'
-k	Kick: synonym for '^D'
-l	Loot: shortcut for '#loot'
-n	Start a count; continue with digit(s)
-N	Name: shortcut for '#name'
-u	Untrap: shortcut for '#untrap'
+h	Aide : synonyme de '?'
+j	Sauter : raccourci de '#jump'
+k	Coup de pied : synonyme de '^D'
+l	Piller : raccourci de '#loot'
+n	Commencer un nombre de répétitions ; continuer avec des chiffres
+N	Nommer : raccourci de '#name'
+u	Désamorcer : raccourci de '#untrap'
 &. #0,-1 vs 1,2,3,4
-a	Apply (use) a tool or break a wand
-A	Remove all armor and/or all accessories and/or unwield weapons
-^A	Redo the previous command
-^B	Go southwest until you are near something
-c	Close a door
-C	Call (name) a monster, an individual object, or a type of object
-^C	Interrupt: quit the game
-d	Drop an item
-D	Drop specific item types
-^D	Kick something (usually a door, chest, or box)
-e	Eat something
-E	Engrave writing on the floor
-f	Fire ammunition from quiver
-F	Followed by direction, fight a monster (even if you don't sense it)
-g	Followed by direction, move until you are near something
-G	Followed by direction, same as control-direction
-^H	Go west until you are near something
-i	Show your inventory
-I	Inventory specific item types
-^J	Go south until you are near something
-^K	Go north until you are near something
-^L	Go east until you are near something
-m	Followed by direction, move without picking anything up or fighting
-M	Followed by direction, move a distance without picking anything up
-^N	Go southeast until you are near something
-o	Open a door
-O	Show option settings, possibly change them
-p	Pay your shopping bill
-P	Put on an accessory (ring, amulet, etc; will work for armor too)
-^P	Toggle through previously displayed game messages
-q	Quaff (drink) something (potion, water, etc)
-Q	Select ammunition for quiver (use '#quit' to quit)
-r	Read a scroll or spellbook
-R	Remove an accessory (ring, amulet, etc; will work for armor too)
-^R	Redraw screen
-s	Search all immediately adjacent locations for traps and secret doors
-S	Save the game (and exit; there is no "save and keep going")
-t	Throw something (choose an item, then a direction--not a target)
-T	Take off one piece of armor (will work for accessories too)
-^T	Teleport around level
-^U	Go northeast until you are near something
-v	Show version ('#version' shows more information)
-V	Show history of game's development
-w	Wield a weapon (for dual weapons: 'w' secondary, 'x', 'w' primary, 'X')
-W	Wear a piece of armor (will work for accessories too)
-x	Swap wielded and secondary weapons
-X	Toggle two-weapon combat
-^X	Show your attributes (shows more in debug or explore mode)
+a	Appliquer (utiliser) un outil ou briser une baguette
+A	Retirer toute l'armure et/ou les accessoires et/ou lâcher les armes
+^A	Refaire la commande précédente
+^B	Avancer vers le sud-ouest jusqu'à être près de quelque chose
+c	Fermer une porte
+C	Nommer un monstre, un objet individuel ou un type d'objet
+^C	Interrompre : quitter la partie
+d	Poser un objet
+D	Poser des types d'objets précis
+^D	Donner un coup de pied (en général porte, coffre ou boîte)
+e	Manger quelque chose
+E	Graver une inscription sur le sol
+f	Tirer les munitions du carquois
+F	Suivi d'une direction, combattre un monstre (même sans le percevoir)
+g	Suivi d'une direction, avancer jusqu'à être près de quelque chose
+G	Suivi d'une direction, comme contrôle-direction
+^H	Avancer vers l'ouest jusqu'à être près de quelque chose
+i	Montrer votre inventaire
+I	Inventaire de types d'objets précis
+^J	Avancer vers le sud jusqu'à être près de quelque chose
+^K	Avancer vers le nord jusqu'à être près de quelque chose
+^L	Avancer vers l'est jusqu'à être près de quelque chose
+m	Suivi d'une direction, avancer sans rien ramasser ni combattre
+M	Suivi d'une direction, avancer d'une traite sans rien ramasser
+^N	Avancer vers le sud-est jusqu'à être près de quelque chose
+o	Ouvrir une porte
+O	Montrer le réglage des options, et éventuellement les modifier
+p	Payer votre facture
+P	Mettre un accessoire (anneau, amulette, etc. ; aussi pour l'armure)
+^P	Parcourir les messages affichés précédemment
+q	Boire quelque chose (potion, eau, etc.)
+Q	Choisir les munitions du carquois ('#quit' pour quitter)
+r	Lire un parchemin ou un grimoire
+R	Retirer un accessoire (anneau, amulette, etc. ; aussi pour l'armure)
+^R	Redessiner l'écran
+s	Chercher pièges et portes secrètes sur toutes les cases adjacentes
+S	Sauvegarder la partie (et quitter ; pas de "sauvegarder et continuer")
+t	Lancer quelque chose (un objet, puis une direction -- pas une cible)
+T	Ôter une pièce d'armure (marche aussi pour les accessoires)
+^T	Se téléporter dans le niveau
+^U	Avancer vers le nord-est jusqu'à être près de quelque chose
+v	Montrer la version ('#version' en montre davantage)
+V	Montrer l'historique du développement du jeu
+w	Manier une arme (deux armes : 'w' secondaire, 'x', 'w' principale, 'X')
+W	Revêtir une pièce d'armure (marche aussi pour les accessoires)
+x	Échanger l'arme maniée et l'arme secondaire
+X	Activer/désactiver le combat à deux armes
+^X	Montrer vos caractéristiques (plus en mode débogage ou exploration)
 &? number_pad=0,1,2,3,4
 &? number_pad=0
-y	Go northwest 1 space
-Y	Go northwest until you are on top of something
+y	Avancer d'une case vers le nord-ouest
+Y	Avancer vers le nord-ouest jusqu'à être sur quelque chose
 &.
-^Y	Go northwest until you are near something
-z	Zap a wand
-Z	Zap (cast) a spell
+^Y	Avancer vers le nord-ouest jusqu'à être près de quelque chose
+z	Utiliser une baguette
+Z	Lancer un sort
 &? suspend
-^Z	Suspend game; 'fg' (foreground) to resume
+^Z	Suspendre la partie ; 'fg' (premier plan) pour reprendre
 &:
-^Z	unavailable command: suspend
+^Z	commande indisponible : suspend
 &.
 &: number_pad=-1
-y	Zap a wand
-Y	Zap (cast) a spell
+y	Utiliser une baguette
+Y	Lancer un sort
 &? suspend
-^Y	Suspend game; 'fg' (foreground) to resume
+^Y	Suspendre la partie ; 'fg' (premier plan) pour reprendre
 &:
-^Y	unavailable command: suspend
+^Y	commande indisponible : suspend
 &.
-z	Go northwest 1 space
-Z	Go northwest until you are on top of something
-^Z	Go northwest until you are near something
+z	Avancer d'une case vers le nord-ouest
+Z	Avancer vers le nord-ouest jusqu'à être sur quelque chose
+^Z	Avancer vers le nord-ouest jusqu'à être près de quelque chose
 &. #0,1..4 vs -1
-<	Go up a staircase
->	Go down a staircase
-/	Show what type of thing a symbol corresponds to
-?	Give a help message
+<	Monter un escalier
+>	Descendre un escalier
+/	Montrer à quel type de chose correspond un symbole
+?	Afficher un message d'aide
 &? shell
-!	Do a shell escape; 'exit' shell to come back
+!	Passer dans un shell ; 'exit' pour revenir
 &:
-!	unavailable command: shell
+!	commande indisponible : shell
 &.
-\	Show what object types have been discovered
-`	Show discovered types for one class of objects
-_	Travel via a shortest-path algorithm to a point on the map
-.	Rest one move while doing nothing
+\	Montrer les types d'objets découverts
+`	Montrer les types découverts d'une classe d'objets
+_	Voyager par le plus court chemin jusqu'à un point de la carte
+.	Se reposer un tour sans rien faire
 &? rest_on_space
- 	Rest one move while doing nothing
+ 	Se reposer un tour sans rien faire
 &.
-:	Look at what is on the floor
-;	Show what type of thing a map symbol on the level corresponds to
-,	Pick up things at the current location
-@	Toggle the pickup option on/off
-)	Show the weapon(s) currently wielded or readied
-[	Show the armor currently worn
-=	Show the ring(s) currently worn
-"	Show the amulet currently worn
-(	Show the tools currently in use
-*	Show all equipment in use (combination of the ),[,=,",( commands)
-$	Count your gold
-+	List known spells
-Del	Display map without monsters or objects obstructing the view.
-#	Perform an extended command (use '#?' to list choices)
+:	Regarder ce qu'il y a au sol
+;	Montrer à quel type de chose correspond un symbole de la carte
+,	Ramasser des choses à l'emplacement actuel
+@	Activer/désactiver l'option pickup
+)	Montrer la ou les armes maniées ou prêtes
+[	Montrer l'armure portée
+=	Montrer le ou les anneaux portés
+"	Montrer l'amulette portée
+(	Montrer les outils utilisés
+*	Montrer tout l'équipement utilisé (combinaison des commandes ),[,=,",()
+$	Compter votre or
++	Lister les sorts connus
+Del	Afficher la carte sans monstres ni objets masquant la vue.
+#	Exécuter une commande étendue ('#?' pour la liste)
 &# number_pad:
 &#  -1 = numpad off, swap y with z (including Y with Z, ^Y with ^Z, M-y &c)
 &#   0 = numpad off (default)
@@ -155,72 +155,72 @@ Del	Display map without monsters or objects obstructing the view.
 &#   3 = numpad on, phone keypad layout, '5'->'g'
 &#   4 = numpad on, phone keypad layout, '5'->'G'
 &? number_pad = 1,2,3,4
-0	Show inventory
-4	Move west
-6	Move east
--	'F' prefix; force fight
+0	Montrer l'inventaire
+4	Aller à l'ouest
+6	Aller à l'est
+-	Préfixe 'F' ; forcer le combat
 &: #-1,0
-0	Continue a count
-4	Start or continue a count
-6	Start or continue a count
+0	Continuer un nombre de répétitions
+4	Commencer ou continuer un nombre de répétitions
+6	Commencer ou continuer un nombre de répétitions
 &. #1,2,3,4 vs -1,0
 &? number_pad=1,2
-7	Move northwest
-8	Move north
-9	Move northeast
-1	Move southwest
-2	Move south
-3	Move southeast
+7	Aller au nord-ouest
+8	Aller au nord
+9	Aller au nord-est
+1	Aller au sud-ouest
+2	Aller au sud
+3	Aller au sud-est
 &: number_pad=3,4
-1	Move northwest
-2	Move north
-3	Move northeast
-7	Move southwest
-8	Move south
-9	Move southeast
+1	Aller au nord-ouest
+2	Aller au nord
+3	Aller au nord-est
+7	Aller au sud-ouest
+8	Aller au sud
+9	Aller au sud-est
 &: #-1,0
-1	Start or continue a count
-2	Start or continue a count
-3	Start or continue a count
-7	Start or continue a count
-8	Start or continue a count
-9	Start or continue a count
+1	Commencer ou continuer un nombre de répétitions
+2	Commencer ou continuer un nombre de répétitions
+3	Commencer ou continuer un nombre de répétitions
+7	Commencer ou continuer un nombre de répétitions
+8	Commencer ou continuer un nombre de répétitions
+9	Commencer ou continuer un nombre de répétitions
 &. #1,2 vs 3,4 vs -1,0
 &? number_pad=1,3
-5	'g' movement prefix
-M-5	'G' movement prefix
+5	Préfixe de déplacement 'g'
+M-5	Préfixe de déplacement 'G'
 &: number_pad=2,4
-5	'G' movement prefix
-M-5	'g' movement prefix
-M-0	Inventory specific item types
+5	Préfixe de déplacement 'G'
+M-5	Préfixe de déplacement 'g'
+M-0	Inventaire de types d'objets précis
 &: #-1,0
-5	Start or continue a count
-M-2	Toggle two-weapon combat
+5	Commencer ou continuer un nombre de répétitions
+M-2	Activer/désactiver le combat à deux armes
 &. #1,3 vs 2,4 vs -1,0
-M-?	Display extended command help (if the platform allows this)
-M-a	Adjust inventory letters
-M-A	Annotate: supply a name for the current dungeon level
-M-c	Chat: talk to an adjacent creature
-M-C	Conduct: list voluntary challenges you have maintained
-M-d	Dip an object into something
-M-e	Enhance: check weapons skills, advance them if eligible
-M-f	Force a lock
-M-i	Invoke an object's special powers
-M-j	Jump to a nearby location
-M-l	Loot a box on the floor
-M-m	When polymorphed, use a monster's special ability
-M-n	Name a monster, an individual object, or a type of object
-M-N	Name a monster, an individual object, or a type of object
-M-o	Offer a sacrifice to the gods
-M-O	Overview: show a summary of the explored dungeon
-M-p	Pray to the gods for help
-M-q	Quit (exit without saving)
-M-r	Rub a lamp or a touchstone
-M-R	Ride: mount or dismount a saddled steed
-M-s	Sit down
-M-t	Turn undead
-M-T	Tip: empty a container
-M-u	Untrap something (trap, door, or chest)
-M-v	Print compile time options for this version of NetHack
-M-w	Wipe off your face
-M-X	Switch from normal play to explore mode
+M-?	Afficher l'aide des commandes étendues (si la plateforme le permet)
+M-a	Réorganiser les lettres de l'inventaire
+M-A	Annoter : donner un nom au niveau actuel du donjon
+M-c	Parler à une créature adjacente
+M-C	Conduite : lister les défis volontaires que vous avez respectés
+M-d	Tremper un objet dans quelque chose
+M-e	Améliorer : voir les compétences d'armes, les faire progresser
+M-f	Forcer une serrure
+M-i	Invoquer les pouvoirs spéciaux d'un objet
+M-j	Sauter à un endroit proche
+M-l	Piller une boîte posée au sol
+M-m	Une fois métamorphosé, utiliser la capacité spéciale du monstre
+M-n	Nommer un monstre, un objet individuel ou un type d'objet
+M-N	Nommer un monstre, un objet individuel ou un type d'objet
+M-o	Offrir un sacrifice aux dieux
+M-O	Vue d'ensemble : résumé du donjon exploré
+M-p	Prier les dieux de vous aider
+M-q	Abandonner (quitter sans sauvegarder)
+M-r	Frotter une lampe ou une pierre de touche
+M-R	Chevaucher : monter ou descendre d'une monture sellée
+M-s	S'asseoir
+M-t	Repousser les morts-vivants
+M-T	Renverser : vider un contenant
+M-u	Désamorcer quelque chose (piège, porte ou coffre)
+M-v	Afficher les options de compilation de cette version de NetHack
+M-w	Vous essuyer le visage
+M-X	Passer du jeu normal au mode exploration

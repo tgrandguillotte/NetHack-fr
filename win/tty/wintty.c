@@ -179,7 +179,14 @@ static char obuf[BUFSIZ]; /* BUFSIZ is defined in stdio.h */
 
 static const char winpanicstr[] = "Bad window Id %d (%s)";
 #define ttywindowpanic() panic(winpanicstr, window, __func__)
-char defmorestr[] = "--More--";
+char defmorestr[] = "--Plus--";
+
+/* UTF-8 support:  text is UTF-8 encoded (French translation); a
+   continuation byte doesn't occupy a screen column of its own */
+#define TTY_UTF8_CONT(c) ((((unsigned char) (c)) & 0xC0) == 0x80)
+/* true if s points at the start of a multi-byte UTF-8 sequence */
+#define TTY_UTF8_LEAD(s) (((unsigned char) (s)[0]) >= 0xC2 \
+                          && TTY_UTF8_CONT((s)[1]))
 
 #ifdef CLIPPING
 #if (defined(TILES_IN_GLYPHMAP) || defined(ENHANCED_SYMBOLS)) && defined(MSDOS)
@@ -222,6 +229,9 @@ static void process_menu_window(winid, struct WinDesc *);
 static void process_text_window(winid, struct WinDesc *);
 static tty_menu_item *reverse(tty_menu_item *);
 static const char *compress_str(const char *);
+static int tty_ucols(const char *);
+static void tty_utrunc(char *, int);
+static void tty_ascii_fold(const char *, char *, size_t);
 #ifndef STATUS_HILITES
 static void tty_putsym(winid, int, int, char);
 #endif
@@ -447,7 +457,7 @@ resize_tty(void)
                 /* cop-out */
                 oldtoplin = TOPLINE_EMPTY; /* don't restore it below */
                 ttyDisplay->toplin = TOPLINE_NON_EMPTY;
-                addtopl("Press a key to continue: ");
+                addtopl("Appuyez sur une touche pour continuer : ");
                 resize_mesg++;
                 break;
             }
@@ -650,14 +660,14 @@ tty_player_selection(void)
 void
 tty_askname(void)
 {
-    static const char who_are_you[] = "Who are you? ";
+    static const char who_are_you[] = "Qui êtes-vous ? ";
     int c, ct, tryct = 0;
 
 #ifdef SELECTSAVED
     if (iflags.wc2_selectsaved && !iflags.renameinprogress)
         switch (restore_menu(BASE_WINDOW)) {
         case -1:
-            bail("Until next time then..."); /* quit */
+            bail("À la prochaine, alors..."); /* quit */
             /*NOTREACHED*/
             break;
         case 0:
@@ -671,14 +681,15 @@ tty_askname(void)
     do {
         if (++tryct > 1) {
             if (tryct > 10)
-                bail("Giving up after 10 tries.\n");
+                bail("Abandon après 10 essais.\n");
             tty_curs(BASE_WINDOW, 1, wins[BASE_WINDOW]->cury - 1);
-            tty_putstr(BASE_WINDOW, 0, "Enter a name for your character...");
+            tty_putstr(BASE_WINDOW, 0, "Entrez un nom pour votre personnage...");
             /* erase previous prompt (in case of ESC after partial response) */
             tty_curs(BASE_WINDOW, 1, wins[BASE_WINDOW]->cury), cl_end();
         }
         tty_putstr(BASE_WINDOW, 0, who_are_you);
-        tty_curs(BASE_WINDOW, (int) (sizeof who_are_you),
+        /* column after the prompt; count columns, not UTF-8 bytes */
+        tty_curs(BASE_WINDOW, tty_ucols(who_are_you) + 1,
                  wins[BASE_WINDOW]->cury - 1);
         ct = 0;
         while ((c = tty_nhgetch()) != '\n') {
@@ -692,7 +703,7 @@ tty_askname(void)
             } /* continue outer loop */
 #if defined(WIN32CON)
             if (c == '\003')
-                bail("^C abort.\n");
+                bail("^C : abandon.\n");
 #endif
             /* some people get confused when their erase char is not ^H */
             if (c == '\b' || c == '\177') {
@@ -764,7 +775,7 @@ static void
 getret(void)
 {
 #if defined(MICRO) || defined(WIN32CON)
-    getreturn("to continue");
+    getreturn("pour continuer");
 #else
     if (!isatty(STDIN_FILENO) || program_state.early_options)
         return;
@@ -772,9 +783,9 @@ getret(void)
     xputs("\n");
     if (flags.standout)
         standoutbeg();
-    xputs("Hit ");
-    xputs(iflags.cbreak ? "space" : "return");
-    xputs(" to continue: ");
+    xputs("Appuyez sur ");
+    xputs(iflags.cbreak ? "Espace" : "Entrée");
+    xputs(" pour continuer : ");
     if (flags.standout)
         standoutend();
     xwaitforspace(" ");
@@ -1166,7 +1177,7 @@ dmore(
     if (flags.standout)
         standoutbeg();
     xputs(prompt);
-    ttyDisplay->curx += strlen(prompt);
+    ttyDisplay->curx += tty_ucols(prompt);
     if (flags.standout)
         standoutend();
 
@@ -1458,7 +1469,9 @@ process_menu_window(winid window, struct WinDesc *cw)
                     for (n = 0, cp = curr->str;
                          *cp &&
 #ifndef WIN32CON
-                            (int) ++ttyDisplay->curx < (int) ttyDisplay->cols;
+                            (TTY_UTF8_CONT(*cp)
+                             || (int) ++ttyDisplay->curx
+                                    < (int) ttyDisplay->cols);
 #else
                             (int) ttyDisplay->curx < (int) ttyDisplay->cols;
                          ttyDisplay->curx++,
@@ -1537,7 +1550,7 @@ process_menu_window(winid window, struct WinDesc *cw)
             Strcat(resp, default_menu_cmds);
 
             if (cw->npages > 1)
-                Sprintf(cw->morestr, "(%d of %d)", curr_page + 1,
+                Sprintf(cw->morestr, "(%d sur %d)", curr_page + 1,
                         (int) cw->npages);
             else if (msave)
                 Strcpy(cw->morestr, msave);
@@ -1549,7 +1562,7 @@ process_menu_window(winid window, struct WinDesc *cw)
             dmore(cw, resp);
         } else {
             /* just put the cursor back... */
-            tty_curs(window, (int) strlen(cw->morestr) + 2, page_lines);
+            tty_curs(window, tty_ucols(cw->morestr) + 2, page_lines);
             xwaitforspace(resp);
         }
 
@@ -1708,7 +1721,7 @@ process_menu_window(winid window, struct WinDesc *cw)
                 boolean on_curr_page = FALSE;
                 int lineno = 0;
 
-                tty_getlin("Search for:", tmpbuf);
+                tty_getlin("Rechercher :", tmpbuf);
                 if (!tmpbuf[0] || tmpbuf[0] == '\033')
                     break;
                 Sprintf(searchbuf, "*%s*", tmpbuf);
@@ -1809,7 +1822,9 @@ process_text_window(winid window, struct WinDesc *cw)
             term_start_attr(attr);
             for (cp = &cw->data[i][1], linestart = TRUE;
 #ifndef WIN32CON
-                 *cp && (int) ++ttyDisplay->curx < (int) ttyDisplay->cols;
+                 *cp && (TTY_UTF8_CONT(*cp)
+                         || (int) ++ttyDisplay->curx
+                                < (int) ttyDisplay->cols);
                  cp++
 #else
                  *cp && (int) ttyDisplay->curx < (int) ttyDisplay->cols;
@@ -1819,7 +1834,10 @@ process_text_window(winid window, struct WinDesc *cw)
                 /* message recall for msg_window:full/combination/reverse
                    might have output from '/' in it (see redotoplin()) */
                 if (linestart) {
-                    if (SYMHANDLING(H_UTF8)) {
+                    if (TTY_UTF8_LEAD(cp)) {
+                        /* UTF-8 text (accented letter), not a symbol */
+                        (void) putchar(*cp);
+                    } else if (SYMHANDLING(H_UTF8)) {
                         /* FIXME: what is actually in that line? is it the \GNNNNNNNN or UTF-8? */
                         g_putch(*cp);
                     } else if ((*cp & 0x80) != 0) {
@@ -2194,6 +2212,66 @@ tty_putsym(winid window, int x, int y, char ch)
 }
 #endif
 
+/* number of screen columns used by a UTF-8 string */
+static int
+tty_ucols(const char *str)
+{
+    int n = 0;
+
+    for (; *str; ++str)
+        if (!TTY_UTF8_CONT(*str))
+            ++n;
+    return n;
+}
+
+/* truncate a UTF-8 string to at most 'maxcols' screen columns */
+static void
+tty_utrunc(char *str, int maxcols)
+{
+    int n = 0;
+
+    for (; *str; ++str)
+        if (!TTY_UTF8_CONT(*str) && n++ == maxcols) {
+            *str = '\0';
+            break;
+        }
+}
+
+/* copy a UTF-8 string into a plain ASCII one (one byte per column),
+   dropping accents of Latin-1 letters; used where the tty code stores
+   text one byte per screen cell */
+static void
+tty_ascii_fold(const char *in, char *out, size_t outsz)
+{
+    static const char latin1[] = /* U+00C0 .. U+00FF */
+        "AAAAAAACEEEEIIII" "DNOOOOOxOUUUUYTs"
+        "aaaaaaaceeeeiiii" "dnooooo/ouuuuyty";
+    const unsigned char *p = (const unsigned char *) in;
+    char *end = out + outsz - 1;
+
+    while (*p && out < end) {
+        if (*p < 0x80) {
+            *out++ = (char) *p++;
+            continue;
+        }
+        if (p[0] == 0xC3 && p[1] >= 0x80 && p[1] <= 0xBF) {
+            *out++ = latin1[p[1] - 0x80];
+            p += 2;
+        } else if (p[0] == 0xC5 && (p[1] == 0x92 || p[1] == 0x93)) {
+            /* OE/oe ligatures */
+            *out++ = (p[1] == 0x92) ? 'O' : 'o';
+            if (out < end)
+                *out++ = (p[1] == 0x92) ? 'E' : 'e';
+            p += 2;
+        } else {
+            *out++ = '?';
+            for (++p; TTY_UTF8_CONT(*p); ++p)
+                continue;
+        }
+    }
+    *out = '\0';
+}
+
 static const char *
 compress_str(const char *str)
 {
@@ -2338,10 +2416,13 @@ tty_putstr(winid window, int attr, const char *str)
     case NHW_MAP:
         tty_curs(window, cw->curx + 1, cw->cury);
         term_start_attr(attr);
-        while (*str && (int) ttyDisplay->curx < (int) ttyDisplay->cols - 1) {
+        while (*str && (TTY_UTF8_CONT(*str)
+                        || (int) ttyDisplay->curx
+                               < (int) ttyDisplay->cols - 1)) {
+            if (!TTY_UTF8_CONT(*str))
+                ttyDisplay->curx++;
             (void) putchar(*str);
             str++;
-            ttyDisplay->curx++;
         }
         cw->curx = 0;
         cw->cury++;
@@ -2351,14 +2432,16 @@ tty_putstr(winid window, int attr, const char *str)
         tty_curs(window, cw->curx + 1, cw->cury);
         term_start_attr(attr);
         while (*str) {
-            if ((int) ttyDisplay->curx >= (int) ttyDisplay->cols - 1) {
-                cw->curx = 0;
-                cw->cury++;
-                tty_curs(window, cw->curx + 1, cw->cury);
+            if (!TTY_UTF8_CONT(*str)) {
+                if ((int) ttyDisplay->curx >= (int) ttyDisplay->cols - 1) {
+                    cw->curx = 0;
+                    cw->cury++;
+                    tty_curs(window, cw->curx + 1, cw->cury);
+                }
+                ttyDisplay->curx++;
             }
             (void) putchar(*str);
             str++;
-            ttyDisplay->curx++;
         }
         cw->curx = 0;
         cw->cury++;
@@ -2404,6 +2487,8 @@ tty_putstr(winid window, int attr, const char *str)
         ob = cw->data[cw->cury] = (char *) alloc((unsigned) n0 + 1);
         *ob++ = (char) (attr + 1); /* avoid nuls, for convenience */
         Strcpy(ob, str);
+        /* width in screen columns rather than in (UTF-8) bytes */
+        n0 = (long) tty_ucols(str) + 1L;
 
         if (n0 > cw->maxcol)
             cw->maxcol = n0;
@@ -2436,7 +2521,7 @@ tty_display_file(
 
         if (fd < 0) {
             if (complain)
-                pline("Cannot open %s.", fname);
+                pline("Impossible d'ouvrir %s.", fname);
             else /* [is this refresh actually necessary?] */
                 docrt();
             return;
@@ -2448,11 +2533,12 @@ tty_display_file(
             (void) close(0);
             if (dup(fd)) {
                 if (complain)
-                    raw_printf("Cannot open %s as stdin.", fname);
+                    raw_printf("Impossible d'ouvrir %s comme entrée standard.",
+                               fname);
             } else {
                 (void) execlp(gc.catmore, "page", (char *) 0);
                 if (complain)
-                    raw_printf("Cannot exec %s.", gc.catmore);
+                    raw_printf("Impossible d'exécuter %s.", gc.catmore);
             }
             if (complain)
                 sleep(10); /* want to wait_synch() but stdin is gone */
@@ -2477,7 +2563,7 @@ tty_display_file(
                 tty_wait_synch(); /* "Hit <space> to continue: " */
                 if (u.ux) /* if hero is on map, refresh the screen */
                     docrt();
-                pline("Cannot open \"%s\".", fname);
+                pline("Impossible d'ouvrir \"%s\".", fname);
             }
         } else {
             winid datawin = tty_create_nhwindow(NHW_TEXT);
@@ -2728,9 +2814,10 @@ tty_end_menu(
         }
 
         /* cut off any lines that are too long */
-        len = strlen(curr->str) + 2; /* extra space at beg & end */
+        /* (measured in screen columns, not in UTF-8 bytes) */
+        len = tty_ucols(curr->str) + 2; /* extra space at beg & end */
         if (len > (int) ttyDisplay->cols) {
-            curr->str[ttyDisplay->cols - 2] = 0;
+            tty_utrunc(curr->str, ttyDisplay->cols - 2);
             len = ttyDisplay->cols;
         }
         if (len > cw->cols)
@@ -2739,16 +2826,16 @@ tty_end_menu(
     cw->plist[cw->npages] = 0; /* plist terminator */
 
     /*
-     * If greater than 1 page, morestr is "(x of y) " otherwise, "(end) "
+     * If greater than 1 page, morestr is "(x sur y) " otherwise, "(fin) "
      */
     if (cw->npages > 1) {
         char buf[QBUFSZ];
         /* produce the largest demo string */
-        Sprintf(buf, "(%ld of %ld) ", cw->npages, cw->npages);
+        Sprintf(buf, "(%ld sur %ld) ", cw->npages, cw->npages);
         len = strlen(buf);
         cw->morestr = dupstr("");
     } else {
-        cw->morestr = dupstr("(end) ");
+        cw->morestr = dupstr("(fin) ");
         len = strlen(cw->morestr);
     }
 
@@ -2957,9 +3044,10 @@ ttyinv_create_window(int newid, struct WinDesc *newwin)
                    &newwin->maxrow)) {
         tty_destroy_nhwindow(newid);
         WIN_INVEN = WIN_ERR;
-        pline("%s.", "tty perm_invent could not be enabled");
-        pline("tty perm_invent needs a terminal that is at least %dx%d, "
-              "yours is %dx%d.",
+        pline("%s.", "L'inventaire permanent (perm_invent) n'a pas pu"
+                     " être activé");
+        pline("L'inventaire permanent tty nécessite un terminal d'au moins"
+              " %dx%d ; le vôtre fait %dx%d.",
               (int) (minrow + 1 + ROWNO + StatusRows()), tty_perminv_mincol,
               ttyDisplay->rows, ttyDisplay->cols);
         tty_wait_synch();
@@ -3089,15 +3177,17 @@ ttyinv_add_menu(
             the interesting part of the object's description; this
             is inline version of pi_article_skip() from cursinvt.c;
             should move that to hacklib.c and use it here */
-        if (text[0] == 'a') {
-            if (text[1] == ' ')
-                text += 2;
-            else if (text[1] == 'n' && text[2] == ' ')
-                text += 3;
-        } else if (text[0] == 't') {
-            if (text[1] == 'h' && text[2] == 'e' && text[3] == ' ')
-                text += 4;
-        }
+        /* French articles:  "un ", "une ", "des ", "le ", "la ",
+           "les ", "l'" */
+        if (!strncmp(text, "un ", 3))
+            text += 3;
+        else if (!strncmp(text, "une ", 4) || !strncmp(text, "des ", 4)
+                 || !strncmp(text, "les ", 4))
+            text += 4;
+        else if (!strncmp(text, "le ", 3) || !strncmp(text, "la ", 3))
+            text += 3;
+        else if (!strncmp(text, "l'", 2))
+            text += 2;
         /*
          * TODO?
          *  Replace "c - " prefix with "c: " or just "c " to have a bit more
@@ -3105,7 +3195,13 @@ ttyinv_add_menu(
          *  changed, the indentation for empty inventory in ttyinv_render()
          *  should be changed to match.
          */
-        Snprintf(invbuf, sizeof invbuf, "%c - %s", ch, text);
+        {
+            /* one byte per screen cell:  drop the accents */
+            char foldbuf[BUFSZ];
+
+            tty_ascii_fold(text, foldbuf, sizeof foldbuf);
+            Snprintf(invbuf, sizeof invbuf, "%c - %s", ch, foldbuf);
+        }
         text = invbuf;
         startcolor_at = (int) (sizeof "a - " - sizeof ""); /* 4 */
         row = (slot % rows_per_side) + 1; /* +1: top border */
@@ -3297,9 +3393,9 @@ ttyinv_render(winid window, struct WinDesc *cw)
            continue;
         if (slot == 0 && !filled_count) {
             Sprintf(invbuf, "%-4s[%s]", "",
-                    inuse_only ? "no items are in use"
-                    : (!show_gold && money_cnt(gi.invent)) ? "only gold"
-                      : "empty");
+                    inuse_only ? "aucun objet utilise"
+                    : (!show_gold && money_cnt(gi.invent)) ? "seulement de l'or"
+                      : "vide");
         } else if (sparse && filled_count) {
             Sprintf(invbuf, "%c", slot_to_invlet(slot, show_gold));
         } else {
@@ -3634,7 +3730,7 @@ tty_wait_synch(void)
     } else {
         tty_display_nhwindow(WIN_MAP, FALSE);
         if (ttyDisplay->inmore) {
-            addtopl("--More--");
+            addtopl(defmorestr);
             (void) fflush(stdout);
         } else if (ttyDisplay->inread > program_state.gameover) {
             /* this can only happen if we were reading and got interrupted */
@@ -4268,9 +4364,9 @@ static int hpbar_percent, hpbar_crit_hp;
 extern const struct conditions_t conditions[CONDITION_COUNT];
 
 static const char *const encvals[3][6] = {
-    { "", "Burdened", "Stressed", "Strained", "Overtaxed", "Overloaded" },
-    { "", "Burden",   "Stress",   "Strain",   "Overtax",   "Overload"   },
-    { "", "Brd",      "Strs",     "Strn",     "Ovtx",      "Ovld"       }
+    { "", "Chargé",   "Accablé",  "Éreinté",  "Surmené",   "Surchargé"  },
+    { "", "Charg",    "Accab",    "Érein",    "Surmen",    "Surch"      },
+    { "", "Chg",      "Acc",      "Ére",      "Smn",       "Sch"        }
 };
 #define blPAD BL_FLUSH
 #define MAX_PER_ROW 19
@@ -4515,7 +4611,7 @@ tty_status_update(
         tty_status[NOW][fldidx].idx = fldidx;
         tty_status[NOW][fldidx].color = (color & 0x00FF);
         tty_status[NOW][fldidx].attr = term_attr_fixup(attrmask);
-        tty_status[NOW][fldidx].lth = strlen(status_vals[fldidx]);
+        tty_status[NOW][fldidx].lth = tty_ucols(status_vals[fldidx]);
         tty_status[NOW][fldidx].valid = TRUE;
         tty_status[NOW][fldidx].dirty = TRUE;
         tty_status[NOW][fldidx].sanitycheck = TRUE;
@@ -4819,15 +4915,19 @@ tty_putstatusfield(const char *text, int x, int y)
     if (x < ncols && y < nrows) {
         if (x != cw->curx || y != cw->cury)
             tty_curs(NHW_STATUS, x, y);
-        for (i = 0; i < lth; ++i) {
-            n = i + x;
-            if (n < ncols && *text) {
-                (void) putchar(*text);
-                ttyDisplay->curx++;
-                cw->curx++;
-                cw->data[y][n - 1] = *text;
-                text++;
+        /* advance one column per character, not per UTF-8 byte */
+        for (i = 0, n = x; i < lth; ++i, ++text) {
+            if (TTY_UTF8_CONT(*text)) {
+                (void) putchar(*text); /* rest of a multi-byte character */
+                continue;
             }
+            if (n >= ncols)
+                break;
+            (void) putchar(*text);
+            ttyDisplay->curx++;
+            cw->curx++;
+            cw->data[y][n - 1] = *text;
+            ++n;
         }
     }
 #if 0
@@ -4851,7 +4951,7 @@ set_condition_length(void)
         for (c = 0; c < SIZE(conditions); ++c) {
             mask = conditions[c].mask;
             if ((tty_condition_bits & mask) == mask)
-                lth += 1 + (int) strlen(conditions[c].text[cond_shrinklvl]);
+                lth += 1 + tty_ucols(conditions[c].text[cond_shrinklvl]);
         }
     }
     tty_status[NOW][BL_CONDITION].lth = lth;
@@ -4865,22 +4965,32 @@ shrink_enc(int lvl)
         enc_shrinklvl = lvl;
         Sprintf(status_vals[BL_CAP], " %s", encvals[lvl][enclev]);
     }
-    tty_status[NOW][BL_CAP].lth = strlen(status_vals[BL_CAP]);
+    tty_status[NOW][BL_CAP].lth = tty_ucols(status_vals[BL_CAP]);
 }
 
 static void
 shrink_dlvl(int lvl)
 {
-    /* try changing Dlvl: to Dl: */
+    /* try changing "Dlvl:" (or its translation) to a short "Nv:";
+       the full label sent by the core is saved so that it can be
+       restored as-is instead of being hard-coded here */
+    static char dlvl_full[BUFSZ];
     char buf[BUFSZ];
     char *levval = strchr(status_vals[BL_LEVELDESC], ':');
 
     if (levval) {
+        if (lvl > 0 && dlvl_shrinklvl == 0)
+            Strcpy(dlvl_full, status_vals[BL_LEVELDESC]);
+        if (lvl == 0 && *dlvl_full) {
+            Strcpy(buf, dlvl_full);
+        } else {
+            Strcpy(buf, (lvl == 0) ? "Dlvl" : "Nv");
+            Strcat(buf, levval);
+        }
         dlvl_shrinklvl = lvl;
-        Strcpy(buf, (lvl == 0) ? "Dlvl" : "Dl");
-        Strcat(buf, levval);
         Strcpy(status_vals[BL_LEVELDESC], buf);
-        tty_status[NOW][BL_LEVELDESC].lth = strlen(status_vals[BL_LEVELDESC]);
+        tty_status[NOW][BL_LEVELDESC].lth
+            = tty_ucols(status_vals[BL_LEVELDESC]);
     }
 }
 
@@ -5094,7 +5204,7 @@ render_status(void)
                                 bits = 0L; /* skip any remaining conditions */
                             }
                             tty_putstatusfield(condtext, x, y);
-                            x += (int) strlen(condtext);
+                            x += tty_ucols(condtext);
                             if (iflags.hilite_delta) {
                                 if (coloridx != NO_COLOR)
                                     term_end_color();
@@ -5128,8 +5238,13 @@ render_status(void)
 
                     /* force exactly 30 characters, padded with spaces
                        if shorter or truncated if longer */
-                    if (strlen(text) != 30) {
-                        Sprintf(bar, "%-30.30s", text);
+                    if (strlen(text) != 30 || tty_ucols(text) != 30) {
+                        /* bar[] is split by byte offset below, so use a
+                           plain ASCII copy of the (UTF-8) title */
+                        char foldbuf[BUFSZ];
+
+                        tty_ascii_fold(text, foldbuf, sizeof foldbuf);
+                        Sprintf(bar, "%-30.30s", foldbuf);
                         Strcpy(status_vals[BL_TITLE], bar);
                     } else {
                         Strcpy(bar, text);
@@ -5227,7 +5342,7 @@ render_status(void)
                             term_start_color(coloridx);
                     }
                     tty_putstatusfield(text, x, y);
-                    x += (int) strlen(text);
+                    x += tty_ucols(text);
                     if (iflags.hilite_delta) {
                         if (coloridx != NO_COLOR)
                             term_end_color();

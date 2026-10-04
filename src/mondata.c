@@ -469,20 +469,19 @@ mstrength(struct permonst *ptr)
         if ((tmp2 == AD_DRLI) || (tmp2 == AD_STON) || (tmp2 == AD_DRST)
             || (tmp2 == AD_DRDX) || (tmp2 == AD_DRCO) || (tmp2 == AD_WERE))
             n += 2;
-        else if (strcmp(ptr->pmnames[NEUTRAL], "grid bug"))
+        else if (ptr != &mons[PM_GRID_BUG])
             n += (tmp2 != AD_PHYS);
         n += ((int) (ptr->mattk[i].damd * ptr->mattk[i].damn) > 23);
     }
 
     /* Leprechauns are a special case.  They have many hit dice so they can
        hit and are hard to kill, but they don't really do much damage. */
-    if (!strcmp(ptr->pmnames[NEUTRAL], "leprechaun"))
+    if (ptr == &mons[PM_LEPRECHAUN])
         n -= 2;
 
     /* despite group and poison increments, soldier ants and killer bees are
        underestimated by the formula, so have an artificial +1 difficulty */
-    if (!strcmp(ptr->pmnames[NEUTRAL], "killer bee") ||
-        !strcmp(ptr->pmnames[NEUTRAL], "soldier ant"))
+    if (ptr == &mons[PM_KILLER_BEE] || ptr == &mons[PM_SOLDIER_ANT])
         n += 2; /* +1 after 'tmp += n/2' below */
 
     /* finally, adjust the monster level  0 <= n <= 24 (approx.) */
@@ -911,7 +910,7 @@ name_to_monplus(
     int mntmp = NON_PM;
     char *s, *str, *term;
     char buf[BUFSZ];
-    int len, mgend, matchgend = -1;
+    int len, mgend, matchgend = -1, pass;
     size_t slen;
     boolean exact_match = FALSE;
 
@@ -1035,16 +1034,21 @@ name_to_monplus(
         }
     }
 
-    for (len = 0, i = LOW_PM; i < NUMMONS; i++) {
+    /* VF : noms francais (passe 0) puis noms anglais d'origine (passe 1) */
+    len = 0;
+    for (pass = 0; pass < 2 && !exact_match; pass++)
+    for (i = LOW_PM; i < NUMMONS; i++) {
       for (mgend = MALE; mgend < NUM_MGENDERS; mgend++) {
         size_t m_i_len;
+        const char *pmn = pass ? en_mon_names[i][mgend]
+                               : mons[i].pmnames[mgend];
 
-        if (!mons[i].pmnames[mgend])
+        if (!pmn)
             continue;
 
-        m_i_len = strlen(mons[i].pmnames[mgend]);
+        m_i_len = strlen(pmn);
         if (m_i_len > (size_t) len
-            && !strncmpi(mons[i].pmnames[mgend], str, (int) m_i_len)) {
+            && !strncmpi(pmn, str, (int) m_i_len)) {
             if (m_i_len == slen) {
                 mntmp = i;
                 len = (int) m_i_len;

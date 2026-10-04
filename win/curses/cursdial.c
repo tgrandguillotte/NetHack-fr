@@ -523,7 +523,7 @@ curses_ext_cmd(void)
         char extcmd_char = extcmd_initiator();
 
         if (*cur_choice)
-            pline("%s%s: unknown extended command.",
+            pline("%s%s : commande étendue inconnue.",
                   visctrl(extcmd_char), cur_choice);
     }
     return ret;
@@ -1133,7 +1133,7 @@ menu_win_size(nhmenu *menu)
        old messages rather than over the map, it is fairly easy for
        the player to overlook it, particularly when walking around and
        stepping on a pile of 2 items; also, multi-page menus need enough
-       room for "(Page M of N) => " even if all entries are narrower
+       room for "(Page M sur N) => " even if all entries are narrower
        than that; we specify same minimum width even when single page */
     menu->width = max(maxwidth, 25);
     menu->height = max(maxheight, 5);
@@ -1348,7 +1348,7 @@ menu_display_page(
     if (menu->num_pages > 1) {
         int footer_x, footwidth, shoesize = menu->num_pages;
 
-        footwidth = (int) (sizeof "<- (Page X of Y) ->" - sizeof "");
+        footwidth = (int) (sizeof "<- (Page X sur Y) ->" - sizeof "");
         while (shoesize >= 10) { /* possible for pickup from big piles... */
              /* room for wider feet; extra digit for both X and Y */
             footwidth += 2;
@@ -1360,7 +1360,7 @@ menu_display_page(
             mvwaddstr(win, menu->height, footer_x, "<=");
             curses_toggle_color_attr(win, HIGHLIGHT_COLOR, NONE, OFF);
         }
-        mvwprintw(win, menu->height, footer_x + 2, " (Page %d of %d) ",
+        mvwprintw(win, menu->height, footer_x + 2, " (Page %d sur %d) ",
                   page_num, menu->num_pages);
         if (page_num != menu->num_pages) {
             curses_toggle_color_attr(win, HIGHLIGHT_COLOR, NONE, ON);
@@ -1472,7 +1472,7 @@ curs_nonselect_menu_action(
             break;
 
         search_key[0] = '\0';
-        curses_line_input_dialog("Search for:", search_key, BUFSZ);
+        curses_line_input_dialog("Rechercher :", search_key, BUFSZ);
 
         refresh();
         touchwin(win);

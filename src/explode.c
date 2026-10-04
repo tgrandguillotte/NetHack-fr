@@ -117,65 +117,72 @@ explosionmask(
 staticfn void
 engulfer_explosion_msg(uchar adtyp, char olet)
 {
-    const char *adj = (char *) 0;
+    const char *adj = (char *) 0, *tail = "";
+    boolean agree = TRUE; /* accorder le participe avec le monstre */
 
     if (digests(u.ustuck->data)) {
         switch (adtyp) {
         case AD_FIRE:
-            adj = "heartburn";
+            adj = "a des brûlures d'estomac";
+            agree = FALSE;
             break;
         case AD_COLD:
-            adj = "chilly";
+            adj = "a froid";
+            agree = FALSE;
             break;
         case AD_DISN:
-            if (olet == WAND_CLASS)
-                adj = "irradiated by pure energy";
-            else
-                adj = "perforated";
+            if (olet == WAND_CLASS) {
+                adj = "est irradié";
+                tail = " par de l'énergie pure";
+            } else
+                adj = "est perforé";
             break;
         case AD_ELEC:
-            adj = "shocked";
+            adj = "est électrocuté";
             break;
         case AD_DRST:
-            adj = "poisoned";
+            adj = "est empoisonné";
             break;
         case AD_ACID:
-            adj = "an upset stomach";
+            adj = "a l'estomac retourné";
+            agree = FALSE;
             break;
         default:
-            adj = "fried";
+            adj = "est frit";
             break;
         }
-        pline("%s gets %s!", Monnam(u.ustuck), adj);
     } else {
         switch (adtyp) {
         case AD_FIRE:
-            adj = "toasted";
+            adj = "est légèrement grillé";
             break;
         case AD_COLD:
-            adj = "chilly";
+            adj = "a un peu froid";
+            agree = FALSE;
             break;
         case AD_DISN:
-            if (olet == WAND_CLASS)
-                adj = "overwhelmed by pure energy";
-            else
-                adj = "perforated";
+            if (olet == WAND_CLASS) {
+                adj = "est légèrement submergé";
+                tail = " par de l'énergie pure";
+            } else
+                adj = "est légèrement perforé";
             break;
         case AD_ELEC:
-            adj = "shocked";
+            adj = "est légèrement électrocuté";
             break;
         case AD_DRST:
-            adj = "intoxicated";
+            adj = "est légèrement intoxiqué";
             break;
         case AD_ACID:
-            adj = "burned";
+            adj = "est légèrement brûlé";
             break;
         default:
-            adj = "fried";
+            adj = "est légèrement frit";
             break;
         }
-        pline("%s gets slightly %s!", Monnam(u.ustuck), adj);
     }
+    pline("%s %s%s%s !", Monnam(u.ustuck), adj,
+          agree ? MON_E(u.ustuck) : "", tail);
 }
 
 /* Note: I had to choose one of three possible kinds of "type" when writing
@@ -301,7 +308,10 @@ explode(
         str = strcpy(killr_buf, svk.killer.name);
         do_hallu = (Hallucination
                     && (strstri(str, "'s explosion")
-                        || strstri(str, "s' explosion")));
+                        || strstri(str, "s' explosion")
+                        || strstri(str, "explosion de ")
+                        || strstri(str, "explosion d'")
+                        || strstri(str, "explosion du ")));
     }
     if (type == PHYS_EXPL_TYPE) {
         /* currently only gas spores */
@@ -313,34 +323,35 @@ explode(
 
         switch (abs(type) % 10) {
         case 0:
-            adstr = "magical blast";
+            adstr = "explosion magique";
             adtyp = AD_MAGM;
             break;
         case 1:
-            adstr = (olet == BURNING_OIL) ? "burning oil"
-                     : (olet == SCROLL_CLASS) ? "tower of flame" : "fireball";
+            adstr = (olet == BURNING_OIL) ? "huile enflammée"
+                     : (olet == SCROLL_CLASS) ? "colonne de feu"
+                       : "boule de feu";
             /* fire damage, not physical damage */
             adtyp = AD_FIRE;
             break;
         case 2:
-            adstr = "ball of cold";
+            adstr = "boule de froid";
             adtyp = AD_COLD;
             break;
         case 4:
-            adstr = (olet == WAND_CLASS) ? "death field"
-                                         : "disintegration field";
+            adstr = (olet == WAND_CLASS) ? "champ de mort"
+                                         : "champ de désintégration";
             adtyp = AD_DISN;
             break;
         case 5:
-            adstr = "ball of lightning";
+            adstr = "boule de foudre";
             adtyp = AD_ELEC;
             break;
         case 6:
-            adstr = "poison gas cloud";
+            adstr = "nuage de gaz toxique";
             adtyp = AD_DRST;
             break;
         case 7:
-            adstr = "splash of acid";
+            adstr = "giclée d'acide";
             adtyp = AD_ACID;
             break;
         default:
@@ -443,13 +454,13 @@ explode(
         }
         if (!Deaf && olet != SCROLL_CLASS) {
             Soundeffect(se_blast, 75);
-            You_hear("a blast.");
+            You_hear("une détonation.");
             didmsg = TRUE;
         }
     }
 
     if (!Deaf && !didmsg)
-        pline("Boom!");
+        pline("Boum !");
 
     /* apply effects to monsters and floor objects first, in case the
        damage to the hero is fatal and leaves bones */
@@ -495,8 +506,8 @@ explode(
                        like "Barney" here in order to suppress "the" below,
                        so avoid any which begins with a capital letter) */
                     do {
-                        Sprintf(hallu_buf, "%s explosion",
-                                s_suffix(rndmonnam((char *) 0)));
+                        Sprintf(hallu_buf, "explosion %s",
+                                du(rndmonnam((char *) 0)));
                     } while (*hallu_buf != lowc(*hallu_buf) && ++tryct < 20);
                     str = hallu_buf;
                 }
@@ -505,7 +516,8 @@ explode(
                 } else if (cansee(xx, yy)) {
                     if (mtmp->m_ap_type)
                         seemimic(mtmp);
-                    pline("%s is caught in the %s!", Monnam(mtmp), str);
+                    pline("%s est pris%s dans %s !", Monnam(mtmp),
+                          MON_E(mtmp), the(str));
                 }
 
                 itemdmg = destroy_items(mtmp, (int) adtyp, dam);
@@ -534,7 +546,8 @@ explode(
                     if (resist(mtmp, olet, 0, FALSE)) {
                         /* inside_engulfer: <xx,yy> == <u.ux,u.uy> */
                         if (cansee(xx, yy) || inside_engulfer)
-                            pline("%s resists the %s!", Monnam(mtmp), str);
+                            pline("%s résiste à %s !", Monnam(mtmp),
+                                  the(str));
                         mdam = (dam + 1) / 2;
                     }
                     /* if grabber is reaching into hero's spot and
@@ -569,10 +582,11 @@ explode(
                          * would be "you killed <mdef>" so give our own.
                          */
                         if (cansee(mtmp->mx, mtmp->my) || canspotmon(mtmp))
-                            pline("%s is %s!", Monnam(mtmp),
-                                  xkflg ? "burned completely"
-                                        : nonliving(mtmp->data) ? "destroyed"
-                                                                : "killed");
+                            pline("%s est %s%s !", Monnam(mtmp),
+                                  xkflg ? "entièrement brûlé"
+                                        : nonliving(mtmp->data) ? "détruit"
+                                                                : "tué",
+                                  MON_E(mtmp));
                         xkilled(mtmp, XKILL_NOMSG | XKILL_NOCONDUCT | xkflg);
                     } else {
                         if (xkflg)
@@ -594,12 +608,12 @@ explode(
         if (flags.verbose && (type < 0 || olet != SCROLL_CLASS)) {
             if (do_hallu) { /* (see explanation above) */
                 do {
-                    Sprintf(hallu_buf, "%s explosion",
-                            s_suffix(rndmonnam((char *) 0)));
+                    Sprintf(hallu_buf, "explosion %s",
+                            du(rndmonnam((char *) 0)));
                 } while (*hallu_buf != lowc(*hallu_buf));
                 str = hallu_buf;
             }
-            You("are caught in the %s!", str);
+            You("êtes pris%s dans %s !", UE, the(str));
             iflags.last_msg = PLNMSG_CAUGHT_IN_EXPLOSION;
         }
         /* do property damage first, in case we end up leaving bones */
@@ -607,7 +621,7 @@ explode(
             burn_away_slime();
         if (Invulnerable) {
             damu = 0;
-            You("are unharmed!");
+            You("êtes indemne !");
         } else if (adtyp == AD_PHYS || adtyp == AD_ACID)
             damu = Maybe_Half_Phys(damu);
         if (adtyp == AD_FIRE) {
@@ -655,25 +669,26 @@ explode(
                 } else if (olet == TRAP_EXPLODE) {
                     svk.killer.format = NO_KILLER_PREFIX;
                     Snprintf(svk.killer.name, sizeof svk.killer.name,
-                             "caught %sself in a %s", uhim(),
-                             str);
+                             "pris%s dans %s", UE, an(str));
                 } else if (type >= 0 && olet != SCROLL_CLASS) {
                     svk.killer.format = NO_KILLER_PREFIX;
                     Snprintf(svk.killer.name, sizeof svk.killer.name,
-                             "caught %sself in %s own %s", uhim(),
-                             uhis(), str);
+                             "victime de %s propre %s",
+                             (fr_genre(str) == FR_FEM && !fr_elision(str))
+                                 ? "sa" : "son",
+                             str);
                 } else {
-                    svk.killer.format = (!strcmpi(str, "tower of flame")
-                                     || !strcmpi(str, "fireball"))
+                    svk.killer.format = (!strcmpi(str, "colonne de feu")
+                                     || !strcmpi(str, "boule de feu"))
                                         ? KILLED_BY_AN
                                         : KILLED_BY;
                     Strcpy(svk.killer.name, str);
                 }
                 if (iflags.last_msg == PLNMSG_CAUGHT_IN_EXPLOSION
                     || iflags.last_msg == PLNMSG_TOWER_OF_FLAME) /*seffects()*/
-                    pline("It is fatal.");
+                    pline("C'est fatal.");
                 else
-                    pline_The("%s is fatal.", str);
+                    pline("%s est fatal%s.", The(str), accord(str));
                 /* Known BUG: BURNING suppresses corpse in bones data,
                    but done does not handle killer reason correctly */
                 done((adtyp == AD_FIRE) ? BURNING : DIED);
@@ -756,7 +771,7 @@ scatter(
             boolean waschain = (otmp == uchain);
 
             Soundeffect(se_chain_shatters, 25);
-            pline_The("chain shatters!");
+            pline_The("La chaîne vole en éclats !");
             unpunish();
             if (waschain)
                 continue;
@@ -779,10 +794,10 @@ scatter(
             && rn2(10)) {
             if (otmp->otyp == BOULDER) {
                 if (cansee(sx, sy)) {
-                    pline("%s apart.", Tobjnam(otmp, "break"));
+                    pline("%s en morceaux.", Tobjnam(otmp, "se briser"));
                 } else {
                     Soundeffect(se_stone_breaking, 100);
-                    You_hear("stone breaking.");
+                    You_hear("de la pierre se briser.");
                 }
                 fracture_rock(otmp);
                 place_object(otmp, sx, sy);
@@ -797,10 +812,10 @@ scatter(
                 if ((trap = t_at(sx, sy)) && trap->ttyp == STATUE_TRAP)
                     deltrap(trap);
                 if (cansee(sx, sy)) {
-                    pline("%s.", Tobjnam(otmp, "crumble"));
+                    pline("%s.", Tobjnam(otmp, "s'effriter"));
                 } else {
                     Soundeffect(se_stone_crumbling, 100);
-                    You_hear("stone crumbling.");
+                    You_hear("de la pierre s'effriter.");
                 }
                 (void) break_statue(otmp);
                 place_object(otmp, sx, sy); /* put fragments on floor */
@@ -1059,8 +1074,8 @@ mon_explodes(
 
     /* This might end up killing you, too; you never know...
      * also, it is used in explode() messages */
-    Sprintf(svk.killer.name, "%s explosion",
-            s_suffix(pmname(mon->data, Mgender(mon))));
+    Sprintf(svk.killer.name, "explosion %s",
+            du(pmname(mon->data, Mgender(mon))));
     svk.killer.format = KILLED_BY_AN;
 
     explode(mon->mx, mon->my, type, dmg, MON_EXPLODE,

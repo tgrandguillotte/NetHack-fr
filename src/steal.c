@@ -74,23 +74,28 @@ stealgold(struct monst *mtmp)
         obj_extract_self(fgold);
         add_to_minv(mtmp, fgold);
         newsym(u.ux, u.uy);
+        char wherebuf[BUFSZ], partbuf[BUFSZ], *p;
+
         if (u.usteed) {
             who = u.usteed;
-            whose = s_suffix(y_monnam(who));
             what = makeplural(mbodypart(who, FOOT));
         } else {
             who = &gy.youmonst;
-            whose = "your";
             what = makeplural(body_part(FOOT));
         }
         /* [ avoid "between your rear regions" :-] */
         if (slithy(who->data))
-            what = "coils";
+            what = "anneaux";
         /* reduce "rear hooves/claws" to "hooves/claws" */
-        if (!strncmp(what, "rear ", 5))
-            what += 5;
-        pline("%s quickly snatches some gold from %s %s %s!", Monnam(mtmp),
-              (Levitation || Flying) ? "beneath" : "between", whose, what);
+        Strcpy(partbuf, what);
+        if ((p = strstri(partbuf, " arrière")) != 0)
+            *p = '\0';
+        if (u.usteed)
+            Sprintf(wherebuf, "les %s %s", partbuf, du(y_monnam(who)));
+        else
+            Sprintf(wherebuf, "vos %s", partbuf);
+        pline("%s vous chipe prestement de l'or %s %s !", Monnam(mtmp),
+              (Levitation || Flying) ? "sous" : "entre", wherebuf);
         if (!ygold || !rn2(5)) {
             if (!tele_restrict(mtmp))
                 (void) rloc(mtmp, RLOC_MSG);
@@ -107,7 +112,7 @@ stealgold(struct monst *mtmp)
             setnotworn(ygold);
         freeinv(ygold);
         add_to_minv(mtmp, ygold);
-        Your("purse feels lighter.");
+        Your("bourse vous semble plus légère.");
         if (!tele_restrict(mtmp))
             (void) rloc(mtmp, RLOC_MSG);
         monflee(mtmp, 0, FALSE, FALSE);
@@ -155,7 +160,7 @@ unstolenarm(void)
             break;
     gs.stealoid = 0;
     if (obj) {
-        You("finish taking off your %s.", armor_simple_name(obj));
+        You("finissez de retirer %s.", the(armor_simple_name(obj)));
     }
     return 0;
 }
@@ -189,7 +194,7 @@ stealarm(void)
                     if (otmp->unpaid)
                         subfrombill(otmp, shop_keeper(*u.ushops));
                     freeinv(otmp);
-                    pline("%s steals %s!", Monnam(mtmp), doname(otmp));
+                    pline("%s vous vole %s !", Monnam(mtmp), doname(otmp));
                     (void) mpickobj(mtmp, otmp); /* may free otmp */
                     /* Implies seduction, "you gladly hand over ..."
                        so we don't set mavenge bit here. */
@@ -295,38 +300,30 @@ worn_item_removal(
     struct monst *mon,
     struct obj *obj)
 {
-    char objbuf[BUFSZ], article[20], *p;
+    char objbuf[BUFSZ];
     const char *verb;
-    int strip_art;
 
-    Strcpy(objbuf, doname(obj));
-    /* massage the object description */
-    strip_art = !strncmp(objbuf, "the ", 4) ? 4
-                : !strncmp(objbuf, "an ", 3) ? 3
-                  : !strncmp(objbuf, "a ", 2) ? 2
-                    : 0;
-    if (strip_art) { /* convert "a/an/the <object>" to "your object" */
-        copynchars(article, objbuf, strip_art);
-        /* when removing attached iron ball, caller passes 'uchain';
-           when formatted, it will be "an iron chain (attached to you)";
-           change "an" to "the" rather than to "your" in that situation */
-        (void) strsubst(objbuf, article, (obj == uchain) ? "the " : "your ");
-    }
-    /* these ought to be guarded against matching user-supplied name */
-    (void) strsubst(objbuf, " (being worn)", "");
-    (void) strsubst(objbuf, " (alternate weapon; not wielded)", "");
-    /* convert "ring (on left hand)" to "ring (from left hand)" */
-    if ((p = strstri(objbuf, " (on "))
-        && (!strncmp(p + 5, "left ", 5) || !strncmp(p + 5, "right ", 6)))
-        (void) strsubst(p + 2, "on", "from");
+    /* French: build "votre <objet>" directly rather than massaging the
+       doname() result (whose worn-status suffixes would need stripping) */
+    if (obj == uchain)
+        Strcpy(objbuf, the(xname(obj)));
+    else
+        Strcpy(objbuf, yname(obj));
+    if (obj == uleft || obj == uright)
+        Sprintf(eos(objbuf), " de votre %s %s", body_part(HAND),
+                (obj == uleft) ? "gauche"
+                               : fr_adj_accord("droit", body_part(HAND)));
 
     /* slightly iffy for alternate weapon that isn't actively dual-wielded,
        but it's better to alert the player to the change in equipment than
        to suppress the message for that case */
-    verb = ((obj->owornmask & W_WEAPONS) != 0L) ? "disarms"
-           : ((obj->owornmask & W_ACCESSORY) != 0L) ? "removes"
-             : "takes off";
-    pline("%s %s %s.", Some_Monnam(mon), verb, objbuf);
+    if ((obj->owornmask & W_WEAPONS) != 0L) {
+        pline("%s vous désarme %s.", Some_Monnam(mon), du(objbuf));
+    } else {
+        verb = ((obj->owornmask & W_ACCESSORY) != 0L) ? "vous retire"
+               : "vous enlève";
+        pline("%s %s %s.", Some_Monnam(mon), verb, objbuf);
+    }
     iflags.last_msg = PLNMSG_MON_TAKES_OFF_ITEM;
     /* removal might trigger more messages (due to loss of Lev|Fly;
        descending happens before the theft in progress finishes) */
@@ -386,15 +383,15 @@ steal(struct monst *mtmp, char *objnambuf)
 
             /* buried ball is not tracked via 'uball' and there is no chain
                at all (hence no uchain to take off) */
-            pline("%s takes off your unseen chain.", Monnambuf);
+            pline("%s vous retire votre chaîne invisible.", Monnambuf);
             (void) openholdingtrap(&gy.youmonst, &dummy);
         } else if (Blind) {
-            pline("Somebody tries to rob you, but finds nothing to steal.");
+            pline("Quelqu'un essaie de vous détrousser, mais ne trouve rien à voler.");
         } else if (inv_cnt(TRUE) > inv_cnt(FALSE)) {
-            pline("%s tries to rob you, but isn't interested in gold.",
+            pline("%s essaie de vous détrousser, mais l'or ne l'intéresse pas.",
                   Monnambuf);
         } else {
-            pline("%s tries to rob you, but there is nothing to steal!",
+            pline("%s essaie de vous détrousser, mais il n'y a rien à voler !",
                   Monnambuf);
         }
         return 1; /* let her flee */
@@ -474,14 +471,14 @@ steal(struct monst *mtmp, char *objnambuf)
 
         if (ostuck || can_carry(mtmp, otmp) == 0) {
             static const char *const how[] = {
-                "steal", "snatch", "grab", "take"
+                "voler", "chiper", "saisir", "prendre"
             };
  cant_take:
-            pline("%s tries to %s %s%s but gives up.", Monnambuf,
+            pline("%s essaie de %s %s, mais abandonne.", Monnambuf,
                   ROLL_FROM(how),
-                  (otmp->owornmask & W_ARMOR) ? "your " : "",
-                  (otmp->owornmask & W_ARMOR) ? armor_simple_name(otmp)
-                                              : yname(otmp));
+                  (otmp->owornmask & W_ARMOR)
+                      ? the(armor_simple_name(otmp))
+                      : yname(otmp));
             /* the fewer items you have, the less likely the thief
                is going to stick around to try again (0) instead of
                running away (1) */
@@ -529,21 +526,21 @@ steal(struct monst *mtmp, char *objnambuf)
                 otmp->cursed = 0;
                 slowly = (armordelay >= 1 || gm.multi < 0);
                 if (flags.female)
-                    urgent_pline("%s charms you.  You gladly %s your %s.",
-                                 !seen ? "She" : Monnambuf,
-                                 curssv ? "let her take"
-                                 : !slowly ? "hand over"
-                                   : was_doffing ? "continue removing"
-                                     : "start removing",
-                                 armor_simple_name(otmp));
+                    urgent_pline("%s vous charme.  Vous %s volontiers %s.",
+                                 !seen ? "Elle" : Monnambuf,
+                                 curssv ? "la laissez prendre"
+                                 : !slowly ? "lui remettez"
+                                   : was_doffing ? "continuez à retirer"
+                                     : "commencez à retirer",
+                                 the(armor_simple_name(otmp)));
                 else
-                    urgent_pline("%s seduces you and %s off your %s.",
-                                 !seen ? "She" : Adjmonnam(mtmp, "beautiful"),
-                                 curssv ? "helps you to take"
-                                 : !slowly ? "you take"
-                                   : was_doffing ? "you continue taking"
-                                     : "you start taking",
-                                 armor_simple_name(otmp));
+                    urgent_pline("%s vous séduit et %s %s.",
+                                 !seen ? "Elle" : Adjmonnam(mtmp, "beau"),
+                                 curssv ? "vous aide à retirer"
+                                 : !slowly ? "vous retirez"
+                                   : was_doffing ? "vous continuez à retirer"
+                                     : "vous commencez à retirer",
+                                 the(armor_simple_name(otmp)));
                 named++;
                 /* the following is to set multi for later on */
                 nomul(-armordelay);
@@ -600,7 +597,8 @@ steal(struct monst *mtmp, char *objnambuf)
     if (iflags.last_msg == PLNMSG_MON_TAKES_OFF_ITEM
         && mtmp->data->mlet == S_NYMPH)
         ++named;
-    urgent_pline("%s stole %s.", named ? "She" : Monnambuf, doname(otmp));
+    urgent_pline("%s vous a volé %s.", named ? "Elle" : Monnambuf,
+                 doname(otmp));
     encumber_msg();
     could_petrify = (otmp->otyp == CORPSE
                      && touch_petrifies(&mons[otmp->corpsenm]));
@@ -647,7 +645,7 @@ mpickobj(struct monst *mtmp, struct obj *otmp)
     if (obj_sheds_light(otmp) && attacktype(mtmp->data, AT_ENGL)) {
         /* this is probably a burning object that you dropped or threw */
         if (engulfing_u(mtmp) && !Blind)
-            pline("%s out.", Tobjnam(otmp, "go"));
+            pline("%s.", Tobjnam(otmp, "s'éteindre"));
         snuff_otmp = TRUE;
     }
     /* for hero owned object on shop floor, mtmp is taking possession
@@ -759,7 +757,7 @@ stealamulet(struct monst *mtmp)
         freeinv(otmp);
         Strcpy(buf, doname(otmp));
         (void) mpickobj(mtmp, otmp); /* could merge and free otmp but won't */
-        pline("%s steals %s!", Some_Monnam(mtmp), buf);
+        pline("%s vous vole %s !", Some_Monnam(mtmp), buf);
         if (can_teleport(mtmp->data) && !tele_restrict(mtmp))
             (void) rloc(mtmp, RLOC_MSG);
         encumber_msg();
@@ -787,23 +785,22 @@ maybe_absorb_item(
         if (cansee(mon->mx, mon->my)) {
             /* Some_Monnam() avoids "It pulls ... and absorbs it!"
                if hero can see the location but not the monster */
-            pline("%s pulls %s away from you and absorbs %s!",
+            pline("%s vous arrache %s et %sabsorbe !",
                   Some_Monnam(mon), /* Monnam() or "Something" */
-                  yname(obj), (obj->quan > 1L) ? "them" : "it");
+                  yname(obj), (obj->quan > 1L) ? "les " : "l'");
         } else {
-            const char *hand_s = body_part(HAND);
-
-            if (bimanual(obj))
-                hand_s = makeplural(hand_s);
-            pline("%s %s pulled from your %s!", upstart(yname(obj)),
-                  otense(obj, "are"), hand_s);
+            pline("%s vous %s arraché%s %s %s !", upstart(yname(obj)),
+                  otense(obj, "être"), accord(xname(obj)),
+                  bimanual(obj) ? "des" : "de la",
+                  bimanual(obj) ? makeplural(body_part(HAND))
+                                : body_part(HAND));
         }
         freeinv(obj);
         encumber_msg();
     } else {
         /* not carried; presumably thrown or kicked */
         if (canspotmon(mon))
-            pline("%s absorbs %s!", Monnam(mon), yname(obj));
+            pline("%s absorbe %s !", Monnam(mon), yname(obj));
     }
     /* add to mon's inventory */
     (void) mpickobj(mon, obj);
@@ -833,8 +830,8 @@ mdrop_obj(
     }
     /* obj_no_longer_held(obj); -- done by place_object */
     if (verbosely && cansee(omx, omy))
-        pline_mon(mon, "%s drops %s.", Monnam(mon), obj_name);
-    if (!flooreffects(obj, omx, omy, "fall")) {
+        pline_mon(mon, "%s lâche %s.", Monnam(mon), obj_name);
+    if (!flooreffects(obj, omx, omy, "tomber")) {
         place_object(obj, omx, omy);
         stackobj(obj);
     }
@@ -883,8 +880,8 @@ relobj(
     /* vault guard's gold goes away rather than be dropped... */
     if (mtmp->isgd && (otmp = findgold(mtmp->minvent)) != 0) {
         if (canspotmon(mtmp))
-            pline("%s gold %s.", s_suffix(Monnam(mtmp)),
-                  canseemon(mtmp) ? "vanishes" : "seems to vanish");
+            pline("L'or %s %s.", du(mon_nam(mtmp)),
+                  canseemon(mtmp) ? "disparaît" : "semble disparaître");
         obj_extract_self(otmp);
         obfree(otmp, (struct obj *) 0);
     } /* isgd && has gold */

@@ -86,7 +86,7 @@ get_mplname(struct monst *mtmp, char *nam)
         mtmp->female = 1;
     else
         mtmp->female = 0;
-    Strcat(nam, " the ");
+    Strcat(nam, mtmp->female ? " la " : " le ");
     Strcat(nam, rank_of((int) mtmp->m_lev, monsndx(mtmp->data),
                         (boolean) mtmp->female));
 }
@@ -357,21 +357,21 @@ mplayer_talk(struct monst *mtmp)
 {
     static const char
         *same_class_msg[3] = {
-            "I can't win, and neither will you!",
-            "You don't deserve to win!",
-            "Mine should be the honor, not yours!",
+            "Je ne peux pas gagner, et vous non plus !",
+            "Vous ne méritez pas de gagner !",
+            "L'honneur devrait me revenir, pas à vous !",
         },
         *other_class_msg[3] = {
-            "The low-life wants to talk, eh?",
-            "Fight, scum!",
-            "Here is what I have to say!",
+            "La racaille veut discuter, hein ?",
+            "Battez-vous, vermine !",
+            "Voici ce que j'ai à dire !",
         };
 
     if (mtmp->mpeaceful)
         return; /* will drop to humanoid talk */
 
     SetVoice(mtmp, 0, 80, 0);
-    verbalize("Talk? -- %s", mtmp->data == &mons[gu.urole.mnum]
+    verbalize("Parler ? -- %s", mtmp->data == &mons[gu.urole.mnum]
                                 ? same_class_msg[rn2(3)]
                                 : other_class_msg[rn2(3)]);
 }

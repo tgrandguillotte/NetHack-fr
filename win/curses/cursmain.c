@@ -329,7 +329,7 @@ curses_askname(void)
         }
 #endif /* SELECTSAVED */
 
-    curses_line_input_dialog("Who are you?", svp.plname, PL_NSIZ);
+    curses_line_input_dialog("Qui êtes-vous ?", svp.plname, PL_NSIZ);
     (void) mungspaces(svp.plname);
     if (!svp.plname[0] || svp.plname[0] == '\033')
          goto bail;
@@ -339,7 +339,7 @@ curses_askname(void)
 
  bail:
     /* message is delivered via raw_print() */
-    curses_bail("\nUntil next time then...\n");
+    curses_bail("\nÀ la prochaine, alors...\n");
     /*NOTREACHED*/
 }
 
@@ -872,7 +872,7 @@ curses_wait_synch(void)
          * a more curses-specific way to handle this. FIXME?]
          */
 
-        (void) fprintf(stdout, "\nPress <return> to continue: ");
+        (void) fprintf(stdout, "\nAppuyez sur <Entrée> pour continuer : ");
         (void) fflush(stdout);
         do {
             chr = fgetc(stdin);

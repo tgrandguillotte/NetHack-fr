@@ -62,6 +62,7 @@ static struct toptenentry zerott;
 
 staticfn void topten_print(const char *);
 staticfn void topten_print_bold(const char *);
+staticfn int tt_cols(const char *);
 staticfn void outheader(void);
 staticfn void outentry(int, struct toptenentry *, boolean);
 staticfn void discardexcess(FILE *);
@@ -95,12 +96,20 @@ formatkiller(
 {
     static NEARDATA const char *const killed_by_prefix[] = {
         /* DIED, CHOKING, POISONING, STARVING, */
-        "killed by ", "choked on ", "poisoned by ", "died of ",
+        "tué par ", "étouffé par ", "empoisonné par ", "mort de ",
         /* DROWNING, BURNING, DISSOLVED, CRUSHING, */
-        "drowned in ", "burned by ", "dissolved in ", "crushed to death by ",
+        "noyé dans ", "brûlé par ", "dissous dans ", "écrasé à mort par ",
         /* STONING, TURNED_SLIME, GENOCIDED, */
-        "petrified by ", "turned to slime by ", "killed by ",
+        "pétrifié par ", "changé en glu par ", "tué par ",
         /* PANICKED, TRICKED, QUIT, ESCAPED, ASCENDED */
+        "", "", "", "", ""
+    };
+    /* French: feminine forms, used for a female hero */
+    static NEARDATA const char *const killed_by_prefix_f[] = {
+        "tuée par ", "étouffée par ", "empoisonnée par ", "morte de ",
+        "noyée dans ", "brûlée par ", "dissoute dans ",
+        "écrasée à mort par ",
+        "pétrifiée par ", "changée en glu par ", "tuée par ",
         "", "", "", "", ""
     };
     unsigned l;
@@ -119,7 +128,8 @@ formatkiller(
         FALLTHROUGH;
         /*FALLTHRU*/
     case KILLED_BY:
-        (void) strncat(buf, killed_by_prefix[how], siz - 1);
+        (void) strncat(buf, flags.female ? killed_by_prefix_f[how]
+                                         : killed_by_prefix[how], siz - 1);
         l = Strlen(buf);
         buf += l, siz -= l;
         break;
@@ -152,11 +162,11 @@ formatkiller(
     if (incl_helpless && gm.multi < 0) {
         /* X <= siz: 'sizeof "string"' includes 1 for '\0' terminator */
         if (gm.multi_reason
-            && strlen(gm.multi_reason) + sizeof ", while " <= siz)
-            Sprintf(buf, ", while %s", gm.multi_reason);
+            && strlen(gm.multi_reason) + sizeof ", " <= siz)
+            Sprintf(buf, ", %s", gm.multi_reason);
         /* either gm.multi_reason wasn't specified or wouldn't fit */
-        else if (sizeof ", while helpless" <= siz)
-            Strcpy(buf, ", while helpless");
+        else if (sizeof ", sans défense" <= siz)
+            Strcpy(buf, ", sans défense");
         /* else extra death info won't fit, so leave it out */
     }
 }
@@ -702,7 +712,7 @@ topten(int how, time_t when)
 #ifdef LOGFILE /* used for debugging (who dies of what, where) */
     if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
         if (!(lfile = fopen_datafile(LOGFILE, "a", SCOREPREFIX))) {
-            HUP raw_print("Cannot open log file!");
+            HUP raw_print("Impossible d'ouvrir le fichier journal !");
         } else {
             writeentry(lfile, t0);
             (void) fclose(lfile);
@@ -713,7 +723,7 @@ topten(int how, time_t when)
 #ifdef XLOGFILE
     if (lock_file(XLOGFILE, SCOREPREFIX, 10)) {
         if (!(xlfile = fopen_datafile(XLOGFILE, "a", SCOREPREFIX))) {
-            HUP raw_print("Cannot open extended log file!");
+            HUP raw_print("Impossible d'ouvrir le fichier journal étendu !");
         } else {
             writexlentry(xlfile, t0, how);
             (void) fclose(xlfile);
@@ -729,8 +739,8 @@ topten(int how, time_t when)
 
                 topten_print("");
                 Sprintf(pbuf,
-             "Since you were in %s mode, the score list will not be checked.",
-                        wizard ? "wizard" : "discover");
+             "Comme vous étiez en mode %s, la liste des scores ne sera pas consultée.",
+                        wizard ? "magicien" : "découverte");
                 topten_print(pbuf);
             }
         goto showwin;
@@ -746,7 +756,7 @@ topten(int how, time_t when)
 #endif
 
     if (!rfile) {
-        HUP raw_print("Cannot open record file!");
+        HUP raw_print("Impossible d'ouvrir le fichier des scores !");
         unlock_file(RECORD);
         goto destroywin;
     }
@@ -792,7 +802,7 @@ topten(int how, time_t when)
                     char pbuf[BUFSZ];
 
                     Sprintf(pbuf,
-                         "You didn't beat your previous score of %ld points.",
+                         "Vous n'avez pas battu votre précédent score de %ld points.",
                             t1->points);
                     topten_print(pbuf);
                     topten_print("");
@@ -819,7 +829,7 @@ topten(int how, time_t when)
 #else
         (void) fclose(rfile);
         if (!(rfile = fopen_datafile(RECORD, "w", SCOREPREFIX))) {
-            HUP raw_print("Cannot write record file");
+            HUP raw_print("Impossible d'écrire le fichier des scores");
             unlock_file(RECORD);
             free_ttlist(tt_head);
             goto destroywin;
@@ -828,12 +838,12 @@ topten(int how, time_t when)
         if (!done_stopprint)
             if (rank0 > 0) {
                 if (rank0 <= 10) {
-                    topten_print("You made the top ten list!");
+                    topten_print("Vous entrez dans les dix meilleurs !");
                 } else {
                     char pbuf[BUFSZ];
 
                     Sprintf(pbuf,
-                            "You reached the %d%s place on the top %d list.",
+                            "Vous atteignez la %d%s place des %d meilleurs.",
                             rank0, ordin(rank0), sysopt.entrymax);
                     topten_print(pbuf);
                 }
@@ -925,17 +935,29 @@ topten(int how, time_t when)
     }
 }
 
+/* number of display columns of a UTF-8 string */
+staticfn int
+tt_cols(const char *str)
+{
+    int n = 0;
+
+    for (; *str; str++)
+        if ((*str & 0xC0) != 0x80)
+            n++;
+    return n;
+}
+
 staticfn void
 outheader(void)
 {
     char linebuf[BUFSZ];
     char *bp;
 
-    Strcpy(linebuf, " No  Points     Name");
+    Strcpy(linebuf, " No  Points     Nom");
     bp = eos(linebuf);
     while (bp < linebuf + COLNO - 9)
         *bp++ = ' ';
-    Strcpy(bp, "Hp [max]");
+    Strcpy(bp, "PV [max]");
     topten_print(linebuf);
 }
 
@@ -948,7 +970,8 @@ outentry(int rank, struct toptenentry *t1, boolean so)
     boolean second_line = TRUE;
     char linebuf[BUFSZ];
     char *bp, hpbuf[24], linebuf3[BUFSZ];
-    int hppos, lngr;
+    int hppos, lngr, extra;
+    boolean fem;
 
     linebuf[0] = '\0';
     if (rank)
@@ -970,66 +993,90 @@ outentry(int rank, struct toptenentry *t1, boolean so)
         Sprintf(eos(linebuf), "-%s ", t1->plalign);
     else
         Strcat(linebuf, " ");
-    if (!strncmp("escaped", t1->death, 7)) {
-        Sprintf(eos(linebuf), "escaped the dungeon %s[max level %d]",
-                !strncmp(" (", t1->death + 7, 2) ? t1->death + 7 + 2 : "",
+    fem = (t1->plgend[0] == 'F');
+    /* French: death reasons are recognized in both French (current
+       games) and English (older entries in the record file) */
+    if (!strncmp("escaped", t1->death, 7)
+        || !strncmp("évasion", t1->death, strlen("évasion"))) {
+        int dl = !strncmp("escaped", t1->death, 7) ? 7
+                 : (int) strlen("évasion");
+
+        Sprintf(eos(linebuf), "s'est échappé%s du donjon %s[niveau max %d]",
+                fem ? "e" : "",
+                !strncmp(" (", t1->death + dl, 2) ? t1->death + dl + 2 : "",
                 t1->maxlvl);
         /* fixup for closing paren in "escaped... with...Amulet)[max..." */
         if ((bp = strchr(linebuf, ')')) != 0)
             *bp = (t1->deathdnum == astral_level.dnum) ? '\0' : ' ';
         second_line = FALSE;
-    } else if (!strncmp("ascended", t1->death, 8)) {
-        Sprintf(eos(linebuf), "ascended to demigod%s-hood",
-                (t1->plgend[0] == 'F') ? "dess" : "");
+    } else if (!strncmp("ascended", t1->death, 8)
+               || !strncmp("ascension", t1->death, 9)) {
+        Sprintf(eos(linebuf), "est monté%s au rang de demi-%s",
+                fem ? "e" : "", fem ? "déesse" : "dieu");
         second_line = FALSE;
     } else {
-        if (!strncmp(t1->death, "quit", 4)) {
-            Strcat(linebuf, "quit");
+        if (!strncmp(t1->death, "quit", 4)
+            || !strncmp(t1->death, "abandon", 7)) {
+            Strcat(linebuf, "a abandonné");
             second_line = FALSE;
-        } else if (!strncmp(t1->death, "died of st", 10)) {
-            Strcat(linebuf, "starved to death");
+        } else if (!strncmp(t1->death, "died of st", 10)
+                   || !strncmp(t1->death, "mort de faim", 12)
+                   || !strncmp(t1->death, "morte de faim", 13)) {
+            Sprintf(eos(linebuf), "est mort%s de faim", fem ? "e" : "");
             second_line = FALSE;
-        } else if (!strncmp(t1->death, "choked", 6)) {
-            Sprintf(eos(linebuf), "choked on h%s food",
-                    (t1->plgend[0] == 'F') ? "er" : "is");
-        } else if (!strncmp(t1->death, "poisoned", 8)) {
-            Strcat(linebuf, "was poisoned");
-        } else if (!strncmp(t1->death, "crushed", 7)) {
-            Strcat(linebuf, "was crushed to death");
-        } else if (!strncmp(t1->death, "petrified by ", 13)) {
-            Strcat(linebuf, "turned to stone");
+        } else if (!strncmp(t1->death, "choked", 6)
+                   || !strncmp(t1->death, "étouffé", strlen("étouffé"))) {
+            Sprintf(eos(linebuf), "s'est étouffé%s avec sa nourriture",
+                    fem ? "e" : "");
+        } else if (!strncmp(t1->death, "poisoned", 8)
+                   || !strncmp(t1->death, "empoisonné",
+                               strlen("empoisonné"))) {
+            Sprintf(eos(linebuf), "a été empoisonné%s", fem ? "e" : "");
+        } else if (!strncmp(t1->death, "crushed", 7)
+                   || !strncmp(t1->death, "écrasé", strlen("écrasé"))) {
+            Sprintf(eos(linebuf), "a été écrasé%s à mort", fem ? "e" : "");
+        } else if (!strncmp(t1->death, "petrified by ", 13)
+                   || !strncmp(t1->death, "pétrifié", strlen("pétrifié"))) {
+            Sprintf(eos(linebuf), "a été changé%s en pierre", fem ? "e" : "");
         } else
-            Strcat(linebuf, "died");
+            Sprintf(eos(linebuf), "est mort%s", fem ? "e" : "");
 
         if (t1->deathdnum == astral_level.dnum) {
-            const char *arg, *fmt = " on the Plane of %s";
+            const char *arg, *fmt = " sur le Plan %s";
 
             switch (t1->deathlev) {
             case -5:
-                fmt = " on the %s Plane";
-                arg = "Astral";
+                arg = "astral";
                 break;
             case -4:
-                arg = "Water";
+                arg = "de l'Eau";
                 break;
             case -3:
-                arg = "Fire";
+                arg = "du Feu";
                 break;
             case -2:
-                arg = "Air";
+                arg = "de l'Air";
                 break;
             case -1:
-                arg = "Earth";
+                arg = "de la Terre";
                 break;
             default:
-                arg = "Void";
+                arg = "du Néant";
                 break;
             }
             Sprintf(eos(linebuf), fmt, arg);
         } else {
-            Sprintf(eos(linebuf), " in %s", svd.dungeons[t1->deathdnum].dname);
+            char *w;
+
+            Strcat(linebuf, " dans ");
+            w = eos(linebuf);
+            Strcat(linebuf, svd.dungeons[t1->deathdnum].dname);
+            /* "dans Les Mines" -> "dans les Mines" */
+            if (!strncmp(w, "Le ", 3) || !strncmp(w, "La ", 3)
+                || !strncmp(w, "Les ", 4) || !strncmp(w, "L'", 2))
+                *w = 'l';
             if (t1->deathdnum != knox_level.dnum)
-                Sprintf(eos(linebuf), " on level %d", t1->deathlev);
+                Sprintf(eos(linebuf), " au niveau %d", t1->deathlev);
             if (t1->deathlev != t1->maxlvl)
                 Sprintf(eos(linebuf), " [max %d]", t1->maxlvl);
         }
@@ -1037,20 +1084,31 @@ outentry(int rank, struct toptenentry *t1, boolean so)
         /* kludge for "quit while already on Charon's boat" */
         if (!strncmp(t1->death, "quit ", 5))
             Strcat(linebuf, t1->death + 4);
+        else if (!strncmp(t1->death, "abandon ", 8))
+            Strcat(linebuf, t1->death + 7);
     }
     Strcat(linebuf, ".");
 
     /* Quit, starved, ascended, and escaped contain no second line */
     if (second_line) {
+        char dbuf[BUFSZ];
+
         bp = eos(linebuf);
-        Sprintf(bp, "  %c%s.", highc(*(t1->death)), t1->death + 1);
+        copynchars(dbuf, t1->death, (int) sizeof dbuf - 1);
+        (void) fr_upstart(dbuf);
+        Sprintf(bp, "  %s.", dbuf);
         /* fix up "Killed by Mr. Asidonhopo; the shopkeeper"; that starts
            with a comma but has it changed to semi-colon to keep the comma
            out of 'record'; change it back for display */
         (void) strsubst(bp, "; the ", ", the ");
+        (void) strsubst(bp, "; le ", ", le ");
+        (void) strsubst(bp, "; la ", ", la ");
     }
 
-    lngr = (int) strlen(linebuf);
+    /* 'extra' is the number of bytes beyond the displayed width,
+       due to multi-byte UTF-8 characters in the French text */
+    extra = (int) strlen(linebuf) - tt_cols(linebuf);
+    lngr = (int) strlen(linebuf) - extra;
     if (t1->hp <= 0)
         hpbuf[0] = '-', hpbuf[1] = '\0';
     else
@@ -1058,11 +1116,15 @@ outentry(int rank, struct toptenentry *t1, boolean so)
     /* beginning of hp column after padding (not actually padded yet) */
     hppos = COLNO - (int) (sizeof "  Hp [max]" - sizeof "");
     while (lngr >= hppos) {
-        for (bp = eos(linebuf); !(*bp == ' ' && bp - linebuf < hppos); bp--)
+        for (bp = eos(linebuf);
+             !(*bp == ' ' && bp - linebuf < hppos + extra); bp--)
             ;
         /* special case: word is too long, wrap in the middle */
-        if (linebuf + 15 >= bp)
-            bp = linebuf + hppos - 1;
+        if (linebuf + 15 >= bp) {
+            bp = linebuf + hppos + extra - 1;
+            while (bp > linebuf && (*bp & 0xC0) == 0x80)
+                bp--;
+        }
         /* special case: if about to wrap in the middle of maximum
            dungeon depth reached, wrap in front of it instead */
         if (bp > linebuf + 5 && !strncmp(bp - 5, " [max", 5))
@@ -1073,17 +1135,19 @@ outentry(int rank, struct toptenentry *t1, boolean so)
             Strcpy(linebuf3, bp + 1);
         *bp = '\0';
         if (so) {
-            while (bp < linebuf + (COLNO - 1))
+            extra = (int) strlen(linebuf) - tt_cols(linebuf);
+            while (bp < linebuf + (COLNO - 1) + extra)
                 *bp++ = ' ';
             *bp = '\0';
             topten_print_bold(linebuf);
         } else
             topten_print(linebuf);
         Snprintf(linebuf, sizeof(linebuf), "%15s %s", "", linebuf3);
-        lngr = Strlen(linebuf);
+        extra = (int) strlen(linebuf) - tt_cols(linebuf);
+        lngr = Strlen(linebuf) - extra;
     }
     /* beginning of hp column not including padding */
-    hppos = COLNO - 7 - (int) strlen(hpbuf);
+    hppos = COLNO - 7 - (int) strlen(hpbuf) + extra;
     bp = eos(linebuf);
 
     if (bp <= linebuf + hppos) {
@@ -1098,7 +1162,7 @@ outentry(int rank, struct toptenentry *t1, boolean so)
 
     if (so) {
         bp = eos(linebuf);
-        while (bp < linebuf + (COLNO - 1))
+        while (bp < linebuf + (COLNO - 1) + extra)
             *bp++ = ' ';
         *bp = '\0';
         topten_print_bold(linebuf);
@@ -1214,7 +1278,7 @@ prscore(int argc, char **argv)
 
     rfile = fopen_datafile(RECORD, "r", SCOREPREFIX);
     if (!rfile) {
-        raw_print("Cannot open record file!");
+        raw_print("Impossible d'ouvrir le fichier des scores !");
         return;
     }
 
@@ -1297,15 +1361,15 @@ prscore(int argc, char **argv)
                 (void) outentry(rank, t1, FALSE);
         }
     } else {
-        Sprintf(pbuf, "Cannot find any %sentries for ",
-                current_ver ? "current " : "");
+        Sprintf(pbuf, "Aucune entrée %strouvée pour ",
+                current_ver ? "de la version actuelle " : "");
         if (playerct < 1) {
-            Strcat(pbuf, "you");
+            Strcat(pbuf, "vous");
         } else {
             /* minor bug: 'nethack -s -u ziggy' will say "any of"
                even though the '-u' doesn't indicate multiple names */
             if (playerct > 1)
-                Strcat(pbuf, "any of ");
+                Strcat(pbuf, "l'un de ");
             for (i = 0; i < playerct; i++) {
                 /* accept '-u name' and '-uname' as well as just 'name'
                    so skip '-u' for the none-found feedback */
@@ -1336,9 +1400,9 @@ prscore(int argc, char **argv)
         if (strlen(pbuf) < BUFSZ - 1)
             Strcat(pbuf, ".");
         raw_print(pbuf);
-        raw_printf("Usage: %s -s [-v] <playertypes> [maxrank] [playernames]",
+        raw_printf("Usage : %s -s [-v] <types de joueur> [rang max] [noms de joueur]",
                    gh.hname);
-        raw_printf("Player types are: [-p role] [-r race]");
+        raw_printf("Les types de joueur sont : [-p rôle] [-r race]");
     }
     free_ttlist(tt_head);
 #ifdef AMIGA

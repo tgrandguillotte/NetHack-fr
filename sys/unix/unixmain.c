@@ -256,16 +256,16 @@ main(int argc, char *argv[])
         /* if there are early trouble-messages issued, let's
          * not go overtop of them with a pline just yet */
         if (ge.early_raw_messages)
-            raw_print("Restoring save file...");
+            raw_print("Restauration de la sauvegarde...");
         else
-            pline("Restoring save file...");
+            pline("Restauration de la sauvegarde...");
         mark_synch(); /* flush output */
         if (dorecover(nhfp)) {
             resuming = TRUE; /* not starting new game */
             wd_message();
             if (discover || wizard) {
                 /* this seems like a candidate for paranoid_confirmation... */
-                if (y_n("Do you want to keep the save file?") == 'n') {
+                if (y_n("Voulez-vous conserver la sauvegarde ?") == 'n') {
                     (void) delete_savefile();
                 } else {
                     (void) chmod(fq_save, FCMASK); /* back to readable */
@@ -364,7 +364,7 @@ process_options(int argc, char *argv[])
                 load_symset("DECGraphics", PRIMARYSET);
                 switch_symbols(TRUE);
             } else {
-                config_error_add("Unknown option: %.60s", origarg);
+                config_error_add("Option inconnue : %.60s", origarg);
             }
             break;
         case 'X':
@@ -392,7 +392,7 @@ process_options(int argc, char *argv[])
                 (void) strncpy(svp.plname, argv[0], sizeof svp.plname - 1);
                 gp.plnamelen = 0;
             } else {
-                config_error_add("Character name expected after -u");
+                config_error_add("Nom de personnage attendu après -u");
             }
             break;
         case 'I':
@@ -402,7 +402,7 @@ process_options(int argc, char *argv[])
                 load_symset("RogueIBM", ROGUESET);
                 switch_symbols(TRUE);
             } else {
-                config_error_add("Unknown option: %.60s", origarg);
+                config_error_add("Option inconnue : %.60s", origarg);
             }
             break;
         case 'l':
@@ -411,7 +411,7 @@ process_options(int argc, char *argv[])
                 gl.loglua = 1;
             } else
 #endif
-                config_error_add("Unknown option: %.60s", origarg);
+                config_error_add("Option inconnue : %.60s", origarg);
             break;
         case 'p': /* profession (role) */
             if (arg[2]) {
@@ -442,7 +442,7 @@ process_options(int argc, char *argv[])
             /* "--" or "--x" or "--x=y"; need at least 2 chars after the
                dashes in order to accept "--x" as an alternative to "-x";
                don't just silently ignore it */
-            config_error_add("Unknown option: %.60s", origarg);
+            config_error_add("Option inconnue : %.60s", origarg);
             break;
         default:
             /* default for "-x" is to play as the role that starts with "x" */
@@ -450,12 +450,12 @@ process_options(int argc, char *argv[])
                 flags.initrole = i;
                 break;
             }
-            /* else config_error_add("Unknown option: %.60s", origarg); */
+            /* else config_error_add("Option inconnue : %.60s", origarg); */
         }
     }
 
     if (argc > 1 && origarg)
-        config_error_add("Unknown option: %.60s", origarg);
+        config_error_add("Option inconnue : %.60s", origarg);
 #ifdef MAX_NR_OF_PLAYERS
     /* limit to compile-time limit */
     if (!gl.locknum || gl.locknum > MAX_NR_OF_PLAYERS)
@@ -510,7 +510,7 @@ chdirx(const char *dir, boolean wr)
 
     if (dir && chdir(dir) < 0) {
         perror(dir);
-        error("Cannot chdir to %s.", dir);
+        error("Impossible d'aller dans le répertoire %s.", dir);
         /*NOTREACHED*/
     }
 
@@ -643,20 +643,22 @@ wd_message(void)
     if (iflags.wiz_error_flag) {
         if (sysopt.wizards && sysopt.wizards[0]) {
             char *tmp = build_english_list(sysopt.wizards);
-            pline("Only user%s %s may access debug (wizard) mode.",
-                  strchr(sysopt.wizards, ' ') ? "s" : "", tmp);
+            pline("%s %s %s accéder au mode débogage (wizard).",
+                  strchr(sysopt.wizards, ' ') ? "Seuls les utilisateurs"
+                                              : "Seul l'utilisateur",
+                  tmp, strchr(sysopt.wizards, ' ') ? "peuvent" : "peut");
             free(tmp);
         } else {
-            You("cannot access debug (wizard) mode.");
+            You("ne pouvez pas accéder au mode débogage (wizard).");
         }
         wizard = FALSE; /* (paranoia) */
         if (!iflags.explore_error_flag)
-            pline("Entering explore/discovery mode instead.");
+            pline("Passage en mode exploration/découverte à la place.");
     } else if (iflags.explore_error_flag) {
-        You("cannot access explore mode."); /* same as enter_explore_mode */
+        You("ne pouvez pas accéder au mode exploration."); /* same as enter_explore_mode */
         discover = iflags.deferred_X = FALSE; /* (more paranoia) */
     } else if (discover)
-        You("are in non-scoring explore/discovery mode.");
+        You("êtes en mode exploration/découverte, sans score.");
 }
 
 /*
@@ -770,7 +772,7 @@ port_insert_pastebuf(char *buf)
     FILE *PB = popen("/usr/bin/pbcopy", "w");
 
     if (!PB) {
-        errarg = "Unable to start pbcopy";
+        errarg = "Impossible de lancer pbcopy";
         goto error;
     }
 
@@ -781,14 +783,14 @@ port_insert_pastebuf(char *buf)
 
     /* XXX Sorry, I'm too lazy to write a loop for output this short. */
     if (len != fwrite(buf, 1, len, PB)) {
-        errarg = "Error sending data to pbcopy";
+        errarg = "Erreur d'envoi des données à pbcopy";
         goto error;
     }
 
     if (pclose(PB) != -1) {
         return;
     }
-    errarg = "Error finishing pbcopy";
+    errarg = "Erreur de fermeture de pbcopy";
 
  error:
     raw_printf("%s: %s (%d)\n", errarg, strerror(errno), errno);

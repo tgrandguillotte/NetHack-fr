@@ -98,7 +98,7 @@ function mk_dgl_extrainfo()
             extrai:close();
         else
             -- failed to open the file.
-            nh.pline("Failed to open dgl extrainfo file: " .. err);
+            nh.pline("Impossible d'ouvrir le fichier extrainfo de dgl : " .. err);
         end
         prev_dgl_extrainfo = u.moves;
     end
@@ -107,14 +107,15 @@ end
 -- Show a helpful tip when player first uses getpos()
 function show_getpos_tip()
    nh.text([[
-Tip: Farlooking or selecting a map location
+Astuce : observer ou choisir un emplacement sur la carte
 
-You are now in a "farlook" mode - the movement keys move the cursor,
-not your character.  Game time does not advance.  This mode is used
-to look around the map, or to select a location on it.
+Vous êtes maintenant en mode « observation » : les touches de
+déplacement déplacent le curseur, pas votre personnage.  Le temps de
+jeu ne s'écoule pas.  Ce mode sert à examiner la carte ou à y choisir
+un emplacement.
 
-When in this mode, you can press ESC to return to normal game mode,
-and pressing ? will show the key help.
+Dans ce mode, appuyez sur Échap pour revenir au jeu normal ; la touche
+? affiche l'aide des touches.
 ]]);
 end
 

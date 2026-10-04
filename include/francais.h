@@ -86,6 +86,7 @@ extern char *fr_upstart(char *);
 /* noms anglais d'origine (src/noms_en.c), pour les recherches par nom */
 extern const char *const en_obj_names[];
 extern const char *const en_obj_descrs[];
+extern const char *const en_defsym_expl[];
 extern const char *const en_mon_names[][NUM_MGENDERS];
 
 #endif /* FRANCAIS_H */

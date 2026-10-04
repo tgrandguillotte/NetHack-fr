@@ -14,6 +14,7 @@
 
 #include "hack.h"
 
+staticfn void fr_lowfirst(char *);
 staticfn void enlght_out(const char *);
 staticfn void enlght_line(const char *, const char *, const char *,
                           const char *);
@@ -41,11 +42,11 @@ staticfn void item_resistance_message(int, const char *, int);
 extern const char *const hu_stat[];  /* hunger status from eat.c */
 extern const char *const enc_stat[]; /* encumbrance status from botl.c */
 
-static const char You_[] = "You ", are[] = "are ", were[] = "were ",
-                  have[] = "have ", had[] = "had ", can[] = "can ",
-                  could[] = "could ";
-static const char have_been[] = "have been ", have_never[] = "have never ",
-                  never[] = "never ";
+static const char You_[] = "Vous ", are[] = "êtes ", were[] = "étiez ",
+                  have[] = "avez ", had[] = "aviez ", can[] = "pouvez ",
+                  could[] = "pouviez ";
+static const char have_been[] = "avez été ", have_never[] = "n'avez jamais ",
+                  never[] = "n'avez jamais ";
 
 /* for livelogging: */
 struct ll_achieve_msg {
@@ -56,35 +57,37 @@ struct ll_achieve_msg {
 /* take care to keep them in sync! */
 static struct ll_achieve_msg achieve_msg [] = {
     { 0, "" }, /* actual achievements are numbered from 1 */
-    { LL_ACHIEVE, "acquired the Bell of Opening" },
-    { LL_ACHIEVE, "entered Gehennom" },
-    { LL_ACHIEVE, "acquired the Candelabrum of Invocation" },
-    { LL_ACHIEVE, "acquired the Book of the Dead" },
-    { LL_ACHIEVE, "performed the invocation" },
-    { LL_ACHIEVE, "acquired The Amulet of Yendor" },
-    { LL_ACHIEVE, "entered the Elemental Planes" },
-    { LL_ACHIEVE, "entered the Astral Plane" },
-    { LL_ACHIEVE, "ascended" },
+    { LL_ACHIEVE, "a obtenu la Cloche d'Ouverture" },
+    { LL_ACHIEVE, "est entré dans la Géhenne" },
+    { LL_ACHIEVE, "a obtenu le Candélabre d'Invocation" },
+    { LL_ACHIEVE, "a obtenu le Livre des Morts" },
+    { LL_ACHIEVE, "a accompli l'invocation" },
+    { LL_ACHIEVE, "a obtenu l'Amulette de Yendor" },
+    { LL_ACHIEVE, "est entré dans les Plans élémentaires" },
+    { LL_ACHIEVE, "est entré dans le Plan astral" },
+    { LL_ACHIEVE, "est monté au ciel" },
     /* if the type of item isn't discovered yet, disclosing the event
        via #chronicle would be a spoiler (particularly for gray stone);
        the ID'd name for the type of item will be appended to the next
        two messages, for display via livelog and/or dumplog */
-    { LL_ACHIEVE | LL_SPOILER, "acquired the Mines' End" }, /* " luckstone" */
-    { LL_ACHIEVE | LL_SPOILER, "acquired the Sokoban" }, /* " <item>" */
-    { LL_ACHIEVE | LL_UMONST, "killed Medusa" },
+    { LL_ACHIEVE | LL_SPOILER,
+      "a obtenu le trésor de la Fin des Mines :" }, /* " luckstone" */
+    { LL_ACHIEVE | LL_SPOILER,
+      "a obtenu le trésor de Sokoban :" }, /* " <item>" */
+    { LL_ACHIEVE | LL_UMONST, "a tué Méduse" },
      /* these two are not logged */
-    { 0, "hero was always blond, no, blind" },
-    { 0, "hero never wore armor" },
+    { 0, "le héros a toujours été blond, euh, aveugle" },
+    { 0, "le héros n'a jamais porté d'armure" },
      /* */
-    { LL_MINORAC | LL_DUMP, "entered the Gnomish Mines" },
-    { LL_ACHIEVE, "reached Mine Town" }, /* probably minor, but dnh logs it */
-    { LL_MINORAC, "entered a shop" },
-    { LL_MINORAC, "entered a temple" },
-    { LL_ACHIEVE, "consulted the Oracle" }, /* minor, but rare enough */
-    { LL_MINORAC | LL_DUMP, "read a Discworld novel" }, /* even more so */
-    { LL_ACHIEVE, "entered Sokoban" }, /* keep as major for turn comparison
-                                        * with completed sokoban */
-    { LL_ACHIEVE, "entered the Bigroom" },
+    { LL_MINORAC | LL_DUMP, "est entré dans les Mines des Gnomes" },
+    { LL_ACHIEVE, "a atteint Minebourg" }, /* probably minor, but dnh logs it */
+    { LL_MINORAC, "est entré dans une boutique" },
+    { LL_MINORAC, "est entré dans un temple" },
+    { LL_ACHIEVE, "a consulté l'Oracle" }, /* minor, but rare enough */
+    { LL_MINORAC | LL_DUMP, "a lu un roman du Disque-monde" }, /* even more so */
+    { LL_ACHIEVE, "est entré dans Sokoban" }, /* keep as major for turn
+                                        * comparison with completed sokoban */
+    { LL_ACHIEVE, "est entré dans la Grande Salle" },
     /* The following 8 are for advancing through the ranks
        and messages differ by role so are created on the fly;
        rank 0 (Xp 1 and 2) isn't an achievement */
@@ -96,7 +99,7 @@ static struct ll_achieve_msg achieve_msg [] = {
     { LL_ACHIEVE, "" }, /* Xp 22 */
     { LL_ACHIEVE, "" }, /* Xp 26 */
     { LL_ACHIEVE, "" }, /* Xp 30 */
-    { LL_MINORAC, "learned castle drawbridge's tune" }, /* achievement #31 */
+    { LL_MINORAC, "a appris l'air du pont-levis du château" }, /* achievement #31 */
     { 0, "" } /* keep this one at the end */
 };
 
@@ -112,7 +115,17 @@ static struct ll_achieve_msg achieve_msg [] = {
 #define you_have_never(badthing) \
     enl_msg(You_, have_never, never, (badthing), "")
 #define you_have_X(something) \
-    enl_msg(You_, have, (const char *) "", (something), "")
+    enl_msg(You_, have, have, (something), "")
+
+/* French: lowercase the first letter of a UTF-8 string (É -> é) */
+staticfn void
+fr_lowfirst(char *s)
+{
+    if ((uchar) s[0] == 0xC3 && (uchar) s[1] >= 0x80 && (uchar) s[1] <= 0x9E)
+        s[1] = (char) ((uchar) s[1] + 0x20);
+    else
+        *s = lowc(*s);
+}
 
 staticfn void
 enlght_out(const char *buf)
@@ -174,22 +187,27 @@ enlght_combatinc(
     if (!strcmp(inctyp, "defense"))
         absamt = (absamt * 2) / 3;
 
+    /* French: "un petit bonus au toucher", "une grande pénalité aux
+       dégâts"; 'bonus' is masculine, 'pénalité' feminine */
+    invrt = (incamt < 0); /* feminine */
     if (absamt <= 3)
-        modif = "small";
+        modif = invrt ? "une petite" : "un petit";
     else if (absamt <= 6)
-        modif = "moderate";
+        modif = invrt ? "une pénalité modérée" : "un bonus modéré";
     else if (absamt <= 12)
-        modif = "large";
+        modif = invrt ? "une grande" : "un grand";
     else
-        modif = "huge";
+        modif = invrt ? "une énorme" : "un énorme";
+    if (!incamt) /* ("no" case shouldn't happen) */
+        modif = "aucun";
+    bonus = invrt ? "pénalité" : "bonus";
+    if (absamt > 3 && absamt <= 6 && incamt) /* adjective follows noun */
+        bonus = modif, modif = "";
 
-    modif = !incamt ? "no" : an(modif); /* ("no" case shouldn't happen) */
-    bonus = (incamt >= 0) ? "bonus" : "penalty";
-    /* "bonus <foo>" (to hit) vs "<bar> bonus" (damage, defense) */
-    invrt = strcmp(inctyp, "to hit") ? TRUE : FALSE;
-
-    Sprintf(outbuf, "%s %s %s", modif, invrt ? inctyp : bonus,
-            invrt ? bonus : inctyp);
+    Sprintf(outbuf, "%s%s%s %s", modif, *modif ? " " : "", bonus,
+            !strcmp(inctyp, "to hit") ? "au toucher"
+            : !strcmp(inctyp, "damage") ? "aux dégâts"
+              : !strcmp(inctyp, "defense") ? "en défense" : inctyp);
     if (final || wizard)
         Sprintf(eos(outbuf), " (%s%d)", (incamt > 0) ? "+" : "", incamt);
 
@@ -205,18 +223,20 @@ enlght_halfdmg(int category, int final)
 
     switch (category) {
     case HALF_PHDAM:
-        category_name = "physical";
+        category_name = "physiques";
         break;
     case HALF_SPDAM:
-        category_name = "spell";
+        category_name = "des sorts";
         break;
     default:
-        category_name = "unknown";
+        category_name = "inconnus";
         break;
     }
-    Sprintf(buf, " %s %s damage", (final || wizard) ? "half" : "reduced",
-            category_name);
-    enl_msg(You_, "take", "took", buf, from_what(category));
+    if (final || wizard)
+        Sprintf(buf, " la moitié des dégâts %s", category_name);
+    else
+        Sprintf(buf, " des dégâts %s réduits", category_name);
+    enl_msg(You_, "subissez", "subissiez", buf, from_what(category));
 }
 
 /* is hero actively using water walking capability on water (or lava)? */
@@ -238,18 +258,19 @@ trap_predicament(char *outbuf, int final, boolean wizxtra)
     *outbuf = '\0';
     switch (u.utraptype) {
     case TT_BURIEDBALL:
-        Strcpy(outbuf, "tethered to something buried");
+        Sprintf(outbuf, "attaché%s à quelque chose d'enterré", UE);
         break;
     case TT_LAVA:
-        Sprintf(outbuf, "sinking into %s", final ? "lava" : hliquid("lava"));
+        Sprintf(outbuf, "en train de vous enfoncer dans %s",
+                the(final ? "lave" : hliquid("lave")));
         break;
     case TT_INFLOOR:
-        Sprintf(outbuf, "stuck in %s", the(surface(u.ux, u.uy)));
+        Sprintf(outbuf, "coincé%s dans %s", UE, the(surface(u.ux, u.uy)));
         break;
     default: /* TT_BEARTRAP, TT_PIT, or TT_WEB */
-        Strcpy(outbuf, "trapped");
+        Sprintf(outbuf, "pris%s au piège", UE);
         if ((t = t_at(u.ux, u.uy)) != 0) /* should never be null */
-            Sprintf(eos(outbuf), " in %s", an(trapname(t->ttyp, FALSE)));
+            Sprintf(eos(outbuf), " dans %s", an(trapname(t->ttyp, FALSE)));
         break;
     }
     if (wizxtra) { /* give extra information for wizard mode enlightenment */
@@ -333,27 +354,27 @@ fmt_elapsed_time(char *outbuf, int final)
     edays = etim / 24L;
     fieldcnt = !!edays + !!ehours + !!eminutes + !!eseconds;
 
-    Strcpy(outbuf, fieldcnt ? "" : " none"); /* 'none' should never happen */
+    Strcpy(outbuf, fieldcnt ? "" : " nul"); /* 'none' should never happen */
     if (edays) {
-        Sprintf(eos(outbuf), " %ld day%s", edays, plur(edays));
+        Sprintf(eos(outbuf), " %ld jour%s", edays, plur(edays));
         if (fieldcnt > 1) /* hours and/or minutes and/or seconds to follow */
-            Strcat(outbuf, (fieldcnt == 2) ? " and" : ",");
+            Strcat(outbuf, (fieldcnt == 2) ? " et" : ",");
         --fieldcnt; /* edays has been processed */
     }
     if (ehours) {
-        Sprintf(eos(outbuf), " %ld hour%s", ehours, plur(ehours));
+        Sprintf(eos(outbuf), " %ld heure%s", ehours, plur(ehours));
         if (fieldcnt > 1) /* minutes and/or seconds to follow */
-            Strcat(outbuf, (fieldcnt == 2) ? " and" : ",");
+            Strcat(outbuf, (fieldcnt == 2) ? " et" : ",");
         --fieldcnt; /* ehours has been processed */
     }
     if (eminutes) {
         Sprintf(eos(outbuf), " %ld minute%s", eminutes, plur(eminutes));
         if (fieldcnt > 1) /* seconds to follow */
-            Strcat(outbuf, " and");
+            Strcat(outbuf, " et");
         /* eminutes has been processed but no need to decrement fieldcnt */
     }
     if (eseconds)
-        Sprintf(eos(outbuf), " %ld second%s", eseconds, plur(eseconds));
+        Sprintf(eos(outbuf), " %ld seconde%s", eseconds, plur(eseconds));
     return outbuf;
 }
 
@@ -364,16 +385,16 @@ N_times(long n, char *outbuf)
     switch (n) {
     case 0:
     default:
-        Sprintf(outbuf, "%ld times", n);
+        Sprintf(outbuf, "%ld fois", n);
         break;
     case 1:
-        Strcpy(outbuf, "once");
+        Strcpy(outbuf, "une fois");
         break;
     case 2:
-        Strcpy(outbuf, "twice");
+        Strcpy(outbuf, "deux fois");
         break;
     case 3:
-        Strcpy(outbuf, "thrice");
+        Strcpy(outbuf, "trois fois");
         break;
     }
     return outbuf;
@@ -395,10 +416,10 @@ enlightenment(
     *tmpbuf = highc(*tmpbuf); /* same adjustment as bottom line */
     /* as in background_enlightenment, when poly'd we need to use the saved
        gender in u.mfemale rather than the current you-as-monster gender */
-    Snprintf(buf, sizeof(buf), "%s the %s's attributes:", tmpbuf,
-             ((Upolyd ? u.mfemale : flags.female) && gu.urole.name.f)
+    Snprintf(buf, sizeof(buf), "Attributs de %s %s :", tmpbuf,
+             the(((Upolyd ? u.mfemale : flags.female) && gu.urole.name.f)
                 ? gu.urole.name.f
-                : gu.urole.name.m);
+                : gu.urole.name.m));
 
     /* title */
     enlght_out(buf); /* "Conan the Archeologist's attributes:" */
@@ -423,30 +444,31 @@ enlightenment(
     }
 
     enlght_out(""); /* separator */
-    enlght_out("Miscellaneous:");
+    enlght_out("Divers :");
     /* reminder to player and/or information for dumplog */
     if ((mode & BASICENLIGHTENMENT) != 0 && (wizard || discover || final)) {
         if (wizard || discover) {
-            Sprintf(buf, "running in %s mode", wizard ? "debug" : "explore");
+            Sprintf(buf, "en mode %s", wizard ? "débogage" : "exploration");
             you_are(buf, "");
         }
 
         if (!flags.bones) {
             /* mention not saving bones iff hero just died */
-            Sprintf(buf, "disabled loading%s of bones levels",
-                    (final == ENL_GAMEOVERDEAD) ? " and storing" : "");
+            Sprintf(buf, "désactivé le chargement%s des niveaux d'os",
+                    (final == ENL_GAMEOVERDEAD) ? " et l'enregistrement" : "");
             you_have_X(buf);
         } else if (!u.uroleplay.numbones) {
-            enl_msg(You_, "haven't encountered", "didn't encounter",
-                    " any bones levels", "");
+            enl_msg(You_, "n'avez rencontré", "n'aviez rencontré",
+                    " aucun niveau d'os", "");
         } else {
-            Sprintf(buf, "encountered %ld bones level%s",
-                    u.uroleplay.numbones, plur(u.uroleplay.numbones));
+            Sprintf(buf, "rencontré %ld niveau%s d'os",
+                    u.uroleplay.numbones,
+                    (u.uroleplay.numbones != 1L) ? "x" : "");
             you_have_X(buf);
         }
     }
     (void) fmt_elapsed_time(buf, final);
-    enl_msg("Total elapsed playing time ", "is", "was", buf, "");
+    enl_msg("Le temps de jeu total ", "est de", "a été de", buf, "");
 
     if (!ge.en_via_menu) {
         display_nhwindow(ge.en_win, TRUE);
@@ -479,7 +501,7 @@ background_enlightenment(int unused_mode UNUSED, int final)
     rank_titl = rank_of(u.ulevel, Role_switch, innategend);
 
     enlght_out(""); /* separator after title */
-    enlght_out("Background:");
+    enlght_out("Contexte :");
 
     /* if polymorphed, report current shape before underlying role;
        will be repeated as first status: "you are transformed" and also
@@ -493,17 +515,22 @@ background_enlightenment(int unused_mode UNUSED, int final)
         boolean altphrasing = vampshifted(&gy.youmonst);
 
         tmpbuf[0] = '\0';
+        nhUse(anbuf);
         /* here we always use current gender, not saved role gender */
         if (!is_male(uasmon) && !is_female(uasmon) && !is_neuter(uasmon))
-            Sprintf(tmpbuf, "%s ", genders[flags.female ? 1 : 0].adj);
+            Sprintf(tmpbuf, " %s", genders[flags.female ? 1 : 0].adj);
         if (altphrasing)
-            Sprintf(eos(tmpbuf), "%s in ",
-                    pmname(&mons[gy.youmonst.cham],
-                           flags.female ? FEMALE : MALE));
-        Snprintf(buf, sizeof(buf), "%s%s%s%s form",
-                 !final ? "currently " : "",
-                 altphrasing ? just_an(anbuf, tmpbuf) : "in ",
-                 tmpbuf, pmname(uasmon, flags.female ? FEMALE : MALE));
+            Snprintf(buf, sizeof(buf), "%s%s sous forme %s%s",
+                     !final ? "actuellement " : "",
+                     an(pmname(&mons[gy.youmonst.cham],
+                               flags.female ? FEMALE : MALE)),
+                     de(pmname(uasmon, flags.female ? FEMALE : MALE)),
+                     tmpbuf);
+        else
+            Snprintf(buf, sizeof(buf), "%ssous forme %s%s",
+                     !final ? "actuellement " : "",
+                     de(pmname(uasmon, flags.female ? FEMALE : MALE)),
+                     tmpbuf);
         you_are(buf, "");
     }
 
@@ -512,40 +539,44 @@ background_enlightenment(int unused_mode UNUSED, int final)
     if (!gu.urole.name.f
         && ((gu.urole.allow & ROLE_GENDMASK) == (ROLE_MALE | ROLE_FEMALE)
             || innategend != flags.initgend))
-        Sprintf(tmpbuf, "%s ", genders[innategend].adj);
+        Sprintf(tmpbuf, " %s", genders[innategend].adj);
     buf[0] = '\0';
     if (Upolyd)
-        Strcpy(buf, "actually "); /* "You are actually a ..." */
+        Strcpy(buf, "en réalité "); /* "You are actually a ..." */
     if (!strcmpi(rank_titl, role_titl)) {
         /* omit role when rank title matches it */
-        Sprintf(eos(buf), "%s, level %d %s%s", an(rank_titl), u.ulevel,
-                tmpbuf, gu.urace.noun);
+        Sprintf(eos(buf), "%s %s, %s%s de niveau %d",
+                innategend ? "une" : "un", rank_titl,
+                gu.urace.noun, tmpbuf, u.ulevel);
     } else {
-        Sprintf(eos(buf), "%s, a level %d %s%s %s", an(rank_titl), u.ulevel,
-                tmpbuf, gu.urace.adj, role_titl);
+        Sprintf(eos(buf), "%s %s, %s %s%s de niveau %d",
+                innategend ? "une" : "un", rank_titl, role_titl,
+                fr_adj(gu.urace.adj, innategend ? FR_FEM : FR_MASC, FALSE),
+                tmpbuf, u.ulevel);
     }
     you_are(buf, "");
 
     /* report alignment (bypass you_are() in order to omit ending period);
        adverb is used to distinguish between temporary change (helm of opp.
        alignment), permanent change (one-time conversion), and original */
-    Sprintf(buf, " %s%s%s, %son a mission for %s",
+    Sprintf(buf, " %s%s%s, %sen mission pour %s",
             You_, !final ? are : were,
-            align_str(u.ualign.type),
+            fr_adj(align_str(u.ualign.type),
+                   flags.female ? FR_FEM : FR_MASC, FALSE),
             /* helm of opposite alignment (might hide conversion) */
             (u.ualign.type != u.ualignbase[A_CURRENT])
                /* what's the past tense of "currently"? if we used "formerly"
                   it would sound like a reference to the original alignment */
-               ? (!final ? "currently " : "temporarily ")
+               ? (!final ? "actuellement " : "temporairement ")
                /* permanent conversion */
                : (u.ualign.type != u.ualignbase[A_ORIGINAL])
                   /* and what's the past tense of "now"? certainly not "then"
                      in a context like this...; "belatedly" == weren't that
                      way sooner (in other words, didn't start that way) */
-                  ? (!final ? "now " : "belatedly ")
+                  ? (!final ? "désormais " : "tardivement ")
                   /* atheist (ignored in very early game) */
                   : (!u.uconduct.gnostic && svm.moves > 1000L)
-                     ? "nominally "
+                     ? "nominalement "
                      /* lastly, normal case */
                      : "",
             u_gname());
@@ -553,14 +584,14 @@ background_enlightenment(int unused_mode UNUSED, int final)
     /* show the rest of this game's pantheon (finishes previous sentence)
        [appending "also Moloch" at the end would allow for straightforward
        trailing "and" on all three aligned entries but looks too verbose] */
-    Sprintf(buf, " who %s opposed by", !final ? "is" : "was");
+    Sprintf(buf, " qui %s pour adversaires", !final ? "a" : "avait");
     if (u.ualign.type != A_LAWFUL)
-        Sprintf(eos(buf), " %s (%s) and", align_gname(A_LAWFUL),
+        Sprintf(eos(buf), " %s (%s) et", align_gname(A_LAWFUL),
                 align_str(A_LAWFUL));
     if (u.ualign.type != A_NEUTRAL)
         Sprintf(eos(buf), " %s (%s)%s", align_gname(A_NEUTRAL),
                 align_str(A_NEUTRAL),
-                (u.ualign.type != A_CHAOTIC) ? " and" : "");
+                (u.ualign.type != A_CHAOTIC) ? " et" : "");
     if (u.ualign.type != A_CHAOTIC)
         Sprintf(eos(buf), " %s (%s)", align_gname(A_CHAOTIC),
                 align_str(A_CHAOTIC));
@@ -576,23 +607,29 @@ background_enlightenment(int unused_mode UNUSED, int final)
                + ((u.ualignbase[A_CURRENT] != u.ualignbase[A_ORIGINAL])
                   ? 2 : 0));
     if (difalgn & 1) { /* have temporary alignment so report permanent one */
-        Sprintf(buf, "actually %s", align_str(u.ualignbase[A_CURRENT]));
+        Sprintf(buf, "en réalité %s",
+                fr_adj(align_str(u.ualignbase[A_CURRENT]),
+                       flags.female ? FR_FEM : FR_MASC, FALSE));
         you_are(buf, "");
         difalgn &= ~1; /* suppress helm from "started out <foo>" message */
     }
     if (difgend || difalgn) { /* sex change or perm align change or both */
-        Sprintf(buf, " You started out %s%s%s.",
+        Sprintf(buf, " Au départ, vous étiez %s%s%s.",
                 difgend ? genders[flags.initgend].adj : "",
-                (difgend && difalgn) ? " and " : "",
-                difalgn ? align_str(u.ualignbase[A_ORIGINAL]) : "");
+                (difgend && difalgn) ? " et " : "",
+                difalgn ? fr_adj(align_str(u.ualignbase[A_ORIGINAL]),
+                                 flags.initgend ? FR_FEM : FR_MASC, FALSE)
+                        : "");
         enlght_out(buf);
     }
 
     /* "You are left-handed." won't work well if polymorphed into something
        without hands; use "You are normally left-handed." in that situation */
-    Sprintf(buf, "%s%s-handed",
-            !strcmp(body_part(HANDED), "handed") ? "" : "normally ",
-            URIGHTY ? "right" : "left");
+    Sprintf(buf, "%s%s",
+            (!strcmp(body_part(HANDED), "handed")
+             || !strcmp(body_part(HANDED), "droitier")) ? "" : "normalement ",
+            URIGHTY ? (flags.female ? "droitière" : "droitier")
+                    : (flags.female ? "gauchère" : "gaucher"));
     you_are(buf, "");
 
     /* As of 3.6.2: dungeon level, so that ^X really has all status info as
@@ -605,49 +642,51 @@ background_enlightenment(int unused_mode UNUSED, int final)
         int egdepth = observable_depth(&u.uz);
 
         (void) endgamelevelname(tmpbuf, egdepth);
-        Snprintf(buf, sizeof(buf), "in the endgame, on the %s%s",
-                 !strncmp(tmpbuf, "Plane", 5) ? "Elemental " : "", tmpbuf);
+        Snprintf(buf, sizeof(buf), "dans la phase finale, sur %s",
+                 the(tmpbuf));
     } else if (Is_knox(&u.uz)) {
         /* this gives away the fact that the knox branch is only 1 level */
-        Sprintf(buf, "on the %s level", svd.dungeons[u.uz.dnum].dname);
+        Sprintf(buf, "au niveau de %s", svd.dungeons[u.uz.dnum].dname);
         /* TODO? maybe phrase it differently when actually inside the fort,
            if we're able to determine that (not trivial) */
     } else {
         char dgnbuf[QBUFSZ];
 
         Strcpy(dgnbuf, svd.dungeons[u.uz.dnum].dname);
-        if (!strncmpi(dgnbuf, "The ", 4))
+        if (!strncmpi(dgnbuf, "The ", 4) || !strncmp(dgnbuf, "Le ", 3)
+            || !strncmp(dgnbuf, "La ", 3) || !strncmp(dgnbuf, "Les ", 4)
+            || !strncmp(dgnbuf, "L'", 2))
             *dgnbuf = lowc(*dgnbuf);
-        Sprintf(tmpbuf, "level %d",
+        Sprintf(tmpbuf, "au niveau %d",
                 In_quest(&u.uz) ? dunlev(&u.uz) : depth(&u.uz));
         /* TODO? maybe extend this bit to include various other automatic
            annotations from the dungeon overview code */
         if (Is_rogue_level(&u.uz))
-            Strcat(tmpbuf, ", a primitive area");
+            Strcat(tmpbuf, ", une zone primitive");
         else if (Is_bigroom(&u.uz) && !Blind)
-            Strcat(tmpbuf, ", a very big room");
-        Snprintf(buf, sizeof(buf), "in %s, on %s", dgnbuf, tmpbuf);
+            Strcat(tmpbuf, ", une très grande salle");
+        Snprintf(buf, sizeof(buf), "dans %s, %s", dgnbuf, tmpbuf);
     }
     you_are(buf, "");
 
     /* this is shown even if the 'time' option is off */
     if (svm.moves == 1L) {
-        you_have("just started your adventure", "");
+        you_have("tout juste commencé votre aventure", "");
     } else {
         /* 'turns' grates on the nerves in this context... */
-        Sprintf(buf, "the dungeon %ld turn%s ago",
+        Sprintf(buf, "êtes entré%s dans le donjon il y a %ld tour%s", UE,
                 svm.moves, plur(svm.moves));
         /* same phrasing for current and final: "entered" is unconditional */
-        enlght_line(You_, "entered ", buf, "");
+        enlght_line(You_, "", buf, "");
     }
 
     /* for gameover, these have been obtained in really_done() so that they
        won't vary if user leaves a disclosure prompt or --More-- unanswered
        long enough for the dynamic value to change between then and now */
     if (final ? iflags.at_midnight : midnight()) {
-        enl_msg("It ", "is ", "was ", "the midnight hour", "");
+        enl_msg("Il ", "est ", "était ", "minuit", "");
     } else if (final ? iflags.at_night : night()) {
-        enl_msg("It ", "is ", "was ", "nighttime", "");
+        enl_msg("Il ", "fait ", "faisait ", "nuit", "");
     }
     /* other environmental factors */
     if (flags.moonphase == FULL_MOON || flags.moonphase == NEW_MOON) {
@@ -657,17 +696,17 @@ background_enlightenment(int unused_mode UNUSED, int final)
            have dragged on for an arbitrary amount of time.  We want to
            report the values that currently affect play--or affected
            play when game ended--rather than actual outside situation.] */
-        Sprintf(buf, "a %s moon in effect%s",
-                (flags.moonphase == FULL_MOON) ? "full"
-                : (flags.moonphase == NEW_MOON) ? "new"
+        Sprintf(buf, "%s%s",
+                (flags.moonphase == FULL_MOON) ? "la pleine lune"
+                : (flags.moonphase == NEW_MOON) ? "la nouvelle lune"
                   /* showing these would probably just lead to confusion
                      since they have no effect on game play... */
-                  : (flags.moonphase < FULL_MOON) ? "first quarter"
-                    : "last quarter",
+                  : (flags.moonphase < FULL_MOON) ? "le premier quartier"
+                    : "le dernier quartier",
                 /* we don't have access to 'how' here--aside from survived
                    vs died--so settle for general platitude */
-                final ? " when your adventure ended" : "");
-        enl_msg("There ", "is ", "was ", buf, "");
+                final ? " quand votre aventure s'est terminée" : "");
+        enl_msg("C'", "est ", "était ", buf, "");
     }
     if (flags.friday13) {
         /* let player know that friday13 penalty is/was in effect;
@@ -675,12 +714,12 @@ background_enlightenment(int unused_mode UNUSED, int final)
            the start of the session and it might be past midnight (or
            days later if the game has been paused without save/restore),
            so phrase this similar to the start up message */
-        Sprintf(buf, " Bad things %s on Friday the 13th.",
-                !final ? "can happen"
-                : (final == ENL_GAMEOVERALIVE) ? "could have happened"
+        Sprintf(buf, " Des malheurs %s un vendredi 13.",
+                !final ? "peuvent arriver"
+                : (final == ENL_GAMEOVERALIVE) ? "auraient pu arriver"
                   /* there's no may to tell whether -1 Luck made a
                      difference but hero has died... */
-                  : "happened");
+                  : "sont arrivés");
         enlght_out(buf);
     }
 
@@ -689,7 +728,7 @@ background_enlightenment(int unused_mode UNUSED, int final)
         /* [flags.showexp currently does not matter; should it?] */
 
         /* experience level is already shown above */
-        Sprintf(buf, "%-1ld experience point%s", u.uexp, plur(u.uexp));
+        Sprintf(buf, "%-1ld point%s d'expérience", u.uexp, plur(u.uexp));
         /* TODO?
          *  Remove wizard-mode restriction since patient players can
          *  determine the numbers needed without resorting to spoilers
@@ -701,12 +740,13 @@ background_enlightenment(int unused_mode UNUSED, int final)
         if (ulvl < 30 && (final || wizard)) {
             long nxtlvl = newuexp(ulvl), delta = nxtlvl - u.uexp;
 
-            Sprintf(eos(buf), ", %ld %s%sneeded %s level %d",
-                    delta, (u.uexp > 0) ? "more " : "",
+            Sprintf(eos(buf), ", %ld %s%s pour atteindre le niveau %d",
+                    delta, (u.uexp > 0) ? "de plus " : "",
                     /* present tense=="needed", past tense=="were needed" */
-                    !final ? "" : (delta == 1L) ? "was " : "were ",
-                    /* "for": grammatically iffy but less likely to wrap */
-                    (ulvl < 18) ? "to attain" : "for", (ulvl + 1));
+                    !final ? (delta == 1L ? "nécessaire" : "nécessaires")
+                           : (delta == 1L ? "était nécessaire"
+                                          : "étaient nécessaires"),
+                    (ulvl + 1));
         }
         you_have(buf, "");
     }
@@ -715,8 +755,8 @@ background_enlightenment(int unused_mode UNUSED, int final)
         /* describes what's shown on status line, which is an approximation;
            only show it here if player has the 'showscore' option enabled */
         Sprintf(buf, "%ld%s", botl_score(),
-                !final ? "" : " before end-of-game adjustments");
-        enl_msg("Your score ", "is ", "was ", buf, "");
+                !final ? "" : " avant les ajustements de fin de partie");
+        enl_msg("Votre score ", "est de ", "était de ", buf, "");
     }
 #endif
 }
@@ -727,43 +767,43 @@ background_enlightenment(int unused_mode UNUSED, int final)
 staticfn void
 basics_enlightenment(int mode UNUSED, int final)
 {
-    static char Power[] = "energy points (spell power)";
+    static char Power[] = "points d'énergie (puissance magique)";
     char buf[BUFSZ];
     int pw = u.uen, hp = (Upolyd ? u.mh : u.uhp),
         pwmax = u.uenmax, hpmax = (Upolyd ? u.mhmax : u.uhpmax);
 
     enlght_out(""); /* separator after background */
-    enlght_out("Basics:");
+    enlght_out("Bases :");
 
     if (hp < 0)
         hp = 0;
     /* "1 out of 1" rather than "all" if max is only 1; should never happen */
     if (hp == hpmax && hpmax > 1)
-        Sprintf(buf, "all %d hit points", hpmax);
+        Sprintf(buf, "la totalité de vos %d points de vie", hpmax);
     else
-        Sprintf(buf, "%d out of %d hit point%s", hp, hpmax, plur(hpmax));
+        Sprintf(buf, "%d point%s de vie sur %d", hp, plur(hp), hpmax);
     you_have(buf, "");
 
     /* low max energy is feasible, so handle couple of extra special cases */
     if (pwmax == 0 || (pw == pwmax && pwmax == 2)) /* both: not "all 2" */
-        Sprintf(buf, "%s %s", !pwmax ? "no" : "both", Power);
+        Sprintf(buf, "%s %s", !pwmax ? "aucun" : "les deux", Power);
     else if (pw == pwmax && pwmax > 2)
-        Sprintf(buf, "all %d %s", pwmax, Power);
+        Sprintf(buf, "la totalité de vos %d %s", pwmax, Power);
     else
-        Sprintf(buf, "%d out of %d %s", pw, pwmax, Power);
+        Sprintf(buf, "%d %s sur %d", pw, Power, pwmax);
     you_have(buf, "");
 
     if (Upolyd) {
         switch (mons[u.umonnum].mlevel) {
         case 0:
             /* status line currently being explained shows "HD:0" */
-            Strcpy(buf, "0 hit dice (actually 1/2)");
+            Strcpy(buf, "0 dé de vie (en fait 1/2)");
             break;
         case 1:
-            Strcpy(buf, "1 hit die");
+            Strcpy(buf, "1 dé de vie");
             break;
         default:
-            Sprintf(buf, "%d hit dice", mons[u.umonnum].mlevel);
+            Sprintf(buf, "%d dés de vie", mons[u.umonnum].mlevel);
             break;
         }
         you_have(buf, "");
@@ -772,9 +812,9 @@ basics_enlightenment(int mode UNUSED, int final)
     find_ac(); /* enforces AC_MAX cap */
     Sprintf(buf, "%d", u.uac);
     if (abs(u.uac) == AC_MAX)
-        Sprintf(eos(buf), ", the %s possible",
-                (u.uac < 0) ? "best" : "worst");
-    enl_msg("Your armor class ", "is ", "was ", buf, "");
+        Sprintf(eos(buf), ", %s possible",
+                (u.uac < 0) ? "la meilleure" : "la pire");
+    enl_msg("Votre classe d'armure ", "est de ", "était de ", buf, "");
 
     /* gold; similar to doprgold (#showgold) but without shop billing info;
        includes container contents, unlike status line but like doprgold */
@@ -782,44 +822,47 @@ basics_enlightenment(int mode UNUSED, int final)
         long umoney = money_cnt(gi.invent), hmoney = hidden_gold(final);
 
         if (!umoney) {
-            Sprintf(buf, " Your wallet %s empty", !final ? "is" : "was");
+            Sprintf(buf, " Votre bourse %s vide", !final ? "est" : "était");
         } else {
-            Sprintf(buf, " Your wallet contain%s %ld %s", !final ? "s" : "ed",
+            Sprintf(buf, " Votre bourse contenait %ld %s",
                     umoney, currency(umoney));
+            if (!final)
+                Sprintf(buf, " Votre bourse contient %ld %s",
+                        umoney, currency(umoney));
         }
         /* terminate the wallet line if appropriate, otherwise add an
            introduction to subsequent continuation; output now either way */
-        Strcat(buf, !hmoney ? "." : !umoney ? ", but" : ", and");
+        Strcat(buf, !hmoney ? "." : !umoney ? ", mais" : ", et");
         enlght_out(buf);
 
         /* put contained gold on its own line to avoid excessive width; it's
            phrased as a continuation of the wallet line so not capitalized */
         if (hmoney) {
-            Sprintf(buf, "%ld %s stashed away in your pack",
-                    hmoney, umoney ? "more" : currency(hmoney));
-            enl_msg("you ", "have ", "had ", buf, "");
+            Sprintf(buf, "%ld %s%s cachés dans votre sac",
+                    hmoney, currency(hmoney), umoney ? " de plus" : "");
+            enl_msg("vous ", "avez ", "aviez ", buf, "");
         }
     }
 
     if (flags.pickup) {
         char ocl[MAXOCLASSES + 1];
 
-        Strcpy(buf, "on");
+        Strcpy(buf, "activé");
         if (costly_spot(u.ux, u.uy)) {
             /* being in a shop inhibits autopickup, even 'pickup_thrown' */
-            Strcat(buf, ", but temporarily disabled while inside the shop");
+            Strcat(buf, ", mais temporairement suspendu dans la boutique");
         } else {
             oc_to_str(flags.pickup_types, ocl);
-            Sprintf(eos(buf), " for %s%s%s", *ocl ? "'" : "",
-                    *ocl ? ocl : "all types", *ocl ? "'" : "");
+            Sprintf(eos(buf), " pour %s%s%s", *ocl ? "'" : "",
+                    *ocl ? ocl : "tous les types", *ocl ? "'" : "");
             if (flags.pickup_thrown && *ocl)
-                Strcat(buf, " plus thrown"); /* show when not 'all types' */
+                Strcat(buf, " plus les objets lancés"); /* show when not 'all types' */
             if (ga.apelist)
-                Strcat(buf, ", with exceptions");
+                Strcat(buf, ", avec des exceptions");
         }
     } else
-        Strcpy(buf, "off");
-    enl_msg("Autopickup ", "is ", "was ", buf, "");
+        Strcpy(buf, "désactivé");
+    enl_msg("Le ramassage automatique ", "est ", "était ", buf, "");
 }
 
 /* characteristics: expanded version of bottom line strength, dexterity, &c */
@@ -829,7 +872,7 @@ characteristics_enlightenment(int mode, int final)
     char buf[BUFSZ];
 
     enlght_out("");
-    Sprintf(buf, "%sCharacteristics:", !final ? "" : "Final ");
+    Sprintf(buf, "Caractéristiques%s :", !final ? "" : " finales");
     enlght_out(buf);
 
     /* bottom line order */
@@ -894,7 +937,7 @@ one_characteristic(int mode, int final, int attrindx)
 
     acurrent = ACURR(attrindx);
     (void) attrval(attrindx, acurrent, valubuf); /* Sprintf(valubuf,"%d",) */
-    Sprintf(subjbuf, "Your %s ", attrname[attrindx]);
+    Sprintf(subjbuf, "Votre %s ", attrname[attrindx]);
 
     if (!hide_innate_value) {
         /* show abase, amax, and/or attrmax if acurr doesn't match abase
@@ -911,28 +954,28 @@ one_characteristic(int mode, int final, int attrindx)
         interesting_alimit =
             final ? TRUE /* was originally `(abase != alimit)' */
                   : (alimit != (attrindx != A_STR ? 18 : STR18(100)));
-        paren_pfx = final ? " (" : " (current; ";
+        paren_pfx = final ? " (" : " (actuelle ; ";
         if (acurrent != abase) {
-            Sprintf(eos(valubuf), "%sbase:%s", paren_pfx,
+            Sprintf(eos(valubuf), "%sbase : %s", paren_pfx,
                     attrval(attrindx, abase, valstring));
             paren_pfx = ", ";
         }
         if (abase != apeak) {
-            Sprintf(eos(valubuf), "%speak:%s", paren_pfx,
+            Sprintf(eos(valubuf), "%smaximum : %s", paren_pfx,
                     attrval(attrindx, apeak, valstring));
             paren_pfx = ", ";
         }
         if (interesting_alimit) {
-            Sprintf(eos(valubuf), "%s%slimit:%s", paren_pfx,
+            Sprintf(eos(valubuf), "%slimite%s : %s", paren_pfx,
                     /* more verbose if exceeding 'limit' due to magic bonus */
-                    (acurrent > alimit) ? "innate " : "",
+                    (acurrent > alimit) ? " innée" : "",
                     attrval(attrindx, alimit, valstring));
             /* paren_pfx = ", "; */
         }
         if (acurrent != abase || abase != apeak || interesting_alimit)
             Strcat(valubuf, ")");
     }
-    enl_msg(subjbuf, "is ", "was ", valubuf, "");
+    enl_msg(subjbuf, "est de ", "était de ", valubuf, "");
 }
 
 /* status: selected obvious capabilities, assorted troubles */
@@ -946,7 +989,9 @@ status_enlightenment(int mode, int final)
                       /* if hero dies while dismounting, u.usteed will still
                          be set; we want to ignore steed in that situation */
                       && !(final == ENL_GAMEOVERDEAD
-                           && !strcmp(svk.killer.name, "riding accident")));
+                           && (!strcmp(svk.killer.name, "riding accident")
+                               || !strcmp(svk.killer.name,
+                                          "accident d'équitation"))));
     const char *steedname = (!Riding ? (char *) 0
                       : x_monnam(u.usteed,
                                  u.usteed->mtame ? ARTICLE_YOUR : ARTICLE_THE,
@@ -959,44 +1004,45 @@ status_enlightenment(int mode, int final)
      *     should be discernible to the hero hence to the player)
     \*/
     enlght_out(""); /* separator after title or characteristics */
-    enlght_out(final ? "Final Status:" : "Status:");
+    enlght_out(final ? "État final :" : "État :");
 
     Strcpy(youtoo, You_);
     /* not a traditional status but inherently obvious to player; more
        detail given below (attributes section) for magic enlightenment */
     if (Upolyd) {
-        Strcpy(buf, "transformed");
+        Sprintf(buf, "transformé%s", UE);
         if (ugenocided())
-            Sprintf(eos(buf), " and %s %s inside",
-                    final ? "felt" : "feel", udeadinside());
+            Sprintf(eos(buf), " et vous vous %s %s à l'intérieur",
+                    final ? "sentiez" : "sentez", udeadinside());
         you_are(buf, "");
     }
     /* not a trouble, but we want to display riding status before maybe
        reporting steed as trapped or hero stuck to cursed saddle */
     if (Riding) {
-        Sprintf(buf, "riding %s", steedname);
+        Sprintf(buf, "en selle sur %s", steedname);
         you_are(buf, "");
-        Sprintf(eos(youtoo), "and %s ", steedname);
+        Sprintf(eos(youtoo), "et %s ", steedname);
     }
     /* other movement situations that hero should always know */
     if (Levitation) {
         if (Lev_at_will && magic)
-            you_are("levitating, at will", "");
+            you_are("en lévitation, à volonté", "");
         else
-            enl_msg(youtoo, are, were, "levitating", from_what(LEVITATION));
+            enl_msg(youtoo, are, were, "en lévitation", from_what(LEVITATION));
     } else if (Flying) { /* can only fly when not levitating */
-        enl_msg(youtoo, are, were, "flying", from_what(FLYING));
+        enl_msg(youtoo, are, were, "en vol", from_what(FLYING));
     }
     if (Underwater) {
-        you_are("underwater", "");
+        you_are("sous l'eau", "");
     } else if (u.uinwater) {
-        you_are(Swimming ? "swimming" : "in water", from_what(SWIMMING));
+        you_are(Swimming ? "en train de nager" : "dans l'eau",
+                from_what(SWIMMING));
     } else if (walking_on_water()) {
         /* show active Wwalking here, potential Wwalking elsewhere */
-        Sprintf(buf, "walking on %s",
-                is_pool(u.ux, u.uy) ? "water"
-                : is_lava(u.ux, u.uy) ? "lava"
-                  : surface(u.ux, u.uy)); /* catchall; shouldn't happen */
+        Sprintf(buf, "en train de marcher sur %s",
+                is_pool(u.ux, u.uy) ? "l'eau"
+                : is_lava(u.ux, u.uy) ? "la lave"
+                  : the(surface(u.ux, u.uy))); /* catchall; shouldn't happen */
         you_are(buf, from_what(WWALKING));
     }
     if (Upolyd && (u.uundetected || U_AP_TYPE != M_AP_NOTHING))
@@ -1005,24 +1051,29 @@ status_enlightenment(int mode, int final)
     /* internal troubles, mostly in the order that prayer ranks them */
     if (Stoned) {
         if (final && (Stoned & I_SPECIAL))
-            enlght_out(" You turned into stone.");
+            Sprintf(buf, " Vous vous êtes changé%s en pierre.", UE),
+                enlght_out(buf);
         else
-            you_are("turning to stone", "");
+            you_are("en train de vous changer en pierre", "");
     }
     if (Slimed) {
         if (final && (Slimed & I_SPECIAL))
-            enlght_out(" You turned into slime.");
+            Sprintf(buf, " Vous vous êtes changé%s en glu.", UE),
+                enlght_out(buf);
         else
-            you_are("turning into slime", "");
+            you_are("en train de vous changer en glu", "");
     }
     if (Strangled) {
         if (u.uburied) {
-            you_are("buried", "");
+            Sprintf(buf, "enterré%s", UE);
+            you_are(buf, "");
         } else {
             if (final && (Strangled & I_SPECIAL)) {
-                enlght_out(" You died from strangulation.");
+                Sprintf(buf, " Vous êtes mort%s étranglé%s.", UE, UE);
+                enlght_out(buf);
             } else {
-                Strcpy(buf, "being strangled");
+                Strcpy(buf, "en train d'être étranglé");
+                Strcat(buf, UE);
                 if (wizard)
                     Sprintf(eos(buf), " (%ld)", (Strangled & TIMEOUT));
                 you_are(buf, from_what(STRANGLED));
@@ -1035,51 +1086,57 @@ status_enlightenment(int mode, int final)
            puts TermIll before FoodPois and death due to timeout reports
            terminal illness if both are in effect, so do the same here */
         if (final && (Sick & I_SPECIAL)) {
-            Sprintf(buf, " %sdied from %s.", You_, /* has trailing space */
-                    (u.usick_type & SICK_NONVOMITABLE)
-                    ? "terminal illness" : "food poisoning");
+            Sprintf(buf, " %sêtes mort%s %s.", You_, /* has trailing space */
+                    UE, (u.usick_type & SICK_NONVOMITABLE)
+                    ? "d'une maladie mortelle" : "d'une intoxication alimentaire");
             enlght_out(buf);
         } else {
             /* unlike death due to sickness, report the two cases separately
                because it is possible to cure one without curing the other */
             if (u.usick_type & SICK_NONVOMITABLE)
-                you_are("terminally sick from illness", "");
+                you_are("atteint d'une maladie mortelle", "");
             if (u.usick_type & SICK_VOMITABLE)
-                you_are("terminally sick from food poisoning", "");
+                you_are("mortellement intoxiqué par la nourriture", "");
         }
     }
-    if (Vomiting)
-        you_are("nauseated", "");
-    if (Stunned)
-        you_are("stunned", "");
-    if (Confusion)
-        you_are("confused", "");
+    if (Vomiting) {
+        Sprintf(buf, "nauséeu%s", flags.female ? "se" : "x");
+        you_are(buf, "");
+    }
+    if (Stunned) {
+        Sprintf(buf, "étourdi%s", UE);
+        you_are(buf, "");
+    }
+    if (Confusion) {
+        Sprintf(buf, "confus%s", UE);
+        you_are(buf, "");
+    }
     if (Hallucination)
-        you_are("hallucinating", "");
+        you_are("en train d'halluciner", "");
     if (Blind) {
         /* check the reasons in same order as from_what() */
-        Sprintf(buf, "%s blind",
-                (HBlinded & FROMOUTSIDE) != 0L ? "permanently"
-                : (HBlinded & FROMFORM) ? "innately"
+        Sprintf(buf, "%s aveugle",
+                (HBlinded & FROMOUTSIDE) != 0L ? "définitivement"
+                : (HBlinded & FROMFORM) ? "par nature"
                   /* better phrasing desperately wanted... */
-                  : Blindfolded_only ? "deliberately"
+                  : Blindfolded_only ? "délibérément"
                     /* timed, possibly combined with blindfold */
-                    : "temporarily");
+                    : "temporairement");
         if (wizard && (HBlinded == BlindedTimeout && !Blindfolded))
             Sprintf(eos(buf), " (%ld)", BlindedTimeout);
         /* !haseyes: avoid "you are innately blind innately" */
         you_are(buf, !haseyes(gy.youmonst.data) ? "" : from_what(BLINDED));
     }
     if (Deaf)
-        you_are("deaf", from_what(DEAF));
+        you_are(flags.female ? "sourde" : "sourd", from_what(DEAF));
 
     /* external troubles, more or less */
     if (Punished) {
         if (uball) {
-            Sprintf(buf, "chained to %s", ansimpleoname(uball));
+            Sprintf(buf, "enchaîné%s à %s", UE, ansimpleoname(uball));
         } else {
             impossible("Punished without uball?");
-            Strcpy(buf, "punished");
+            Sprintf(buf, "puni%s", UE);
         }
         you_are(buf, "");
     }
@@ -1089,34 +1146,35 @@ status_enlightenment(int mode, int final)
 
         (void) trap_predicament(predicament, final, wizard);
         if (u.usteed) { /* not `Riding' here */
-            Sprintf(buf, "%s%s ", anchored ? "you and " : "", steedname);
-            *buf = highc(*buf);
-            enl_msg(buf, (anchored ? "are " : "is "),
-                    (anchored ? "were " : "was "), predicament, "");
+            Sprintf(buf, "%s%s ", anchored ? "vous et " : "", steedname);
+            (void) fr_upstart(buf);
+            enl_msg(buf, (anchored ? "êtes " : "est "),
+                    (anchored ? "étiez " : "était "), predicament, "");
         } else
             you_are(predicament, "");
     } /* (u.utrap) */
     heldmon[0] = '\0'; /* lint suppression */
     if (u.ustuck) { /* includes u.uswallow */
         Strcpy(heldmon, a_monnam(u.ustuck));
-        if (!strcmp(heldmon, "it")
+        if ((!strcmp(heldmon, "it") || !strcmp(heldmon, "quelque chose"))
             && (!has_mgivenname(u.ustuck)
-                || strcmp(MGIVENNAME(u.ustuck), "it") != 0))
-            Strcpy(heldmon, "an unseen creature");
+                || (strcmp(MGIVENNAME(u.ustuck), "it") != 0
+                    && strcmp(MGIVENNAME(u.ustuck), "quelque chose") != 0)))
+            Strcpy(heldmon, "une créature invisible");
     }
     if (u.uswallow) {
         assert(u.ustuck != NULL); /* implied by u.uswallow */
-        Snprintf(buf, sizeof buf, "%s by %s",
-                digests(u.ustuck->data) ? "swallowed" : "engulfed",
+        Snprintf(buf, sizeof buf, "%s%s par %s",
+                digests(u.ustuck->data) ? "avalé" : "englouti", UE,
                 heldmon);
         if (dmgtype(u.ustuck->data, AD_DGST)) {
             /* if final, death via digestion can be deduced by u.uswallow
                still being True and u.uswldtim having been decremented to 0 */
             if (final && !u.uswldtim)
-                Strcat(buf, " and got totally digested");
+                Sprintf(eos(buf), " et avez été entièrement digéré%s", UE);
             else
-                Sprintf(eos(buf), " and %s being digested",
-                        final ? "were" : "are");
+                Sprintf(eos(buf), " et %s en cours de digestion",
+                        final ? "étiez" : "êtes");
         }
         if (wizard)
             Sprintf(eos(buf), " (%u)", u.uswldtim);
@@ -1126,7 +1184,8 @@ status_enlightenment(int mode, int final)
         int dx = u.ustuck->mx - u.ux, dy = u.ustuck->my - u.uy;
 
         Snprintf(buf, sizeof buf, "%s %s (%s)",
-                 ustick ? "holding" : "held by",
+                 ustick ? "en train d'agripper"
+                        : flags.female ? "retenue par" : "retenu par",
                  heldmon, dxdy_to_dist_descr(dx, dy, TRUE));
         you_are(buf, "");
     }
@@ -1134,8 +1193,8 @@ status_enlightenment(int mode, int final)
         struct obj *saddle = which_armor(u.usteed, W_SADDLE);
 
         if (saddle && saddle->cursed) {
-            Sprintf(buf, "stuck to %s %s", s_suffix(steedname),
-                    simpleonames(saddle));
+            Sprintf(buf, "collé%s à la %s %s", UE,
+                    simpleonames(saddle), du(steedname));
             you_are(buf, "");
         }
     }
@@ -1145,14 +1204,20 @@ status_enlightenment(int mode, int final)
            both apply to steed instead of hero when mounted */
         long whichleg = (EWounded_legs & BOTH_SIDES);
         const char *bp = u.usteed ? mbodypart(u.usteed, LEG) : body_part(LEG),
-            *article = "a ", /* precedes "wounded", so never "an " */
-            *leftright = "";
+            *article = "", *leftright = "";
+        boolean fem = (fr_genre(bp) == FR_FEM);
 
-        if (whichleg == BOTH_SIDES)
-            bp = makeplural(bp), article = "";
-        else
-            leftright = (whichleg == LEFT_SIDE) ? "left " : "right ";
-        Sprintf(buf, "%swounded %s%s", article, leftright, bp);
+        if (whichleg == BOTH_SIDES) {
+            Sprintf(buf, "les %s %s", makeplural(bp),
+                    fr_adj("blessé", fem ? FR_FEM : FR_MASC, TRUE));
+        } else {
+            article = fem ? "une " : "un ";
+            leftright = (whichleg == LEFT_SIDE)
+                            ? (fem ? " gauche" : " gauche")
+                            : (fem ? " droite" : " droit");
+            Sprintf(buf, "%s%s%s %s", article, bp, leftright,
+                    fr_adj("blessé", fem ? FR_FEM : FR_MASC, FALSE));
+        }
 
         /* when mounted, Wounded_legs applies to steed rather than to
            hero; we only report steed's wounded legs in wizard mode */
@@ -1162,34 +1227,37 @@ status_enlightenment(int mode, int final)
 
                 Strcpy(steednambuf, steedname);
                 *steednambuf = highc(*steednambuf);
-                enl_msg(steednambuf, " has ", " had ", buf, "");
+                enl_msg(steednambuf, " a ", " avait ", buf, "");
             }
         } else {
             you_have(buf, "");
         }
     }
     if (Glib) {
-        Sprintf(buf, "slippery %s", fingers_or_gloves(TRUE));
+        Sprintf(buf, "les %s glissant%s", fingers_or_gloves(TRUE),
+                (fr_genre(fingers_or_gloves(TRUE)) == FR_FEM) ? "es" : "s");
         if (wizard)
             Sprintf(eos(buf), " (%ld)", (Glib & TIMEOUT));
         you_have(buf, "");
     }
     if (Fumbling) {
         if (magic || cause_known(FUMBLING))
-            enl_msg(You_, "fumble", "fumbled", "", from_what(FUMBLING));
+            enl_msg(You_, "êtes maladroit", "étiez maladroit", UE,
+                    from_what(FUMBLING));
     }
     if (Sleepy) {
         if (magic || cause_known(SLEEPY)) {
             Strcpy(buf, from_what(SLEEPY));
             if (wizard)
                 Sprintf(eos(buf), " (%ld)", (HSleepy & TIMEOUT));
-            enl_msg("You ", "fall", "fell", " asleep uncontrollably", buf);
+            enl_msg("Vous ", "vous endormez", "vous endormiez",
+                    " de manière incontrôlable", buf);
         }
     }
     /* hunger/nutrition */
     if (Hunger) {
         if (magic || cause_known(HUNGER))
-            enl_msg(You_, "hunger", "hungered", " rapidly",
+            enl_msg(You_, "avez faim", "aviez faim", " rapidement",
                     from_what(HUNGER));
     }
     Strcpy(buf, hu_stat[u.uhs]); /* hunger status; omitted if "normal" */
@@ -1197,13 +1265,22 @@ status_enlightenment(int mode, int final)
     /* status line doesn't show hunger when state is "not hungry", we do;
        needed for wizard mode's reveal of u.uhunger but add it for everyone */
     if (!*buf)
-        Strcpy(buf, "not hungry");
+        Strcpy(buf, "pas affamé");
     if (*buf) { /* (since "not hungry" was added, this will always be True) */
-        *buf = lowc(*buf); /* override capitalization */
-        if (!strcmp(buf, "weak"))
-            Strcat(buf, " from severe hunger");
-        else if (!strncmp(buf, "faint", 5)) /* fainting, fainted */
-            Strcat(buf, " due to starvation");
+        fr_lowfirst(buf); /* override capitalization */
+        if (!strcmp(buf, "inanition")) {
+            Sprintf(buf, "mort%s de faim", UE);
+        } else {
+            /* agree the adjective with the hero's gender */
+            if (flags.female && strcmp(buf, "faible"))
+                Strcat(buf, "e");
+            if (!strcmp(buf, "weak") || !strcmp(buf, "faible"))
+                Strcat(buf, " à cause d'une faim intense");
+            else if (!strncmp(buf, "faint", 5) /* fainting, fainted */
+                     || !strncmp(buf, "défaillant", strlen("défaillant"))
+                     || !strncmp(buf, "évanoui", strlen("évanoui")))
+                Strcat(buf, " à cause de l'inanition");
+        }
         if (wizard)
             Sprintf(eos(buf), " <%d>", u.uhunger);
         you_are(buf, "");
@@ -1213,34 +1290,36 @@ status_enlightenment(int mode, int final)
         const char *adj = "?_?"; /* (should always get overridden) */
 
         Strcpy(buf, enc_stat[cap]);
-        *buf = lowc(*buf);
+        fr_lowfirst(buf);
+        Strcat(buf, UE);
         switch (cap) {
         case SLT_ENCUMBER:
-            adj = "slightly";
+            adj = "légèrement";
             break; /* burdened */
         case MOD_ENCUMBER:
-            adj = "moderately";
+            adj = "modérément";
             break; /* stressed */
         case HVY_ENCUMBER:
-            adj = "very";
+            adj = "très";
             break; /* strained */
         case EXT_ENCUMBER:
-            adj = "extremely";
+            adj = "extrêmement";
             break; /* overtaxed */
         case OVERLOADED:
-            adj = "not possible";
+            adj = "impossibles";
             break;
         }
         if (wizard)
             Sprintf(eos(buf), " <%d>", inv_weight());
-        Sprintf(eos(buf), "; movement %s %s%s", !final ? "is" : "was", adj,
-                (cap < OVERLOADED) ? " slowed" : "");
+        Sprintf(eos(buf), " ; vos déplacements %s %s%s",
+                !final ? "sont" : "étaient", adj,
+                (cap < OVERLOADED) ? " ralentis" : "");
         you_are(buf, "");
     } else {
         /* last resort entry, guarantees Status section is non-empty
            (no longer needed for that purpose since weapon status added;
            still useful though) */
-        Strcpy(buf, "unencumbered");
+        Sprintf(buf, "non chargé%s", UE);
         if (wizard)
             Sprintf(eos(buf), " <%d>", inv_weight());
         you_are(buf, "");
@@ -1253,15 +1332,15 @@ status_enlightenment(int mode, int final)
         (void) enlght_combatinc("to hit", -gu.urole.spelarmr, final, buf);
         /* if from_what() ever gets extended from wizard mode to normal
            play, it could be adapted to handle this */
-        Sprintf(eos(buf), " due to your %s", suit_simple_name(uarm));
+        Sprintf(eos(buf), " à cause de votre %s", suit_simple_name(uarm));
         you_have(buf, "");
     }
     /* report 'nudity' */
     if (!uarm && !uarmu && !uarmc && !uarms && !uarmg && !uarmf && !uarmh) {
         if (u.uroleplay.nudist)
-            enl_msg(You_, "do", "did", " not wear any armor", "");
+            enl_msg(You_, "ne portez", "ne portiez", " aucune armure", "");
         else
-            you_are("not wearing any armor", "");
+            you_are("sans armure", "");
     }
 }
 
@@ -1280,7 +1359,7 @@ weapon_insight(int final)
     /* two-weaponing implies hands and
        a weapon or wep-tool (not other odd stuff) in each hand */
     } else if (u.twoweap) {
-        you_are("wielding two weapons at once", "");
+        you_are("en train de manier deux armes à la fois", "");
 
     /* report most weapons by their skill class (so a katana will be
        described as a long sword, for instance; mattock, hook, and aklys
@@ -1292,15 +1371,16 @@ weapon_insight(int final)
         if (uwep->otyp == SHIELD_OF_REFLECTION)
             what = shield_simple_name(uwep); /* silver|smooth shield */
         else if (is_wet_towel(uwep))
-            what = /* (uwep->spe < 3) ? "moist towel" : */ "wet towel";
+            what = /* (uwep->spe < 3) ? "moist towel" : */ "serviette mouillée";
 
         if (!strcmpi(what, "armor") || !strcmpi(what, "food")
-            || !strcmpi(what, "venom"))
-            Sprintf(buf, "wielding some %s", what);
+            || !strcmpi(what, "venom") || !strcmpi(what, "armure")
+            || !strcmpi(what, "nourriture") || !strcmpi(what, "venin"))
+            Sprintf(buf, "en train de manier %s", du(what));
         else
             /* [maybe include known blessed?] */
-            Sprintf(buf, "wielding %s",
-                    (uwep->quan == 1L) ? an(what) : makeplural(what));
+            Sprintf(buf, "en train de manier %s",
+                    (uwep->quan == 1L) ? an(what) : an(makeplural(what)));
         you_are(buf, "");
     }
 
@@ -1311,28 +1391,30 @@ weapon_insight(int final)
     if ((wtype = weapon_type(uwep)) != P_NONE && (!uwep || !is_ammo(uwep))) {
         char sklvlbuf[20];
         int sklvl = P_SKILL(wtype);
-        boolean hav = (sklvl != P_UNSKILLED && sklvl != P_SKILLED);
+        /* French: always "Vous avez une compétence de niveau X en Y" */
+        boolean hav = TRUE;
 
         if (sklvl == P_ISRESTRICTED)
-            Strcpy(sklvlbuf, "no");
+            Strcpy(sklvlbuf, "aucun");
         else
             (void) lcase(skill_level_name(wtype, sklvlbuf));
-        /* "you have no/basic/expert/master/grand-master skill with <skill>"
-           or "you are unskilled/skilled in <skill>" */
-        Sprintf(buf, "%s %s %s", sklvlbuf,
-                hav ? "skill with" : "in", skill_name(wtype));
+        if (sklvl == P_ISRESTRICTED)
+            Sprintf(buf, "aucune compétence en %s", skill_name(wtype));
+        else
+            Sprintf(buf, "une compétence de niveau %s en %s", sklvlbuf,
+                    skill_name(wtype));
 
         if (!u.twoweap) {
             if (can_advance(wtype, FALSE))
-                Sprintf(eos(buf), " and %s that",
-                        !final ? "can enhance" : "could have enhanced");
+                Sprintf(eos(buf), " et %s l'améliorer",
+                        !final ? "pouvez" : "auriez pu");
             if (hav)
                 you_have(buf, "");
             else
                 you_are(buf, "");
 
         } else { /* two-weapon */
-            static const char also_[] = "also ";
+            static const char also_[] = "aussi ";
             char pfx[QBUFSZ], sfx[QBUFSZ],
                 sknambuf2[20], sklvlbuf2[20], twobuf[20];
             const char *also = "", *also2 = "", *also3 = (char *) 0,
@@ -1341,7 +1423,7 @@ weapon_insight(int final)
                 sklvl2 = P_SKILL(wtype2),
                 twoskl = P_SKILL(P_TWO_WEAPON_COMBAT);
             boolean a1, a2, ab,
-                    hav2 = (sklvl2 != P_UNSKILLED && sklvl2 != P_SKILLED);
+                    hav2 = TRUE; /* French: always "avez" */
 
             /* normally hero must have access to two-weapon skill in
                order to initiate u.twoweap, but not if polymorphed into
@@ -1352,7 +1434,7 @@ weapon_insight(int final)
                 /* restricted is the same as unskilled as far as bonus
                    or penalty goes, and it isn't ordinarily seen so
                    skill_level_name() returns "Unknown" for it */
-                Strcpy(twobuf, "restricted");
+                Strcpy(twobuf, "restreint");
             } else {
                 (void) lcase(skill_level_name(P_TWO_WEAPON_COMBAT, twobuf));
             }
@@ -1361,25 +1443,26 @@ weapon_insight(int final)
             pfx[0] = sfx[0] = '\0';
             if (twoskl < sklvl) {
                 /* twoskil won't be restricted so sklvl is at least basic */
-                Sprintf(pfx, "Your skill in %s ", skill_name(wtype));
-                Sprintf(sfx, " limited by being %s with two weapons", twobuf);
+                Sprintf(pfx, "Votre compétence en %s ", skill_name(wtype));
+                Sprintf(sfx, " limitée par votre niveau %s à deux armes",
+                        twobuf);
                 also = also_;
             } else if (twoskl > sklvl) {
                 /* sklvl might be restricted */
-                Strcpy(pfx, "Your two weapon skill ");
-                Strcpy(sfx, " limited by ");
+                Strcpy(pfx, "Votre compétence à deux armes ");
+                Strcpy(sfx, " limitée par ");
                 if (sklvl > P_ISRESTRICTED)
-                    Sprintf(eos(sfx), "being %s", sklvlbuf);
+                    Sprintf(eos(sfx), "votre niveau %s", sklvlbuf);
                 else
-                    Sprintf(eos(sfx), "having no skill");
-                Sprintf(eos(sfx), " with %s", skill_name(wtype));
+                    Sprintf(eos(sfx), "votre absence de compétence");
+                Sprintf(eos(sfx), " en %s", skill_name(wtype));
                 also2 = also_;
             } else {
-                Strcat(buf, " and two weapons");
+                Strcat(buf, " et à deux armes");
                 also3 = also_;
             }
             if (*pfx)
-                enl_msg(pfx, "is", "was", sfx, "");
+                enl_msg(pfx, "est", "était", sfx, "");
             else if (hav)
                 you_have(buf, "");
             else
@@ -1390,35 +1473,35 @@ weapon_insight(int final)
             if (wtype2 != wtype) {
                 Strcpy(sknambuf2, skill_name(wtype2));
                 (void) lcase(skill_level_name(wtype2, sklvlbuf2));
-                verb_present = "is", verb_past = "was";
+                verb_present = "est", verb_past = "était";
                 pfx[0] = sfx[0] = buf[0] = '\0';
                 if (twoskl < sklvl2) {
                     /* twoskil is at least unskilled, sklvl2 at least basic */
-                    Sprintf(pfx, "Your skill in %s ", sknambuf2);
-                    Sprintf(sfx, " %slimited by being %s with two weapons",
+                    Sprintf(pfx, "Votre compétence en %s ", sknambuf2);
+                    Sprintf(sfx, " %slimitée par votre niveau %s à deux armes",
                             also, twobuf);
                 } else if (twoskl > sklvl2) {
                     /* sklvl2 might be restricted */
-                    Strcpy(pfx, "Your two weapon skill ");
-                    Sprintf(sfx, " %slimited by ", also2);
+                    Strcpy(pfx, "Votre compétence à deux armes ");
+                    Sprintf(sfx, " %slimitée par ", also2);
                     if (sklvl2 > P_ISRESTRICTED)
-                        Sprintf(eos(sfx), "being %s", sklvlbuf2);
+                        Sprintf(eos(sfx), "votre niveau %s", sklvlbuf2);
                     else
-                        Strcat(eos(sfx), "having no skill");
-                    Sprintf(eos(sfx), " with %s", sknambuf2);
+                        Strcat(eos(sfx), "votre absence de compétence");
+                    Sprintf(eos(sfx), " en %s", sknambuf2);
                 } else {
                     /* equal; two-weapon is at least unskilled, so sklvl2 is
                        too; "you [also] have basic/expert/master/grand-master
                        skill with <skill>" or "you [also] are unskilled/
                        skilled in <skill> */
-                    Sprintf(buf, "%s %s %s", sklvlbuf2,
-                            hav2 ? "skill with" : "in", sknambuf2);
-                    Strcat(buf, " and two weapons");
+                    Sprintf(buf, "une compétence de niveau %s en %s",
+                            sklvlbuf2, sknambuf2);
+                    Strcat(buf, " et à deux armes");
                     if (also3) {
-                        Strcpy(pfx, "You also ");
+                        Strcpy(pfx, "Vous ");
                         Snprintf(sfx, sizeof(sfx), " %s", buf), buf[0] = '\0';
-                        verb_present = hav2 ? "have" : "are";
-                        verb_past = hav2 ? "had" : "were";
+                        verb_present = "avez aussi";
+                        verb_past = "aviez aussi";
                     }
                 }
                 if (*pfx)
@@ -1438,7 +1521,7 @@ weapon_insight(int final)
             a2 = (wtype2 != wtype) ? can_advance(wtype2, FALSE) : FALSE;
             ab = can_advance(P_TWO_WEAPON_COMBAT, FALSE);
             if (a1 || a2 || ab) {
-                static const char also_wik_[] = " and also with ";
+                static const char also_wik_[] = " et aussi en ";
 
                 /* for just one, the conditionals yield
                    1) "skill with <that one>"; for more than one:
@@ -1449,16 +1532,17 @@ weapon_insight(int final)
                    (no 'also's or extra 'with's for case 5); when primary
                    and secondary use the same skill, only cases 1 and 3 are
                    possible because 'a2' gets forced to False above */
-                Sprintf(sfx, " skill%s with %s%s%s%s%s",
+                Sprintf(sfx, " vos compétence%s en %s%s%s%s%s",
                         ((int) a1 + (int) a2 + (int) ab > 1) ? "s" : "",
                         a1 ? skill_name(wtype) : "",
                         ((a1 && a2 && ab) ? ", "
                          : (a1 && (a2 || ab)) ? also_wik_ : ""),
                         a2 ? skill_name(wtype2) : "",
-                        ((a1 && a2 && ab) ? ", and "
+                        ((a1 && a2 && ab) ? " et "
                          : (a2 && ab) ? also_wik_ : ""),
-                        ab ? "two weapons" : "");
-                enl_msg(You_, "can enhance", "could have enhanced", sfx, "");
+                        ab ? "combat à deux armes" : "");
+                enl_msg(You_, "pouvez améliorer", "auriez pu améliorer", sfx,
+                        "");
             }
         } /* two-weapon */
     } /* skill applies */
@@ -1475,9 +1559,9 @@ item_resistance_message(
     if (protection) {
         boolean somewhat = protection < 99;
 
-        enl_msg("Your items ",
-                somewhat ? "are somewhat" : "are",
-                somewhat ? "were somewhat" : "were",
+        enl_msg("Vos objets ",
+                somewhat ? "sont quelque peu" : "sont",
+                somewhat ? "étaient quelque peu" : "étaient",
                 prot_message, item_what(adtyp));
     }
 }
@@ -1489,7 +1573,7 @@ attributes_enlightenment(
     int final)
 {
     static NEARDATA const char
-        if_surroundings_permitted[] = " if surroundings permitted";
+        if_surroundings_permitted[] = " si l'environnement le permettait";
     int ltmp, armpro, warnspecies;
     char buf[BUFSZ];
 
@@ -1497,16 +1581,16 @@ attributes_enlightenment(
      *  Attributes
     \*/
     enlght_out("");
-    enlght_out(final ? "Final Attributes:" : "Attributes:");
+    enlght_out(final ? "Attributs finaux :" : "Attributs :");
 
     if (u.uevent.uhand_of_elbereth) {
-        static const char *const hofe_titles[3] = { "the Hand of Elbereth",
-                                                    "the Envoy of Balance",
-                                                    "the Glory of Arioch" };
+        static const char *const hofe_titles[3] = { "la Main d'Elbereth",
+                                                    "l'Envoyé de l'Équilibre",
+                                                    "la Gloire d'Arioch" };
         you_are(hofe_titles[u.uevent.uhand_of_elbereth - 1], "");
     }
 
-    Sprintf(buf, "%s", piousness(TRUE, "aligned"));
+    Sprintf(buf, "%s", piousness(TRUE, flags.female ? "alignée" : "aligné"));
     if (u.ualign.record >= 0)
         you_are(buf, "");
     else
@@ -1514,114 +1598,141 @@ attributes_enlightenment(
 
     if (wizard) {
         Sprintf(buf, " %d", u.ualign.record);
-        enl_msg("Your alignment ", "is", "was", buf, "");
+        enl_msg("Votre alignement ", "est de", "était de", buf, "");
     }
 
     /*** Resistances to troubles ***/
     if (Invulnerable)
-        you_are("invulnerable", from_what(INVULNERABLE));
-    if (Antimagic)
-        you_are("magic-protected", from_what(ANTIMAGIC));
-    if (Fire_resistance)
-        you_are("fire resistant", from_what(FIRE_RES));
-    item_resistance_message(AD_FIRE, " protected from fire", final);
-    if (Cold_resistance)
-        you_are("cold resistant", from_what(COLD_RES));
-    item_resistance_message(AD_COLD, " protected from cold", final);
-    if (Sleep_resistance)
-        you_are("sleep resistant", from_what(SLEEP_RES));
-    if (Disint_resistance)
-        you_are("disintegration resistant", from_what(DISINT_RES));
-    item_resistance_message(AD_DISN, " protected from disintegration", final);
-    if (Shock_resistance)
-        you_are("shock resistant", from_what(SHOCK_RES));
-    item_resistance_message(AD_ELEC, " protected from electric shocks",
+        you_are("invulnérable", from_what(INVULNERABLE));
+    if (Antimagic) {
+        Sprintf(buf, "protégé%s contre la magie", UE);
+        you_are(buf, from_what(ANTIMAGIC));
+    }
+    if (Fire_resistance) {
+        Sprintf(buf, "résistant%s au feu", UE);
+        you_are(buf, from_what(FIRE_RES));
+    }
+    item_resistance_message(AD_FIRE, " protégés du feu", final);
+    if (Cold_resistance) {
+        Sprintf(buf, "résistant%s au froid", UE);
+        you_are(buf, from_what(COLD_RES));
+    }
+    item_resistance_message(AD_COLD, " protégés du froid", final);
+    if (Sleep_resistance) {
+        Sprintf(buf, "résistant%s au sommeil", UE);
+        you_are(buf, from_what(SLEEP_RES));
+    }
+    if (Disint_resistance) {
+        Sprintf(buf, "résistant%s à la désintégration", UE);
+        you_are(buf, from_what(DISINT_RES));
+    }
+    item_resistance_message(AD_DISN, " protégés de la désintégration", final);
+    if (Shock_resistance) {
+        Sprintf(buf, "résistant%s aux décharges électriques", UE);
+        you_are(buf, from_what(SHOCK_RES));
+    }
+    item_resistance_message(AD_ELEC, " protégés des décharges électriques",
                             final);
-    if (Poison_resistance)
-        you_are("poison resistant", from_what(POISON_RES));
+    if (Poison_resistance) {
+        Sprintf(buf, "résistant%s au poison", UE);
+        you_are(buf, from_what(POISON_RES));
+    }
     if (Acid_resistance) {
-        Sprintf(buf, "%.20s%.30s",
-                temp_resist(ACID_RES) ? "temporarily " : "",
-                "acid resistant");
+        Sprintf(buf, "%s%s à l'acide",
+                temp_resist(ACID_RES) ? "temporairement " : "",
+                flags.female ? "résistante" : "résistant");
         you_are(buf, from_what(ACID_RES));
     }
-    item_resistance_message(AD_ACID, " protected from acid", final);
-    if (Drain_resistance)
-        you_are("level-drain resistant", from_what(DRAIN_RES));
-    if (Sick_resistance)
-        you_are("immune to sickness", from_what(SICK_RES));
+    item_resistance_message(AD_ACID, " protégés de l'acide", final);
+    if (Drain_resistance) {
+        Sprintf(buf, "résistant%s à la perte de niveau", UE);
+        you_are(buf, from_what(DRAIN_RES));
+    }
+    if (Sick_resistance) {
+        Sprintf(buf, "immunisé%s contre les maladies", UE);
+        you_are(buf, from_what(SICK_RES));
+    }
     if (Stone_resistance) {
-        Sprintf(buf, "%.20s%.30s",
-                temp_resist(STONE_RES) ? "temporarily " : "",
-                "petrification resistant");
+        Sprintf(buf, "%s%s à la pétrification",
+                temp_resist(STONE_RES) ? "temporairement " : "",
+                flags.female ? "résistante" : "résistant");
         you_are(buf, from_what(STONE_RES));
     }
     if (Halluc_resistance)
-        enl_msg(You_, "resist", "resisted", " hallucinations",
+        enl_msg(You_, "résistez", "résistiez", " aux hallucinations",
                 from_what(HALLUC_RES));
     if (u.uedibility)
-        you_can("recognize detrimental food", "");
+        you_can("reconnaître la nourriture nocive", "");
 
     /*** Vision and senses ***/
     if ((HBlinded || EBlinded) && BBlinded) /* blind w/ blindness blocked */
-        you_can("see", from_what(-BLINDED)); /* Eyes of the Overworld */
+        you_can("voir", from_what(-BLINDED)); /* Eyes of the Overworld */
     if (Blnd_resist && !Blind) /* skip if no eyes or blindfolded */
-        you_are("not subject to light-induced blindness",
+        you_are("insensible à l'aveuglement par la lumière",
                 from_what(BLND_RES));
     if (See_invisible) {
         if (!Blind)
-            enl_msg(You_, "see", "saw", " invisible", from_what(SEE_INVIS));
+            enl_msg(You_, "voyez", "voyiez", " l'invisible",
+                    from_what(SEE_INVIS));
         else if (!PermaBlind)
-            enl_msg(You_, "will see", "would have seen",
-                    " invisible when not blind", "");
+            enl_msg(You_, "verrez", "auriez vu",
+                    " l'invisible une fois la vue recouvrée", "");
         else
-            enl_msg(You_, "would see", "would have seen",
-                    " invisible if not blind", "");
+            enl_msg(You_, "verriez", "auriez vu",
+                    " l'invisible si vous n'étiez pas aveugle", "");
     }
     if (Blind_telepat)
-        you_are("telepathic", from_what(TELEPAT));
-    if (Warning)
-        you_are("warned", from_what(WARNING));
+        you_are("télépathe", from_what(TELEPAT));
+    if (Warning) {
+        Sprintf(buf, "averti%s du danger", UE);
+        you_are(buf, from_what(WARNING));
+    }
     if (Warn_of_mon && svc.context.warntype.obj) {
-        Sprintf(buf, "aware of the presence of %s",
-                (svc.context.warntype.obj & M2_ORC) ? "orcs"
-                : (svc.context.warntype.obj & M2_ELF) ? "elves"
-                  : (svc.context.warntype.obj & M2_DEMON) ? "demons"
-                    : something);
+        Sprintf(buf, "conscient%s de la présence %s", UE,
+                (svc.context.warntype.obj & M2_ORC) ? "des orques"
+                : (svc.context.warntype.obj & M2_ELF) ? "des elfes"
+                  : (svc.context.warntype.obj & M2_DEMON) ? "des démons"
+                    : du(something));
         you_are(buf, from_what(WARN_OF_MON));
     }
     if (Warn_of_mon && svc.context.warntype.polyd) {
-        Sprintf(buf, "aware of the presence of %s",
+        Sprintf(buf, "conscient%s de la présence %s", UE,
                 ((svc.context.warntype.polyd & (M2_HUMAN | M2_ELF))
-                 == (M2_HUMAN | M2_ELF)) ? "humans and elves"
-                    : (svc.context.warntype.polyd & M2_HUMAN) ? "humans"
-                      : (svc.context.warntype.polyd & M2_ELF) ? "elves"
-                        : (svc.context.warntype.polyd & M2_ORC) ? "orcs"
-                          : (svc.context.warntype.polyd & M2_DEMON) ? "demons"
-                            : "certain monsters");
+                 == (M2_HUMAN | M2_ELF)) ? "des humains et des elfes"
+                    : (svc.context.warntype.polyd & M2_HUMAN) ? "des humains"
+                      : (svc.context.warntype.polyd & M2_ELF) ? "des elfes"
+                        : (svc.context.warntype.polyd & M2_ORC) ? "des orques"
+                          : (svc.context.warntype.polyd & M2_DEMON)
+                            ? "des démons"
+                            : "de certains monstres");
         you_are(buf, "");
     }
     warnspecies =  svc.context.warntype.speciesidx;
     if (Warn_of_mon && ismnum(warnspecies)) {
-        Sprintf(buf, "aware of the presence of %s",
-                makeplural(mons[warnspecies].pmnames[NEUTRAL]));
+        Sprintf(buf, "conscient%s de la présence %s", UE,
+                du(the(makeplural(mons[warnspecies].pmnames[NEUTRAL]))));
         you_are(buf, from_what(WARN_OF_MON));
     }
     if (Undead_warning)
-        you_are("warned of undead", from_what(WARN_UNDEAD));
+    {
+        Sprintf(buf, "averti%s de la présence des morts-vivants", UE);
+        you_are(buf, from_what(WARN_UNDEAD));
+    }
     if (Searching)
-        you_have("automatic searching", from_what(SEARCHING));
+        you_have("la fouille automatique", from_what(SEARCHING));
     if (Clairvoyant) {
-        you_are("clairvoyant", from_what(CLAIRVOYANT));
+        you_are(flags.female ? "clairvoyante" : "clairvoyant",
+                from_what(CLAIRVOYANT));
     } else if ((HClairvoyant || EClairvoyant) && BClairvoyant) {
         Strcpy(buf, from_what(-CLAIRVOYANT));
-        (void) strsubst(buf, " because of ", " if not for ");
-        enl_msg(You_, "could be", "could have been", " clairvoyant", buf);
+        (void) strsubst(buf, " à cause de ", " sans ");
+        enl_msg(You_, "pourriez être", "auriez pu être",
+                flags.female ? " clairvoyante" : " clairvoyant", buf);
     }
     if (Infravision)
-        you_have("infravision", from_what(INFRAVISION));
+        you_have("l'infravision", from_what(INFRAVISION));
     if (Detect_monsters) {
-        Strcpy(buf, "sensing the presence of monsters");
+        Strcpy(buf, "en train de percevoir la présence des monstres");
         if (wizard) {
             long detectmon_timeout = (HDetect_monsters & TIMEOUT);
 
@@ -1631,14 +1742,14 @@ attributes_enlightenment(
         you_are(buf, "");
     }
     if (u.umconf) { /* 'u.umconf' is a counter rather than a timeout */
-        Strcpy(buf, " monsters when hitting them");
+        Strcpy(buf, " les monstres en les frappant");
         if (wizard && !final) {
             if (u.umconf == 1)
-                Strcat(buf, " (next hit only)");
+                Strcat(buf, " (prochain coup seulement)");
             else /* u.umconf > 1 */
-                Sprintf(eos(buf), " (next %u hits)", u.umconf);
+                Sprintf(eos(buf), " (%u prochains coups)", u.umconf);
         }
-        enl_msg(You_, "will confuse", "would have confused", buf, "");
+        enl_msg(You_, "désorienterez", "auriez désorienté", buf, "");
     }
 
     /*** Appearance and behavior ***/
@@ -1652,40 +1763,45 @@ attributes_enlightenment(
         /* the sum might be 0 (+0 ring or two which negate each other);
            that yields "you are charismatic" (which isn't pointless
            because it potentially impacts seduction attacks) */
-        Sprintf(buf, "%scharismatic",
-                (adorn > 0) ? "more " : (adorn < 0) ? "less " : "");
+        Sprintf(buf, "%scharismatique",
+                (adorn > 0) ? "plus " : (adorn < 0) ? "moins " : "");
         you_are(buf, from_what(ADORNED));
     }
     if (Invisible)
         you_are("invisible", from_what(INVIS));
     else if (Invis)
-        you_are("invisible to others", from_what(INVIS));
+        you_are("invisible aux yeux des autres", from_what(INVIS));
     /* ordinarily "visible" is redundant; this is a special case for
        the situation when invisibility would be an expected attribute */
     else if ((HInvis || EInvis) && BInvis)
         you_are("visible", from_what(-INVIS));
-    if (Displaced)
-        you_are("displaced", from_what(DISPLACED));
+    if (Displaced) {
+        Sprintf(buf, "déplacé%s", UE);
+        you_are(buf, from_what(DISPLACED));
+    }
     if (Stealth) {
-        you_are("stealthy", from_what(STEALTH));
+        you_are(flags.female ? "furtive" : "furtif", from_what(STEALTH));
     } else if (BStealth && (HStealth || EStealth)) {
-        Sprintf(buf, " stealthy%s",
-                (BStealth == FROMOUTSIDE) ? " if not mounted" : "");
-        enl_msg(You_, "would be", "would have been", buf, "");
+        Sprintf(buf, " %s%s", flags.female ? "furtive" : "furtif",
+                (BStealth == FROMOUTSIDE) ? " si vous n'étiez pas en selle"
+                                          : "");
+        enl_msg(You_, "seriez", "auriez été", buf, "");
     }
     if (Aggravate_monster)
-        enl_msg("You aggravate", "", "d", " monsters",
+        enl_msg("Vous ", "irritez", "irritiez", " les monstres",
                 from_what(AGGRAVATE_MONSTER));
     if (Conflict)
-        enl_msg("You cause", "", "d", " conflict", from_what(CONFLICT));
+        enl_msg("Vous ", "provoquez", "provoquiez", " des conflits",
+                from_what(CONFLICT));
 
     /*** Transportation ***/
     if (Jumping)
-        you_can("jump", from_what(JUMPING));
+        you_can("sauter", from_what(JUMPING));
     if (Teleportation)
-        you_can("teleport", from_what(TELEPORT));
+        you_can("vous téléporter", from_what(TELEPORT));
     if (Teleport_control)
-        you_have("teleport control", from_what(TELEPORT_CONTROL));
+        you_have("le contrôle de la téléportation",
+                 from_what(TELEPORT_CONTROL));
     /* actively levitating handled earlier as a status condition */
     if (BLevitation) { /* levitation is blocked */
         long save_BLev = BLevitation;
@@ -1699,10 +1815,11 @@ attributes_enlightenment(
                     terrain = (save_BLev & FROMOUTSIDE) != 0L;
 
             Sprintf(buf, "%s%s%s",
-                    trapped ? " if not trapped" : "",
-                    (trapped && terrain) ? " and" : "",
-                    terrain ? if_surroundings_permitted : "");
-            enl_msg(You_, "would levitate", "would have levitated", buf, "");
+                    trapped ? " si vous n'étiez pas piégé" : "",
+                    (trapped && flags.female) ? "e" : "",
+                    terrain ? (trapped ? " et si l'environnement le permettait"
+                                       : if_surroundings_permitted) : "");
+            enl_msg(You_, "léviteriez", "auriez lévité", buf, "");
         }
         BLevitation = save_BLev;
     }
@@ -1712,24 +1829,25 @@ attributes_enlightenment(
 
         BFlying = 0L;
         if (Flying) {
-            enl_msg(You_, "would fly", "would have flown",
+            enl_msg(You_, "voleriez", "auriez volé",
                     /* wording quibble: for past tense, "hadn't been"
                        would sound better than "weren't" (and
                        "had permitted" better than "permitted"), but
                        "weren't" and "permitted" are adequate so the
                        extra complexity to handle that isn't worth it */
                     Levitation
-                       ? " if you weren't levitating"
+                       ? " si vous n'étiez pas en lévitation"
                        : (save_BFly == I_SPECIAL)
                           /* this is an oversimplification; being trapped
                              might also be blocking levitation so flight
                              would still be blocked after escaping trap */
-                          ? " if you weren't trapped"
+                          ? (flags.female ? " si vous n'étiez pas piégée"
+                                          : " si vous n'étiez pas piégé")
                           : (save_BFly == FROMOUTSIDE)
                              ? if_surroundings_permitted
                              /* two or more of levitation, surroundings,
                                 and being trapped in the floor */
-                             : " if circumstances permitted",
+                             : " si les circonstances le permettaient",
                     "");
         }
         BFlying = save_BFly;
@@ -1740,44 +1858,47 @@ attributes_enlightenment(
         boolean has_lid = has_ceiling(&u.uz);
 
         if (has_lid && !u.uinwater) {
-            you_can("cling to the ceiling", "");
+            you_can("vous accrocher au plafond", "");
         } else {
-            Sprintf(buf, " to the ceiling if %s%s%s",
-                    !has_lid ? "there was one" : "",
-                    (!has_lid && u.uinwater) ? " and " : "",
-                    u.uinwater ? (Underwater ? "you weren't underwater"
-                                  : "you weren't in the water") : "");
+            Sprintf(buf, " au plafond %s%s%s",
+                    !has_lid ? "s'il y en avait un" : "",
+                    (!has_lid && u.uinwater) ? " et " : "",
+                    u.uinwater ? (Underwater ? "si vous n'étiez pas sous l'eau"
+                                  : "si vous n'étiez pas dans l'eau") : "");
             /* past tense is applicable for death while Unchanging */
-            enl_msg(You_, "could cling", "could have clung", buf, "");
+            enl_msg(You_, "pourriez vous accrocher",
+                    "auriez pu vous accrocher", buf, "");
         }
     }
     /* actively walking on water handled earlier as a status condition */
     if (Wwalking && !walking_on_water())
-        you_can("walk on water", from_what(WWALKING));
+        you_can("marcher sur l'eau", from_what(WWALKING));
     /* actively swimming (in water but not under it) handled earlier */
     if (Swimming && (Underwater || !u.uinwater))
-        you_can("swim", from_what(SWIMMING));
+        you_can("nager", from_what(SWIMMING));
     if (Breathless)
-        you_can("survive without air", from_what(MAGICAL_BREATHING));
+        you_can("survivre sans air", from_what(MAGICAL_BREATHING));
     else if (Amphibious)
-        you_can("breathe water", from_what(MAGICAL_BREATHING));
+        you_can("respirer sous l'eau", from_what(MAGICAL_BREATHING));
     if (Passes_walls)
-        you_can("walk through walls", from_what(PASSES_WALLS));
+        you_can("traverser les murs", from_what(PASSES_WALLS));
 
     /*** Physical attributes ***/
     if (Regeneration)
-        enl_msg("You regenerate", "", "d", "", from_what(REGENERATION));
+        enl_msg("Vous ", "régénérez", "régénériez", "",
+                from_what(REGENERATION));
     if (Slow_digestion)
-        you_have("slower digestion", from_what(SLOW_DIGESTION));
+        you_have("une digestion ralentie", from_what(SLOW_DIGESTION));
     if (u.uhitinc) {
         (void) enlght_combatinc("to hit", u.uhitinc, final, buf);
         if (iflags.tux_penalty && !Upolyd)
-            Sprintf(eos(buf), " %s your suit's penalty",
-                    (u.uhitinc < 0) ? "increasing"
+            Sprintf(eos(buf), " %s la pénalité de votre costume",
+                    (u.uhitinc < 0) ? "aggravant"
                     : (u.uhitinc < 4 * gu.urole.spelarmr / 5)
-                      ? "partly offsetting"
-                      : (u.uhitinc < gu.urole.spelarmr) ? "nearly offsetting"
-                        : "overcoming");
+                      ? "compensant en partie"
+                      : (u.uhitinc < gu.urole.spelarmr)
+                        ? "compensant presque"
+                        : "surmontant");
         you_have(buf, "");
     }
     if (u.udaminc)
@@ -1800,19 +1921,21 @@ attributes_enlightenment(
     if ((armpro = magic_negation(&gy.youmonst)) > 0) {
         /* magic cancellation factor, conferred by worn armor */
         static const char *const mc_types[] = {
-            "" /*ordinary*/, "warded", "guarded", "protected",
+            "" /*ordinary*/, "préservé", "gardé", "protégé",
         };
         /* sanity check */
         if (armpro >= SIZE(mc_types))
             armpro = SIZE(mc_types) - 1;
-        you_are(mc_types[armpro], "");
+        Sprintf(buf, "%s%s", mc_types[armpro], UE);
+        you_are(buf, "");
     }
     if (Half_physical_damage)
         enlght_halfdmg(HALF_PHDAM, final);
     if (Half_spell_damage)
         enlght_halfdmg(HALF_SPDAM, final);
     if (Half_gas_damage)
-        enl_msg(You_, "take", "took", " reduced poison gas damage", "");
+        enl_msg(You_, "subissez", "subissiez",
+                " des dégâts réduits des gaz toxiques", "");
     if (spellid(0) > NO_SPELL) { /* skip if no spells are known yet */
         /* greatly simplified edition of percent_success(spell.c)--may need
            to be suppressed if oversimplification leads to player confusion */
@@ -1822,40 +1945,44 @@ attributes_enlightenment(
 
         *cast_adj = '\0';
         if (suit) /* omit "wearing" to shorten the text */
-            Sprintf(cast_adj, " impaired by metallic armor%s",
-                    robe ? ", mitigated by your robe" : "");
+            Sprintf(cast_adj, " gênée par une armure métallique%s",
+                    robe ? ", atténuée par votre robe" : "");
         else if (robe)
-            Strcpy(cast_adj, " enhanced by wearing a robe");
+            Strcpy(cast_adj, " améliorée par le port d'une robe");
 
         if (*cast_adj)
-            enl_msg("Your spell casting ", "is", "was", cast_adj, "");
+            enl_msg("Votre incantation ", "est", "était", cast_adj, "");
     }
     /* polymorph and other shape change */
     if (Protection_from_shape_changers)
-        you_are("protected from shape changers",
+        you_are(flags.female ? "protégée des métamorphes"
+                             : "protégé des métamorphes",
                 from_what(PROT_FROM_SHAPE_CHANGERS));
     if (Unchanging) {
         const char *what = 0;
 
         if (!Upolyd) /* Upolyd handled below after current form */
-            you_can("not change from your current form",
-                    from_what(UNCHANGING));
+            enl_msg(You_, "ne pouvez pas", "ne pouviez pas",
+                    " quitter votre forme actuelle", from_what(UNCHANGING));
         /* blocked shape changes */
         if (Polymorph)
-            what = !final ? "polymorph" : "have polymorphed";
+            what = !final ? "vous métamorphoseriez" : "vous seriez métamorphosé";
         else if (ismnum(u.ulycn))
-            what = !final ? "change shape" : "have changed shape";
+            what = !final ? "changeriez de forme" : "auriez changé de forme";
         if (what) {
-            Sprintf(buf, "would %s periodically", what);
+            Sprintf(buf, "%s%s périodiquement", what,
+                    (Polymorph && final) ? UE : "");
             /* omit from_what(UNCHANGING); too verbose */
-            enl_msg(You_, buf, buf, " if not locked into your current form",
+            enl_msg(You_, buf, buf,
+                    " si vous n'étiez pas bloqué dans votre forme actuelle",
                     "");
         }
     } else if (Polymorph) {
-        you_are("polymorphing periodically", from_what(POLYMORPH));
+        you_are("sujet à des métamorphoses périodiques", from_what(POLYMORPH));
     }
     if (Polymorph_control)
-        you_have("polymorph control", from_what(POLYMORPH_CONTROL));
+        you_have("le contrôle des métamorphoses",
+                 from_what(POLYMORPH_CONTROL));
     if (Upolyd && u.umonnum != u.ulycn
         /* if we've died from turning into slime, we're polymorphed
            right now but don't want to list it as a temporary attribute
@@ -1864,76 +1991,83 @@ attributes_enlightenment(
              && u.umonnum == PM_GREEN_SLIME && !Unchanging)) {
         /* foreign shape (except were-form which is handled below) */
         if (!vampshifted(&gy.youmonst))
-            Sprintf(buf, "polymorphed into %s",
+            Sprintf(buf, "métamorphosé%s en %s", UE,
                     an(pmname(gy.youmonst.data,
                               flags.female ? FEMALE : MALE)));
         else
-            Sprintf(buf, "polymorphed into %s in %s form",
+            Sprintf(buf, "métamorphosé%s en %s sous forme %s", UE,
                     an(pmname(&mons[gy.youmonst.cham],
                               flags.female ? FEMALE : MALE)),
-                    pmname(gy.youmonst.data, flags.female ? FEMALE : MALE));
+                    de(pmname(gy.youmonst.data,
+                              flags.female ? FEMALE : MALE)));
         if (wizard)
             Sprintf(eos(buf), " (%d)", u.mtimedone);
         you_are(buf, "");
     }
     if (lays_eggs(gy.youmonst.data) && flags.female) /* Upolyd */
-        you_can("lay eggs", "");
+        you_can("pondre des œufs", "");
     if (ismnum(u.ulycn)) {
         /* "you are a werecreature [in beast form]" */
         Strcpy(buf, an(pmname(&mons[u.ulycn],
                flags.female ? FEMALE : MALE)));
         if (u.umonnum == u.ulycn) {
-            Strcat(buf, " in beast form");
+            Strcat(buf, " sous forme bestiale");
             if (wizard)
                 Sprintf(eos(buf), " (%d)", u.mtimedone);
         }
         you_are(buf, "");
     }
     if (Unchanging && Upolyd) /* !Upolyd handled above */
-        you_can("not change from your current form", from_what(UNCHANGING));
-    if (Hate_silver)
-        you_are("harmed by silver", "");
+        enl_msg(You_, "ne pouvez pas", "ne pouviez pas",
+                " quitter votre forme actuelle", from_what(UNCHANGING));
+    if (Hate_silver) {
+        Sprintf(buf, "vulnérable à l'argent");
+        you_are(buf, "");
+    }
     /* movement and non-armor-based protection */
     if (Fast)
-        you_are(Very_fast ? "very fast" : "fast", from_what(FAST));
+        you_are(Very_fast ? "très rapide" : "rapide", from_what(FAST));
     if (Reflecting)
-        you_have("reflection", from_what(REFLECTING));
+        you_have("la réflexion", from_what(REFLECTING));
     if (Free_action)
-        you_have("free action", from_what(FREE_ACTION));
+        you_have("la liberté d'action", from_what(FREE_ACTION));
     if (Fixed_abil)
-        you_have("fixed abilities", from_what(FIXED_ABIL));
+        you_have("des caractéristiques fixes", from_what(FIXED_ABIL));
     if (Lifesaved)
-        enl_msg("Your life ", "will be", "would have been", " saved", "");
+        enl_msg("Votre vie ", "sera", "aurait été", " sauvée", "");
 
     /*** Miscellany ***/
     if (Luck) {
         ltmp = abs((int) Luck);
-        Sprintf(buf, "%s%slucky",
-                ltmp >= 10 ? "extremely " : ltmp >= 5 ? "very " : "",
-                Luck < 0 ? "un" : "");
+        Sprintf(buf, "%s%s",
+                ltmp >= 10 ? "extrêmement " : ltmp >= 5 ? "très " : "",
+                Luck < 0 ? "malchanceu" : "chanceu");
+        Strcat(buf, flags.female ? "se" : "x");
         if (wizard)
             Sprintf(eos(buf), " (%d)", Luck);
         you_are(buf, "");
     } else if (wizard)
-        enl_msg("Your luck ", "is", "was", " zero", "");
+        enl_msg("Votre chance ", "est", "était", " nulle", "");
     if (u.moreluck > 0)
-        you_have("extra luck", "");
+        you_have("un surcroît de chance", "");
     else if (u.moreluck < 0)
-        you_have("reduced luck", "");
+        you_have("une chance réduite", "");
     if (carrying(LUCKSTONE) || stone_luck(TRUE)) {
         ltmp = stone_luck(FALSE);
         if (ltmp <= 0)
-            enl_msg("Bad luck ", "does", "did", " not time out for you", "");
+            enl_msg("Votre malchance ", "ne s'estompe", "ne s'estompait",
+                    " pas avec le temps", "");
         if (ltmp >= 0)
-            enl_msg("Good luck ", "does", "did", " not time out for you", "");
+            enl_msg("Votre chance ", "ne s'estompe", "ne s'estompait",
+                    " pas avec le temps", "");
     }
 
     if (u.ugangr) {
-        Sprintf(buf, " %sangry with you",
-                u.ugangr > 6 ? "extremely " : u.ugangr > 3 ? "very " : "");
+        Sprintf(buf, " %sen colère contre vous",
+                u.ugangr > 6 ? "extrêmement " : u.ugangr > 3 ? "très " : "");
         if (wizard)
             Sprintf(eos(buf), " (%d)", u.ugangr);
-        enl_msg(u_gname(), " is", " was", buf, "");
+        enl_msg(u_gname(), " est", " était", buf, "");
     } else {
         /*
          * We need to suppress this when the game is over, because death
@@ -1946,11 +2080,14 @@ attributes_enlightenment(
             Sprintf(buf, "%s%ssafely pray%s", can_pray(FALSE) ? "" : "not ",
                     final ? "have " : "", final ? "ed" : "");
 #else
-            Sprintf(buf, "%ssafely pray", can_pray(FALSE) ? "" : "not ");
+            Sprintf(buf, "prier sans danger");
 #endif
             if (wizard)
                 Sprintf(eos(buf), " (%d)", u.ublesscnt);
-            you_can(buf, "");
+            if (can_pray(FALSE))
+                you_can(buf, "");
+            else
+                enl_msg(You_, "ne pouvez pas ", "ne pouviez pas ", buf, "");
         }
     }
 
@@ -1978,14 +2115,19 @@ attributes_enlightenment(
         const char *p;
 
         buf[0] = '\0';
+        char killedbuf[QBUFSZ], pbuf[QBUFSZ];
+
+        Sprintf(killedbuf, "avez été tué%s ", UE);
         if (final < 2) { /* still in progress, or quit/escaped/ascended */
-            p = "survived after being killed ";
+            Sprintf(pbuf, "avez survécu après avoir été tué%s ", UE);
+            p = pbuf;
             if (!u.umortality)
-                p = !final ? (char *) 0 : "survived";
+                p = !final ? (char *) 0 : "avez survécu";
             else
                 (void) N_times((long) u.umortality, buf);
         } else { /* game ended in character's death */
-            p = "are dead";
+            Sprintf(pbuf, "êtes mort%s", UE);
+            p = pbuf;
             switch (u.umortality) {
             case 0:
                 impossible("dead without dying?");
@@ -1994,13 +2136,13 @@ attributes_enlightenment(
             case 1:
                 break; /* just "are dead" */
             default:
-                Sprintf(buf, " (%d%s time!)", u.umortality,
+                Sprintf(buf, " (pour la %d%s fois !)", u.umortality,
                         ordin(u.umortality));
                 break;
             }
         }
         if (p)
-            enl_msg(You_, "have been killed ", p, buf, "");
+            enl_msg(You_, killedbuf, p, buf, "");
     }
 }
 
@@ -2024,18 +2166,18 @@ youhiding(boolean via_enlghtmt, /* enlightenment line vs topl message */
 {
     char *bp, buf[BUFSZ];
 
-    Strcpy(buf, "hiding");
+    Sprintf(buf, "caché%s", UE);
     if (U_AP_TYPE != M_AP_NOTHING) {
         /* mimic; hero is only able to mimic a strange object or gold
            or hallucinatory alternative to gold, so we skip the details
            for the hypothetical furniture and monster cases */
-        bp = eos(strcpy(buf, "mimicking"));
+        bp = eos(strcpy(buf, "en train d'imiter"));
         if (U_AP_TYPE == M_AP_OBJECT) {
             Sprintf(bp, " %s", an(simple_typename(gy.youmonst.mappearance)));
         } else if (U_AP_TYPE == M_AP_FURNITURE) {
-            Strcpy(bp, " something");
+            Strcpy(bp, " quelque chose");
         } else if (U_AP_TYPE == M_AP_MONSTER) {
-            Strcpy(bp, " someone");
+            Strcpy(bp, " quelqu'un");
         } else {
             ; /* something unexpected; leave 'buf' as-is */
         }
@@ -2043,24 +2185,24 @@ youhiding(boolean via_enlghtmt, /* enlightenment line vs topl message */
         bp = eos(buf); /* points past "hiding" */
         if (gy.youmonst.data->mlet == S_EEL) {
             if (is_pool(u.ux, u.uy))
-                Sprintf(bp, " in the %s", waterbody_name(u.ux, u.uy));
+                Sprintf(bp, " dans %s", the(waterbody_name(u.ux, u.uy)));
         } else if (hides_under(gy.youmonst.data)) {
             struct obj *o = svl.level.objects[u.ux][u.uy];
 
             if (o)
-                Sprintf(bp, " underneath %s", ansimpleoname(o));
+                Sprintf(bp, " sous %s", ansimpleoname(o));
         } else if (is_clinger(gy.youmonst.data) || Flying) {
             /* Flying: 'lurker above' hides on ceiling but doesn't cling */
-            Sprintf(bp, " on the %s", ceiling(u.ux, u.uy));
+            Sprintf(bp, " %s", au(ceiling(u.ux, u.uy)));
         } else {
             /* on floor; is_hider() but otherwise not special: 'trapper' */
             if (u.utrap && u.utraptype == TT_PIT) {
                 struct trap *t = t_at(u.ux, u.uy);
 
-                Sprintf(bp, " in a %spit",
-                        (t && t->ttyp == SPIKED_PIT) ? "spiked " : "");
+                Sprintf(bp, " dans une fosse%s",
+                        (t && t->ttyp == SPIKED_PIT) ? " à pointes" : "");
             } else
-                Sprintf(bp, " on the %s", surface(u.ux, u.uy));
+                Sprintf(bp, " sur %s", the(surface(u.ux, u.uy)));
         }
     } else {
         ; /* shouldn't happen; will result in generic "you are hiding" */
@@ -2072,7 +2214,7 @@ youhiding(boolean via_enlghtmt, /* enlightenment line vs topl message */
         you_are(buf, "");
     } else {
         /* for dohide(), when player uses '#monster' command */
-        You("are %s %s.", msgflag ? "already" : "now", buf);
+        You("êtes %s %s.", msgflag ? "déjà" : "maintenant", buf);
     }
 }
 
@@ -2093,98 +2235,97 @@ show_conduct(int final)
 
     /* Create the conduct window */
     ge.en_win = create_nhwindow(NHW_MENU);
-    putstr(ge.en_win, 0, "Voluntary challenges:");
+    putstr(ge.en_win, 0, "Défis volontaires :");
 
     /* rerolling; "You <this or that>" is about the character, rerolling
        is about the player so phrase it differently;
        also, always use past tense since the chance to do something with it
        is gone by time player can issue #conduct command or see disclosure */
     if (!u.uroleplay.reroll)
-        Strcpy(buf, " Character rerolling was not enabled.");
+        Strcpy(buf, " La relance du personnage n'était pas activée.");
     else if (!u.uroleplay.numrerolls)
-        Strcpy(buf, " Your character was not rerolled.");
+        Strcpy(buf, " Votre personnage n'a pas été relancé.");
     else
-        Sprintf(buf, " Your character was rerolled %s.",
+        Sprintf(buf, " Votre personnage a été relancé %s.",
                 N_times(u.uroleplay.numrerolls, bufN));
     enlght_out(buf);
 
     if (u.uroleplay.blind)
-        you_have_been("blind from birth");
+        you_have_been("aveugle de naissance");
     if (u.uroleplay.deaf)
-        you_have_been("deaf from birth");
+        you_have_been(flags.female ? "sourde de naissance"
+                                   : "sourd de naissance");
     /* note: we don't report "you are without possessions" unless the
        game started with the pauper option set */
     if (u.uroleplay.pauper)
-        enl_msg(You_, gi.invent ? "started" : "are", "started out",
-                " without possessions", "");
+        enl_msg(You_, gi.invent ? "avez commencé" : "êtes", "avez commencé",
+                " sans possessions", "");
     /* nudist is far more than a subset of possessionless, and a much
        more impressive accomplishment, but showing "started out without
        possessions" before "faithfully nudist" looks more logical */
     if (u.uroleplay.nudist)
-        you_have_been("faithfully nudist");
+        you_have_been("fidèlement nudiste");
 
     if (!u.uconduct.food)
-        enl_msg(You_, "have gone", "went", " without food", "");
+        enl_msg(You_, "avez vécu", "avez vécu", " sans nourriture", "");
         /* but beverages are okay */
     else if (!u.uconduct.unvegan)
-        you_have_X("followed a strict vegan diet");
+        you_have_X("suivi un régime végétalien strict");
     else if (!u.uconduct.unvegetarian)
-        you_have_been("vegetarian");
+        you_have_been(flags.female ? "végétarienne" : "végétarien");
 
     if (!u.uconduct.gnostic)
-        you_have_been("an atheist");
+        you_have_been("athée");
 
     if (!u.uconduct.weaphit) {
-        you_have_never("hit with a wielded weapon");
+        you_have_never("frappé avec une arme maniée");
     } else if (wizard) {
-        Sprintf(buf, "hit with a wielded weapon %ld time%s",
-                u.uconduct.weaphit, plur(u.uconduct.weaphit));
+        Sprintf(buf, "frappé avec une arme maniée %ld fois",
+                u.uconduct.weaphit);
         you_have_X(buf);
     }
     if (!u.uconduct.killer)
-        you_have_been("a pacifist");
+        you_have_been("pacifiste");
 
     if (!u.uconduct.literate) {
-        you_have_been("illiterate");
+        you_have_been(flags.female ? "illettrée" : "illettré");
     } else if (wizard) {
-        Sprintf(buf, "read items or engraved %ld time%s", u.uconduct.literate,
-                plur(u.uconduct.literate));
+        Sprintf(buf, "lu des objets ou gravé %ld fois", u.uconduct.literate);
         you_have_X(buf);
     }
 
     if (!u.uconduct.pets)
-        you_have_never("had a pet");
+        you_have_never("eu d'animal de compagnie");
 
     ngenocided = num_genocides();
     if (ngenocided == 0) {
-        you_have_never("genocided any monsters");
+        you_have_never("génocidé de monstres");
     } else {
-        Sprintf(buf, "genocided %d type%s of monster%s", ngenocided,
-                plur(ngenocided), plur(ngenocided));
+        Sprintf(buf, "génocidé %d type%s de monstres", ngenocided,
+                plur(ngenocided));
         you_have_X(buf);
     }
 
     if (!u.uconduct.polypiles) {
-        you_have_never("polymorphed an object");
+        you_have_never("métamorphosé d'objet");
     } else if (wizard) {
-        Sprintf(buf, "polymorphed %ld item%s", u.uconduct.polypiles,
+        Sprintf(buf, "métamorphosé %ld objet%s", u.uconduct.polypiles,
                 plur(u.uconduct.polypiles));
         you_have_X(buf);
     }
 
     if (!u.uconduct.polyselfs) {
-        you_have_never("changed form");
+        you_have_never("changé de forme");
     } else if (wizard) {
-        Sprintf(buf, "changed form %ld time%s", u.uconduct.polyselfs,
-                plur(u.uconduct.polyselfs));
+        Sprintf(buf, "changé de forme %ld fois", u.uconduct.polyselfs);
         you_have_X(buf);
     }
 
     if (!u.uconduct.wishes) {
-        you_have_X("used no wishes");
+        enl_msg(You_, "n'avez fait", "n'aviez fait", " aucun vœu", "");
     } else {
-        Sprintf(buf, "used %ld wish%s", u.uconduct.wishes,
-                (u.uconduct.wishes > 1L) ? "es" : "");
+        Sprintf(buf, "fait %ld vœu%s", u.uconduct.wishes,
+                (u.uconduct.wishes > 1L) ? "x" : "");
         if (u.uconduct.wisharti) {
             /* if wisharti == wishes
              *  1 wish (for an artifact)
@@ -2196,32 +2337,32 @@ show_conduct(int final)
              */
             if (u.uconduct.wisharti == u.uconduct.wishes)
                 Sprintf(eos(buf), " (%s",
-                        (u.uconduct.wisharti > 2L) ? "all "
-                          : (u.uconduct.wisharti == 2L) ? "both " : "");
+                        (u.uconduct.wisharti > 2L) ? "tous "
+                          : (u.uconduct.wisharti == 2L) ? "tous deux " : "");
             else
-                Sprintf(eos(buf), " (%ld ", u.uconduct.wisharti);
+                Sprintf(eos(buf), " (dont %ld ", u.uconduct.wisharti);
 
-            Sprintf(eos(buf), "for %s)",
-                    (u.uconduct.wisharti == 1L) ? "an artifact"
-                                                : "artifacts");
+            Sprintf(eos(buf), "pour %s)",
+                    (u.uconduct.wisharti == 1L) ? "un artefact"
+                                                : "des artefacts");
         }
         you_have_X(buf);
 
         if (!u.uconduct.wisharti)
-            enl_msg(You_, "have not wished", "did not wish",
-                    " for any artifacts", "");
+            enl_msg(You_, "n'avez souhaité", "n'aviez souhaité",
+                    " aucun artefact", "");
     }
 
     /* only report Sokoban conduct if the Sokoban branch has been entered */
     if (sokoban_in_play()) {
-        const char *presentverb = "have violated", *pastverb = "violated";
+        const char *presentverb = "avez enfreint", *pastverb = "aviez enfreint";
 
         if (!u.uconduct.sokocheat) {
-            presentverb = "have not violated";
-            pastverb = "did not violate";
-            Strcpy(buf, " any of the special Sokoban rules");
+            presentverb = "n'avez enfreint";
+            pastverb = "n'aviez enfreint";
+            Strcpy(buf, " aucune des règles spéciales de Sokoban");
         } else {
-            Strcpy(buf, " the special Sokoban rules ");
+            Strcpy(buf, " les règles spéciales de Sokoban ");
             Strcat(buf, N_times(u.uconduct.sokocheat, bufN));
         }
         enl_msg(You_, presentverb, pastverb, buf, "");
@@ -2265,7 +2406,7 @@ show_achievements(
     } else {
         awin = create_nhwindow(NHW_MENU);
     }
-    Sprintf(title, "Achievement%s:", plur(acnt));
+    Sprintf(title, "Exploit%s :", plur(acnt));
     putstr(awin, 0, title);
 
     /* display achievements in the order in which they were recorded;
@@ -2287,110 +2428,118 @@ show_achievements(
 
         switch (absidx) {
         case ACH_BLND:
-            enl_msg(You_, "are exploring", "explored",
-                    " without being able to see", "");
+            enl_msg(You_, "explorez", "avez exploré",
+                    " sans pouvoir voir", "");
             break;
         case ACH_NUDE:
-            enl_msg(You_, "have gone", "went", " without any armor", "");
+            enl_msg(You_, "avez vécu", "avez vécu", " sans aucune armure", "");
             break;
         case ACH_MINE:
-            you_have_X("entered the Gnomish Mines");
+            Sprintf(buf, "êtes entré%s dans les Mines des Gnomes", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_TOWN:
-            you_have_X("entered Minetown");
+            Sprintf(buf, "êtes entré%s dans Minebourg", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_SHOP:
-            you_have_X("entered a shop");
+            Sprintf(buf, "êtes entré%s dans une boutique", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_TMPL:
-            you_have_X("entered a temple");
+            Sprintf(buf, "êtes entré%s dans un temple", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_ORCL:
-            you_have_X("consulted the Oracle of Delphi");
+            you_have_X("consulté l'Oracle de Delphes");
             break;
         case ACH_NOVL:
-            you_have_X("read from a Discworld novel");
+            you_have_X("lu un roman du Disque-monde");
             break;
         case ACH_SOKO:
-            you_have_X("entered Sokoban");
+            Sprintf(buf, "êtes entré%s dans Sokoban", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_SOKO_PRIZE: /* hard to reach guaranteed bag or amulet */
-            you_have_X("completed Sokoban");
+            you_have_X("terminé Sokoban");
             break;
         case ACH_MINE_PRIZE: /* hidden guaranteed luckstone */
-            you_have_X("completed the Gnomish Mines");
+            you_have_X("terminé les Mines des Gnomes");
             break;
         case ACH_BGRM:
-            you_have_X("entered the Big Room");
+            Sprintf(buf, "êtes entré%s dans la Grande Salle", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_MEDU:
-            you_have_X("defeated Medusa");
+            you_have_X("vaincu Méduse");
             break;
         case ACH_TUNE:
             you_have_X(
-                "learned the tune to open and close the Castle's drawbridge");
+             "appris l'air qui ouvre et ferme le pont-levis du Château");
             break;
         case ACH_BELL:
             /* alternate phrasing for present vs past and also for
                possessing the item vs once held it */
             enl_msg(You_,
-                    u.uhave.bell ? "have" : "have handled",
-                    u.uhave.bell ? "had" : "handled",
-                    " the Bell of Opening", "");
+                    u.uhave.bell ? "avez" : "avez eu en main",
+                    u.uhave.bell ? "aviez" : "avez eu en main",
+                    " la Cloche d'Ouverture", "");
             break;
         case ACH_HELL:
-            enl_msg(You_, "have ", "", "entered Gehennom", "");
+            Sprintf(buf, "êtes entré%s dans la Géhenne", UE);
+            enl_msg(You_, "", "", buf, "");
             break;
         case ACH_CNDL:
             enl_msg(You_,
-                    u.uhave.menorah ? "have" : "have handled",
-                    u.uhave.menorah ? "had" : "handled",
-                    " the Candelabrum of Invocation", "");
+                    u.uhave.menorah ? "avez" : "avez eu en main",
+                    u.uhave.menorah ? "aviez" : "avez eu en main",
+                    " le Candélabre d'Invocation", "");
             break;
         case ACH_BOOK:
             enl_msg(You_,
-                    u.uhave.book ? "have" : "have handled",
-                    u.uhave.book ? "had" : "handled",
-                    " the Book of the Dead", "");
+                    u.uhave.book ? "avez" : "avez eu en main",
+                    u.uhave.book ? "aviez" : "avez eu en main",
+                    " le Livre des Morts", "");
             break;
         case ACH_INVK:
-            you_have_X("gained access to Moloch's Sanctum");
+            you_have_X("obtenu l'accès au Sanctuaire de Moloch");
             break;
         case ACH_AMUL:
             /* alternate wording for ascended (always past tense) since
                hero had it until #offer forced it to be relinquished */
             enl_msg(You_,
-                    u.uhave.amulet ? "have" : "have obtained",
-                    u.uevent.ascended ? "delivered"
-                     : u.uhave.amulet ? "had" : "had obtained",
-                    " the Amulet of Yendor", "");
+                    u.uhave.amulet ? "avez" : "avez obtenu",
+                    u.uevent.ascended ? "avez remis"
+                     : u.uhave.amulet ? "aviez" : "aviez obtenu",
+                    " l'Amulette de Yendor", "");
             break;
 
         /* reaching Astral makes feedback about reaching the Planes
            be redundant and ascending makes both be redundant, but
            we display all that apply */
         case ACH_ENDG:
-            you_have_X("reached the Elemental Planes");
+            you_have_X("atteint les Plans élémentaires");
             break;
         case ACH_ASTR:
-            you_have_X("reached the Astral Plane");
+            you_have_X("atteint le Plan astral");
             break;
         case ACH_UWIN:
             /* the ultimate achievement... */
-            enlght_out(" You ascended!");
+            Sprintf(buf, " Vous êtes monté%s au ciel !", UE);
+            enlght_out(buf);
             break;
 
         /* rank 0 is the starting condition, not an achievement; 8 is Xp 30 */
         case ACH_RNK1: case ACH_RNK2: case ACH_RNK3: case ACH_RNK4:
         case ACH_RNK5: case ACH_RNK6: case ACH_RNK7: case ACH_RNK8:
-            Sprintf(buf, "attained the rank of %s",
+            Sprintf(buf, "atteint le rang de %s",
                     rank_of(rank_to_xlev(absidx - (ACH_RNK1 - 1)),
                             Role_switch, (achidx < 0) ? TRUE : FALSE));
             you_have_X(buf);
             break;
 
         default:
-            Sprintf(buf, " [Unexpected achievement #%d.]", achidx);
+            Sprintf(buf, " [Exploit inattendu n°%d.]", achidx);
             enlght_out(buf);
             break;
         } /* switch */
@@ -2449,7 +2598,7 @@ record_achievement(schar achidx)
 
     if (absidx >= ACH_RNK1 && absidx <= ACH_RNK8) {
         livelog_printf(achieve_msg[absidx].llflag,
-                       "attained the rank of %s (level %d)",
+                       "a atteint le rang de %s (niveau %d)",
                        rank_of(rank_to_xlev(absidx - (ACH_RNK1 - 1)),
                                Role_switch, (achidx < 0) ? TRUE : FALSE),
                        u.ulevel);
@@ -2466,8 +2615,15 @@ record_achievement(schar achidx)
         livelog_printf(achieve_msg[achidx].llflag, "%s %s",
                        achieve_msg[achidx].msg, OBJ_NAME(objects[otyp]));
     } else {
-        livelog_printf(achieve_msg[absidx].llflag, "%s",
-                       achieve_msg[absidx].msg);
+        char llbuf[BUFSZ];
+
+        /* French: agree the past participle with a female hero */
+        Strcpy(llbuf, achieve_msg[absidx].msg);
+        if (flags.female) {
+            (void) strsubst(llbuf, "est entré ", "est entrée ");
+            (void) strsubst(llbuf, "est monté ", "est montée ");
+        }
+        livelog_printf(achieve_msg[absidx].llflag, "%s", llbuf);
     }
 }
 
@@ -2535,10 +2691,10 @@ do_gamelog(void)
     if (gg.gamelog) {
         show_gamelog(ENL_GAMEINPROGRESS);
     } else {
-        pline("No chronicled events.");
+        pline("Aucun événement dans la chronique.");
     }
 #else
-    pline("Chronicle was turned off during compile-time.");
+    pline("La chronique a été désactivée à la compilation.");
 #endif /* !CHRONICLE */
     return ECMD_OK;
 }
@@ -2567,7 +2723,7 @@ show_gamelog(int final)
     int eventcnt = 0;
 
     win = create_nhwindow(NHW_TEXT);
-    Sprintf(buf, "%s events:", final ? "Major" : "Logged");
+    Sprintf(buf, "Événements %s :", final ? "majeurs" : "enregistrés");
     putstr(win, 0, buf);
     for (llmsg = gg.gamelog; llmsg; llmsg = llmsg->next) {
         if (final && !majorevent(llmsg))
@@ -2575,14 +2731,14 @@ show_gamelog(int final)
         if (!final && !wizard && spoilerevent(llmsg))
             continue;
         if (!eventcnt++)
-            putstr(win, 0, " Turn");
+            putstr(win, 0, " Tour");
         Snprintf(buf, sizeof buf, "%5ld: %s", llmsg->turn, llmsg->text);
         putstr(win, 0, buf);
     }
     /* since start of game is logged as a major event, 'eventcnt' should
        never end up as 0; for 'final', end of game is a major event too */
     if (!eventcnt)
-        putstr(win, 0, " none");
+        putstr(win, 0, " aucun");
 
     display_nhwindow(win, TRUE);
     destroy_nhwindow(win);
@@ -2599,22 +2755,22 @@ show_gamelog(int final)
 /* the two uppercase choices are implemented but suppressed from menu.
    also used in options.c */
 const char *const vanqorders[NUM_VANQ_ORDER_MODES][3] = {
-    { "t", "traditional: by monster level",
-           "traditional: by monster level, by internal monster index" },
-    { "d", "by monster difficulty rating",
-           "by monster difficulty rating, by internal monster index" },
-    { "a", "alphabetically, unique monsters separate",
-           "alphabetically, first unique monsters, then others" },
-    { "A", "alphabetically, unique monsters intermixed",
-           "alphabetically, unique monsters and others intermixed" },
-    { "C", "by monster class, high to low level in class",
-           "by monster class, high to low level within class" },
-    { "c", "by monster class, low to high level in class",
-           "by monster class, low to high level within class" },
-    { "n", "by count, high to low",
-           "by count, high to low, by internal index within tied count" },
-    { "z", "by count, low to high",
-           "by count, low to high, by internal index within tied count" },
+    { "t", "traditionnel : par niveau de monstre",
+           "traditionnel : par niveau de monstre, puis par index interne" },
+    { "d", "par indice de difficulté",
+           "par indice de difficulté, puis par index interne" },
+    { "a", "alphabétique, monstres uniques à part",
+           "alphabétique, d'abord les monstres uniques, puis les autres" },
+    { "A", "alphabétique, monstres uniques mêlés",
+           "alphabétique, monstres uniques et autres mêlés" },
+    { "C", "par classe, niveau décroissant dans la classe",
+           "par classe de monstre, niveau décroissant dans la classe" },
+    { "c", "par classe, niveau croissant dans la classe",
+           "par classe de monstre, niveau croissant dans la classe" },
+    { "n", "par nombre, décroissant",
+           "par nombre décroissant, puis par index interne à égalité" },
+    { "z", "par nombre, croissant",
+           "par nombre croissant, puis par index interne à égalité" },
 };
 
 staticfn int QSORTCALLBACK
@@ -2739,16 +2895,16 @@ set_vanq_order(boolean for_vanq)
            and "alpha, unique intermixed" are confusing descriptions when
            this menu is for #genocided rather than for #vanquished */
         if (!for_vanq && i == VANQ_ALPHA_SEP)
-            desc = "alphabetically";
+            desc = "alphabétique";
         any.a_int = i + 1;
         add_menu(tmpwin, &nul_glyphinfo, &any, *vanqorders[i][0], 0,
                  ATR_NONE, clr, desc,
                  (i == flags.vanq_sortmode) ? MENU_ITEMFLAGS_SELECTED
                                             : MENU_ITEMFLAGS_NONE);
     }
-    Sprintf(buf, "Sort order for %s",
-            for_vanq ? "vanquished monster counts (also genocided types)"
-                     : "genocided monster types (also vanquished counts)");
+    Sprintf(buf, "Ordre de tri %s",
+            for_vanq ? "des monstres vaincus (et des types génocidés)"
+                     : "des types génocidés (et des monstres vaincus)");
     end_menu(tmpwin, buf);
 
     n = select_menu(tmpwin, PICK_ONE, &selected);
@@ -2839,7 +2995,7 @@ list_vanquished(char defquery, boolean ask)
                 if (defquery == 'a') /* potential default from 'disclose' */
                     defquery = 'y';
             }
-            c = yn_function("Do you want an account of creatures vanquished?",
+            c = yn_function("Voulez-vous la liste des créatures vaincues ?",
                             allow_yn, defquery, TRUE);
         } else {
             c = defquery;
@@ -2860,7 +3016,7 @@ list_vanquished(char defquery, boolean ask)
                             && ntypes > 1);
 
             klwin = create_nhwindow(NHW_MENU);
-            putstr(klwin, 0, "Vanquished creatures:");
+            putstr(klwin, 0, "Créatures vaincues :");
             if (!dumping)
                 putstr(klwin, 0, "");
 
@@ -2876,7 +3032,7 @@ list_vanquished(char defquery, boolean ask)
                         Strcpy(buf, def_monsyms[(int) mlet].explain);
                         special_hdr = FALSE;
                     } else {
-                        Strcpy(buf, "Rider");
+                        Strcpy(buf, "Cavalier");
                         special_hdr = TRUE;
                     }
                     /* 'ask' implies final disclosure, where highlighting
@@ -2886,9 +3042,9 @@ list_vanquished(char defquery, boolean ask)
                     prev_mlet = mlet;
                 }
                 if (UniqCritterIndx(i)) {
-                    Sprintf(buf, "%s%s",
-                            !type_is_pname(&mons[i]) ? "the " : "",
-                            mons[i].pmnames[NEUTRAL]);
+                    Strcpy(buf, !type_is_pname(&mons[i])
+                                    ? the(mons[i].pmnames[NEUTRAL])
+                                    : mons[i].pmnames[NEUTRAL]);
                     if (nkilled > 1)
                         Sprintf(eos(buf), " (%s)",
                                 N_times((long) nkilled, buftoo));
@@ -2907,9 +3063,10 @@ list_vanquished(char defquery, boolean ask)
                                 makeplural(mons[i].pmnames[NEUTRAL]));
                 }
                 /* number of leading spaces to match 3 digit prefix */
-                pfx = !strncmpi(buf, "the ", 4) ? 0
-                      : !strncmpi(buf, "an ", 3) ? 1
-                        : !strncmpi(buf, "a ", 2) ? 2
+                pfx = !strncmp(buf, "une ", 4) ? 0
+                      : (!strncmp(buf, "un ", 3) || !strncmp(buf, "le ", 3)
+                         || !strncmp(buf, "la ", 3)) ? 1
+                        : !strncmp(buf, "l'", 2) ? 2
                           : !digit(buf[2]) ? 4 : 0;
                 if (class_header)
                     ++pfx;
@@ -2923,7 +3080,7 @@ list_vanquished(char defquery, boolean ask)
             if (ntypes > 1) {
                 if (!dumping)
                     putstr(klwin, 0, "");
-                Sprintf(buf, "%ld creatures vanquished.", total_killed);
+                Sprintf(buf, "%ld créatures vaincues.", total_killed);
                 putstr(klwin, 0, buf);
             }
             display_nhwindow(klwin, TRUE);
@@ -2940,10 +3097,10 @@ list_vanquished(char defquery, boolean ask)
      */
     } else if (!program_state.gameover) {
         /* #vanquished rather than final disclosure, so pline() is ok */
-        pline("No creatures have been vanquished.");
+        pline("Aucune créature n'a été vaincue.");
 #ifdef DUMPLOG
     } else if (dumping) {
-        putstr(0, 0, "No creatures were vanquished."); /* not pline() */
+        putstr(0, 0, "Aucune créature ne fut vaincue."); /* not pline() */
 #endif
     }
 }
@@ -3033,10 +3190,10 @@ list_genocided(char defquery, boolean ask)
 
     /* genocided or extinct species list */
     if (ngone > 0) {
-        Sprintf(buf, "Do you want a list of %sspecies%s%s?",
-                (nextinct && !ngenocided) ? "extinct " : "",
-                (ngenocided) ? " genocided" : "",
-                (nextinct && ngenocided) ? " and extinct" : "");
+        Sprintf(buf, "Voulez-vous la liste des espèces%s%s%s ?",
+                (nextinct && !ngenocided) ? " éteintes" : "",
+                (ngenocided) ? " génocidées" : "",
+                (nextinct && ngenocided) ? " et éteintes" : "");
         c = ask ? yn_function(buf, (ngone > 1) ? "ynaq" : "ynq\033a",
                               defquery, TRUE)
                 : defquery;
@@ -3070,9 +3227,9 @@ list_genocided(char defquery, boolean ask)
             }
 
             klwin = create_nhwindow(NHW_MENU);
-            Sprintf(buf, "%s%s species:",
-                    (ngenocided) ? "Genocided" : "Extinct",
-                    (nextinct && ngenocided) ? " or extinct" : "");
+            Sprintf(buf, "Espèces %s%s :",
+                    (ngenocided) ? "génocidées" : "éteintes",
+                    (nextinct && ngenocided) ? " ou éteintes" : "");
             putstr(klwin, 0, buf);
             if (!dumping)
                 putstr(klwin, 0, "");
@@ -3100,17 +3257,19 @@ list_genocided(char defquery, boolean ask)
                  * collected list unless that bit is set.
                  */
                 if ((svm.mvitals[mndx].mvflags & G_GONE) == G_EXTINCT)
-                    Strcat(buf, " (extinct)");
+                    Strcat(buf, " (éteinte)");
                 putstr(klwin, 0, buf);
             }
             if (!dumping)
                 putstr(klwin, 0, "");
             if (ngenocided > 0) {
-                Sprintf(buf, "%d species genocided.", ngenocided);
+                Sprintf(buf, "%d espèce%s génocidée%s.", ngenocided,
+                        plur(ngenocided), plur(ngenocided));
                 putstr(klwin, 0, buf);
             }
             if (nextinct > 0) {
-                Sprintf(buf, "%d species extinct.", nextinct);
+                Sprintf(buf, "%d espèce%s éteinte%s.", nextinct,
+                        plur(nextinct), plur(nextinct));
                 putstr(klwin, 0, buf);
             }
 
@@ -3122,10 +3281,11 @@ list_genocided(char defquery, boolean ask)
     } else if (!program_state.gameover) {
         /* #genocided rather than final disclosure, so pline() is ok and
            extinction has been ignored */
-        pline("No creatures have been genocided%s.", genoing ? " yet" : "");
+        pline("Aucune créature n'a %sété génocidée.",
+              genoing ? "encore " : "");
 #ifdef DUMPLOG
     } else if (dumping) { /* 'gameover' is True if we make it here */
-        putstr(0, 0, "No species were genocided or became extinct.");
+        putstr(0, 0, "Aucune espèce n'a été génocidée ni ne s'est éteinte.");
 #endif
     }
 }
@@ -3150,7 +3310,7 @@ doborn(void)
     char buf[BUFSZ];
     int nborn = 0, ndied = 0;
 
-    putstr(datawin, 0, "died born");
+    putstr(datawin, 0, "mort  nés");
     for (i = LOW_PM; i < NUMMONS; i++)
         if (svm.mvitals[i].born || svm.mvitals[i].died
             || (svm.mvitals[i].mvflags & G_GONE) != 0) {
@@ -3188,15 +3348,15 @@ align_str(aligntyp alignment)
 {
     switch ((int) alignment) {
     case A_CHAOTIC:
-        return "chaotic";
+        return "chaotique";
     case A_NEUTRAL:
-        return "neutral";
+        return "neutre";
     case A_LAWFUL:
-        return "lawful";
+        return "loyal";
     case A_NONE:
-        return "unaligned";
+        return "non aligné";
     }
-    return "unknown";
+    return "inconnu";
 }
 
 staticfn char *
@@ -3206,25 +3366,25 @@ size_str(int msize)
 
     switch (msize) {
     case MZ_TINY:
-        Strcpy(outbuf, "tiny");
+        Strcpy(outbuf, "minuscule");
         break;
     case MZ_SMALL:
-        Strcpy(outbuf, "small");
+        Strcpy(outbuf, "petite taille");
         break;
     case MZ_MEDIUM:
-        Strcpy(outbuf, "medium");
+        Strcpy(outbuf, "taille moyenne");
         break;
     case MZ_LARGE:
-        Strcpy(outbuf, "large");
+        Strcpy(outbuf, "grande taille");
         break;
     case MZ_HUGE:
-        Strcpy(outbuf, "huge");
+        Strcpy(outbuf, "énorme");
         break;
     case MZ_GIGANTIC:
-        Strcpy(outbuf, "gigantic");
+        Strcpy(outbuf, "gigantesque");
         break;
     default:
-        Sprintf(outbuf, "unknown size (%d)", msize);
+        Sprintf(outbuf, "taille inconnue (%d)", msize);
         break;
     }
     return outbuf;
@@ -3234,32 +3394,32 @@ size_str(int msize)
 char *
 piousness(boolean showneg, const char *suffix)
 {
-    static char buf[32]; /* bigger than "insufficiently neutral" */
+    static char buf[80]; /* bigger than "insuffisamment non alignée" */
     const char *pio;
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
     if (u.ualign.record >= 20)
-        pio = "piously";
+        pio = "pieusement";
     else if (u.ualign.record > 13)
-        pio = "devoutly";
+        pio = "dévotement";
     else if (u.ualign.record > 8)
-        pio = "fervently";
+        pio = "ardemment";
     else if (u.ualign.record > 3)
-        pio = "stridently";
+        pio = "résolument";
     else if (u.ualign.record == 3)
         pio = "";
     else if (u.ualign.record > 0)
-        pio = "haltingly";
+        pio = "timidement";
     else if (u.ualign.record == 0)
-        pio = "nominally";
+        pio = "nominalement";
     else if (!showneg)
-        pio = "insufficiently";
+        pio = "insuffisamment";
     else if (u.ualign.record >= -3)
-        pio = "strayed";
+        pio = "dévié";
     else if (u.ualign.record >= -8)
-        pio = "sinned";
+        pio = "péché";
     else
-        pio = "transgressed";
+        pio = "transgressé";
 
     Sprintf(buf, "%s", pio);
     if (suffix && (!showneg || u.ualign.record >= 0)) {
@@ -3276,19 +3436,20 @@ mstatusline(struct monst *mtmp)
 {
     aligntyp alignment = mon_aligntyp(mtmp);
     char info[BUFSZ], monnambuf[BUFSZ];
+    const char *E = MON_E(mtmp); /* French agreement */
 
     info[0] = 0;
     if (mtmp->mtame) {
-        Strcat(info, ", tame");
+        Sprintf(eos(info), ", apprivoisé%s", E);
         if (wizard) {
             Sprintf(eos(info), " (%d", mtmp->mtame);
             if (!mtmp->isminion)
-                Sprintf(eos(info), "; hungry %ld; apport %d",
+                Sprintf(eos(info), " ; faim %ld ; apport %d",
                         EDOG(mtmp)->hungrytime, EDOG(mtmp)->apport);
             Strcat(info, ")");
         }
     } else if (mtmp->mpeaceful)
-        Strcat(info, ", peaceful");
+        Sprintf(eos(info), ", pacifique");
 
     if (mtmp->data == &mons[PM_LONG_WORM]) {
         int segndx, nsegs = count_wsegs(mtmp);
@@ -3297,21 +3458,21 @@ mstatusline(struct monst *mtmp)
            the worm's segments, but we count it as such when presenting
            worm feedback to the player */
         if (!nsegs) {
-            Strcat(info, ", single segment");
+            Strcat(info, ", un seul segment");
         } else {
             ++nsegs; /* include head in the segment count */
             segndx = wseg_at(mtmp, gb.bhitpos.x, gb.bhitpos.y);
-            Sprintf(eos(info), ", %d%s of %d segments",
+            Sprintf(eos(info), ", %d%s segment sur %d",
                     segndx, ordin(segndx), nsegs);
         }
     }
     if (ismnum(mtmp->cham) && mtmp->data != &mons[mtmp->cham])
         /* don't reveal the innate form (chameleon, vampire, &c),
            just expose the fact that this current form isn't it */
-        Strcat(info, ", shapechanger");
+        Strcat(info, ", métamorphe");
     /* pets eating mimic corpses mimic while eating, so this comes first */
     if (mtmp->meating)
-        Strcat(info, ", eating");
+        Strcat(info, ", en train de manger");
     /* a stethoscope exposes mimic before getting here so this
        won't be relevant for it, but wand of probing doesn't */
     if (mtmp->mundetected || mtmp->m_ap_type
@@ -3320,34 +3481,35 @@ mstatusline(struct monst *mtmp)
                        MHID_PREFIX | MHID_ARTICLE | MHID_ALTMON | MHID_REGION,
                             eos(info));
     if (mtmp->mcan)
-        Strcat(info, ", cancelled");
+        Sprintf(eos(info), ", annulé%s", E);
     if (mtmp->mconf)
-        Strcat(info, ", confused");
+        Sprintf(eos(info), ", confus%s", E);
     if (mtmp->mblinded || !mtmp->mcansee)
-        Strcat(info, ", blind");
+        Strcat(info, ", aveugle");
     if (mtmp->mstun)
-        Strcat(info, ", stunned");
+        Sprintf(eos(info), ", étourdi%s", E);
     if (mtmp->msleeping)
-        Strcat(info, ", asleep");
+        Sprintf(eos(info), ", endormi%s", E);
 #if 0 /* unfortunately mfrozen covers temporary sleep and being busy
        * (donning armor, for instance) as well as paralysis */
     else if (mtmp->mfrozen)
-        Strcat(info, ", paralyzed");
+        Sprintf(eos(info), ", paralysé%s", E);
 #else
     else if (mtmp->mfrozen || !mtmp->mcanmove)
-        Strcat(info, ", can't move");
+        Strcat(info, ", incapable de bouger");
 #endif
     /* [arbitrary reason why it isn't moving] */
     else if ((mtmp->mstrategy & STRAT_WAITMASK) != 0)
-        Strcat(info, ", meditating");
+        Strcat(info, ", en méditation");
     if (mtmp->mflee)
-        Strcat(info, ", scared");
+        Sprintf(eos(info), ", effrayé%s", E);
     if (mtmp->mtrapped)
-        Strcat(info, ", trapped");
+        Sprintf(eos(info), ", pris%s au piège", E);
     if (mtmp->mspeed)
-        Strcat(info, (mtmp->mspeed == MFAST) ? ", fast"
-                      : (mtmp->mspeed == MSLOW) ? ", slow"
-                         : ", [? speed]");
+        Sprintf(eos(info), "%s", (mtmp->mspeed == MFAST) ? ", rapide"
+                      : (mtmp->mspeed == MSLOW)
+                         ? (*E ? ", lente" : ", lent")
+                         : ", [vitesse ?]");
     if (mtmp->minvis)
         Strcat(info, ", invisible");
     if (mtmp == u.ustuck) {
@@ -3356,44 +3518,50 @@ mstatusline(struct monst *mtmp)
         /* being swallowed/engulfed takes priority over sticks(youmonst);
            this used to have that backwards and checked sticks() first */
         Strcat(info, u.uswallow ? (digests(pm)
-                                   ? ", digesting you"
+                                   ? ", en train de vous digérer"
                                    /* note: the "swallowing you" case won't
                                       happen because all animal engulfers
                                       either digest their victims (purple
                                       worm) or enfold them (trappers and
                                       lurkers above) */
                                    : (is_animal(pm) && !enfolds(pm))
-                                     ? ", swallowing you"
-                                     : ", engulfing you")
+                                     ? ", en train de vous avaler"
+                                     : ", en train de vous engloutir")
                      /* !u.uswallow; if both youmonst and ustuck are holders,
                         youmonst wins */
-                     : (!sticks(gy.youmonst.data) ? ", holding you"
-                                                 : ", held by you"));
+                     : (!sticks(gy.youmonst.data) ? ", vous retenant"
+                                                 : (*E ? ", retenue par vous"
+                                                       : ", retenu par vous")));
     }
     if (mtmp == u.usteed) {
-        Strcat(info, ", carrying you");
+        Strcat(info, ", vous portant");
         if (Wounded_legs) {
             /* EWounded_legs is used to track left/right/both rather than
                some form of extrinsic impairment; HWounded_legs is used for
                timeout; both apply to steed instead of hero when mounted */
             long legs = (EWounded_legs & BOTH_SIDES);
             const char *what = mbodypart(mtmp, LEG);
+            boolean fem = (fr_genre(what) == FR_FEM);
 
             if (legs == BOTH_SIDES)
                 what = makeplural(what);
-            Sprintf(eos(info), ", injured %s", what);
+            Sprintf(eos(info), ", %s %s", what,
+                    fr_adj("blessé", fem ? FR_FEM : FR_MASC,
+                           legs == BOTH_SIDES));
         }
     }
     if (mtmp->mleashed)
-        Strcat(info, ", leashed");
+        Sprintf(eos(info), ", tenu%s en laisse", E);
 
     /* avoid "Status of the invisible newt ..., invisible" */
     /* and unlike a normal mon_nam, use "saddled" even if it has a name */
     Strcpy(monnambuf, x_monnam(mtmp, ARTICLE_YOUR, (char *) 0,
                                (SUPPRESS_IT | SUPPRESS_INVISIBLE), FALSE));
 
-    pline("Status of %s (%s, %s):  Level %d  HP %d(%d)  AC %d%s.",
-          monnambuf, align_str(alignment), size_str(mtmp->data->msize),
+    pline("État %s (%s, %s) :  Niveau %d  PV %d(%d)  CA %d%s.",
+          du(monnambuf),
+          fr_adj(align_str(alignment), *E ? FR_FEM : FR_MASC, FALSE),
+          size_str(mtmp->data->msize),
           mtmp->m_lev, mtmp->mhp, mtmp->mhpmax, find_mac(mtmp), info);
 }
 
@@ -3407,36 +3575,38 @@ ustatusline(void)
 
     info[0] = '\0';
     if (Sick) {
-        Strcat(info, ", dying from");
+        Sprintf(eos(info), ", mourant%s", UE);
         if (u.usick_type & SICK_VOMITABLE)
-            Strcat(info, " food poisoning");
+            Strcat(info, " d'une intoxication alimentaire");
         if (u.usick_type & SICK_NONVOMITABLE) {
             if (u.usick_type & SICK_VOMITABLE)
-                Strcat(info, " and");
-            Strcat(info, " illness");
+                Strcat(info, " et");
+            Strcat(info, " d'une maladie");
         }
     }
     if (Stoned)
-        Strcat(info, ", solidifying");
+        Strcat(info, ", en cours de solidification");
     if (Slimed)
-        Strcat(info, ", becoming slimy");
+        Sprintf(eos(info), ", en train de devenir gluant%s", UE);
     if (Strangled)
-        Strcat(info, ", being strangled");
+        Sprintf(eos(info), ", en train d'être étranglé%s", UE);
     if (Vomiting)
-        Strcat(info, ", nauseated"); /* !"nauseous" */
+        Sprintf(eos(info), ", nauséeu%s", flags.female ? "se" : "x");
     if (Confusion)
-        Strcat(info, ", confused");
+        Sprintf(eos(info), ", confus%s", UE);
     if (Blind) {
-        Strcat(info, ", blind");
+        Strcat(info, ", aveugle");
         if (u.ucreamed) {
             if ((long) u.ucreamed < BlindedTimeout || Blindfolded
                 || !haseyes(gy.youmonst.data))
-                Strcat(info, ", cover");
-            Strcat(info, "ed by sticky goop");
+                Sprintf(eos(info), ", couvert%s", UE);
+            else
+                Strcat(info, " à cause");
+            Strcat(info, " d'une substance gluante");
         } /* note: "goop" == "glop"; variation is intentional */
     }
     if (Stunned)
-        Strcat(info, ", stunned");
+        Sprintf(eos(info), ", étourdi%s", UE);
     if (Wounded_legs && !u.usteed) {
         /* EWounded_legs is used to track left/right/both rather than some
            form of extrinsic impairment; HWounded_legs is used for timeout;
@@ -3444,32 +3614,38 @@ ustatusline(void)
         long legs = (EWounded_legs & BOTH_SIDES);
         const char *what = body_part(LEG);
 
+        boolean fem = (fr_genre(what) == FR_FEM);
+
         if (legs == BOTH_SIDES)
             what = makeplural(what);
         /* when it's just one leg, ^X reports which, left or right;
            ustatusline() doesn't, in order to keep the output a bit shorter */
-        Sprintf(eos(info), ", injured %s", what);
+        Sprintf(eos(info), ", %s %s", what,
+                fr_adj("blessé", fem ? FR_FEM : FR_MASC, legs == BOTH_SIDES));
     }
     if (Glib)
-        Sprintf(eos(info), ", slippery %s", fingers_or_gloves(TRUE));
+        Sprintf(eos(info), ", %s glissant%s", fingers_or_gloves(TRUE),
+                (fr_genre(fingers_or_gloves(TRUE)) == FR_FEM) ? "es" : "s");
     if (u.utrap)
-        Strcat(info, ", trapped");
+        Sprintf(eos(info), ", pris%s au piège", UE);
     if (Fast)
-        Strcat(info, Very_fast ? ", very fast" : ", fast");
+        Strcat(info, Very_fast ? ", très rapide" : ", rapide");
     if (u.uundetected)
-        Strcat(info, ", concealed");
+        Sprintf(eos(info), ", caché%s", UE);
     else if (U_AP_TYPE != M_AP_NOTHING)
-        Strcat(info, ", disguised");
+        Sprintf(eos(info), ", déguisé%s", UE);
     if (Invis)
         Strcat(info, ", invisible");
     if (u.ustuck) {
         if (u.uswallow)
-            Strcat(info, digests(u.ustuck->data) ? ", being digested by "
-                                                 : ", engulfed by ");
+            Strcat(info, digests(u.ustuck->data) ? ", en cours de digestion par "
+                                                 : (flags.female
+                                                    ? ", engloutie par "
+                                                    : ", englouti par "));
         else if (!sticks(gy.youmonst.data))
-            Strcat(info, ", held by ");
+            Strcat(info, flags.female ? ", retenue par " : ", retenu par ");
         else
-            Strcat(info, ", holding ");
+            Strcat(info, ", agrippant ");
         /* FIXME? a_monnam() uses x_monnam() which has a special case that
            forces "the" instead of "a" when formatting u.ustuck while hero
            is swallowed; we don't really want that here but it isn't worth
@@ -3479,11 +3655,12 @@ ustatusline(void)
     if (!u.uswallow
         && (reg = visible_region_at(u.ux, u.uy)) != 0
         && (ln = strlen(info)) < sizeof info)
-        Snprintf(eos(info), sizeof info - ln, ", in a cloud of %s",
-                 reg_damg(reg) ? "poison gas" : "vapor");
+        Snprintf(eos(info), sizeof info - ln, ", dans un nuage %s",
+                 reg_damg(reg) ? "de gaz toxique" : "de vapeur");
 
-    pline("Status of %s (%s):  Level %d  HP %d(%d)  AC %d%s.", svp.plname,
-          piousness(FALSE, align_str(u.ualign.type)),
+    pline("État de %s (%s) :  Niveau %d  PV %d(%d)  CA %d%s.", svp.plname,
+          piousness(FALSE, fr_adj(align_str(u.ualign.type),
+                                  flags.female ? FR_FEM : FR_MASC, FALSE)),
           Upolyd ? mons[u.umonnum].mlevel : u.ulevel, Upolyd ? u.mh : u.uhp,
           Upolyd ? u.mhmax : u.uhpmax, u.uac, info);
 }

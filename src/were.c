@@ -22,10 +22,10 @@ were_change(struct monst *mon)
 
                 switch (monsndx(mon->data)) {
                 case PM_WEREWOLF:
-                    howler = "wolf";
+                    howler = "un loup";
                     break;
                 case PM_WEREJACKAL:
-                    howler = "jackal";
+                    howler = "un chacal";
                     break;
                 default:
                     howler = (char *) 0;
@@ -33,7 +33,7 @@ were_change(struct monst *mon)
                 }
                 if (howler) {
                     Soundeffect(se_canine_howl, 50);
-                    You_hear("a %s howling at the moon.", howler);
+                    You_hear("%s hurler à la lune.", howler);
                     wake_nearto(mon->mx, mon->my, 4 * 4);
                 }
             }
@@ -92,6 +92,26 @@ were_beastie(int pm)
     return NON_PM;
 }
 
+/* French name of the animal form of a werecritter, without
+   article (replaces the old "pmname()+4" trick that skipped "were") */
+staticfn const char *
+were_beast_name(int pm)
+{
+    switch (pm) {
+    case PM_WEREWOLF:
+    case PM_HUMAN_WEREWOLF:
+        return "loup";
+    case PM_WEREJACKAL:
+    case PM_HUMAN_WEREJACKAL:
+        return "chacal";
+    case PM_WERERAT:
+    case PM_HUMAN_WERERAT:
+        return "rat";
+    default:
+        return "bête";
+    }
+}
+
 void
 new_were(struct monst *mon)
 {
@@ -111,10 +131,9 @@ new_were(struct monst *mon)
     }
 
     if (canseemon(mon) && !Hallucination)
-        pline("%s changes into a %s.", Monnam(mon),
-              is_human(&mons[pm]) ? "human"
-                                  /* pmname()+4: skip past "were" prefix */
-                                  : pmname(&mons[pm], Mgender(mon)) + 4);
+        pline("%s se transforme en %s.", Monnam(mon),
+              is_human(&mons[pm]) ? (mon->female ? "humaine" : "humain")
+                                  : were_beast_name(pm));
 
     set_mon_data(mon, &mons[pm]);
     if (helpless(mon)) {
@@ -165,13 +184,13 @@ were_summon(
         case PM_HUMAN_WEREJACKAL:
             typ = rn2(7) ? PM_JACKAL : rn2(3) ? PM_COYOTE : PM_FOX;
             if (genbuf)
-                Strcpy(genbuf, "jackal");
+                Strcpy(genbuf, "chacal");
             break;
         case PM_WEREWOLF:
         case PM_HUMAN_WEREWOLF:
             typ = rn2(5) ? PM_WOLF : rn2(2) ? PM_WARG : PM_WINTER_WOLF;
             if (genbuf)
-                Strcpy(genbuf, "wolf");
+                Strcpy(genbuf, "loup");
             break;
         default:
             continue;
@@ -198,8 +217,8 @@ you_were(void)
         return;
     if (controllable_poly) {
         /* `+4' => skip "were" prefix to get name of beast */
-        Sprintf(qbuf, "Do you want to change into %s?",
-                an(mons[u.ulycn].pmnames[NEUTRAL] + 4));
+        Sprintf(qbuf, "Voulez-vous vous transformer en %s ?",
+                were_beast_name(u.ulycn));
         if (!paranoid_query(ParanoidWerechange, qbuf))
             return;
     } else if (monster_nearby()) {
@@ -215,13 +234,13 @@ you_unwere(boolean purify)
     boolean controllable_poly = Polymorph_control && !(Stunned || Unaware);
 
     if (purify) {
-        You_feel("purified.");
+        You_feel("vous sentez purifi%s.", UE);
         set_ulycn(NON_PM); /* cure lycanthropy */
     }
     if (!Unchanging && is_were(gy.youmonst.data)
         && !monster_nearby()
         && (!controllable_poly
-            || !paranoid_query(ParanoidWerechange, "Remain in beast form?")))
+            || !paranoid_query(ParanoidWerechange, "Rester sous forme animale ?")))
         rehumanize();
     else if (is_were(gy.youmonst.data) && !u.mtimedone)
         u.mtimedone = rn1(200, 200); /* 40% of initial were change */

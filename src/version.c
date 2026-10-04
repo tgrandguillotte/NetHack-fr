@@ -207,7 +207,7 @@ doextversion(void)
         f = dlb_fopen(OPTIONS_USED, "r");
         if (!f) {
             putstr(win, 0, "");
-            Sprintf(buf, "[Configuration '%s' not available?]", OPTIONS_USED);
+            Sprintf(buf, "[Configuration '%s' non disponible ?]", OPTIONS_USED);
             putstr(win, 0, buf);
             done_dlb = TRUE;
         }
@@ -306,7 +306,7 @@ early_version_info(boolean pastebuf)
          */
         port_insert_pastebuf(buf);
 #else
-        raw_printf("%s", "Paste buffer copy is not available.\n");
+        raw_printf("%s", "La copie dans le presse-papiers n'est pas disponible.\n");
 #endif
     }
 }
@@ -399,7 +399,7 @@ check_version(
         ) {
 #ifndef SFCTOOL
         if (complain) {
-            pline("Version mismatch for file \"%s\".", filename);
+            pline("Version incompatible pour le fichier \"%s\".", filename);
             if (WIN_MESSAGE != WIN_ERR)
                  display_nhwindow(WIN_MESSAGE, TRUE);
         }
@@ -413,7 +413,7 @@ check_version(
         ) {
 #ifndef SFCTOOL
         if (complain) {
-            pline("Configuration incompatibility for file \"%s\".", filename);
+            pline("Configuration incompatible pour le fichier \"%s\".", filename);
             display_nhwindow(WIN_MESSAGE, TRUE);
         }
 #endif

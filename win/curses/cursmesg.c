@@ -96,7 +96,8 @@ curses_message_win_puts(const char *message, boolean recursed)
      * capable of putting something into the ^P recall history without
      * displaying it at the same time.
      */
-    if (strncmp("Count:", message, 6) == 0) {
+    if (strncmp("Count:", message, 6) == 0
+        || strncmp("Nombre :", message, 8) == 0) { /* French get_count() */
         curses_count_window(message);
         return;
     }
@@ -540,7 +541,7 @@ curses_prev_mesg(void)
     }
     if (!count)
         curses_add_menu(wid, &nul_glyphinfo, &Id, 0, 0,
-                        A_NORMAL, clr, "[No past messages available.]",
+                        A_NORMAL, clr, "[Aucun message précédent disponible.]",
                         MENU_ITEMFLAGS_NONE);
 
     curses_end_menu(wid, "");

@@ -769,10 +769,11 @@ selection_size_description(struct selectionvar *sel, char *buf)
     selection_getbounds(sel, &rect);
     dx = rect.hx - rect.lx + 1;
     dy = rect.hy - rect.ly + 1;
-    Sprintf(buf, "%s %i by %i",
-            selection_is_irregular(sel) ? "irregularly shaped"
-            : (dx == dy) ? "square"
-              : "rectangular",
+    /* VF : accorde au feminin ("une pièce carrée de 3 sur 3") */
+    Sprintf(buf, "%s de %i sur %i",
+            selection_is_irregular(sel) ? "de forme irrégulière"
+            : (dx == dy) ? "carrée"
+              : "rectangulaire",
             dx, dy);
     return buf;
 }

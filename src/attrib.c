@@ -8,83 +8,100 @@
 
 /* part of the output on gain or loss of attribute */
 static const char
-    *const plusattr[] = { "strong", "smart", "wise",
-                          "agile",  "tough", "charismatic" },
-    *const minusattr[] = { "weak",    "stupid",
-                           "foolish", "clumsy",
-                           "fragile", "repulsive" };
+    /* French: "masculine/feminine" forms, see attr_gend() */
+    *const plusattr[] = { "fort/forte", "intelligent/intelligente",
+                          "sage", "agile", "robuste", "charismatique" },
+    *const minusattr[] = { "faible", "stupide",
+                           "insensé/insensée", "maladroit/maladroite",
+                           "fragile", "repoussant/repoussante" };
 /* also used by enlightenment in insight.c for non-abbreviated status info */
 extern const char *const attrname[6];
 
 const char
-    *const attrname[] = { "strength", "intelligence", "wisdom",
-                          "dexterity", "constitution", "charisma" };
+    *const attrname[] = { "force", "intelligence", "sagesse",
+                          "dextérité", "constitution", "charisme" };
+
+/* French: pick the form matching the hero's gender from a string
+   holding "masculine/feminine" (or a single invariable form) */
+staticfn const char *
+attr_gend(const char *str)
+{
+    static char gbuf[BUFSZ];
+    const char *slash = strchr(str, '/');
+
+    if (!slash)
+        return str;
+    if (flags.female)
+        return slash + 1;
+    copynchars(gbuf, str, (int) (slash - str));
+    return gbuf;
+}
 
 static const struct innate {
     schar ulevel;
     long *ability;
     const char *gainstr, *losestr;
 } arc_abil[] = { { 1, &(HSearching), "", "" },
-                 { 5, &(HStealth), "stealthy", "" },
-                 { 10, &(HFast), "quick", "slow" },
+                 { 5, &(HStealth), "furtif/furtive", "" },
+                 { 10, &(HFast), "rapide", "lent/lente" },
                  { 0, 0, 0, 0 } },
 
   bar_abil[] = { { 1, &(HPoison_resistance), "", "" },
-                 { 7, &(HFast), "quick", "slow" },
-                 { 15, &(HStealth), "stealthy", "" },
+                 { 7, &(HFast), "rapide", "lent/lente" },
+                 { 15, &(HStealth), "furtif/furtive", "" },
                  { 0, 0, 0, 0 } },
 
-  cav_abil[] = { { 7, &(HFast), "quick", "slow" },
-                 { 15, &(HWarning), "sensitive", "" },
+  cav_abil[] = { { 7, &(HFast), "rapide", "lent/lente" },
+                 { 15, &(HWarning), "sensible", "" },
                  { 0, 0, 0, 0 } },
 
   hea_abil[] = { { 1, &(HPoison_resistance), "", "" },
-                 { 15, &(HWarning), "sensitive", "" },
+                 { 15, &(HWarning), "sensible", "" },
                  { 0, 0, 0, 0 } },
 
-  kni_abil[] = { { 7, &(HFast), "quick", "slow" }, { 0, 0, 0, 0 } },
+  kni_abil[] = { { 7, &(HFast), "rapide", "lent/lente" }, { 0, 0, 0, 0 } },
 
   mon_abil[] = { { 1, &(HFast), "", "" },
                  { 1, &(HSleep_resistance), "", "" },
                  { 1, &(HSee_invisible), "", "" },
-                 { 3, &(HPoison_resistance), "healthy", "" },
-                 { 5, &(HStealth), "stealthy", "" },
-                 { 7, &(HWarning), "sensitive", "" },
-                 { 9, &(HSearching), "perceptive", "unaware" },
-                 { 11, &(HFire_resistance), "cool", "warmer" },
-                 { 13, &(HCold_resistance), "warm", "cooler" },
-                 { 15, &(HShock_resistance), "insulated", "conductive" },
-                 { 17, &(HTeleport_control), "controlled", "uncontrolled" },
+                 { 3, &(HPoison_resistance), "en bonne santé", "" },
+                 { 5, &(HStealth), "furtif/furtive", "" },
+                 { 7, &(HWarning), "sensible", "" },
+                 { 9, &(HSearching), "perspicace", "inattentif/inattentive" },
+                 { 11, &(HFire_resistance), "bien au frais", "réchauffé/réchauffée" },
+                 { 13, &(HCold_resistance), "bien au chaud", "refroidi/refroidie" },
+                 { 15, &(HShock_resistance), "isolé/isolée", "conducteur/conductrice" },
+                 { 17, &(HTeleport_control), "maître de vous/maîtresse de vous", "incontrôlé/incontrôlée" },
                  { 0, 0, 0, 0 } },
 
-  pri_abil[] = { { 15, &(HWarning), "sensitive", "" },
-                 { 20, &(HFire_resistance), "cool", "warmer" },
+  pri_abil[] = { { 15, &(HWarning), "sensible", "" },
+                 { 20, &(HFire_resistance), "bien au frais", "réchauffé/réchauffée" },
                  { 0, 0, 0, 0 } },
 
   ran_abil[] = { { 1, &(HSearching), "", "" },
-                 { 7, &(HStealth), "stealthy", "" },
+                 { 7, &(HStealth), "furtif/furtive", "" },
                  { 15, &(HSee_invisible), "", "" },
                  { 0, 0, 0, 0 } },
 
   rog_abil[] = { { 1, &(HStealth), "", "" },
-                 { 10, &(HSearching), "perceptive", "" },
+                 { 10, &(HSearching), "perspicace", "" },
                  { 0, 0, 0, 0 } },
 
   sam_abil[] = { { 1, &(HFast), "", "" },
-                 { 15, &(HStealth), "stealthy", "" },
+                 { 15, &(HStealth), "furtif/furtive", "" },
                  { 0, 0, 0, 0 } },
 
-  tou_abil[] = { { 10, &(HSearching), "perceptive", "" },
-                 { 20, &(HPoison_resistance), "hardy", "" },
+  tou_abil[] = { { 10, &(HSearching), "perspicace", "" },
+                 { 20, &(HPoison_resistance), "endurci/endurcie", "" },
                  { 0, 0, 0, 0 } },
 
   val_abil[] = { { 1, &(HCold_resistance), "", "" },
-                 { 3, &(HStealth), "stealthy", "" },
-                 { 7, &(HFast), "quick", "slow" },
+                 { 3, &(HStealth), "furtif/furtive", "" },
+                 { 7, &(HFast), "rapide", "lent/lente" },
                  { 0, 0, 0, 0 } },
 
-  wiz_abil[] = { { 15, &(HWarning), "sensitive", "" },
-                 { 17, &(HTeleport_control), "controlled", "uncontrolled" },
+  wiz_abil[] = { { 15, &(HWarning), "sensible", "" },
+                 { 17, &(HTeleport_control), "maître de vous/maîtresse de vous", "incontrôlé/incontrôlée" },
                  { 0, 0, 0, 0 } },
 
   /* Intrinsics conferred by race */
@@ -92,7 +109,7 @@ static const struct innate {
                  { 0, 0, 0, 0 } },
 
   elf_abil[] = { { 1, &HInfravision, "", "" },
-                 { 4, &HSleep_resistance, "awake", "tired" },
+                 { 4, &HSleep_resistance, "éveillé/éveillée", "fatigué/fatiguée" },
                  { 0, 0, 0, 0 } },
 
   gno_abil[] = { { 1, &HInfravision, "", "" },
@@ -105,6 +122,7 @@ static const struct innate {
   hum_abil[] = { { 0, 0, 0, 0 } };
 
 staticfn void exerper(void);
+staticfn const char *attr_gend(const char *);
 staticfn int rnd_attr(void);
 staticfn int init_attr_role_redist(int, boolean);
 staticfn void postadjabil(long *) NONNULLARG1;
@@ -128,7 +146,7 @@ adjattrib(
 
     if ((ndx == A_INT || ndx == A_WIS) && uarmh && uarmh->otyp == DUNCE_CAP) {
         if (msgflg == 0)
-            Your("cap constricts briefly, then relaxes again.");
+            Your("bonnet se resserre brièvement, puis se relâche.");
         return FALSE;
     }
 
@@ -175,13 +193,16 @@ adjattrib(
     if (ACURR(ndx) == old_acurr) {
         if (msgflg == 0 && flags.verbose) {
             if (ABASE(ndx) == old_abase && AMAX(ndx) == old_amax) {
-                pline("You're %s as %s as you can get.",
-                      abonflg ? "currently" : "already", attrstr);
+                pline("Vous êtes %s aussi %s que possible.",
+                      abonflg ? "actuellement" : "déjà", attr_gend(attrstr));
             } else {
                 /* current stayed the same but base value changed, or
                    base is at minimum and reduction caused max to drop */
-                Your("innate %s has %s.", attrname[ndx],
-                     (incr > 0) ? "improved" : "declined");
+                /* all attribute names are feminine except "charisme" */
+                pline("Votre %s inné%s s'est %s%s.", attrname[ndx],
+                      (ndx == A_CHA) ? "" : "e",
+                      (incr > 0) ? "amélioré" : "dégradé",
+                      (ndx == A_CHA) ? "" : "e");
             }
         }
         return FALSE;
@@ -192,7 +213,8 @@ adjattrib(
 
     disp.botl = TRUE;
     if (msgflg <= 0)
-        You_feel("%s%s!", (incr > 1 || incr < -1) ? "very " : "", attrstr);
+        You_feel("vous sentez %s%s !", (incr > 1 || incr < -1) ? "très " : "",
+                 attr_gend(attrstr));
     if (program_state.in_moveloop && (ndx == A_STR || ndx == A_CON))
         encumber_msg();
     return TRUE;
@@ -238,7 +260,7 @@ losestr(int num, const char *knam, schar k_format)
     if (dmg) {
         /* in case damage is fatal and caller didn't supply killer reason */
         if (!knam || !*knam) {
-            knam = "terminal frailty";
+            knam = "une fragilité fatale";
             k_format = KILLED_BY;
         }
         losehp(dmg, knam, k_format);
@@ -281,12 +303,12 @@ static const struct poison_effect_message {
     void (*delivery_func)(const char *, ...);
     const char *effect_msg;
 } poiseff[] = {
-    { You_feel, "weaker" },             /* A_STR */
-    { Your, "brain is on fire" },       /* A_INT */
-    { Your, "judgement is impaired" },  /* A_WIS */
-    { Your, "muscles won't obey you" }, /* A_DEX */
-    { You_feel, "very sick" },          /* A_CON */
-    { You, "break out in hives" }       /* A_CHA */
+    { You_feel, "vous sentez plus faible" },             /* A_STR */
+    { Your, "cerveau est en feu" },                      /* A_INT */
+    { Your, "jugement est altéré" },                     /* A_WIS */
+    { pline, "Vos muscles refusent de vous obéir" },     /* A_DEX */
+    { You_feel, "vous sentez très malade" },             /* A_CON */
+    { You, "vous couvrez d'urticaire" }                  /* A_CHA */
 };
 
 /* feedback for attribute loss due to poisoning */
@@ -305,11 +327,11 @@ poisontell(int typ,         /* which attribute */
      * (dunce cap) is such that we don't need message fixups for them.
      */
     if (typ == A_STR && ACURR(A_STR) == STR19(25))
-        msg_txt = "innately weaker";
+        msg_txt = "vous sentez fondamentalement plus faible";
     else if (typ == A_CON && ACURR(A_CON) == 25)
-        msg_txt = "sick inside";
+        msg_txt = "vous sentez malade intérieurement";
 
-    (*func)("%s%c", msg_txt, exclaim ? '!' : '.');
+    (*func)("%s%s", msg_txt, exclaim ? " !" : ".");
 }
 
 /* called when an attack or trap has poisoned hero (used to be in mon.c) */
@@ -331,14 +353,14 @@ poisoned(
         boolean plural = (reason[strlen(reason) - 1] == 's') ? 1 : 0;
 
         /* avoid "The" Orcus's sting was poisoned... */
-        pline("%s%s %s poisoned!",
-              isupper((uchar) *reason) ? "" : "The ", reason,
-              plural ? "were" : "was");
+        pline("%s %s empoisonné%s !",
+              isupper((uchar) *reason) ? reason : The(reason),
+              plural ? "étaient" : "était", accord(reason));
     }
     if (Poison_resistance) {
         if (blast)
             shieldeff(u.ux, u.uy);
-        pline_The("poison doesn't seem to affect you.");
+        pline_The("Le poison ne semble pas vous affecter.");
         return;
     }
 
@@ -349,7 +371,12 @@ poisoned(
         if (!type_is_pname(&mons[i]))
             pkiller = the(pkiller);
     } else if (!strncmpi(pkiller, "the ", 4) || !strncmpi(pkiller, "an ", 3)
-               || !strncmpi(pkiller, "a ", 2)) {
+               || !strncmpi(pkiller, "a ", 2)
+               /* French articles */
+               || !strncmpi(pkiller, "le ", 3) || !strncmpi(pkiller, "la ", 3)
+               || !strncmpi(pkiller, "l'", 2) || !strncmpi(pkiller, "les ", 4)
+               || !strncmpi(pkiller, "un ", 3) || !strncmpi(pkiller, "une ", 4)
+               || !strncmpi(pkiller, "des ", 4) || !strncmpi(pkiller, "du ", 3)) {
         /*[ does this need a plural check too? ]*/
         kprefix = KILLED_BY;
     }
@@ -366,7 +393,7 @@ poisoned(
         if (u.uhp <= loss) {
             u.uhp = -1;
             disp.botl = TRUE;
-            pline_The("poison was deadly...");
+            pline_The("Le poison était mortel...");
         } else {
             /* survived, but with severe reaction */
             int olduhp = u.uhp,
@@ -586,11 +613,14 @@ exerper(void)
 /* exercise/abuse text (must be in attribute order, not botl order);
    phrased as "You must have been [][0]." or "You haven't been [][1]." */
 static NEARDATA const char *const exertext[A_MAX][2] = {
-    { "exercising diligently", "exercising properly" },           /* Str */
+    /* French: "Vous avez dû [][0]." / "Vous n'avez pas [][1]." */
+    { "vous exercer avec assiduité", "fait assez d'exercice" },   /* Str */
     { 0, 0 },                                                     /* Int */
-    { "very observant", "paying attention" },                     /* Wis */
-    { "working on your reflexes", "working on reflexes lately" }, /* Dex */
-    { "leading a healthy life-style", "watching your health" },   /* Con */
+    { "faire preuve d'un grand sens de l'observation",
+      "fait attention" },                                        /* Wis */
+    { "travailler vos réflexes",
+      "travaillé vos réflexes ces derniers temps" },              /* Dex */
+    { "mener une vie saine", "pris soin de votre santé" },        /* Con */
     { 0, 0 },                                                     /* Cha */
 };
 
@@ -662,7 +692,7 @@ exerchk(void)
                 AEXE(i) = ax = 0;
                 /* then print an explanation */
                 You("%s %s.",
-                    (mod_val > 0) ? "must have been" : "haven't been",
+                    (mod_val > 0) ? "avez dû" : "n'avez pas",
                     exertext[i][(mod_val > 0) ? 0 : 1]);
             }
  nextattrib:
@@ -912,7 +942,7 @@ from_what(
      * Restrict the source of the attributes just to debug mode for now
      */
     if (wizard) {
-        static NEARDATA const char because_of[] = " because of %s";
+        static NEARDATA const char because_of[] = " à cause de %s";
 
         if (propidx >= 0) {
             char *p;
@@ -935,24 +965,24 @@ from_what(
              */
             if ((propidx == BLINDED && u.uroleplay.blind)
                 || (propidx == DEAF && u.uroleplay.deaf))
-                Sprintf(buf, " from birth");
+                Sprintf(buf, " de naissance");
             else if (innateness == FROM_ROLE || innateness == FROM_RACE)
-                Strcpy(buf, " innately");
+                Strcpy(buf, " de façon innée");
             else if (innateness == FROM_INTR) /* [].intrinsic & FROMOUTSIDE */
-                Strcpy(buf, " intrinsically");
+                Strcpy(buf, " de façon intrinsèque");
             else if (innateness == FROM_EXP)
-                Strcpy(buf, " because of your experience");
+                Strcpy(buf, " grâce à votre expérience");
             else if (innateness == FROM_LYCN)
-                Strcpy(buf, " due to your lycanthropy");
+                Strcpy(buf, " à cause de votre lycanthropie");
             else if (innateness == FROM_FORM)
-                Strcpy(buf, " from your creature form");
+                Strcpy(buf, " du fait de votre forme de créature");
             else if (propidx == FAST && Very_fast)
                 Sprintf(buf, because_of,
-                        ((HFast & TIMEOUT) != 0L) ? "a potion or spell"
+                        ((HFast & TIMEOUT) != 0L) ? "une potion ou un sort"
                           : ((EFast & W_ARMF) != 0L && uarmf->dknown
                              && objects[uarmf->otyp].oc_name_known)
                               ? ysimple_name(uarmf) /* speed boots */
-                                : EFast ? "worn equipment"
+                                : EFast ? "l'équipement porté"
                                   : something);
             else if (wizard
                      && (obj = what_gives(&u.uprops[propidx].extrinsic)) != 0)
@@ -964,14 +994,17 @@ from_what(
             else if (propidx == BLINDED && u.ucreamed
                      && BlindedTimeout == (long) u.ucreamed
                      && !EBlinded && !(HBlinded & ~TIMEOUT))
-                Sprintf(buf, "due to goop covering your %s",
+                Sprintf(buf, " à cause de la substance gluante sur votre %s",
                         body_part(FACE));
 
             /* remove some verbosity and/or redundancy */
             if ((p = strstri(buf, " pair of ")) != 0)
                 copynchars(p + 1, p + 9, BUFSZ); /* overlapping buffers ok */
+            else if ((p = strstri(buf, " paire de ")) != 0)
+                copynchars(p + 1, p + 10, BUFSZ); /* overlapping buffers ok */
             else if (propidx == STRANGLED
-                     && (p = strstri(buf, " of strangulation")) != 0)
+                     && ((p = strstri(buf, " of strangulation")) != 0
+                         || (p = strstri(buf, " d'étranglement")) != 0))
                 *p = '\0';
 
         } else { /* negative property index */
@@ -1049,15 +1082,16 @@ adjabil(int oldlevel, int newlevel)
                 *(abil->ability) |= mask;
             if (!(*(abil->ability) & INTRINSIC & ~mask)) {
                 if (*(abil->gainstr))
-                    You_feel("%s!", abil->gainstr);
+                    You_feel("vous sentez %s !", attr_gend(abil->gainstr));
             }
         } else if (oldlevel >= abil->ulevel && newlevel < abil->ulevel) {
             *(abil->ability) &= ~mask;
             if (!(*(abil->ability) & INTRINSIC)) {
                 if (*(abil->losestr))
-                    You_feel("%s!", abil->losestr);
+                    You_feel("vous sentez %s !", attr_gend(abil->losestr));
                 else if (*(abil->gainstr))
-                    You_feel("less %s!", abil->gainstr);
+                    You_feel("vous sentez moins %s !",
+                             attr_gend(abil->gainstr));
             }
         }
         if (prevabil != *(abil->ability)) /* it changed */
@@ -1329,30 +1363,30 @@ uchangealign(
     disp.botl = TRUE; /* status line needs updating */
     if (reason == A_CG_CONVERT) {
         /* conversion via altar */
-        livelog_printf(LL_ALIGNMENT, "permanently converted to %s",
+        livelog_printf(LL_ALIGNMENT, "s'est converti%s définitivement à l'alignement %s", UE,
                        aligns[1 - newalign].adj);
         u.ualignbase[A_CURRENT] = (aligntyp) newalign;
         /* worn helm of opposite alignment might block change */
         if (!uarmh || uarmh->otyp != HELM_OF_OPPOSITE_ALIGNMENT)
             u.ualign.type = u.ualignbase[A_CURRENT];
-        You("have a %ssense of a new direction.",
-            (u.ualign.type != oldalign) ? "sudden " : "");
+        You("avez %sle sentiment d'une nouvelle orientation.",
+            (u.ualign.type != oldalign) ? "soudain " : "");
     } else {
         /* putting on or taking off a helm of opposite alignment */
         u.ualign.type = (aligntyp) newalign;
         if (reason == A_CG_HELM_ON) {
             adjalign(-7); /* for abuse -- record will be cleared shortly */
-            Your("mind oscillates %s.", Hallucination ? "wildly" : "briefly");
+            Your("esprit oscille %s.", Hallucination ? "follement" : "brièvement");
             make_confused(rn1(2, 3), FALSE);
             if (Is_astralevel(&u.uz) || ((unsigned) rn2(50) < u.ualign.abuse))
                 summon_furies(Is_astralevel(&u.uz) ? 0 : 1);
             /* don't livelog taking it back off */
-            livelog_printf(LL_ALIGNMENT, "used a helm to turn %s",
+            livelog_printf(LL_ALIGNMENT, "a utilisé un heaume pour devenir %s",
                            aligns[1 - newalign].adj);
         } else if (reason == A_CG_HELM_OFF) {
-            Your("mind is %s.", Hallucination
-                                    ? "much of a muchness"
-                                    : "back in sync with your body");
+            Your("esprit est %s.", Hallucination
+                                    ? "kif-kif bourricot"
+                                    : "de nouveau en phase avec votre corps");
         }
     }
     if (u.ualign.type != oldalign) {

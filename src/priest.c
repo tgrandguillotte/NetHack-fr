@@ -127,7 +127,7 @@ move_special(struct monst *mtmp, boolean in_his_shop, schar appr,
 #if 0 /* dead code; maybe someday someone will track down why... */
         if (ib) {
             if (cansee(mtmp->mx, mtmp->my))
-                pline("%s picks up %s.", Monnam(mtmp),
+                pline("%s ramasse %s.", Monnam(mtmp),
                       distant_name(ib, doname));
             obj_extract_self(ib);
             (void) mpickobj(mtmp, ib);
@@ -198,7 +198,7 @@ pri_move(struct monst *priest)
         || (Conflict && !resist_conflict(priest))) {
         if (monnear(priest, u.ux, u.uy)) {
             if (Displaced)
-                Your("displaced image doesn't fool %s!", mon_nam(priest));
+                Your("image déplacée ne trompe pas %s !", mon_nam(priest));
             (void) mattacku(priest);
             return 0;
         } else if (strchr(u.urooms, temple)) {
@@ -314,54 +314,55 @@ priestname(
     if (!mon->ispriest && !mon->isminion) /* should never happen...  */
         return strcpy(pname, what);       /* caller must be confused */
 
-    /* for high priest(ess), "high" (or "grand" for poohbah) will be inserted
+    /* for high priest(ess), "grand" will be inserted
        [this was done near the end but we want 'what' to be updated sooner] */
     if (mon->ispriest || aligned_priest || high_priest)
-        what = do_hallu ? "poohbah" : mon->female ? "priestess" : "priest";
+        what = do_hallu ? "manitou" : mon->female ? "prêtresse" : "prêtre";
 
-    *pname = '\0';
-    if (article != ARTICLE_NONE && (!do_hallu || !bogon_is_pname(whatcode))) {
-        if (article == ARTICLE_YOUR || (article == ARTICLE_A && high_priest))
-            article = ARTICLE_THE;
-        if (article == ARTICLE_THE) {
-            Strcpy(pname, "the ");
-        } else if (!strcmp(what, "Angel")) {
-            /* bypass just_an(); it would yield "" due to treating capital A
-               as indicating a personal name */
-            Strcpy(pname, "an ");
-        } else {
-            (void) just_an(pname, what);
+    {
+        char phrase[BUFSZ];
+        int genre;
+
+        if (!do_hallu && (mon->ispriest || aligned_priest || high_priest))
+            genre = mon->female ? FR_FEM : FR_MASC;
+        else
+            genre = fr_genre(what);
+
+        /* French word order: [grand ]<what>[ gardien][ invisible]
+           [ renégat] de <deity> */
+        phrase[0] = '\0';
+        if ((mon->ispriest || aligned_priest) && high_priest)
+            Strcat(phrase, (genre == FR_FEM && !do_hallu) ? "grande "
+                                                           : "grand ");
+        Strcat(phrase, what);
+        if (!(mon->ispriest || aligned_priest) && mon->mtame
+            && (!strcmpi(what, "Angel") || !strcmpi(what, "Ange")))
+            Strcat(phrase, " gardien");
+        if (mon->minvis)
+            Strcat(phrase, " invisible");
+        if (mon->isminion && EMIN(mon)->renegade)
+            Strcat(phrase, genre == FR_FEM ? " renégate" : " renégat");
+
+        *pname = '\0';
+        if (article != ARTICLE_NONE
+            && (!do_hallu || !bogon_is_pname(whatcode))) {
+            if (article == ARTICLE_YOUR
+                || (article == ARTICLE_A && high_priest))
+                article = ARTICLE_THE;
+            if (article == ARTICLE_THE)
+                Strcpy(pname, fr_elision(phrase) ? "l'"
+                              : (genre == FR_FEM) ? "la " : "le ");
+            else
+                Strcpy(pname, (genre == FR_FEM) ? "une " : "un ");
         }
+        Strcat(pname, phrase);
     }
-    /* pname[] contains "" or {"a ","an ","the "} */
-    if (mon->minvis) {
-        /* avoid "a invisible priest" */
-        if (!strcmp(pname, "a "))
-            Strcpy(pname, "an ");
-        Strcat(pname, "invisible ");
-    }
-    if (mon->isminion && EMIN(mon)->renegade) {
-        /* avoid "an renegade Angel" */
-        if (!strcmp(pname, "an ") && !mon->minvis)
-            Strcpy(pname, "a ");
-        Strcat(pname, "renegade ");
-    }
-
-    if (mon->ispriest || aligned_priest) {
-        if (high_priest)
-            Strcat(pname, do_hallu ? "grand " : "high ");
-    } else {
-        if (mon->mtame && !strcmpi(what, "Angel"))
-            Strcat(pname, "guardian ");
-    }
-
-    Strcat(pname, what);
     /* same as distant_monnam(), more or less... */
     if (do_hallu || !high_priest || reveal_high_priest
         || !Is_astralevel(&u.uz)
         || m_next2u(mon) || program_state.gameover) {
-        Strcat(pname, " of ");
-        Strcat(pname, halu_gname(mon_aligntyp(mon)));
+        Strcat(pname, " ");
+        Strcat(pname, de(halu_gname(mon_aligntyp(mon))));
     }
     return pname;
 }
@@ -437,8 +438,8 @@ intemple(int roomno)
                Moloch so suppress the "of Moloch" for him here too */
             if (sanctum && !Hallucination)
                 priest->ispriest = 0;
-            pline("%s intones:",
-                  canseemon(priest) ? Monnam(priest) : "A nearby voice");
+            pline("%s psalmodie :",
+                  canseemon(priest) ? Monnam(priest) : "Une voix proche");
             priest->ispriest = save_priest;
             epri_p->intone_time = svm.moves + (long) d(10, 500); /* ~2505 */
             /* make sure that we don't suppress entry message when
@@ -449,18 +450,21 @@ intemple(int roomno)
         if (sanctum && Is_sanctum(&u.uz)) {
             if (priest->mpeaceful) {
                 /* first time inside */
-                msg1 = "Infidel, you have entered Moloch's Sanctum!";
-                msg2 = "Be gone!";
+                Sprintf(buf,
+                      "Infidèle, vous êtes entré%s dans le Sanctuaire de Moloch !",
+                        UE);
+                msg1 = buf;
+                msg2 = "Hors d'ici !";
                 priest->mpeaceful = 0;
                 /* became angry voluntarily; no penalty for attacking him */
                 set_malign(priest);
             } else {
                 /* repeat visit, or attacked priest before entering */
-                msg1 = "You desecrate this place by your presence!";
+                msg1 = "Vous profanez ce lieu par votre présence !";
             }
         } else if (svm.moves >= epri_p->enter_time) {
-            Sprintf(buf, "Pilgrim, you enter a %s place!",
-                    !shrined ? "desecrated" : "sacred");
+            Sprintf(buf, "Pèlerin, vous entrez dans un lieu %s !",
+                    !shrined ? "profané" : "sacré");
             msg1 = buf;
         }
         if (msg1 && can_speak && !Deaf) {
@@ -473,13 +477,15 @@ intemple(int roomno)
         if (!sanctum) {
             if (!shrined || !p_coaligned(priest)
                 || u.ualign.record <= ALGN_SINNED) {
-                msg1 = "have a%s forbidding feeling...";
-                msg2 = (!shrined || !p_coaligned(priest)) ? "" : " strange";
+                msg1 = "avez un%s sentiment d'hostilité...";
+                msg2 = (!shrined || !p_coaligned(priest)) ? "" : " étrange";
                 this_time = &epri_p->hostile_time;
                 other_time = &epri_p->peaceful_time;
             } else {
-                msg1 = "experience %s sense of peace.";
-                msg2 = (u.ualign.record >= ALGN_DEVOUT) ? "a" : "an unusual";
+                msg1 = "éprouvez %s.";
+                msg2 = (u.ualign.record >= ALGN_DEVOUT)
+                           ? "un sentiment de paix"
+                           : "un étrange sentiment de paix";
                 this_time = &epri_p->peaceful_time;
                 other_time = &epri_p->hostile_time;
             }
@@ -503,13 +509,13 @@ intemple(int roomno)
 
         switch (rn2(4)) {
         case 0:
-            You("have an eerie feeling...");
+            You("avez une sensation inquiétante...");
             break;
         case 1:
-            You_feel("like you are being watched.");
+            You_feel("avez l'impression d'être observé%s.", UE);
             break;
         case 2:
-            pline("A shiver runs down your %s.", body_part(SPINE));
+            pline("Un frisson vous parcourt %s.", the(body_part(SPINE)));
             break;
         default:
             break; /* no message; unfortunately there's no
@@ -521,18 +527,18 @@ intemple(int roomno)
                    != 0) {
             int ngen = svm.mvitals[PM_GHOST].born;
             if (canspotmon(mtmp))
-                pline("A%s ghost appears next to you%c",
-                      ngen < 5 ? "n enormous" : "",
-                      ngen < 10 ? '!' : '.');
+                pline("Un%s fantôme apparaît à côté de vous%s",
+                      ngen < 5 ? " énorme" : "",
+                      ngen < 10 ? " !" : ".");
             else
-                You("sense a presence close by!");
+                You("sentez une présence toute proche !");
             mtmp->mpeaceful = 0;
             set_malign(mtmp);
             if (flags.verbose)
-                You("are frightened to death, and unable to move.");
+                You("êtes mort%s de peur et incapable de bouger.", UE);
             nomul(-3);
-            gm.multi_reason = "being terrified of a ghost";
-            gn.nomovemsg = "You regain your composure.";
+            gm.multi_reason = "terrifié par un fantôme";
+            gn.nomovemsg = "Vous retrouvez votre calme.";
         }
     }
 }
@@ -571,11 +577,11 @@ priest_talk(struct monst *priest)
     /* KMH, conduct */
     if (!u.uconduct.gnostic++)
         livelog_printf(LL_CONDUCT,
-                       "rejected atheism by consulting with %s",
+                       "a renoncé à l'athéisme en consultant %s",
                        mon_nam(priest));
 
     if (priest->mflee || (!priest->ispriest && coaligned && strayed)) {
-        pline("%s doesn't want anything to do with you!", Monnam(priest));
+        pline("%s ne veut rien avoir à faire avec vous !", Monnam(priest));
         priest->mpeaceful = 0;
         return;
     }
@@ -583,14 +589,13 @@ priest_talk(struct monst *priest)
     /* priests don't chat unless peaceful and in their own temple */
     if (!inhistemple(priest) || !priest->mpeaceful || helpless(priest)) {
         static const char *const cranky_msg[3] = {
-            "Thou wouldst have words, eh?  I'll give thee a word or two!",
-            "Talk?  Here is what I have to say!",
-            "Pilgrim, I would speak no longer with thee."
+            "Vous voulez causer, hein ? Je vais vous en toucher deux mots !",
+            "Parler ? Voici ce que j'ai à dire !",
+            "Pèlerin, je ne vous parlerai plus."
         };
 
         if (helpless(priest)) {
-            pline("%s breaks out of %s reverie!", Monnam(priest),
-                  mhis(priest));
+            pline("%s sort de sa rêverie !", Monnam(priest));
             priest->mfrozen = priest->msleeping = 0;
             priest->mcanmove = 1;
         }
@@ -605,7 +610,7 @@ priest_talk(struct monst *priest)
         && !has_shrine(priest)) {
         SetVoice(priest, 0, 80, 0);
         verbalize(
-              "Begone!  Thou desecratest this holy place with thy presence.");
+              "Hors d'ici ! Vous profanez ce lieu saint par votre présence.");
         priest->mpeaceful = 0;
         return;
     }
@@ -615,16 +620,16 @@ priest_talk(struct monst *priest)
             if (pmoney > 0L) {
                 const char *bits;
                 bits = (Hallucination) ? currency(pmoney)
-                                       : (pmoney == 1L) ? "bit" : "bits";
+                                       : (pmoney == 1L) ? "sou" : "sous";
                 /* Note: two bits is actually 25 cents.  Hmm. */
-                pline("%s gives you %s%s for an ale.", Monnam(priest),
-                      (pmoney == 1L) ? "one " : "two ", bits);
+                pline("%s vous donne %s%s pour une bière.", Monnam(priest),
+                      (pmoney == 1L) ? "un " : "deux ", bits);
                 money2u(priest, pmoney > 1L ? 2 : 1);
             } else
-                pline("%s preaches the virtues of poverty.", Monnam(priest));
+                pline("%s prêche les vertus de la pauvreté.", Monnam(priest));
             exercise(A_WIS, TRUE);
         } else
-            pline("%s is not interested.", Monnam(priest));
+            pline("%s n'est pas intéressé%s.", Monnam(priest), MON_E(priest));
         return;
     } else {
         /* there's now some randomization in how much you need to donate, but
@@ -642,40 +647,40 @@ priest_talk(struct monst *priest)
         if (quan < 1)
             quan = 1;
 
-        Sprintf(buf, "How much will you offer (suggested: %ld or %ld)?",
+        Sprintf(buf, "Combien offrez-vous (suggestion : %ld ou %ld) ?",
                 suggested * quan, suggested * quan * 2);
 
         if (flags.debug)
-            pline("%s asks you for a contribution for the temple (base %ld).",
+            pline("%s vous demande une contribution pour le temple (base %ld).",
                   Monnam(priest), suggested);
         else
-            pline("%s asks you for a contribution for the temple.",
+            pline("%s vous demande une contribution pour le temple.",
                   Monnam(priest));
         if ((offer = bribe(priest, buf)) == 0) {
             SetVoice(priest, 0, 80, 0);
-            verbalize("Thou shalt regret thine action!");
+            verbalize("Vous regretterez votre geste !");
             if (coaligned)
                 adjalign(-1);
             if (cheapskate) ++*cheapskate;
         } else if (offer < suggested * quan) {
             if (money_cnt(gi.invent) > (offer * 2L)) {
                 SetVoice(priest, 0, 80, 0);
-                verbalize("Cheapskate.");
+                verbalize("Radin%s.", UE);
                 if (cheapskate) ++*cheapskate;
             } else {
                 SetVoice(priest, 0, 80, 0);
-                verbalize("I thank thee for thy contribution.");
+                verbalize("Je vous remercie de votre contribution.");
                 /* give player some token */
                 exercise(A_WIS, TRUE);
             }
         } else if (offer < suggested * quan * 2) {
             SetVoice(priest, 0, 80, 0);
-            verbalize("Thou art indeed a pious individual.");
+            verbalize("Vous êtes vraiment une personne pieuse.");
             if (money_cnt(gi.invent) < (offer * 2L)) {
                 if (coaligned && u.ualign.record <= ALGN_SINNED)
                     adjalign(1);
             }
-            verbalize("I bestow upon thee a blessing.");
+            verbalize("Je vous accorde une bénédiction.");
             incr_itimeout(&HClairvoyant, rn1(500 * offer / suggested,
                                              500 * offer / suggested));
         } else if (offer < suggested * quan * 3) {
@@ -699,13 +704,13 @@ priest_talk(struct monst *priest)
             }
             SetVoice(priest, 0, 80, 0);
             if (u.ublessed > orig_ublessed) {
-                verbalize("Thou hast been rewarded for thy devotion.");
+                verbalize("Vous avez été récompensé%s pour votre dévotion.", UE);
             } else {
-                verbalize("Thy selfless generosity is deeply appreciated.");
+                verbalize("Votre générosité désintéressée est profondément appréciée.");
             }
         } else {
             SetVoice(priest, 0, 80, 0);
-            verbalize("Thy selfless generosity is deeply appreciated.");
+            verbalize("Votre générosité désintéressée est profondément appréciée.");
             /* money_cnt check is preserved for futureproofing but probably
                can't fail in the current code */
             if (money_cnt(gi.invent) < (offer * 2L) && coaligned) {
@@ -849,15 +854,15 @@ ghod_hitsu(struct monst *priest)
 
     switch (rn2(3)) {
     case 0:
-        pline("%s roars in anger:  \"Thou shalt suffer!\"",
+        pline("%s rugit de colère : \"Vous allez souffrir !\"",
               a_gname_at(ax, ay));
         break;
     case 1:
-        pline("%s voice booms:  \"How darest thou harm my servant!\"",
-              s_suffix(a_gname_at(ax, ay)));
+        pline("La voix de %s tonne : \"Comment osez-vous blesser mon serviteur !\"",
+              a_gname_at(ax, ay));
         break;
     default:
-        pline("%s roars:  \"Thou dost profane my shrine!\"",
+        pline("%s rugit : \"Vous profanez mon autel !\"",
               a_gname_at(ax, ay));
         break;
     }

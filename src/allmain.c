@@ -52,14 +52,14 @@ moveloop_preamble(boolean resuming)
     /* side-effects from the real world */
     flags.moonphase = phase_of_the_moon();
     if (flags.moonphase == FULL_MOON) {
-        You("are lucky!  Full moon tonight.");
+        You("avez de la chance !  C'est la pleine lune ce soir.");
         change_luck(1);
     } else if (flags.moonphase == NEW_MOON) {
-        pline("Be careful!  New moon tonight.");
+        pline("Prudence !  C'est la nouvelle lune ce soir.");
     }
     flags.friday13 = friday_13th();
     if (flags.friday13) {
-        pline("Watch out!  Bad things can happen on Friday the 13th.");
+        pline("Attention !  Il peut arriver des malheurs un vendredi 13.");
         change_luck(-1);
     }
 
@@ -253,7 +253,7 @@ moveloop_core(void)
                  */
                 if (svm.moves >= 1000000000L) {
                     display_nhwindow(WIN_MESSAGE, TRUE);
-                    urgent_pline("The dungeon capitulates.");
+                    urgent_pline("Le donjon capitule.");
                     done(ESCAPED);
                 }
                 /* 'moves' is misnamed; it represents turns; hero_seq is
@@ -447,7 +447,7 @@ moveloop_core(void)
     if (u.uhave.amulet && !u.uevent.amulet_wish) {
         u.uevent.amulet_wish = 1;
         display_nhwindow(WIN_MESSAGE, TRUE);
-        urgent_pline("The Amulet is bestowing a wish upon you!");
+        urgent_pline("L'Amulette vous accorde un vœu !");
         makewish();
     }
 
@@ -576,7 +576,7 @@ maybe_do_tutorial(void)
         assign_level(&u.ucamefrom, &u.uz);
         iflags.nofollowers = TRUE;
         schedule_goto(&sp->dlevel, UTOTYPE_NONE,
-                      "Entering the tutorial.", (char *) 0);
+                      "Entrée dans le tutoriel.", (char *) 0);
         deferred_goto();
         vision_recalc(0);
         docrt();
@@ -621,7 +621,8 @@ regen_pw(int wtcap)
             u.uen = u.uenmax;
         disp.botl = TRUE;
         if (u.uen == u.uenmax)
-            interrupt_multi("You feel full of energy.");
+            interrupt_multi(flags.female ? "Vous vous sentez pleine d'énergie."
+                                          : "Vous vous sentez plein d'énergie.");
     }
 }
 
@@ -682,7 +683,7 @@ regen_hp(int wtcap)
     }
 
     if (reached_full)
-        interrupt_multi("You are in full health.");
+        interrupt_multi("Vous êtes en pleine santé.");
 }
 
 #undef U_CAN_REGEN
@@ -692,7 +693,8 @@ stop_occupation(void)
 {
     if (go.occupation) {
         if (!maybe_finished_meal(TRUE))
-            You("stop %s.", go.occtxt);
+            You("arrêtez %s%s.", fr_elision(go.occtxt) ? "d'" : "de ",
+                go.occtxt);
         go.occupation = (int (*)(void)) 0;
         disp.botl = TRUE; /* in case u.uhs changed */
         nomul(0);
@@ -851,7 +853,7 @@ newgame(void)
                 rerolls_this_second = 1;
             } else {
                 if (rerolls_this_second >= sysopt.maxrerollrate) {
-                    if (!paranoid_query(TRUE, "Continue rerolling?"))
+                    if (!paranoid_query(TRUE, "Continuer à relancer ?"))
                         break;
                     goto check_reroll_time;
                 }
@@ -905,12 +907,12 @@ welcome(boolean new_game) /* false => restoring an old game */
     /* skip "welcome back" if restoring a doomed character */
     if (!new_game && Upolyd && ugenocided()) {
         /* death via self-genocide is pending */
-        pline("You're back, but you still feel %s inside.", udeadinside());
+        pline("Vous êtes de retour, mais vous vous sentez toujours %s à l'intérieur.", udeadinside());
         return;
     }
 
     if (Hallucination)
-        pline("NetHack is filmed in front of an undead studio audience.");
+        pline("NetHack est tourné devant un public de morts-vivants.");
 
     /*
      * The "welcome back" message always describes your innate form
@@ -920,48 +922,47 @@ welcome(boolean new_game) /* false => restoring an old game */
      * Sex is shown for new games except when it is redundant; for
      * restores it's only shown if different from its original value.
      */
+    /* French order: role, race, [gender], [alignment], with adjectives
+       agreed with the hero's current gender */
     *buf = '\0';
-#if 0
-    if (new_game || u.ualignbase[A_ORIGINAL] != u.ualignbase[A_CURRENT])
-        Sprintf(eos(buf), " %s", align_str(u.ualignbase[A_ORIGINAL]));
-#else
-    /*
-     * 2026-04-24
-     * GitHub issue https://github.com/NetHack/NetHack/issues/537
-     * "Judging by the comment above, it should display your new alignment
-     *  if it was changed, so align_str(u.ualignbase[A_CURRENT]) would
-     *  probably be more appropriate. This won't affect the new game message."
-     *
-     * That is followed by a suggestion to revisit the matter (paraphrased):
-     * "That's actually intentional; the comment oversimplifies.
-     *  When it was implemented, it may have been the only way to tell that
-     *  you had converted alignment. Now ^X mentions your starting alignment
-     *  if base alignment has been changed, so revisiting this welcome back
-     *  message."
-     */
-    if (new_game || u.ualignbase[A_ORIGINAL] != u.ualignbase[A_CURRENT] || adrift)
-        Sprintf(eos(buf), " %s%s",
-                adrift ? "adrift " : "",
-                adrift ? align_str(u.ualign.type)
-                       : align_str(u.ualignbase[A_CURRENT]));
-#endif
+    Sprintf(eos(buf), " %s %s",
+            (currentgend && gu.urole.name.f) ? gu.urole.name.f
+                                             : gu.urole.name.m,
+            fr_adj(gu.urace.adj, currentgend ? FR_FEM : FR_MASC, FALSE));
     if (!gu.urole.name.f
         && (new_game
             ? (gu.urole.allow & ROLE_GENDMASK) == (ROLE_MALE | ROLE_FEMALE)
             : currentgend != flags.initgend))
         Sprintf(eos(buf), " %s", genders[currentgend].adj);
-    Sprintf(eos(buf), " %s %s", gu.urace.adj,
-            (currentgend && gu.urole.name.f) ? gu.urole.name.f
-                                             : gu.urole.name.m);
+    /*
+     * 2026-04-24
+     * GitHub issue https://github.com/NetHack/NetHack/issues/537
+     * (see upstream for discussion; alignment shown is the current one)
+     */
+    if (new_game || u.ualignbase[A_ORIGINAL] != u.ualignbase[A_CURRENT] || adrift)
+        Sprintf(eos(buf), " %s%s",
+                fr_adj(adrift ? align_str(u.ualign.type)
+                              : align_str(u.ualignbase[A_CURRENT]),
+                       currentgend ? FR_FEM : FR_MASC, FALSE),
+                adrift ? " à la dérive" : "");
 
-    pline(new_game ? "%s %s, welcome to NetHack!  You are a%s."
-                   : "%s %s, the%s, welcome back to NetHack!",
-          Hello((struct monst *) 0), svp.plname, buf);
+    if (new_game)
+        pline("%s %s, bienvenue dans NetHack !  Vous êtes %s%s.",
+              Hello((struct monst *) 0), svp.plname,
+              currentgend ? "une" : "un", buf);
+    else
+        pline("%s %s, %s%s, bon retour dans NetHack !",
+              Hello((struct monst *) 0), svp.plname,
+              fr_elision(buf + 1) ? "l'" : currentgend ? "la " : "le ",
+              buf + 1);
 
     if (new_game) {
         /* guarantee that 'major' event category is never empty */
-        livelog_printf(LL_ACHIEVE, "%s the%s entered the dungeon",
-                       svp.plname, buf);
+        livelog_printf(LL_ACHIEVE, "%s, %s%s, est entré%s dans le donjon",
+                       svp.plname,
+                       fr_elision(buf + 1) ? "l'"
+                       : currentgend ? "la " : "le ",
+                       buf + 1, currentgend ? "e" : "");
     } else {
         /* if restoring in Gehennom, give same hot/smoky message as when
            first entering it */

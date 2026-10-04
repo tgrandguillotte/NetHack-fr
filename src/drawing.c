@@ -38,17 +38,17 @@ const struct class_sym def_monsyms[MAXMCLASSES] = {
 
 const struct symdef def_warnsyms[WARNCOUNT] = {
     /* white warning  */
-    { '0', "unknown creature causing you worry",    CLR_WHITE },
+    { '0', "créature inconnue qui vous soucie", CLR_WHITE },
     /* pink warning   */
-    { '1', "unknown creature causing you concern",  CLR_RED },
+    { '1', "créature inconnue qui vous préoccupe", CLR_RED },
     /* red warning    */
-    { '2', "unknown creature causing you anxiety",  CLR_RED },
+    { '2', "créature inconnue qui vous inquiète", CLR_RED },
     /* ruby warning   */
-    { '3', "unknown creature causing you disquiet", CLR_RED },
+    { '3', "créature inconnue qui vous angoisse", CLR_RED },
     /* purple warning */
-    { '4', "unknown creature causing you alarm",    CLR_MAGENTA },
+    { '4', "créature inconnue qui vous alarme", CLR_MAGENTA },
     /* black warning  */
-    { '5', "unknown creature causing you dread",    CLR_BRIGHT_MAGENTA },
+    { '5', "créature inconnue qui vous terrifie", CLR_BRIGHT_MAGENTA },
 };
 
 /*
@@ -121,14 +121,15 @@ def_char_is_furniture(char ch)
 {
     /* note: these refer to defsyms[] order which is much different from
        levl[][].typ order but both keep furniture in a contiguous block */
-    static const char first_furniture[] = "stair", /* "staircase up" */
-                      last_furniture[] = "fountain";
+    static const char first_furniture[] = "escalier", /* "escalier montant" */
+                      last_furniture[] = "fontaine";
     int i;
     boolean furniture = FALSE;
 
     for (i = 0; i < MAXPCHARS; ++i) {
         if (!furniture) {
-            if (!strncmp(defsyms[i].explanation, first_furniture, 5))
+            if (!strncmp(defsyms[i].explanation, first_furniture,
+                         sizeof first_furniture - 1))
                 furniture = TRUE;
         }
         if (furniture) {

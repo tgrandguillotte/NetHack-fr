@@ -176,19 +176,19 @@ do_write_config_file(void)
     char tmp[BUFSZ];
 
     if (!configfile[0]) {
-        pline("Strange, could not figure out config file name.");
+        pline("Étrange, impossible de déterminer le nom du fichier de configuration.");
         return ECMD_OK;
     }
     if (flags.suppress_alert < FEATURE_NOTICE_VER(3,7,0)) {
-        pline("Warning: saveoptions is highly experimental!");
+        pline("Attention : saveoptions est très expérimental !");
         wait_synch();
-        pline("Some settings are not saved!");
+        pline("Certains réglages ne sont pas sauvegardés !");
         wait_synch();
-        pline("All manual customization and comments are removed"
-              " from the file!");
+        pline("Toutes les personnalisations manuelles et tous les commentaires"
+              " seront supprimés du fichier !");
         wait_synch();
     }
-#define overwrite_prompt "Overwrite config file %.*s?"
+#define overwrite_prompt "Écraser le fichier de configuration %.*s ?"
     Sprintf(tmp, overwrite_prompt,
             (int) (BUFSZ - sizeof overwrite_prompt - 2), configfile);
 #undef overwrite_prompt
@@ -207,7 +207,7 @@ do_write_config_file(void)
         fclose(fp);
         strbuf_empty(&buf);
         if (wrote != len)
-            pline("An error occurred, wrote only partial data (%zu/%zu).",
+            pline("Une erreur est survenue, données écrites partiellement (%zu/%zu).",
                   wrote, len);
     }
     return ECMD_OK;
@@ -262,7 +262,7 @@ fopen_config_file(const char *filename, int src)
              * control (but SYSCF_FILE is not under the player's
              * control so it's OK).
              */
-            raw_printf("Access to %s denied (%d).", configfile, errno);
+            raw_printf("Accès à %s refusé (%d).", configfile, errno);
             wait_synch();
             /* fall through to standard names */
         } else
@@ -272,7 +272,7 @@ fopen_config_file(const char *filename, int src)
 #if defined(UNIX) || defined(VMS)
         } else {
             /* access() above probably caught most problems for UNIX */
-            raw_printf("Couldn't open requested config file %s (%d).",
+            raw_printf("Impossible d'ouvrir le fichier de configuration demandé %s (%d).",
                        configfile, errno);
             wait_synch();
 #endif
@@ -366,7 +366,7 @@ fopen_config_file(const char *filename, int src)
         if ((details = strerror(errno)) == 0)
 #endif
             details = "";
-        raw_printf("Couldn't open default config file %s %s(%d).",
+        raw_printf("Impossible d'ouvrir le fichier de configuration par défaut %s %s(%d).",
                    configfile, details, errno);
         wait_synch();
     }
@@ -432,7 +432,7 @@ get_uchars(char *bufp,       /* current pointer */
 
         default:
  gi_error:
-            raw_printf("Syntax error in %s", name);
+            raw_printf("Erreur de syntaxe dans %s", name);
             wait_synch();
             return count;
         }
@@ -562,7 +562,7 @@ handle_config_section(char *buf)
             free(gc.config_section_current), gc.config_section_current = 0;
         /* is_config_section() removed brackets from 'sect' */
         if (!gc.config_section_chosen) {
-            config_error_add("Section \"[%s]\" without CHOOSE", sect);
+            config_error_add("Section \"[%s]\" sans CHOOSE", sect);
             return TRUE;
         }
         if (*sect) { /* got a section name */
@@ -938,7 +938,7 @@ cnf_line_SEDUCE(char *bufp)
     /* allow anyone to disable it but can only enable it in sysconf
        or as a no-op for the user when sysconf hasn't disabled it */
     if (!in_sysconf && !sysopt.seduce && n != 0) {
-        config_error_add("Illegal value in SEDUCE");
+        config_error_add("Valeur illégale pour SEDUCE");
         n = 0;
     }
     sysopt.seduce = n;
@@ -962,7 +962,7 @@ cnf_line_MAXPLAYERS(char *bufp)
 
     /* XXX to get more than 25, need to rewrite all lock code */
     if (n < 0 || n > 25) {
-        config_error_add("Illegal value in MAXPLAYERS (maximum is 25)");
+        config_error_add("Valeur illégale pour MAXPLAYERS (maximum 25)");
         n = 5;
     }
     sysopt.maxplayers = n;
@@ -975,7 +975,7 @@ cnf_line_MAX_REROLL_RATE(char *bufp)
     int n = atoi(bufp);
 
     if (n < 0 || n > 255) {
-        config_error_add("Illegal value in MAX_REROLL_RATE (maximum is 255)");
+        config_error_add("Valeur illégale pour MAX_REROLL_RATE (maximum 255)");
         n = 10;
     }
     sysopt.maxrerollrate = n;
@@ -988,7 +988,7 @@ cnf_line_PERSMAX(char *bufp)
     int n = atoi(bufp);
 
     if (n < 1) {
-        config_error_add("Illegal value in PERSMAX (minimum is 1)");
+        config_error_add("Valeur illégale pour PERSMAX (minimum 1)");
         n = 0;
     }
     sysopt.persmax = n;
@@ -1001,7 +1001,7 @@ cnf_line_PERS_IS_UID(char *bufp)
     int n = atoi(bufp);
 
     if (n != 0 && n != 1) {
-        config_error_add("Illegal value in PERS_IS_UID (must be 0 or 1)");
+        config_error_add("Valeur illégale pour PERS_IS_UID (doit valoir 0 ou 1)");
         n = 0;
     }
     sysopt.pers_is_uid = n;
@@ -1014,7 +1014,7 @@ cnf_line_ENTRYMAX(char *bufp)
     int n = atoi(bufp);
 
     if (n < 10) {
-        config_error_add("Illegal value in ENTRYMAX (minimum is 10)");
+        config_error_add("Valeur illégale pour ENTRYMAX (minimum 10)");
         n = 10;
     }
     sysopt.entrymax = n;
@@ -1027,7 +1027,7 @@ cnf_line_POINTSMIN(char *bufp)
     int n = atoi(bufp);
 
     if (n < 1) {
-        config_error_add("Illegal value in POINTSMIN (minimum is 1)");
+        config_error_add("Valeur illégale pour POINTSMIN (minimum 1)");
         n = 100;
     }
     sysopt.pointsmin = n;
@@ -1040,8 +1040,8 @@ cnf_line_MAX_STATUENAME_RANK(char *bufp)
     int n = atoi(bufp);
 
     if (n < 1) {
-        config_error_add("Illegal value in MAX_STATUENAME_RANK"
-                         " (minimum is 1)");
+        config_error_add("Valeur illégale pour MAX_STATUENAME_RANK"
+                         " (minimum 1)");
         n = 10;
     }
     sysopt.tt_oname_maxrank = n;
@@ -1057,8 +1057,8 @@ cnf_line_LIVELOG(char *bufp)
     long L = strtol(bufp, NULL, 0);
 
     if (L < 0L || L > 0xffffL) {
-        config_error_add("Illegal value for LIVELOG"
-                         " (must be between 0 and 0xFFFF).");
+        config_error_add("Valeur illégale pour LIVELOG"
+                         " (doit être entre 0 et 0xFFFF).");
         return 0;
     }
     sysopt.livelog = L;
@@ -1072,7 +1072,7 @@ cnf_line_PANICTRACE_LIBC(char *bufp)
 
 #if defined(PANICTRACE) && defined(PANICTRACE_LIBC)
     if (n < 0 || n > 2) {
-        config_error_add("Illegal value in PANICTRACE_LIBC (not 0,1,2)");
+        config_error_add("Valeur illégale pour PANICTRACE_LIBC (ni 0, ni 1, ni 2)");
         n = 0;
     }
 #endif
@@ -1087,7 +1087,7 @@ cnf_line_PANICTRACE_GDB(char *bufp)
 
 #if defined(PANICTRACE)
     if (n < 0 || n > 2) {
-        config_error_add("Illegal value in PANICTRACE_GDB (not 0,1,2)");
+        config_error_add("Valeur illégale pour PANICTRACE_GDB (ni 0, ni 1, ni 2)");
         n = 0;
     }
 #endif
@@ -1100,7 +1100,7 @@ cnf_line_GDBPATH(char *bufp)
 {
 #if defined(PANICTRACE) && !defined(VMS)
     if (!file_exists(bufp)) {
-        config_error_add("File specified in GDBPATH does not exist");
+        config_error_add("Le fichier indiqué dans GDBPATH n'existe pas");
         return FALSE;
     }
 #endif
@@ -1115,7 +1115,7 @@ cnf_line_GREPPATH(char *bufp)
 {
 #if defined(PANICTRACE) && !defined(VMS)
     if (!file_exists(bufp)) {
-        config_error_add("File specified in GREPPATH does not exist");
+        config_error_add("Le fichier indiqué dans GREPPATH n'existe pas");
         return FALSE;
     }
 #endif
@@ -1140,7 +1140,7 @@ cnf_line_ACCESSIBILITY(char *bufp)
     int n = atoi(bufp);
 
     if (n < 0 || n > 1) {
-        config_error_add("Illegal value in ACCESSIBILITY (not 0,1)");
+        config_error_add("Valeur illégale pour ACCESSIBILITY (ni 0, ni 1)");
         n = 0;
     }
     sysopt.accessibility = n;
@@ -1154,14 +1154,14 @@ cnf_line_PORTABLE_DEVICE_PATHS(char *bufp)
     int n = atoi(bufp);
 
     if (n < 0 || n > 1) {
-        config_error_add("Illegal value in PORTABLE_DEVICE_PATHS"
-                         " (not 0 or 1)");
+        config_error_add("Valeur illégale pour PORTABLE_DEVICE_PATHS"
+                         " (ni 0, ni 1)");
         n = 0;
     }
     sysopt.portable_device_paths = n;
 #else   /* Windows-only directive encountered by non-Windows config */
     nhUse(bufp);
-    config_error_add("PORTABLE_DEVICE_PATHS is not supported");
+    config_error_add("PORTABLE_DEVICE_PATHS n'est pas pris en charge");
 #endif
     return TRUE;
 }
@@ -1211,7 +1211,7 @@ cnf_line_ROGUESYMBOLS(char *bufp)
         switch_symbols(TRUE);
         return TRUE;
     }
-    config_error_add("Error in ROGUESYMBOLS definition '%s'", bufp);
+    config_error_add("Erreur dans la définition ROGUESYMBOLS '%s'", bufp);
     return FALSE;
 }
 
@@ -1223,7 +1223,7 @@ cnf_line_SYMBOLS(char *bufp)
         return TRUE;
     }
     if (!config_unmatched_ignored())
-        config_error_add("Error in SYMBOLS definition '%s'", bufp);
+        config_error_add("Erreur dans la définition SYMBOLS '%s'", bufp);
     return FALSE;
 }
 
@@ -1429,7 +1429,7 @@ parse_config_line(char *origbuf)
     bufp = find_optparam(buf);
     if (!bufp) {
         if (!ignore_statement_errors)
-            config_error_add("Not a config statement, missing '='");
+            config_error_add("Pas une instruction de configuration, '=' manquant");
         return FALSE;
     }
     /* skip past '=', then space between it and value, if any */
@@ -1452,7 +1452,7 @@ parse_config_line(char *origbuf)
     }
 
     if (!ignore_errors_on_unmatched)
-        config_error_add("Unknown config statement");
+        config_error_add("Instruction de configuration inconnue");
     return FALSE;
 }
 
@@ -1565,7 +1565,7 @@ config_erradd(const char *buf)
     const char *punct;
 
     if (!buf || !*buf)
-        buf = "Unknown error";
+        buf = "Erreur inconnue";
 
     /* if buf[] doesn't end in a period, exclamation point, or question mark,
        we'll include a period (in the message, not appended to buf[]) */
@@ -1598,11 +1598,11 @@ config_erradd(const char *buf)
         config_error_data->origline_shown = TRUE;
     }
     if (config_error_data->line_num > 0 && !config_error_data->secure) {
-        Sprintf(lineno, "Line %d: ", config_error_data->line_num);
+        Sprintf(lineno, "Ligne %d : ", config_error_data->line_num);
     } else
         lineno[0] = '\0';
 
-    pline("%s %s%s%s", config_error_data->secure ? "Error:" : " *",
+    pline("%s %s%s%s", config_error_data->secure ? "Erreur :" : " *",
           lineno, buf, punct);
 }
 
@@ -1627,9 +1627,11 @@ config_error_done(void)
     if (n) {
         boolean cmdline = !strcmp(config_error_data->source, "command line");
 
-        pline("\n%d error%s %s %s.\n", n, plur(n), cmdline ? "on" : "in",
-              *config_error_data->source ? config_error_data->source
-                                         : configfile);
+        pline("\n%d erreur%s %s%s.\n", n, plur(n),
+              cmdline ? "sur la ligne de commande" : "dans ",
+              cmdline ? ""
+              : *config_error_data->source ? config_error_data->source
+                                           : configfile);
         wait_synch();
     }
     config_error_data = tmp->next;
@@ -1723,7 +1725,7 @@ parse_conf_buf(struct _cnf_parser_state *p, boolean (*proc)(char *arg))
                    missing a newline; process it anyway  */
                 p->ep = eos(p->inbuf);
             } else {
-                config_error_add("Line too long, skipping");
+                config_error_add("Ligne trop longue, ignorée");
                 p->skip = TRUE; /* discard next fgets */
             }
         } else {
@@ -1795,7 +1797,7 @@ parse_conf_buf(struct _cnf_parser_state *p, boolean (*proc)(char *arg))
                 char *bufp = find_optparam(p->buf);
 
                 if (!bufp) {
-                    config_error_add("Format is CHOOSE=section1"
+                    config_error_add("Le format est CHOOSE=section1"
                                      ",section2,...");
                     p->rv = FALSE;
                     free(p->buf), p->buf = (char *) 0;
@@ -1809,7 +1811,7 @@ parse_conf_buf(struct _cnf_parser_state *p, boolean (*proc)(char *arg))
                 if (section) {
                     gc.config_section_chosen = dupstr(section);
                 } else {
-                    config_error_add("No config section to choose");
+                    config_error_add("Aucune section de configuration à choisir");
                     p->rv = FALSE;
                 }
                 free(p->buf), p->buf = (char *) 0;
@@ -1968,7 +1970,7 @@ rcfile(void)
     if (nameval && (int) strlen(nameval) >= BUFSZ / 2) {
         config_error_init(TRUE, namesrc, FALSE);
         config_error_add(
-            "nethackrc file name \"%.40s\"... too long; using default",
+            "nom de fichier nethackrc \"%.40s\"... trop long ; valeur par défaut utilisée",
             nameval);
         config_error_done();
         nameval = namesrc = 0; /* revert to default nethackrc */
@@ -2235,7 +2237,7 @@ assure_syscf_file(void)
     if (gd.deferred_showpaths)
         do_deferred_showpaths(1); /* does not return */
 #endif
-    raw_printf("Unable to open SYSCF_FILE.\n");
+    raw_printf("Impossible d'ouvrir SYSCF_FILE.\n");
     exit(EXIT_FAILURE);
 }
 

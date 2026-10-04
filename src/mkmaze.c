@@ -711,7 +711,7 @@ check_ransacked(const char *s)
 }
 
 #define ORC_LEADER 1
-static const char *const orcfruit[] = { "paddle cactus", "dwarven root" };
+static const char *const orcfruit[] = { "figue de Barbarie", "racine naine" };
 
 staticfn void
 migrate_orc(struct monst *mtmp, unsigned long mflags)
@@ -1510,7 +1510,7 @@ fumaroles(void)
         }
     }
     if (snd && !Deaf)
-        Norep("You hear a %swhoosh!", loud ? "loud " : "");  /* Deaf-aware */
+        Norep("Vous entendez un sifflement%s !", loud ? " puissant" : "");  /* Deaf-aware */
 }
 
 /*
@@ -1716,7 +1716,7 @@ water_friction(void)
         eff = TRUE;
     }
     if (eff)
-        pline("Water turbulence affects your movements.");
+        pline("Les turbulences de l'eau gênent vos mouvements.");
 }
 
 void

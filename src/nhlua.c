@@ -1172,7 +1172,7 @@ nhl_int_to_pm_name(lua_State *L)
         lua_Integer i = luaL_checkinteger(L, 1);
 
         if (i >= LOW_PM && i <= HIGH_PM)
-            lua_pushstring(L, mons[i].pmnames[NEUTRAL]);
+            lua_pushstring(L, en_mon_names[i][NEUTRAL]); /* VF: nom anglais */
         else
             lua_pushstring(L, "");
     } else
@@ -1191,8 +1191,8 @@ nhl_int_to_obj_name(lua_State *L)
         char buf[8];
         lua_Integer i = luaL_checkinteger(L, 1);
 
-        if (i >= 0 && i < NUM_OBJECTS && OBJ_NAME(objects[i])) {
-            lua_pushstring(L, OBJ_NAME(objects[i]));
+        if (i >= 0 && i < NUM_OBJECTS && en_obj_names[i]) {
+            lua_pushstring(L, en_obj_names[i]); /* VF: nom anglais */
             buf[0] = def_oc_syms[(int)objects[i].oc_class].sym;
             buf[1] = '\0';
             lua_pushstring(L, buf);
@@ -1729,7 +1729,7 @@ nhl_gamestate(lua_State *L)
 
         /* restore game state */
         svm.moves = gg.gmst_moves;
-        pline("Resetting time to move #%ld.", svm.moves);
+        pline("Retour au tour n°%ld.", svm.moves);
         gg.gmst_moves = 0L;
 
         gl.lastinvnr = 51;

@@ -1,360 +1,373 @@
-NetHack History file for release 5.0
+Historique de NetHack pour la version 5.0
 
-Behold, mortal, the origins of NetHack...
+Contemple, mortel, les origines de NetHack...
 
-Jay Fenlason wrote the original Hack, with help from Kenny Woodland,
-Mike Thome, and Jon Payne.
+Jay Fenlason a écrit le Hack original, avec l'aide de Kenny Woodland,
+Mike Thome et Jon Payne.
 
-Andries Brouwer did a major re-write while at Stichting Mathematisch Centrum
-(now Centrum Wiskunde & Informatica), transforming Hack into a very different
-game.  He published the Hack source code for use on UNIX(tm) systems by
-posting that to Usenet newsgroup net.sources (later renamed comp.sources)
-releasing version 1.0 in December of 1984, then versions 1.0.1, 1.0.2, and
-finally 1.0.3 in July of 1985.  Usenet newsgroup net.games.hack (later
-renamed rec.games.hack, eventually replaced by rec.games.roguelike.nethack)
-was created for discussing it.
+Andries Brouwer en a fait une réécriture majeure au Stichting Mathematisch
+Centrum (aujourd'hui Centrum Wiskunde & Informatica), transformant Hack en un
+jeu très différent.  Il a publié le code source de Hack pour les systèmes
+UNIX(tm) en le postant dans le groupe Usenet net.sources (renommé plus tard
+comp.sources) : la version 1.0 en décembre 1984, puis les versions 1.0.1,
+1.0.2 et enfin 1.0.3 en juillet 1985.  Le groupe Usenet net.games.hack
+(renommé plus tard rec.games.hack, finalement remplacé par
+rec.games.roguelike.nethack) a été créé pour en discuter.
 
-Don G. Kneller ported Hack 1.0.3 to Microsoft(tm) C and MS-DOS(tm), producing
-PC HACK 1.01e, added support for DEC Rainbow graphics in version 1.03g, and
-went on to produce at least four more versions (3.0, 3.2, 3.51, and 3.6;
-note that these are old Hack version numbers, not contemporary NetHack ones).
+Don G. Kneller a porté Hack 1.0.3 vers Microsoft(tm) C et MS-DOS(tm),
+produisant PC HACK 1.01e, a ajouté la prise en charge des graphismes du DEC
+Rainbow dans la version 1.03g, puis a produit au moins quatre autres versions
+(3.0, 3.2, 3.51 et 3.6 ; notez qu'il s'agit d'anciens numéros de version de
+Hack, et non de ceux du NetHack contemporain).
 
-R. Black ported PC HACK 3.51 to Lattice(tm) C and the Atari 520/1040ST,
-producing ST Hack 1.03.
+R. Black a porté PC HACK 3.51 vers Lattice(tm) C et l'Atari 520/1040ST,
+produisant ST Hack 1.03.
 
-Mike Stephenson merged these various versions back together, incorporating
-many of the added features, and produced NetHack version 1.4 in 1987.  He
-then coordinated a cast of thousands in enhancing and debugging NetHack 1.4
-and released NetHack versions 2.2 and 2.3.  Like Hack, they were released by
-posting their source code to Usenet where they remained available in various
-archives accessible via ftp and uucp after expiring from the newsgroup.
+Mike Stephenson a fusionné ces diverses versions, en y intégrant beaucoup des
+fonctionnalités ajoutées, et a produit NetHack version 1.4 en 1987.  Il a
+ensuite coordonné une foule de contributeurs pour améliorer et déboguer
+NetHack 1.4, et a publié les versions 2.2 et 2.3 de NetHack.  Comme Hack,
+elles ont été publiées en postant leur code source sur Usenet, où elles sont
+restées disponibles dans diverses archives accessibles par ftp et uucp après
+leur expiration dans le groupe.
 
-Later, Mike coordinated a major re-write of the game, heading a team which
-included Ken Arromdee, Jean-Christophe Collet, Steve Creps, Eric Hendrickson,
-Izchak Miller, Eric S. Raymond, John Rupley, Mike Threepoint, and Janet Walz,
-to produce NetHack 3.0c.
+Plus tard, Mike a coordonné une réécriture majeure du jeu, à la tête d'une
+équipe comprenant Ken Arromdee, Jean-Christophe Collet, Steve Creps, Eric
+Hendrickson, Izchak Miller, Eric S. Raymond, John Rupley, Mike Threepoint et
+Janet Walz, pour produire NetHack 3.0c.
 
-NetHack 3.0 was ported to the Atari by Eric R. Smith, to OS/2 by Timo
-Hakulinen, and to VMS by David Gentzel.  The three of them and Kevin Darcy
-later joined the main NetHack Development Team to produce subsequent
-revisions of 3.0.
+NetHack 3.0 a été porté sur Atari par Eric R. Smith, sur OS/2 par Timo
+Hakulinen et sur VMS par David Gentzel.  Tous trois, ainsi que Kevin Darcy,
+ont ensuite rejoint l'équipe principale de développement de NetHack pour
+produire les révisions suivantes de la 3.0.
 
-Olaf Seibert ported NetHack 2.3 and 3.0 to the Amiga.  Norm Meluch, Stephen
-Spackman and Pierre Martineau designed overlay code for PC NetHack 3.0.
-Johnny Lee ported NetHack 3.0 to the Macintosh.  Along with various other
-Dungeoneers, they continued to enhance the PC, Macintosh, and Amiga ports
-through the later revisions of 3.0.
+Olaf Seibert a porté NetHack 2.3 et 3.0 sur Amiga.  Norm Meluch, Stephen
+Spackman et Pierre Martineau ont conçu le code de recouvrement (overlays) de
+PC NetHack 3.0.  Johnny Lee a porté NetHack 3.0 sur Macintosh.  Avec divers
+autres Donjonniers, ils ont continué à améliorer les portages PC, Macintosh
+et Amiga au fil des révisions ultérieures de la 3.0.
 
-Version 3.0 went through ten relatively rapidly released "patch-level"
-revisions.  Versions at the time were known as 3.0 for the base release
-and variously as "3.0a" through "3.0j", "3.0 patchlevel 1" through
-"3.0 patchlevel 10", or "3.0pl1" through "3.0pl10" rather than 3.0.0 and
-3.0.1 through 3.0.10; the three component numbering scheme began to be used
-with 3.1.0.
+La version 3.0 a connu dix révisions de "niveau de correctif" publiées
+assez rapidement.  À l'époque, on les appelait 3.0 pour la version de base,
+puis "3.0a" à "3.0j", "3.0 patchlevel 1" à "3.0 patchlevel 10", ou "3.0pl1"
+à "3.0pl10", plutôt que 3.0.0 et 3.0.1 à 3.0.10 ; la numérotation à trois
+composantes n'a été adoptée qu'avec la 3.1.0.
 
-Headed by Mike Stephenson and coordinated by Izchak Miller and Janet Walz,
-the NetHack Development Team which now included Ken Arromdee, David Cohrs,
-Jean-Christophe Collet, Kevin Darcy, Matt Day, Timo Hakulinen, Steve Linhart,
-Dean Luick, Pat Rankin, Eric Raymond, and Eric Smith undertook a radical
-revision of 3.0.  They re-structured the game's design, and re-wrote major
-parts of the code.  They added multiple dungeons, a new display, special
-individual character quests, a new endgame and many other new features, and
-produced NetHack 3.1.  Version 3.1.0 was released in January of 1993.
+Dirigée par Mike Stephenson et coordonnée par Izchak Miller et Janet Walz,
+l'équipe de développement de NetHack, qui comprenait désormais Ken Arromdee,
+David Cohrs, Jean-Christophe Collet, Kevin Darcy, Matt Day, Timo Hakulinen,
+Steve Linhart, Dean Luick, Pat Rankin, Eric Raymond et Eric Smith, a
+entrepris une révision radicale de la 3.0.  Elle a restructuré la conception
+du jeu et réécrit de grandes parties du code.  Elle a ajouté plusieurs
+donjons, un nouvel affichage, des quêtes propres à chaque personnage, une
+nouvelle fin de partie et beaucoup d'autres nouveautés, et a produit NetHack
+3.1.  La version 3.1.0 est sortie en janvier 1993.
 
-Ken Lorber, Gregg Wonderly and Greg Olson, with help from Richard Addison,
-Mike Passaretti, and Olaf Seibert, developed NetHack 3.1 for the Amiga.
+Ken Lorber, Gregg Wonderly et Greg Olson, avec l'aide de Richard Addison,
+Mike Passaretti et Olaf Seibert, ont développé NetHack 3.1 pour Amiga.
 
-Norm Meluch and Kevin Smolkowski, with help from Carl Schelin, Stephen
-Spackman, Steve VanDevender, and Paul Winner, ported NetHack 3.1 to the PC.
+Norm Meluch et Kevin Smolkowski, avec l'aide de Carl Schelin, Stephen
+Spackman, Steve VanDevender et Paul Winner, ont porté NetHack 3.1 sur PC.
 
-Jon W{tte and Hao-yang Wang, with help from Ross Brown, Mike Engber, David
-Hairston, Michael Hamel, Jonathan Handler, Johnny Lee, Tim Lennan, Rob Menke,
-and Andy Swanson, developed NetHack 3.1 for the Macintosh, porting it for
-MPW.  Building on their development, Bart House added a Think C port.
+Jon W{tte et Hao-yang Wang, avec l'aide de Ross Brown, Mike Engber, David
+Hairston, Michael Hamel, Jonathan Handler, Johnny Lee, Tim Lennan, Rob Menke
+et Andy Swanson, ont développé NetHack 3.1 pour Macintosh, en le portant sous
+MPW.  Sur cette base, Bart House a ajouté un portage pour Think C.
 
-Timo Hakulinen ported NetHack 3.1 to OS/2.  Eric Smith ported NetHack 3.1
-to the Atari.  Pat Rankin, with help from Joshua Delahunty, was responsible
-for the VMS version of NetHack 3.1.  Michael Allison ported NetHack 3.1 to
+Timo Hakulinen a porté NetHack 3.1 sur OS/2.  Eric Smith a porté NetHack 3.1
+sur Atari.  Pat Rankin, avec l'aide de Joshua Delahunty, était responsable de
+la version VMS de NetHack 3.1.  Michael Allison a porté NetHack 3.1 sous
 Windows NT.
 
-Dean Luick, with help from David Cohrs, developed NetHack 3.1 for X11.
-It drew the map as text rather than graphically but included nh10.bdf, an
-optionally used custom X11 font which has tiny images in place of letters and
-punctuation, a precursor of tiles.  Those images don't extend to individual
-monster and object types, just replacements for monster and object classes
-(so one custom image for all "a" insects and another for all "[" armor and
-so forth, not separate images for beetles and ants or for cloaks and boots).
+Dean Luick, avec l'aide de David Cohrs, a développé NetHack 3.1 pour X11.
+Cette version dessinait la carte en texte et non graphiquement, mais
+incluait nh10.bdf, une police X11 personnalisée facultative contenant de
+minuscules images à la place des lettres et de la ponctuation, précurseur des
+tuiles.  Ces images ne distinguaient pas chaque type de monstre ou d'objet ;
+elles remplaçaient seulement les classes de monstres et d'objets (une image
+pour tous les insectes "a", une autre pour toutes les armures "[", et ainsi
+de suite, sans images distinctes pour les scarabées et les fourmis, ni pour
+les capes et les bottes).
 
-Warwick Allison wrote a graphically displayed version of NetHack for the
-Atari where the tiny pictures were described as "icons" and were distinct
-for specific types of monsters and objects rather than just their classes.
-He contributed them to the NetHack Development Team which rechristened them
-"tiles", original usage which has subsequently been picked up by various
-other games.  NetHack's tiles support was then implemented on other platforms
-(initially MS-DOS but eventually Windows, Qt, and X11 too).
+Warwick Allison a écrit pour Atari une version graphique de NetHack où les
+petites images, appelées "icônes", étaient propres à chaque type de monstre
+et d'objet, et non plus seulement à leur classe.  Il les a offertes à
+l'équipe de développement de NetHack, qui les a rebaptisées "tuiles" (tiles),
+un usage original repris depuis par divers autres jeux.  La prise en charge
+des tuiles a ensuite été implémentée sur d'autres plateformes (d'abord
+MS-DOS, puis Windows, Qt et X11).
 
-The 3.2 NetHack Development Team, comprised of Michael Allison, Ken Arromdee,
-David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo Hakulinen, Steve
-Linhart, Dean Luick, Pat Rankin, Eric Smith, Mike Stephenson, Janet Walz,
-and Paul Winner, released version 3.2.0 in April of 1996.
+L'équipe de développement de NetHack 3.2, composée de Michael Allison, Ken
+Arromdee, David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo
+Hakulinen, Steve Linhart, Dean Luick, Pat Rankin, Eric Smith, Mike
+Stephenson, Janet Walz et Paul Winner, a publié la version 3.2.0 en avril
+1996.
 
-Version 3.2 marked the tenth anniversary of the formation of the development
-team.  In a testament to their dedication to the game, all thirteen members
-of the original NetHack Development Team remained on the team at the start
-of work on that release.  During the interval between the release of 3.1.3
-and 3.2.0, one of the founding members of the NetHack Development Team,
-Dr. Izchak Miller, was diagnosed with cancer and passed away.  That release
-of the game was dedicated to him by the development and porting teams.
+La version 3.2 a marqué le dixième anniversaire de la formation de l'équipe
+de développement.  Preuve de leur dévouement au jeu, les treize membres de
+l'équipe de développement d'origine en faisaient encore tous partie au début
+du travail sur cette version.  Entre la sortie de la 3.1.3 et celle de la
+3.2.0, l'un des membres fondateurs de l'équipe de développement de NetHack,
+le Dr Izchak Miller, a appris qu'il était atteint d'un cancer et nous a
+quittés.  Les équipes de développement et de portage lui ont dédié cette
+version du jeu.
 
-Version 3.2 proved to be more stable than previous versions.  Many bugs
-were fixed, abuses eliminated, and game features tuned for better game
-play.
+La version 3.2 s'est révélée plus stable que les précédentes.  De nombreux
+bogues ont été corrigés, des abus éliminés et des éléments de jeu ajustés
+pour une meilleure jouabilité.
 
-During the lifespan of NetHack 3.1 and 3.2, several enthusiasts of the game
-added their own modifications to the game and made these "variants" publicly
-available:
+Pendant la vie de NetHack 3.1 et 3.2, plusieurs passionnés du jeu y ont
+apporté leurs propres modifications et ont rendu publiques ces "variantes" :
 
-Tom Proudfoot and Yuval Oren created NetHack++, which was quickly renamed
-NetHack-- when some people incorrectly assumed that it was a conversion
-of the C source code to C++.  Working independently, Stephen White wrote
-NetHack Plus.  Tom Proudfoot later merged NetHack Plus and his own NetHack--
-to produce SLASH.  Larry Stewart-Zerba and Warwick Allison improved the
-spell casting system with the Wizard Patch.  Warwick Allison also ported
-NetHack to use the Qt interface.
+Tom Proudfoot et Yuval Oren ont créé NetHack++, vite renommé NetHack--
+quand certains ont cru à tort qu'il s'agissait d'une conversion du code
+source C en C++.  De son côté, Stephen White a écrit NetHack Plus.  Tom
+Proudfoot a ensuite fusionné NetHack Plus et son propre NetHack-- pour
+produire SLASH.  Larry Stewart-Zerba et Warwick Allison ont amélioré le
+système de magie avec le Wizard Patch.  Warwick Allison a aussi porté
+NetHack vers l'interface Qt.
 
-Warren Cheung combined SLASH with the Wizard Patch to produce Slash'EM, and
-with the help of Kevin Hugo, added more features.  Kevin later joined the
-NetHack Development Team and incorporated the best of these ideas into
-NetHack 3.3.
+Warren Cheung a combiné SLASH avec le Wizard Patch pour produire Slash'EM
+et, avec l'aide de Kevin Hugo, y a ajouté d'autres fonctionnalités.  Kevin a
+plus tard rejoint l'équipe de développement de NetHack et a intégré le
+meilleur de ces idées dans NetHack 3.3.
 
-The final update to 3.2 was the bug fix release 3.2.3, which was released
-simultaneously with 3.3.0 in December 1999 just in time for the Year 2000.
-Because of the newer version, 3.2.3 was released as a source code patch only,
-without any ready-to-play distribution for systems that usually had such.
+La dernière mise à jour de la 3.2 a été la version corrective 3.2.3, publiée
+en même temps que la 3.3.0 en décembre 1999, juste à temps pour l'an 2000.
+À cause de la version plus récente, la 3.2.3 n'a été publiée que sous forme
+de correctif du code source, sans distribution prête à jouer pour les
+systèmes qui en avaient habituellement une.
 
-(To anyone considering resurrecting an old version:  all versions before
-3.2.3 had a Y2K bug.  The high scores file and the log file contained dates
-which were formatted using a two-digit year, and 1999's year 99 was followed
-by 2000's year 100.  That got written out successfully but it unintentionally
-introduced an extra column in the file layout which prevented score entries
-from being read back in correctly, interfering with insertion of new high
-scores and with retrieval of old character names to use for random ghost and
-statue names in the current game.)
+(À qui songerait à ressusciter une ancienne version : toutes les versions
+antérieures à la 3.2.3 avaient un bogue de l'an 2000.  Le fichier des
+meilleurs scores et le fichier journal contenaient des dates dont l'année
+était écrite sur deux chiffres, et l'année 99 de 1999 était suivie de
+l'année 100 de 2000.  Elle était écrite sans problème, mais ajoutait
+involontairement une colonne au format du fichier, ce qui empêchait de
+relire correctement les scores, perturbant l'insertion de nouveaux
+meilleurs scores et la récupération d'anciens noms de personnages servant
+à nommer au hasard fantômes et statues dans la partie en cours.)
 
-The 3.3 NetHack Development Team, consisting of Michael Allison, Ken Arromdee,
-David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo Hakulinen,
-Kevin Hugo, Steve Linhart, Ken Lorber, Dean Luick, Pat Rankin, Eric Smith,
-Mike Stephenson, Janet Walz, and Paul Winner, released 3.3.0 in
-December 1999 and 3.3.1 in August of 2000.
+L'équipe de développement de NetHack 3.3, composée de Michael Allison, Ken
+Arromdee, David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo
+Hakulinen, Kevin Hugo, Steve Linhart, Ken Lorber, Dean Luick, Pat Rankin,
+Eric Smith, Mike Stephenson, Janet Walz et Paul Winner, a publié la 3.3.0
+en décembre 1999 et la 3.3.1 en août 2000.
 
-Version 3.3 offered many firsts.  It was the first version to separate race
-and profession.  The Elf class was removed in preference to an elf race,
-and the races of dwarves, gnomes, and orcs made their first appearance in
-the game alongside the familiar human race.  Monk and Ranger roles joined
-Archeologists, Barbarians, Cavemen, Healers, Knights, Priests, Rogues,
-Samurai, Tourists, Valkyries and of course, Wizards.  It was also the first
-version to allow you to ride a steed, and was the first version to have a
-publicly available web-site listing all the bugs that had been discovered.
-Despite that constantly growing bug list, 3.3 proved stable enough to last
-for more than a year and a half.
+La version 3.3 a apporté de nombreuses premières.  C'était la première
+version à séparer la race et la profession.  La classe Elfe a été supprimée
+au profit d'une race elfe, et les races des nains, des gnomes et des orques
+ont fait leur première apparition dans le jeu aux côtés de la race humaine
+familière.  Les rôles de Moine et de Rôdeur ont rejoint les Archéologues,
+Barbares, Hommes des cavernes, Guérisseurs, Chevaliers, Prêtres, Voleurs,
+Samouraïs, Touristes, Valkyries et, bien sûr, Magiciens.  C'était aussi la
+première version permettant de chevaucher une monture, et la première à
+disposer d'un site web public listant tous les bogues découverts.  Malgré
+cette liste de bogues sans cesse croissante, la 3.3 s'est révélée assez
+stable pour durer plus d'un an et demi.
 
-The 3.4 NetHack Development Team initially consisted of Michael Allison,
-Ken Arromdee, David Cohrs, Jessie Collet, Kevin Hugo, Ken Lorber, Dean Luick,
-Pat Rankin, Mike Stephenson, Janet Walz, and Paul Winner, with Warwick Allison
-joining just before the release of NetHack 3.4.0 in March 2002.
+L'équipe de développement de NetHack 3.4 comprenait au départ Michael
+Allison, Ken Arromdee, David Cohrs, Jessie Collet, Kevin Hugo, Ken Lorber,
+Dean Luick, Pat Rankin, Mike Stephenson, Janet Walz et Paul Winner, Warwick
+Allison la rejoignant juste avant la sortie de NetHack 3.4.0 en mars 2002.
 
-As with version 3.3, various people contributed to the game as a whole as
-well as supporting ports on the different platforms that NetHack runs on:
+Comme pour la version 3.3, diverses personnes ont contribué au jeu dans son
+ensemble ainsi qu'aux portages sur les différentes plateformes où NetHack
+fonctionne :
 
-Pat Rankin maintained 3.4 for VMS.
+Pat Rankin a maintenu la 3.4 pour VMS.
 
-Michael Allison maintained NetHack 3.4 for the MS-DOS platform.
-Paul Winner and Yitzhak Sapir provided encouragement.
+Michael Allison a maintenu NetHack 3.4 pour la plateforme MS-DOS.
+Paul Winner et Yitzhak Sapir l'ont encouragé.
 
-Dean Luick, Mark Modrall, and Kevin Hugo maintained and enhanced the
-Macintosh port of 3.4.
+Dean Luick, Mark Modrall et Kevin Hugo ont maintenu et amélioré le portage
+Macintosh de la 3.4.
 
-Michael Allison, David Cohrs, Alex Kompel, Dion Nicolaas, and Yitzhak Sapir
-maintained and enhanced 3.4 for the Microsoft Windows platform.  Alex Kompel
-contributed a new graphical interface for the Windows port.  Alex Kompel also
-contributed a Windows CE port for 3.4.1.
+Michael Allison, David Cohrs, Alex Kompel, Dion Nicolaas et Yitzhak Sapir ont
+maintenu et amélioré la 3.4 pour la plateforme Microsoft Windows.  Alex
+Kompel a fourni une nouvelle interface graphique pour le portage Windows.
+Il a aussi fourni un portage Windows CE pour la 3.4.1.
 
-Ron Van Iwaarden was the sole maintainer of NetHack for OS/2 the past several
-releases. Unfortunately Ron's last OS/2 machine stopped working in early
-2006. A great many thanks to Ron for keeping NetHack alive on OS/2 all these
-years.
+Ron Van Iwaarden a été le seul mainteneur de NetHack pour OS/2 pendant les
+dernières versions.  Malheureusement, la dernière machine OS/2 de Ron a cessé
+de fonctionner début 2006.  Un grand merci à Ron pour avoir fait vivre
+NetHack sur OS/2 pendant toutes ces années.
 
-Janne Salmijarvi and Teemu Suikki maintained and enhanced the
-Amiga port of 3.4 after Janne Salmijarvi resurrected it for 3.3.1.
+Janne Salmijarvi et Teemu Suikki ont maintenu et amélioré le portage Amiga
+de la 3.4 après que Janne Salmijarvi l'a ressuscité pour la 3.3.1.
 
-Christian "Marvin" Bressler maintained 3.4 for the Atari after he
-resurrected it for 3.3.1.
+Christian "Marvin" Bressler a maintenu la 3.4 pour Atari après l'avoir
+ressuscitée pour la 3.3.1.
 
-The release of NetHack 3.4.3 in December 2003 marked the beginning of a
-long release hiatus.  3.4.3 proved to be a remarkably stable version that
-provided continued enjoyment by the community for more than a decade.  The
-NetHack Development Team slowly and quietly continued to work on the game
-behind the scenes during the tenure of 3.4.3.  It was during that same
-period that several new variants emerged within the NetHack community.
-Notably sporkhack by Derek S. Ray, unnethack by Patric Mueller, nitrohack
-and its successors originally by Daniel Thaler and then by Alex Smith, and
-Dynahack by Tung Nguyen.  Some of those variants continue to be developed,
-maintained, and enjoyed by the community to this day.
+La sortie de NetHack 3.4.3 en décembre 2003 a marqué le début d'une longue
+interruption des publications.  La 3.4.3 s'est révélée remarquablement
+stable et a continué de faire le bonheur de la communauté pendant plus de
+dix ans.  L'équipe de développement de NetHack a continué lentement et
+discrètement à travailler sur le jeu en coulisse pendant le règne de la
+3.4.3.  C'est durant cette même période que plusieurs nouvelles variantes
+sont apparues dans la communauté NetHack, notamment sporkhack de Derek S.
+Ray, unnethack de Patric Mueller, nitrohack et ses successeurs, d'abord de
+Daniel Thaler puis d'Alex Smith, et Dynahack de Tung Nguyen.  Certaines de
+ces variantes sont encore développées, maintenues et appréciées par la
+communauté aujourd'hui.
 
-In September 2014, an interim snapshot of the code under development was
-released publicly by other parties.  Since that code was a work-in-progress
-and had not gone through the process of debugging it as a suitable release,
-it was decided that the version numbers present on that code snapshot would
-be retired and never used in an official NetHack release.  An announcement
-was posted on the NetHack Development Team's official nethack.org website
-to that effect, stating that there would never be a 3.4.4, 3.5, or 3.5.0
-official release version.
+En septembre 2014, un instantané intermédiaire du code en développement a
+été rendu public par des tiers.  Comme ce code était un travail en cours et
+n'avait pas été débogué pour en faire une version publiable, il a été décidé
+que les numéros de version présents dans cet instantané seraient retirés et
+jamais utilisés pour une version officielle de NetHack.  Une annonce en ce
+sens a été publiée sur le site officiel de l'équipe de développement,
+nethack.org, précisant qu'il n'y aurait jamais de version officielle 3.4.4,
+3.5 ou 3.5.0.
 
-In January 2015, preparation began for the release of NetHack 3.6.
+En janvier 2015, la préparation de la sortie de NetHack 3.6 a commencé.
 
-At the beginning of development for what would eventually get released
-as 3.6.0, the NetHack Development Team consisted of Warwick Allison,
-Michael Allison, Ken Arromdee, David Cohrs, Jessie Collet, Ken Lorber,
-Dean Luick, Pat Rankin, Mike Stephenson, Janet Walz, and Paul Winner.
-In early 2015, ahead of the release of 3.6.0, new members Sean Hunt,
-Pasi Kallinen, and Derek S. Ray joined the NetHack Development Team.
+Au début du développement de ce qui allait devenir la 3.6.0, l'équipe de
+développement de NetHack se composait de Warwick Allison, Michael Allison,
+Ken Arromdee, David Cohrs, Jessie Collet, Ken Lorber, Dean Luick, Pat
+Rankin, Mike Stephenson, Janet Walz et Paul Winner.  Début 2015, avant la
+sortie de la 3.6.0, de nouveaux membres, Sean Hunt, Pasi Kallinen et
+Derek S. Ray, ont rejoint l'équipe de développement de NetHack.
 
-Near the end of the development of 3.6.0, one of the significant inspirations
-for many of the humorous and fun features found in the game, author
-Terry Pratchett, passed away.  NetHack 3.6.0 introduced a tribute to him.
+Vers la fin du développement de la 3.6.0, l'auteur Terry Pratchett, l'une
+des grandes sources d'inspiration de nombreux éléments drôles et amusants
+du jeu, nous a quittés.  NetHack 3.6.0 lui a rendu hommage.
 
-3.6.0 was released in December 2015, and merged work done by the development
-team since the release of 3.4.3 with some of the beloved community patches.
-Many bugs were fixed and some code was restructured.
+La 3.6.0 est sortie en décembre 2015 ; elle réunissait le travail de
+l'équipe de développement depuis la 3.4.3 et certains des correctifs
+chéris de la communauté.  De nombreux bogues ont été corrigés et une partie
+du code a été restructurée.
 
-The NetHack Development Team, as well as Steve VanDevender and
-Kevin Smolkowski, ensured that NetHack 3.6 continued to operate on various
-UNIX flavors and maintained the X11 interface.
+L'équipe de développement de NetHack, ainsi que Steve VanDevender et Kevin
+Smolkowski, ont veillé à ce que NetHack 3.6 continue de fonctionner sur
+diverses variantes d'UNIX et ont maintenu l'interface X11.
 
-Ken Lorber, Haoyang Wang, Pat Rankin, and Dean Luick maintained the port
-of NetHack 3.6 for MacOS.
+Ken Lorber, Haoyang Wang, Pat Rankin et Dean Luick ont maintenu le portage
+de NetHack 3.6 pour MacOS.
 
 Michael Allison, David Cohrs, Bart House, Pasi Kallinen, Alex Kompel,
-Dion Nicolaas, Derek S. Ray and Yitzhak Sapir maintained the port of
-NetHack 3.6 for Microsoft Windows.
+Dion Nicolaas, Derek S. Ray et Yitzhak Sapir ont maintenu le portage de
+NetHack 3.6 pour Microsoft Windows.
 
-Pat Rankin attempted to keep the VMS port running for NetHack 3.6,
-hindered by limited access.  Kevin Smolkowski has updated and tested it
-for the most recent version of OpenVMS (V8.4 as of this writing) on Alpha
-and Integrity (aka Itanium aka IA64) but not VAX.
+Pat Rankin a tenté de maintenir en état le portage VMS de NetHack 3.6,
+gêné par un accès limité.  Kevin Smolkowski l'a mis à jour et testé pour
+la version la plus récente d'OpenVMS (V8.4 à l'heure où ces lignes sont
+écrites) sur Alpha et Integrity (alias Itanium alias IA64), mais pas VAX.
 
-Ray Chason resurrected the MS-DOS port for 3.6 and contributed the
-necessary updates to the community at large.
+Ray Chason a ressuscité le portage MS-DOS pour la 3.6 et a offert les mises
+à jour nécessaires à l'ensemble de la communauté.
 
-In late April 2018, several hundred bug fixes for 3.6.0 and some new
-features were assembled and released as NetHack 3.6.1.
-The NetHack Development Team at the time of release of 3.6.1 consisted of
-Warwick Allison, Michael Allison, Ken Arromdee, David Cohrs, Jessie Collet,
-Pasi Kallinen, Ken Lorber, Dean Luick, Patric Mueller, Pat Rankin,
-Derek S. Ray, Alex Smith, Mike Stephenson, Janet Walz, and Paul Winner.
+Fin avril 2018, plusieurs centaines de corrections de bogues de la 3.6.0 et
+quelques nouveautés ont été rassemblées et publiées sous le nom de NetHack
+3.6.1.  À la sortie de la 3.6.1, l'équipe de développement de NetHack se
+composait de Warwick Allison, Michael Allison, Ken Arromdee, David Cohrs,
+Jessie Collet, Pasi Kallinen, Ken Lorber, Dean Luick, Patric Mueller, Pat
+Rankin, Derek S. Ray, Alex Smith, Mike Stephenson, Janet Walz et Paul
+Winner.
 
-In early May 2019, another 320 bug fixes along with some enhancements and
-the adopted curses window port, were released as 3.6.2.
+Début mai 2019, 320 autres corrections de bogues, ainsi que quelques
+améliorations et l'interface curses adoptée, ont été publiées sous le nom
+de 3.6.2.
 
-Bart House, who had contributed to the game as a porting team participant
-for decades, joined the NetHack Development Team in late May 2019.
+Bart House, qui contribuait au jeu au sein des équipes de portage depuis
+des décennies, a rejoint l'équipe de développement de NetHack fin mai 2019.
 
-NetHack 3.6.3 was released on December 5, 2019 containing over 190 bug
-fixes to NetHack 3.6.2.
+NetHack 3.6.3 est sorti le 5 décembre 2019 avec plus de 190 corrections de
+bogues par rapport à NetHack 3.6.2.
 
-NetHack 3.6.4 was released on December 18, 2019 containing a security
-fix and a few bug fixes.
+NetHack 3.6.4 est sorti le 18 décembre 2019 avec un correctif de sécurité
+et quelques corrections de bogues.
 
-NetHack 3.6.5 was released on January 27, 2020 containing some security fixes
-and a small number of bug fixes.
+NetHack 3.6.5 est sorti le 27 janvier 2020 avec quelques correctifs de
+sécurité et un petit nombre de corrections de bogues.
 
-NetHack 3.6.6 was released on March 8, 2020 containing a security fix and
-some bug fixes.
+NetHack 3.6.6 est sorti le 8 mars 2020 avec un correctif de sécurité et
+quelques corrections de bogues.
 
-NetHack 3.6.7 was released on February 16, 2023 containing a security fix and
-some bug fixes.
+NetHack 3.6.7 est sorti le 16 février 2023 avec un correctif de sécurité et
+quelques corrections de bogues.
 
-Development work for the major release to follow NetHack 3.6 began in 2015
-around the same time as NetHack 3.6.0 was being released. That development
-work continued in parallel to each of the NetHack 3.6 releases from 2015
-through 2023, and continued until the end of April 2026.  For the first time,
-that development was shared publicly on GitHub and SourceForge as it occurred.
-It was done under the label NetHack-3.7 work-in-progress (WIP), although the
-version number for the next release had not yet been solidified.
+Le développement de la version majeure destinée à succéder à NetHack 3.6 a
+commencé en 2015, à peu près au moment de la sortie de NetHack 3.6.0.  Ce
+travail s'est poursuivi en parallèle de chacune des versions 3.6 de 2015 à
+2023, et a continué jusqu'à fin avril 2026.  Pour la première fois, ce
+développement a été partagé publiquement sur GitHub et SourceForge au fur et
+à mesure.  Il était étiqueté NetHack-3.7 work-in-progress (WIP), bien que le
+numéro de la prochaine version n'ait pas encore été arrêté.
 
-Exposure of the development to the public brought many good things, and some
-challenges. People were able to observe and criticize changes and new features
-almost immediately, and they often did. The GitHub pull request system made
-it straightforward for people to contribute directly to development.
-Contributions resolved many, many bugs in the game and we thank all the
-contributors.
+Exposer le développement au public a apporté beaucoup de bonnes choses, et
+quelques défis.  Chacun pouvait observer et critiquer les changements et les
+nouveautés presque immédiatement, et ne s'en privait souvent pas.  Le système
+de pull requests de GitHub a permis de contribuer facilement et directement
+au développement.  Les contributions ont résolu de très, très nombreux bogues
+du jeu, et nous remercions tous les contributeurs.
 
-In early 2026, with the game development getting stable enough to consider
-initiating an official release, the devteam reviewed the nature and number of
-changes in the game. It was clear that there was sufficient depth and
-breadth to warrant a major release and version 5.0 was decided on.
-That's a new major release over 3.x, without opening up any ambiguity
-or confusion with existing variants that there might have been had it
-been released as version 4.0.
+Début 2026, le développement étant assez stable pour envisager une version
+officielle, l'équipe a examiné la nature et le nombre des changements du
+jeu.  Il était clair qu'ils avaient assez de profondeur et d'ampleur pour
+justifier une version majeure, et le numéro 5.0 a été choisi.  C'est une
+nouvelle version majeure après la 3.x, sans l'ambiguïté ni la confusion avec
+des variantes existantes qu'aurait pu entraîner une version 4.0.
 
-NetHack 5.0.0 was released on May 2, 2026.
+NetHack 5.0.0 est sorti le 2 mai 2026.
 
-The source code for NetHack 5.0.0 was modified and modernized to be compliant
-with the C99 standard. The 5.0.0 release contained over 3100 fixes,changes,
-and updated features.
+Le code source de NetHack 5.0.0 a été modifié et modernisé pour être
+conforme à la norme C99.  La version 5.0.0 contenait plus de 3100
+corrections, changements et améliorations.
 
-NetHack 5.0 was the first version to replace the lex and yacc level
-and dungeon compilers of past versions, with a new Lua interpreter-based
-approach to provide those elements. Lua is also used for the quest texts
-in NetHack 5.0.0. The entire development team acknowledges the work
-done by Pasi Kallinen to make that happen.
+NetHack 5.0 est la première version à remplacer les compilateurs de niveaux
+et de donjons à base de lex et yacc des versions passées par une nouvelle
+approche fondée sur un interpréteur Lua.  Lua sert aussi pour les textes de
+quête de NetHack 5.0.0.  Toute l'équipe de développement salue le travail
+accompli par Pasi Kallinen pour y parvenir.
 
-At the time of the NetHack 5.0 release, the core development team,
-active and erstwhile, included Warwick Allison, Michael Allison,
-Ken Arromdee, David Cohrs, Jessie Collet, Bart House, Kevin Hugo,
-Pasi Kallinen, Ken Lorber, Dean Luick, Pat Rankin, Derek S. Ray,
-Alex Smith, Patric Mueller, Mike Stephenson, Janet Walz, Paul Winner.
+À la sortie de NetHack 5.0, l'équipe principale de développement, membres
+actifs et anciens, comprenait Warwick Allison, Michael Allison, Ken
+Arromdee, David Cohrs, Jessie Collet, Bart House, Kevin Hugo, Pasi Kallinen,
+Ken Lorber, Dean Luick, Pat Rankin, Derek S. Ray, Alex Smith, Patric
+Mueller, Mike Stephenson, Janet Walz, Paul Winner.
 
-Ken Lorber, Pat Rankin, Patrick Mueller and Michael Allison helped ensure
-that NetHack 5.0 would run on macOS.
+Ken Lorber, Pat Rankin, Patrick Mueller et Michael Allison ont veillé à ce
+que NetHack 5.0 fonctionne sous macOS.
 
-Ingo Paschke somehow managed to revive a NetHack 5.0 port for the Amiga,
-using a cross-compiler on a modern platform to do so. His work was shared
-so others can straightforwardly produce NetHack 5.0 for the Amiga thanks
-to his efforts.
+Ingo Paschke a réussi, on ne sait comment, à faire revivre un portage de
+NetHack 5.0 pour Amiga, à l'aide d'un compilateur croisé sur une plateforme
+moderne.  Son travail a été partagé, si bien que d'autres peuvent produire
+facilement NetHack 5.0 pour Amiga grâce à ses efforts.
 
-Ray Chason contributed the majority of maintenance work for the NetHack 5.0
-MS-DOS port, including porting the curses interface to it.
-Michael Allison ensured that NetHack 5.0 core changes continued to work
-with the msdos port and keep it alive.  Cross-compiling the MS-DOS port
-has helped make that possible and mostly painless.
+Ray Chason a assuré l'essentiel de la maintenance du portage MS-DOS de
+NetHack 5.0, y compris le portage de l'interface curses.  Michael Allison a
+veillé à ce que les changements du cœur de NetHack 5.0 continuent de
+fonctionner avec le portage msdos pour le garder en vie.  La compilation
+croisée du portage MS-DOS a rendu cela possible et presque indolore.
 
-People that contributed to the Windows port of NetHack 5.0 since the
-development of NetHack 5.0 began over eleven years ago, included
-Michael Allison, David Cohrs, Bart House, Pasi Kallinen, Alex Kompel,
-Dion Nicolaas, Derek S. Ray and Yitzhak Sapir.
+Ont contribué au portage Windows de NetHack 5.0, depuis le début de son
+développement il y a plus de onze ans, Michael Allison, David Cohrs, Bart
+House, Pasi Kallinen, Alex Kompel, Dion Nicolaas, Derek S. Ray et Yitzhak
+Sapir.
 
-With sadness, the devteam would like to acknowledge and remember the past
-contributions from the late Ron Van Iwaarden, who was the sole maintainer
-of NetHack for OS/2 for several past NetHack releases. Ron will be missed.
+C'est avec tristesse que l'équipe tient à saluer et à rappeler les
+contributions passées du regretté Ron Van Iwaarden, qui fut le seul
+mainteneur de NetHack pour OS/2 pendant plusieurs versions.  Ron nous
+manquera.
 
-The official NetHack web site is maintained by Ken Lorber at
+Le site web officiel de NetHack est maintenu par Ken Lorber à l'adresse
 https://www.nethack.org/.
 
-On behalf of the NetHack community, thank you very much once again  to
-M.  Drew  Streib and Pasi Kallinen for providing a public NetHack server
-at nethack.alt.org. Thanks to  Keith  Simpson  and Andy Thomson for
-hardfought.org. Thanks to all those unnamed dungeoneers who invest their
-time and  effort  into  annual  NetHack tournaments such as Junethack,
-The November NetHack Tournament, and in days past, devnull.net (gone for
-now, but not forgotten).
+Au nom de la communauté NetHack, merci encore mille fois à M. Drew Streib
+et Pasi Kallinen de fournir un serveur NetHack public sur nethack.alt.org.
+Merci à Keith Simpson et Andy Thomson pour hardfought.org.  Merci à tous
+les donjonniers anonymes qui consacrent leur temps et leurs efforts aux
+tournois annuels de NetHack comme Junethack, The November NetHack
+Tournament et, autrefois, devnull.net (disparu pour l'instant, mais pas
+oublié).
 
                            - - - - - - - - - -
 
-From time to time, some depraved individual out there in netland sends a
-particularly intriguing modification to help out with the game.  The
-NetHack Development Team sometimes makes note of the names of the worst
-of these miscreants in this, the list of Dungeoneers:
+De temps à autre, quelque individu dépravé quelque part sur le réseau envoie
+une modification particulièrement intrigante pour améliorer le jeu.
+L'équipe de développement de NetHack note parfois les noms des pires de ces
+mécréants dans la présente liste des Donjonniers :
 
     Adam Aronow               Irina Rempt-Drijfhout     Mike Gallop
     Alex Kompel               Izchak Miller             Mike Passaretti

@@ -221,8 +221,8 @@ local tutorial_events = {
          if (u.uhunger < 148) then
             local o = obj.new("blessed food ration");
             o:placeobj(u.ux, u.uy);
-            nh.pline("Looks like you're getting hungry.  You'll starve to death, unless you eat something.", true);
-            nh.pline("Comestibles are eaten with '" .. nh.eckey("eat") .. "'", true);
+            nh.pline("On dirait que vous commencez à avoir faim.  Vous allez mourir de faim, à moins de manger quelque chose.", true);
+            nh.pline("Les comestibles se mangent avec '" .. nh.eckey("eat") .. "'", true);
             return true;
          end
       end

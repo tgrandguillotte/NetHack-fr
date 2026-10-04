@@ -27,7 +27,7 @@ tty_doprev_message(void)
         && !ttyDisplay->inread) {           /* not single */
         if (iflags.prevmsg_window == 'f') { /* full */
             prevmsg_win = create_nhwindow(NHW_MENU);
-            putstr(prevmsg_win, 0, "Message History");
+            putstr(prevmsg_win, 0, "Historique des messages");
             putstr(prevmsg_win, 0, "");
             cw->maxcol = cw->maxrow;
             i = cw->maxcol;
@@ -60,7 +60,7 @@ tty_doprev_message(void)
                         cw->maxcol = cw->maxrow;
                 } else {
                     prevmsg_win = create_nhwindow(NHW_MENU);
-                    putstr(prevmsg_win, 0, "Message History");
+                    putstr(prevmsg_win, 0, "Historique des messages");
                     putstr(prevmsg_win, 0, "");
                     cw->maxcol = cw->maxrow;
                     i = cw->maxcol;
@@ -79,7 +79,7 @@ tty_doprev_message(void)
         } else { /* reversed */
             morc = 0;
             prevmsg_win = create_nhwindow(NHW_MENU);
-            putstr(prevmsg_win, 0, "Message History");
+            putstr(prevmsg_win, 0, "Historique des messages");
             putstr(prevmsg_win, 0, "");
             putstr(prevmsg_win, 0, gt.toplines);
             cw->maxcol = cw->maxrow - 1;
@@ -263,7 +263,8 @@ update_topl(const char *bp)
         && cw->cury == 0
         /* room for --More-- */
         && n0 + (int) strlen(gt.toplines) + 3 < min(CO - 8, TBUFSZ)
-        && (notdied = strncmp(bp, "You die", 7)) != 0) {
+        && (notdied = (strncmp(bp, "You die", 7) != 0
+                       && strncmp(bp, "Vous mourez", 11) != 0)) != 0) {
         Strcat(gt.toplines, "  ");
         Strcat(gt.toplines, bp);
         cw->curx += 2;
@@ -309,6 +310,13 @@ topl_putsym(char c)
 
     if (cw == (struct WinDesc *) 0)
         panic("Putsym window MESSAGE nonexistent");
+
+    /* UTF-8 continuation byte: output it but don't advance the column,
+       otherwise the tracked cursor drifts right of the real one */
+    if (((unsigned char) c & 0xC0) == 0x80) {
+        (void) putchar(c);
+        return;
+    }
 
     switch (c) {
     case '\b':

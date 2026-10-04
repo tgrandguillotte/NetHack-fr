@@ -132,7 +132,7 @@ getmailstatus(void)
 
     if (mailbox && stat(mailbox, &omstat)) {
 #ifdef PERMANENT_MAILBOX
-        pline("Cannot get status of MAIL=\"%s\".", mailbox);
+        pline("Impossible d'obtenir l'état de MAIL=\"%s\".", mailbox);
         free_maildata(); /* set 'mailbox' to Null */
 #else
         omstat.st_mtime = 0;
@@ -274,8 +274,8 @@ md_stop(coord *stopp,  /* stopping position (we fill it in) */
 }
 
 /* Let the mail daemon have a larger vocabulary. */
-staticfn NEARDATA const char *mail_text[] = { "Gangway!", "Look out!",
-                                            "Pardon me!" };
+staticfn NEARDATA const char *mail_text[] = { "Place !", "Attention !",
+                                            "Pardon !" };
 #define md_exclamations() (mail_text[rn2(3)])
 
 /*
@@ -339,7 +339,7 @@ md_rush(struct monst *md,
             if (mon)
                 verbalize1(md_exclamations());
             else if (u_at(fx, fy))
-                verbalize("Excuse me.");
+                verbalize("Excusez-moi.");
         }
 
         if (mon)
@@ -370,7 +370,7 @@ md_rush(struct monst *md,
         newsym(fx, fy);
         if (!Deaf) {
             SetVoice(md, 0, 80, 0);
-            verbalize("This place's too crowded.  I'm outta here.");
+            verbalize("Il y a trop de monde ici. Je me tire.");
         } else {
             pline("%s.", Never_mind);
         }
@@ -415,9 +415,9 @@ newmail(struct mail_info *info)
     message_seen = TRUE;
     if (!Deaf) {
         SetVoice(md, 0, 80, 0);
-        verbalize("%s, %s!  %s.", Hello(md), svp.plname, info->display_txt);
+        verbalize("%s, %s ! %s.", Hello(md), svp.plname, info->display_txt);
     } else {
-        pline("Message:  %s.", info->display_txt);
+        pline("Message : %s.", info->display_txt);
     }
 
     if (info->message_typ) {
@@ -431,14 +431,14 @@ newmail(struct mail_info *info)
         if (!m_next2u(md)) {
             if (!Deaf) {
                 SetVoice(md, 0, 80, 0);
-                verbalize("Catch!");
+                verbalize("Attrapez !");
             } else {
                 /* don't bother with nonverbal alternative ... */
                 ;
             }
         }
         display_nhwindow(WIN_MESSAGE, FALSE);
-        obj = hold_another_object(obj, "Oops!", (const char *) 0,
+        obj = hold_another_object(obj, "Oups !", (const char *) 0,
                                   (const char *) 0);
         nhUse(obj);
     }
@@ -452,7 +452,7 @@ newmail(struct mail_info *info)
  give_up:
     /* deliver some classes of messages even if no daemon ever shows up */
     if (!message_seen && info->message_typ == MSG_OTHER)
-        pline("Hark!  \"%s.\"", info->display_txt);
+        pline("Écoutez ! \"%s.\"", info->display_txt);
 }
 
 #if !defined(UNIX) && !defined(VMS)
@@ -471,7 +471,7 @@ ckmailstatus(void)
     }
     if (--mustgetmail <= 0) {
         static struct mail_info deliver = {
-            MSG_MAIL, "I have some mail for you", 0, 0
+            MSG_MAIL, "J'ai du courrier pour vous", 0, 0
         };
         newmail(&deliver);
         mustgetmail = -1;
@@ -490,39 +490,39 @@ readmail(struct obj *otmp UNUSED)
     enum delivery_types delivery = normal_delivery;
     const char *recipient = 0;
     static const char *const junk_templates[] = {
-        "%sReport bugs to <%s>.%s", /*** must be first entry ***/
-        "Please disregard previous letter.",
-        "Welcome to NetHack.",
+        "%sSignalez les bogues à <%s>.%s", /*** must be first entry ***/
+        "Merci de ne pas tenir compte de la lettre précédente.",
+        "Bienvenue dans NetHack.",
 #ifdef AMIGA
-        "Only Amiga makes it possible.",
-        "CATS have all the answers.",
+        "Seul Amiga rend cela possible.",
+        "Les CATS ont toutes les réponses.",
 #endif
-        "This mail complies with the Yendorian Anti-Spam Act (YASA)",
-        "Please find enclosed a small token to represent your Owlbear",
-        "**FR33 P0T10N 0F FULL H34L1NG**",
-        "Please return to sender (Asmodeus)",
+        "Ce courrier est conforme à la Loi Yendorienne Anti-Spam (LYAS)",
+        "Veuillez trouver ci-joint un petit souvenir de votre Hibours",
+        "**P0T10N D3 S01NS C0MPL3TS GR4TU1T3**",
+        "Retour à l'expéditeur (Asmodeus)",
         /* when enclosed by "It reads:  \"...\"", this is too long
            for an ordinary 80-column display so wraps to a second line
            (suboptimal but works correctly);
            dollar sign and fractional zorkmids are inappropriate within
            nethack but are suitable for typical dysfunctional spam mail */
-        ("Buy a potion of gain level for only $19.99! "
-         " Guaranteed to be blessed!"),
+        ("Achetez une potion de gain de niveau pour seulement 19,99 $ ! "
+         " Bénédiction garantie !"),
         /* DEVTEAM_URL will be substituted for 2nd "%s";
            terminating punctuation (formerly "!") has deliberately been
            omitted so that it can't be mistaken for part of the URL
            (unfortunately that is still followed by a closing quote--in
            the pline below, not the data here) */
-        "%sInvitation: Visit the NetHack web site at %s%s"
+        "%sInvitation : visitez le site web de NetHack à l'adresse %s%s"
     };
-    const char *const it_reads = "It reads:  \"";
+    const char *const it_reads = "On peut y lire : \"";
 
     i = rn2(SIZE(junk_templates));
     if (strchr(junk_templates[i], '%')) {
         if (i == 0) {
             recipient = DEVTEAM_EMAIL;
             delivery = subst_delivery;
-        } else if (strstri(junk_templates[i], "web site")) {
+        } else if (strstri(junk_templates[i], "site web")) {
             recipient = DEVTEAM_URL;
             delivery = subst_delivery;
         } else {
@@ -531,7 +531,7 @@ readmail(struct obj *otmp UNUSED)
         }
     }
     if (Blind) {
-        pline("Unfortunately you cannot see what it says.");
+        pline("Malheureusement, vous ne pouvez pas voir ce qui est écrit.");
     } else {
         if (delivery == subst_delivery)
             pline(junk_templates[i], it_reads, recipient, "\"");
@@ -561,7 +561,7 @@ ckmailstatus(void)
     laststattime = svm.moves;
     if (stat(mailbox, &nmstat)) {
 #ifdef PERMANENT_MAILBOX
-        pline("Cannot get status of MAIL=\"%s\" anymore.", mailbox);
+        pline("Impossible d'obtenir encore l'état de MAIL=\"%s\".", mailbox);
         free_maildata();
 #else
         nmstat.st_mtime = 0;
@@ -570,10 +570,10 @@ ckmailstatus(void)
         if (nmstat.st_size) {
             static struct mail_info deliver = {
 #ifndef NO_MAILREADER
-                MSG_MAIL, "I have some mail for you",
+                MSG_MAIL, "J'ai du courrier pour vous",
 #else
                 /* suppress creation and delivery of scroll of mail */
-                MSG_OTHER, "You have some mail in the outside world",
+                MSG_OTHER, "Vous avez du courrier dans le monde extérieur",
 #endif
                 0, 0
             };
@@ -623,8 +623,8 @@ read_simplemail(const char *mbox, boolean adminmsg)
             fl.l_type = F_UNLCK;
             fcntl(fileno(mb), F_UNLCK, &fl);
 #endif
-            There("is a%s message on this scroll.",
-                  seen_one_already ? "nother" : "");
+            There("Il y a %s message sur ce parchemin.",
+                  seen_one_already ? "un autre" : "un");
         }
         msg = strchr(curline, ':');
 
@@ -643,11 +643,11 @@ read_simplemail(const char *mbox, boolean adminmsg)
             endpunct = ".";
 
         if (adminmsg) {
-            urgent_pline("The voice of %s booms through the caverns:",
+            urgent_pline("La voix de %s résonne dans les cavernes :",
                          curline);
         } else {
-            pline("This message is from '%s'.", curline);
-            pline("It reads:");
+            pline("Ce message vient de '%s'.", curline);
+            pline("On peut y lire :");
         }
         pline("\"%s\"%s", msg, endpunct);
 
@@ -676,7 +676,7 @@ read_simplemail(const char *mbox, boolean adminmsg)
  bail:
     /* bail out _professionally_ */
     if (!adminmsg)
-        pline("It appears to be all gibberish.");
+        pline("Cela semble n'être que du charabia.");
 }
 
 #endif /* SIMPLE_MAIL */
@@ -778,7 +778,7 @@ readmail(struct obj *otmp)
     if (!cmd || !*cmd)
         cmd = "SPAWN";
 
-    Sprintf(qbuf, "System command (%s)", cmd);
+    Sprintf(qbuf, "Commande système (%s)", cmd);
     getlin(qbuf, buf);
     if (*buf != '\033') {
         for (p = eos(buf); p > buf; *p = '\0')

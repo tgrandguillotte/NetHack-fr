@@ -104,7 +104,8 @@ getlock(void)
 {
 #ifndef SELF_RECOVER
     static const char destroy_old_game_prompt[] =
-    "There is already a game in progress under your name.  Destroy old game?";
+        "Une partie est déjà en cours sous votre nom.  "
+        "Détruire l'ancienne partie ?";
 #endif
     int i = 0, fd, c, too_old;
     const char *fq_lock;
@@ -119,7 +120,7 @@ getlock(void)
     /* added check for window-system type -dlc */
     if (!strcmp(windowprocs.name, "tty"))
         if (!isatty(0))
-            error("You must play from a terminal.");
+            error("Vous devez jouer depuis un terminal.");
 #endif
 
     /* we ignore QUIT and INT at this point */
@@ -150,7 +151,7 @@ getlock(void)
                     goto gotlock; /* no such file */
                 perror(fq_lock);
                 unlock_file(HLOCK);
-                error("Cannot open %s", fq_lock);
+                error("Impossible d'ouvrir %s", fq_lock);
             }
 
             /* veryold() no longer conditionally closes fd */
@@ -161,7 +162,7 @@ getlock(void)
         } while (i < gl.locknum);
 
         unlock_file(HLOCK);
-        error("Too many hacks running now.");
+        error("Trop de parties en cours actuellement.");
     } else {
         fq_lock = fqname(gl.lock, LEVELPREFIX, 0);
         if ((fd = open(fq_lock, 0)) == -1) {
@@ -169,7 +170,7 @@ getlock(void)
                 goto gotlock; /* no such file */
             perror(fq_lock);
             unlock_file(HLOCK);
-            error("Cannot open %s", fq_lock);
+            error("Impossible d'ouvrir %s", fq_lock);
         }
 
         /* veryold() no longer conditionally closes fd */
@@ -183,7 +184,8 @@ getlock(void)
         if (iflags.window_inited) {
 #ifdef SELF_RECOVER
             c = yn_function(
-             "Old game in progress. Destroy [y], Recover [r], or Cancel [n]?",
+                "Ancienne partie en cours. Détruire [y], Récupérer [r]"
+                " ou Annuler [n] ?",
                             "ynr", 'n', FALSE);
 #else
             /* this is a candidate for paranoid_confirmation */
@@ -192,10 +194,10 @@ getlock(void)
         } else {
 #ifdef SELF_RECOVER
             (void) raw_printf(
-        "\nThere is already a game in progress under your name.  Do what?\n");
-            (void) raw_printf("\n  y - Destroy old game");
-            (void) raw_printf("\n  r - Try to recover it");
-            (void) raw_printf("\n  n - Cancel");
+        "\nUne partie est déjà en cours sous votre nom.  Que faire ?\n");
+            (void) raw_printf("\n  y - Détruire l'ancienne partie");
+            (void) raw_printf("\n  r - Tenter de la récupérer");
+            (void) raw_printf("\n  n - Annuler");
             (void) raw_printf("\n\n  => ");
             (void) fflush(stdout);
             do {
@@ -222,7 +224,7 @@ getlock(void)
                 goto gotlock;
             } else {
                 unlock_file(HLOCK);
-                error("Couldn't recover old game.");
+                error("Impossible de récupérer l'ancienne partie.");
             }
         } else
 #endif
@@ -231,7 +233,7 @@ getlock(void)
                 goto gotlock;
             } else {
                 unlock_file(HLOCK);
-                error("Couldn't destroy old game.");
+                error("Impossible de détruire l'ancienne partie.");
             }
         } else {
             unlock_file(HLOCK);
@@ -243,16 +245,16 @@ getlock(void)
     fd = creat(fq_lock, FCMASK);
     unlock_file(HLOCK);
     if (fd == -1) {
-        error("cannot creat lock file (%s).", fq_lock);
+        error("Impossible de créer le fichier verrou (%s).", fq_lock);
         /*NOTREACHED*/
     } else {
         if (write(fd, (genericptr_t) &svh.hackpid, sizeof svh.hackpid)
             != sizeof svh.hackpid) {
-            error("cannot write lock (%s)", fq_lock);
+            error("Impossible d'écrire le verrou (%s)", fq_lock);
             /*NOTREACHED*/
         }
         if (close(fd) == -1) {
-            error("cannot close lock (%s)", fq_lock);
+            error("Impossible de fermer le verrou (%s)", fq_lock);
             /*NOTREACHED*/
         }
     }
@@ -263,11 +265,12 @@ void
 ask_about_panic_save(void)
 {
 #ifdef CHECK_PANIC_SAVE
-    static const char Instead_prompt[] = "Start a new game instead?";
+    static const char Instead_prompt[] = "Commencer plutôt une nouvelle partie ?";
     int c = '\0';
 
-    pline("There is no regular save file but there is a panic one.");
-    pline("It might be recoverable with demi-divine intervention.");
+    pline("Il n'y a pas de sauvegarde normale, mais il y a une"
+          " sauvegarde de panique.");
+    pline("Elle pourrait être récupérée par une intervention semi-divine.");
     if (iflags.window_inited) {
         c = yn_function(Instead_prompt, "yn\033q", 'n', FALSE);
     } else {
@@ -349,7 +352,7 @@ dosh(void)
     if (!sysopt.shellers || !sysopt.shellers[0]
         || !check_user_string(sysopt.shellers)) {
         /* FIXME: should no longer assume a particular command keystroke */
-        Norep("Unavailable command '!'.");
+        Norep("Commande '!' indisponible.");
         return 0;
     }
 #endif
@@ -358,7 +361,7 @@ dosh(void)
             (void) execl(str, str, (char *) 0);
         else
             (void) execl("/bin/sh", "sh", (char *) 0);
-        raw_print("sh: cannot execute.");
+        raw_print("sh : exécution impossible.");
         exit(EXIT_FAILURE);
     }
     return 0;
@@ -391,7 +394,7 @@ child(int wt)
         return 1;
     }
     if (f == -1) { /* cannot fork */
-        pline("Fork failed.  Try again.");
+        pline("Échec du fork.  Réessayez.");
         return 0;
     }
     /* fork succeeded; wait for child to exit */
