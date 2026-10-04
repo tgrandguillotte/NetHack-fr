@@ -1,0 +1,32 @@
+{
+    // Configuration GitHub Codespaces / Dev Containers pour compiler NetHack.
+    // Voir .devcontainer/README.md
+    "name": "NetHack - compilation",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+    "containerEnv": {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8"
+    },
+    // Installe les dépendances puis compile le jeu à la création du codespace
+    "postCreateCommand": "bash .devcontainer/post-create.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.makefile-tools"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "files.encoding": "utf8"
+            }
+        },
+        "codespaces": {
+            "openFiles": [
+                ".devcontainer/README.md"
+            ]
+        }
+    },
+    "hostRequirements": {
+        "cpus": 2
+    }
+}
