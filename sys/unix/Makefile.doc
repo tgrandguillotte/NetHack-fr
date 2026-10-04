@@ -33,7 +33,7 @@ GUIDEBOOK ?= Guidebook		# regular ASCII file
 # recognize the option.  Sigh.
 #
 # col is unnecessary, but harmless, with groff.  See grotty(1).
-COLCMD ?= col -bx
+COLCMD ?= LC_ALL=C.UTF-8 col -bx
 #COLCMD ?= col -b
 #COLCMD ?= $(STRIPBS)
 
@@ -48,7 +48,7 @@ GUIDE_PREFORMAT ?= cat $(GUIDEBOOK_MN) | $(NHGREP) | tbl tmac.n -
 # for Guidebook.dat, unpaginated version of Guidebook.txt
 ONEPAGE_PREFORMAT ?= cat Gbk-1pg-pfx.mn $(GUIDEBOOK_MN) Gbk-1pg-sfx.mn \
 	| $(NHGREP) | tbl tmac.n -
-ONEPAGECMD ?= $(ONEPAGE_PREFORMAT) | $(NROFF) -c -Tascii $(NROFF_FLAGS) | $(COLCMD)
+ONEPAGECMD ?= $(ONEPAGE_PREFORMAT) | $(NROFF) -c -Kutf8 -Tutf8 $(NROFF_FLAGS) | $(COLCMD)
 # Use the "cat" GUIDECMD if nroff and/or tbl and/or col are not installed
 # Not appropriate for creating Guidebook.txt.
 # GUIDECMD ?= cat Guidebook.txt
@@ -57,7 +57,7 @@ ONEPAGECMD ?= $(ONEPAGE_PREFORMAT) | $(NROFF) -c -Tascii $(NROFF_FLAGS) | $(COLC
 # PLVALUE='s/^(.mt)$$/.pl 4720v\n.in 0\n.po 8\n.ll 64m\n$$1/'
 # GUIDECMD ?= $(GUIDE_PREFORMAT) | perl -pe $(PLVALUE) | $(NROFF) -c -Tascii | $(COLCMD)
 #
-GUIDECMD ?= $(GUIDE_PREFORMAT) | $(NROFF) -c -Tascii $(NROFF_FLAGS) | $(COLCMD)
+GUIDECMD ?= $(GUIDE_PREFORMAT) | $(NROFF) -c -Kutf8 -Tutf8 $(NROFF_FLAGS) | $(COLCMD)
 GUIDEBOOK_TEX_SRC ?= Guidebook.tex
 GUIDEBOOK_TEX ?= $(GUIDEBOOK_TEX_SRC)
 
