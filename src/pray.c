@@ -739,7 +739,7 @@ fry_by_god(aligntyp resp_god, boolean via_disintegration)
     else
         You("êtes désintégré%s en un tas de poussière !", UE);
     svk.killer.format = KILLED_BY;
-    Sprintf(svk.killer.name, "le courroux de %s", align_gname(resp_god));
+    Sprintf(svk.killer.name, "le courroux %s", du(align_gname(resp_god)));
     done(DIED);
 }
 
@@ -1236,7 +1236,7 @@ pleased(aligntyp g_align)
                               repair_buf);
                         iflags.last_msg = PLNMSG_OBJ_GLOWS;
                     } else
-                        You_feel("sentez le pouvoir de %s sur %s.", u_gname(),
+                        You_feel("sentez le pouvoir %s sur %s.", du(u_gname()),
                                  yname(uwep));
                     uncurse(uwep);
                     uwep->bknown = 1; /* ok to bypass set_bknown() */
@@ -1249,7 +1249,7 @@ pleased(aligntyp g_align)
                               repair_buf);
                         iflags.last_msg = PLNMSG_OBJ_GLOWS;
                     } else
-                        You_feel("sentez la bénédiction de %s sur %s.", u_gname(),
+                        You_feel("sentez la bénédiction %s sur %s.", du(u_gname()),
                                  yname(uwep));
                     bless(uwep);
                     uwep->bknown = 1; /* ok to bypass set_bknown() */
@@ -1341,7 +1341,7 @@ pleased(aligntyp g_align)
             int any = 0;
 
             if (Blind)
-                You_feel("sentez le pouvoir de %s.", u_gname());
+                You_feel("sentez le pouvoir %s.", du(u_gname()));
             else
                 You("êtes entouré%s d'une aura %s.", UE,
                     fr_adj(hcolor(NH_LIGHT_BLUE), FR_FEM, FALSE));
@@ -1481,7 +1481,7 @@ godvoice(aligntyp g_align, const char *words)
     else
         words = "";
 
-    pline_The("La voix de %s %s : %s%s%s", align_gname(g_align),
+    pline_The("La voix %s %s : %s%s%s", du(align_gname(g_align)),
               ROLL_FROM(godvoices), quot, words, quot);
 }
 
@@ -1726,7 +1726,7 @@ offer_different_alignment_altar(
             struct monst *pri;
             boolean shrine;
 
-            You_feel("sentez le pouvoir de %s croître.", u_gname());
+            You_feel("sentez le pouvoir %s croître.", du(u_gname()));
             exercise(A_WIS, TRUE);
             change_luck(1);
             shrine = on_shrine();
@@ -1749,7 +1749,7 @@ offer_different_alignment_altar(
                 && !p_coaligned(pri))
                 angry_priest();
         } else {
-            pline("Par malchance, vous sentez le pouvoir de %s décroître.", u_gname());
+            pline("Par malchance, vous sentez le pouvoir %s décroître.", du(u_gname()));
             change_luck(-1);
             exercise(A_WIS, FALSE);
             if (rnl(u.ulevel) > 6 && u.ualign.record > 0

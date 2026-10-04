@@ -933,7 +933,9 @@ welcome(boolean new_game) /* false => restoring an old game */
         && (new_game
             ? (gu.urole.allow & ROLE_GENDMASK) == (ROLE_MALE | ROLE_FEMALE)
             : currentgend != flags.initgend))
-        Sprintf(eos(buf), " %s", genders[currentgend].adj);
+        Sprintf(eos(buf), " %s",
+                fr_adj(genders[currentgend].adj,
+                       currentgend ? FR_FEM : FR_MASC, FALSE));
     /*
      * 2026-04-24
      * GitHub issue https://github.com/NetHack/NetHack/issues/537

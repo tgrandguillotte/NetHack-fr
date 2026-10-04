@@ -27,6 +27,12 @@ staticfn int genre_par_suffixe(const char *);
 staticfn boolean est_nom_propre(const char *);
 staticfn boolean a_determinant(const char *);
 staticfn boolean finit_par(const char *, const char *);
+staticfn void baisse_article(char *);
+staticfn void fem_mot(char *, size_t);
+staticfn void plur_adj_mot(char *, size_t);
+staticfn boolean adj_invariable(const char *);
+staticfn void pluriel_simple(char *, size_t);
+staticfn void conj_simple(const char *, int, boolean, char *, size_t);
 staticfn void pluriel_mot(char *, size_t, boolean);
 staticfn boolean mot_stop(const char *);
 staticfn void singulier_mot(char *);
@@ -383,13 +389,13 @@ fr_elision(const char *s)
 staticfn boolean
 est_nom_propre(const char *s)
 {
-    const unsigned char *u = (const unsigned char *) s;
+    const unsigned char *uc = (const unsigned char *) s;
 
-    if (*u >= 'A' && *u <= 'Z')
+    if (*uc >= 'A' && *uc <= 'Z')
         return TRUE;
-    if (*u == 0xC3 && u[1] >= 0x80 && u[1] <= 0x9E)
+    if (*uc == 0xC3 && uc[1] >= 0x80 && uc[1] <= 0x9E)
         return TRUE;
-    if (*u == 0xC5 && u[1] == 0x92) /* Œ */
+    if (*uc == 0xC5 && uc[1] == 0x92) /* Œ */
         return TRUE;
     return FALSE;
 }
@@ -689,6 +695,9 @@ adj_invariable(const char *w)
     for (i = 0; adj_invar[i]; i++)
         if (!strcmp(w, adj_invar[i]))
             return TRUE;
+    /* adverbes en -ment ("partiellement", "complètement") */
+    if (strlen(w) > 6 && finit_par(w, "ment"))
+        return TRUE;
     for (i = 0; i < SIZE(adj_irreg); i++)
         if (!strcmp(w, adj_irreg[i].m) && !strcmp(adj_irreg[i].m,
                                                   adj_irreg[i].f))
@@ -719,8 +728,10 @@ fr_adj(const char *adj, int genre, boolean pluriel)
         (void) strncpy(w, p, l);
         w[l] = '\0';
         sep = *q;
-        if (!stop && (mot_stop(w) || !strncmp(w, "d'", 2)
-                      || !strncmp(w, "l'", 2)))
+        if (!stop && strncmp(w, "nomm", 4) && strncmp(w, "appel", 5)
+            && strncmp(w, "étiquet", 8)
+            && (mot_stop(w) || !strncmp(w, "d'", 2)
+                || !strncmp(w, "l'", 2)))
             stop = TRUE;
         if (!stop && !adj_invariable(w) && *w) {
             if (genre == FR_FEM)
@@ -854,8 +865,11 @@ pluriel_mot(char *w, size_t sz, boolean premier)
         for (i = 0; compose_invar[i]; i++)
             if (!strcmp(a, compose_invar[i]))
                 invar = TRUE;
-        if (!invar)
-            pluriel_simple(a, sizeof a);
+        if (invar) { /* porte-bonheur, garde-fou : invariables */
+            *h = '-';
+            return;
+        }
+        pluriel_simple(a, sizeof a);
         /* "-de-", "-à-" : seul le premier element varie */
         if (strncmp(b, "de-", 3) && strncmp(b, "à-", 3)
             && strncmp(b, "en-", 3) && strncmp(b, "d'", 2))
@@ -923,8 +937,14 @@ makeplural(const char *oldstr)
         (void) strncpy(w, p, l);
         w[l] = '\0';
         sep = *q;
-        if (!stop && (mot_stop(w) || !strncmp(w, "d'", 2)))
+        if (!stop && (!strcmp(w, "nommé") || !strcmp(w, "nommée")
+                      || !strcmp(w, "appelé") || !strcmp(w, "appelée")
+                      || !strcmp(w, "étiqueté") || !strcmp(w, "étiquetée"))) {
+            Strcat(w, "s"); /* "parchemins étiquetés FOO" */
             stop = TRUE;
+        } else if (!stop && (mot_stop(w) || !strncmp(w, "d'", 2))) {
+            stop = TRUE;
+        }
         if (!stop) {
             pluriel_mot(w, sizeof w, premier);
             premier = FALSE;
@@ -1359,16 +1379,16 @@ fr_conj(const char *inf, int pers, boolean pl)
 char *
 fr_upstart(char *s)
 {
-    unsigned char *u = (unsigned char *) s;
+    unsigned char *uc = (unsigned char *) s;
 
     if (!s)
         return s;
-    if (*u >= 'a' && *u <= 'z')
-        *u = (unsigned char) (*u - ('a' - 'A'));
-    else if (*u == 0xC3 && u[1] >= 0xA0 && u[1] <= 0xBE && u[1] != 0xB7)
-        u[1] = (unsigned char) (u[1] - 0x20);
-    else if (*u == 0xC5 && u[1] == 0x93)
-        u[1] = 0x92; /* œ -> Œ */
+    if (*uc >= 'a' && *uc <= 'z')
+        *uc = (unsigned char) (*uc - ('a' - 'A'));
+    else if (*uc == 0xC3 && uc[1] >= 0xA0 && uc[1] <= 0xBE && uc[1] != 0xB7)
+        uc[1] = (unsigned char) (uc[1] - 0x20);
+    else if (*uc == 0xC5 && uc[1] == 0x93)
+        uc[1] = 0x92; /* œ -> Œ */
     return s;
 }
 

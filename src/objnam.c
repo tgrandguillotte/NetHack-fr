@@ -2375,6 +2375,11 @@ static const char *const as_is[] = {
        variant instead of attempting to support both. */
 };
 
+staticfn boolean singplur_lookup(char *, char *, boolean,
+                                 const char *const *);
+staticfn char *singplur_compound(char *);
+staticfn char *en_makesingular(const char *);
+
 static const char *const special_subjs[] = {
     "erinys",  "manes", /* this one is ambiguous */
     "Cyclops", "Hippocrates",     "Pelias",    "aklys",
@@ -2921,7 +2926,6 @@ staticfn boolean fr_strictmatch(const char *, const char *);
 staticfn boolean fr_exact_objname(const char *);
 staticfn boolean fr_loosematch(const char *, const char *);
 staticfn boolean wishymatch_en(const char *, const char *, boolean);
-staticfn char *en_makesingular(const char *);
 
 /* replie un caractere (eventuellement multioctet UTF-8) de *pp en
    minuscule ASCII sans accent dans out[] (au plus 4 octets + NUL) ;
@@ -3102,8 +3106,10 @@ fr_exact_objname(const char *s)
     for (i = MAXOCLASSES; i < NUM_OBJECTS; i++) {
         if (((zn = OBJ_NAME(objects[i])) != 0 && fr_strictmatch(s, zn))
             || ((zn = OBJ_DESCR(objects[i])) != 0 && fr_strictmatch(s, zn))
-            || ((zn = en_obj_names[i]) != 0 && fr_strictmatch(s, zn))
-            || ((zn = en_obj_descrs[i]) != 0 && fr_strictmatch(s, zn)))
+            || ((zn = en_obj_names[objects[i].oc_name_idx]) != 0
+                && fr_strictmatch(s, zn))
+            || ((zn = en_obj_descrs[objects[i].oc_descr_idx]) != 0
+                && fr_strictmatch(s, zn)))
             return TRUE;
     }
     return FALSE;
@@ -3369,6 +3375,11 @@ static const struct alt_spellings {
     { "amulette de protection", AMULET_OF_GUARDING },
     { "parchemin d'identité", SCR_IDENTIFY },
     { "pierre de chance", LUCKSTONE },
+    { "gantelets de force d'ogre", GAUNTLETS_OF_POWER },
+    { "gantelets de force de géant", GAUNTLETS_OF_POWER },
+    { "gants de puissance", GAUNTLETS_OF_POWER },
+    { "casque de clairvoyance", HELM_OF_TELEPATHY },
+    { "amulette de vie", AMULET_OF_LIFE_SAVING },
     { (const char *) 0, 0 },
 };
 
@@ -3458,13 +3469,13 @@ rnd_otyp_by_namedesc(
             || ((zn = objects[i].oc_uname) != 0
                 && wishymatch(name, zn, FALSE)) /* user-called name */
             /* original English name and description */
-            || ((zn = en_obj_names[i]) != 0
+            || ((zn = en_obj_names[objects[i].oc_name_idx]) != 0
                 && (wishymatch(name, zn, TRUE)
                     || (check_of && i != BELL_OF_OPENING
                         && (i < minglob || i > maxglob)
                         && (of = strstri(zn, " of ")) != 0
                         && wishymatch(name, of + 4, FALSE))))
-            || ((zn = en_obj_descrs[i]) != 0
+            || ((zn = en_obj_descrs[objects[i].oc_descr_idx]) != 0
                 && wishymatch(name, zn, FALSE))
             /* second pass, French: let "<bar>" match "<foo> de <bar>"
                ("aconit" for "brin d'aconit") */
@@ -4240,6 +4251,9 @@ fr_wish_prefix(struct _readobjnam_data *d)
     for (i = 0; fr_wishadjs[i].kw; i++)
         if ((l = fr_adjword(d->bp, fr_wishadjs[i].kw)) != 0
             && d->bp[l] == ' ' && d->bp[l + 1]
+            /* "piège à ours" (or "piege") is a noun, not "piégé" */
+            && (fr_wishadjs[i].act != FA_TRAPPED
+                || !strncmp(d->bp, "piég", 5))
             && fr_wish_adj(d, fr_wishadjs[i].act, d->very))
             return l + 1;
     return 0;
@@ -4866,6 +4880,12 @@ readobjnam_postparse1(struct _readobjnam_data *d)
         return 2; /*goto typfnd;*/
     }
 
+    if (fr_is(d->bp, "épinards") || fr_is(d->bp, "épinard")) {
+        d->contents = TIN_SPINACH;
+        d->typ = TIN;
+        return 2; /*goto typfnd;*/
+    }
+
     /* French corpses, statues, figurines and eggs: "cadavre de lézard",
        "statue de Méduse", "figurine d'un chien", "œuf de cocatrix" */
     {
@@ -5381,7 +5401,8 @@ readobjnam_postparse3(struct _readobjnam_data *d)
 
             if (((zn = OBJ_NAME(objects[i])) != 0
                  && fr_strictmatch(d->actualn, zn))
-                || ((zn = en_obj_names[i]) != 0 && !strcmpi(d->actualn, zn))) {
+                || ((zn = en_obj_names[objects[i].oc_name_idx]) != 0
+                    && !strcmpi(d->actualn, zn))) {
                 d->typ = i;
                 return 2; /*goto typfnd;*/
             }

@@ -442,7 +442,7 @@ look_at_monster(
                  : (mtmp->mpeaceful && accurate)
                      ? " pacifique"
                      : "",
-             (mtmp->mtame && accurate) ? MON_E(mtmp) : "");
+             (mtmp->mtame && accurate && fr_genre(name) == FR_FEM) ? "e" : "");
     if (mtmp->mx != x || mtmp->my != y) {
         if (mtmp->isshk && accurate)
             Snprintf(buf, BUFSZ, "queue de %s", descbuf);

@@ -858,8 +858,8 @@ ghod_hitsu(struct monst *priest)
               a_gname_at(ax, ay));
         break;
     case 1:
-        pline("La voix de %s tonne : \"Comment osez-vous blesser mon serviteur !\"",
-              a_gname_at(ax, ay));
+        pline("La voix %s tonne : \"Comment osez-vous blesser mon serviteur !\"",
+              du(a_gname_at(ax, ay)));
         break;
     default:
         pline("%s rugit : \"Vous profanez mon autel !\"",

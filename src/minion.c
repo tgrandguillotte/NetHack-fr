@@ -239,7 +239,7 @@ summon_minion(aligntyp alignment, boolean talk)
     if (mon) {
         if (talk) {
             if (!Deaf)
-                pline("La voix de %s tonne :", align_gname(alignment));
+                pline("La voix %s tonne :", du(align_gname(alignment)));
             else
                 You_feel("sentez la voix tonnante de %s :",
                          align_gname(alignment));
