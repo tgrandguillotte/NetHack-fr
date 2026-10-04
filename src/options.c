@@ -3214,6 +3214,19 @@ optfn_pettype(
     if (req == do_set) {
         if ((op = string_for_env_opt(allopt[optidx].name, opts, negated))
             != empty_optstr) {
+            /* noms francais : "chien", "chat"/"chaton", "cheval"/"poney",
+               "aucun", "aléatoire" (les noms anglais restent acceptés) */
+            if (!strncmpi(op, "chien", 4))
+                gp.preferred_pet = 'd';
+            else if (!strncmpi(op, "chat", 4))
+                gp.preferred_pet = 'c';
+            else if (!strncmpi(op, "chev", 4) || !strncmpi(op, "pon", 3))
+                gp.preferred_pet = 'h';
+            else if (!strncmpi(op, "aucun", 5) || !strncmpi(op, "rien", 4))
+                gp.preferred_pet = 'n';
+            else if (!strncmpi(op, "aléatoire", 3) || !strncmpi(op, "hasard", 3))
+                gp.preferred_pet = '\0';
+            else
             switch (lowc(*op)) {
             case 'd': /* dog */
                 gp.preferred_pet = 'd';
@@ -8256,7 +8269,13 @@ fruitadd(char *str, struct fruit *replace_fruit)
              i++) {
             if (!strcmp(OBJ_NAME(objects[i]), svp.pl_fruit)
                 || (globpfx > 0 && !strcmp(OBJ_NAME(objects[i]),
-                                           &svp.pl_fruit[globpfx]))) {
+                                           &svp.pl_fruit[globpfx]))
+                /* noms anglais d'origine, encore reconnus par les voeux */
+                || (en_obj_names[i]
+                    && (!strcmp(en_obj_names[i], svp.pl_fruit)
+                        || (globpfx > 0
+                            && !strcmp(en_obj_names[i],
+                                       &svp.pl_fruit[globpfx]))))) {
                 found = TRUE;
                 break;
             }

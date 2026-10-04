@@ -2089,7 +2089,7 @@ start_eating(struct obj *otmp, boolean already_partly_eaten)
         return;
     }
 
-    Sprintf(msgbuf, "eating %s", food_xname(otmp, TRUE));
+    Sprintf(msgbuf, "manger %s", food_xname(otmp, TRUE));
     set_occupation(eatfood, msgbuf, 0);
 }
 
@@ -3456,7 +3456,7 @@ newuhs(boolean incr)
                 incr_itimeout(&HDeaf, duration);
                 disp.botl = TRUE;
                 nomul(-duration);
-                gm.multi_reason = "fainted from lack of food";
+                gm.multi_reason = "évanoui faute de nourriture";
                 gn.nomovemsg = "Vous reprenez connaissance.";
                 ga.afternmv = unfaint;
                 newhs = FAINTED;

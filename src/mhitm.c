@@ -775,12 +775,12 @@ gazemm(struct monst *magr, struct monst *mdef, struct attack *mattk)
     /* call mon_reflects 2x, first test, then, if visible, print message */
     if (magr->data == &mons[PM_MEDUSA] && mon_reflects(mdef, (char *) 0)) {
         if (canseemon(mdef))
-            (void) mon_reflects(mdef, "Le regard est renvoyé par %s (%s).");
+            (void) mon_reflects(mdef, "Le regard est renvoyé par %s %s.");
         if (mdef->mcansee) {
             if (mon_reflects(magr, (char *) 0)) {
                 if (canseemon(magr))
                     (void) mon_reflects(magr,
-                                      "Le regard est renvoyé par %s (%s).");
+                                      "Le regard est renvoyé par %s %s.");
                 return M_ATTK_MISS;
             }
             if (mdef->minvis && !perceives(magr->data)) {
@@ -1183,7 +1183,7 @@ mon_poly(struct monst *magr, struct monst *mdef, int dmg)
             }
         } else if (newcham(mdef, (struct permonst *) 0, NO_NC_FLAGS)) {
             if (gv.vis) { /* either seen or adjacent */
-                boolean was_seen = !!strcmpi("It", Before),
+                boolean was_seen = !!strcmpi("Il", Before),
                         verbosely = flags.verbose || !was_seen;
 
                 if (canspotmon(mdef))
@@ -1390,7 +1390,7 @@ passivemm(
                     Snprintf(buf, sizeof buf, "Le regard %s",
                              du(mon_nam(mdef)));
                     (void) strNsubst(buf, "%", "%%", 0);
-                    Strcat(buf, " est renvoyé par %s (%s).");
+                    Strcat(buf, " est renvoyé par %s %s.");
                     if (mon_reflects(magr,
                                      canseemon(magr) ? buf : (char *) 0))
                         return (mdead | mhit);

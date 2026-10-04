@@ -3231,7 +3231,7 @@ corpse_chance(
                     There("Il y a une explosion dans votre %s !",
                           body_part(STOMACH));
                     Sprintf(svk.killer.name, "explosion %s",
-                            de(pmname(mdat, Mgender(mon))));
+                            du(pmname(mdat, Mgender(mon))));
                     losehp(Maybe_Half_Phys(tmp), svk.killer.name,
                            KILLED_BY_AN);
                 } else {

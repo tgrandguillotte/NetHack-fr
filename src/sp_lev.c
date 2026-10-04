@@ -2269,7 +2269,15 @@ create_object(object *o, struct mkroom *croom)
     /* set_corpsenm() took care of egg hatch and corpse timers */
 
     if (named) {
-        otmp = oname(otmp, o->name.str, ONAME_LEVEL_DEF);
+        const char *nm = o->name.str, *aname;
+        short atyp = STRANGE_OBJECT;
+
+        /* les fichiers Lua donnent le nom anglais d'origine des artefacts
+           ("The Orb of Detection") : le convertir en nom francais */
+        if ((aname = artifact_name(nm, &atyp, FALSE)) != 0
+            && atyp == otmp->otyp)
+            nm = aname;
+        otmp = oname(otmp, nm, ONAME_LEVEL_DEF);
         if (otmp->otyp == SPE_NOVEL) {
             /* needs to be an existing title */
             (void) lookup_novel(o->name.str, &otmp->novelidx);

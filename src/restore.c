@@ -871,10 +871,16 @@ dorecover(NHFILE *nhfp)
         clear_nhwindow(WIN_MAP);
 #endif
     clear_nhwindow(WIN_MESSAGE);
-    You("retournez au niveau %d de %s%s.", depth(&u.uz),
-        svd.dungeons[u.uz.dnum].dname,
+    {
+        char dnbuf[BUFSZ];
+
+        /* "Les Mines des Gnomes" -> "des Mines des Gnomes" */
+        Strcpy(dnbuf, dname_fr(svd.dungeons[u.uz.dnum].dname));
+        dnbuf[0] = lowc(dnbuf[0]);
+        You("retournez au niveau %d %s%s.", depth(&u.uz), du(dnbuf),
         flags.debug ? ", en mode débogage"
                     : flags.explore ? ", en mode découverte" : "");
+    }
     curs(WIN_MAP, 1, 1);
     dotcnt = 0;
     dotrow = 2;

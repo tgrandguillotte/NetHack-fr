@@ -29,6 +29,7 @@ staticfn int spec_applies(const struct artifact *, struct monst *)
                                                                  NONNULLARG12;
 staticfn int invoke_ok(struct obj *);
 staticfn void nothing_special(struct obj *) NONNULLARG1;
+staticfn const char *arti_skip_article(const char *) NONNULL;
 staticfn int invoke_taming(struct obj *) NONNULLARG1;
 staticfn int invoke_healing(struct obj *) NONNULLARG1;
 staticfn int invoke_energy_boost(struct obj *) NONNULLARG1;
@@ -318,6 +319,39 @@ dispose_of_orig_obj(struct obj *obj)
     obfree(obj, (struct obj *) 0);
 }
 
+/* noms anglais d'origine des artefacts, dans l'ordre de artilist[]
+   (include/artilist.h) ; acceptes en plus des noms francais par
+   artifact_name() pour les fichiers Lua et la saisie du joueur */
+static const char *const en_arti_names[] = {
+    "", "Excalibur", "Stormbringer", "Mjollnir", "Cleaver", "Grimtooth",
+    "Orcrist", "Sting", "Magicbane", "Frost Brand", "Fire Brand",
+    "Dragonbane", "Demonbane", "Werebane", "Grayswandir", "Giantslayer",
+    "Ogresmasher", "Trollsbane", "Vorpal Blade", "Snickersnee", "Sunsword",
+    "The Orb of Detection", "The Heart of Ahriman", "The Sceptre of Might",
+    "The Palantir of Westernesse", "The Staff of Aesculapius",
+    "The Magic Mirror of Merlin", "The Eyes of the Overworld",
+    "The Mitre of Holiness", "The Longbow of Diana",
+    "The Master Key of Thievery", "The Tsurugi of Muramasa",
+    "The Platinum Yendorian Express Card", "The Orb of Fate",
+    "The Eye of the Aethiopica",
+};
+
+/* saute l'article initial d'un nom d'artefact : "the ", "le ", "la ",
+   "les ", "l'" (insensible a la casse) */
+staticfn const char *
+arti_skip_article(const char *name)
+{
+    if (!strncmpi(name, "the ", 4))
+        return name + 4;
+    if (!strncmpi(name, "les ", 4))
+        return name + 4;
+    if (!strncmpi(name, "le ", 3) || !strncmpi(name, "la ", 3))
+        return name + 3;
+    if (!strncmpi(name, "l'", 2))
+        return name + 2;
+    return name;
+}
+
 /*
  * Returns the full name (with articles and correct capitalization) of an
  * artifact named "name" if one exists, or NULL, it not.
@@ -333,19 +367,29 @@ artifact_name(
 {
     const struct artifact *a;
     const char *aname;
+    int pass, idx;
 
-    if (!strncmpi(name, "the ", 4))
-        name += 4;
+    name = arti_skip_article(name);
 
-    for (a = artilist + 1; a->otyp; a++) {
-        aname = a->name;
-        if (!strncmpi(aname, "the ", 4))
-            aname += 4;
-        if (!fuzzy ? !strcmpi(name, aname)
-                   : fuzzymatch(name, aname, " -", TRUE)) {
-            if (otyp_p)
-                *otyp_p = a->otyp;
-            return a->name;
+    /* pass 0: noms francais ; pass 1: noms anglais d'origine (fichiers
+       Lua, saisie du joueur) */
+    for (pass = 0; pass < 2; pass++) {
+        for (a = artilist + 1; a->otyp; a++) {
+            if (pass == 0) {
+                aname = a->name;
+            } else {
+                idx = (int) (a - artilist);
+                if (idx >= SIZE(en_arti_names) || !en_arti_names[idx])
+                    continue;
+                aname = en_arti_names[idx];
+            }
+            aname = arti_skip_article(aname);
+            if (!fuzzy ? !strcmpi(name, aname)
+                       : fuzzymatch(name, aname, " -", TRUE)) {
+                if (otyp_p)
+                    *otyp_p = a->otyp;
+                return a->name;
+            }
         }
     }
 
@@ -581,8 +625,7 @@ restrict_name(struct obj *otmp, const char *name)
 
     if (!*name)
         return FALSE;
-    if (!strncmpi(name, "the ", 4))
-        name += 4;
+    name = arti_skip_article(name);
 
     /* decide what types of objects are the same as otyp;
        if it's been discovered, then only itself matches;
@@ -611,9 +654,7 @@ restrict_name(struct obj *otmp, const char *name)
     for (a = artilist + 1; a->otyp; a++) {
         if (!sametype[a->otyp])
             continue;
-        aname = a->name;
-        if (!strncmpi(aname, "the ", 4))
-            aname += 4;
+        aname = arti_skip_article(a->name);
         if (!strcmp(aname, name))
             return (boolean) ((a->spfx & (SPFX_NOGEN | SPFX_RESTR)) != 0
                               || otmp->quan > 1L);

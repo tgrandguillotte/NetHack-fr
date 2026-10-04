@@ -14,39 +14,41 @@ const char * const nhcb_name[NUM_NHCB] = {
 
 int nhcb_counts[NUM_NHCB] = DUMMY;
 NEARDATA const struct c_color_names c_color_names = {
-    "black",  "amber", "golden", "light blue", "red",   "green",
-    "silver", "blue",  "purple", "white",      "orange"
+    /* VF : adjectifs francais au masculin singulier (voir hcolor()) */
+    "noir",    "ambre", "doré",  "bleu clair", "rouge", "vert",
+    "argenté", "bleu",  "violet", "blanc",     "orange"
 };
 const char *c_obj_colors[] = {
-    "black",          /* CLR_BLACK */
-    "red",            /* CLR_RED */
-    "green",          /* CLR_GREEN */
-    "brown",          /* CLR_BROWN */
-    "blue",           /* CLR_BLUE */
+    /* VF : adjectifs francais au masculin singulier */
+    "noir",           /* CLR_BLACK */
+    "rouge",          /* CLR_RED */
+    "vert",           /* CLR_GREEN */
+    "brun",           /* CLR_BROWN */
+    "bleu",           /* CLR_BLUE */
     "magenta",        /* CLR_MAGENTA */
     "cyan",           /* CLR_CYAN */
-    "gray",           /* CLR_GRAY */
+    "gris",           /* CLR_GRAY */
     "transparent",    /* no_color */
     "orange",         /* CLR_ORANGE */
-    "bright green",   /* CLR_BRIGHT_GREEN */
-    "yellow",         /* CLR_YELLOW */
-    "bright blue",    /* CLR_BRIGHT_BLUE */
-    "bright magenta", /* CLR_BRIGHT_MAGENTA */
-    "bright cyan",    /* CLR_BRIGHT_CYAN */
-    "white",          /* CLR_WHITE */
+    "vert vif",       /* CLR_BRIGHT_GREEN */
+    "jaune",          /* CLR_YELLOW */
+    "bleu vif",       /* CLR_BRIGHT_BLUE */
+    "magenta vif",    /* CLR_BRIGHT_MAGENTA */
+    "cyan vif",       /* CLR_BRIGHT_CYAN */
+    "blanc",          /* CLR_WHITE */
 };
 
 const struct c_common_strings c_common_strings =
-    { "Nothing happens.",
-      "Nothing seems to happen.",
-      "That's enough tries!",
-      "That is a silly thing to %s.",
-      "shudder for a moment.",
-      "something",
-      "Something",
-      "You can move again.",
-      "Never mind.",
-      "vision quickly clears.",
+    { "Il ne se passe rien.",
+      "Rien ne semble se passer.",
+      "Assez d'essais !",
+      "Quelle idée saugrenue de vouloir %s cela.",
+      "frissonnez un instant.",
+      "quelque chose",
+      "Quelque chose",
+      "Vous pouvez de nouveau bouger.",
+      "Peu importe.",
+      "vue s'éclaircit rapidement.",
       { "the", "your" },
       { "mon", "you" }
 };

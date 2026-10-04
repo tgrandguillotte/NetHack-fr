@@ -7,6 +7,15 @@
 
 extern const char *const destroy_strings[][3]; /* from zap.c */
 
+/* noms francais des matieres (meme ordre que materialnm[] de decl.c,
+   qui reste en anglais car compare par les scripts Lua) */
+static const char *const materialnm_fr[] = {
+    "matière mystérieuse", "liquide", "cire", "matière organique", "chair",
+    "papier", "tissu", "cuir", "bois", "os", "peau de dragon", "fer",
+    "métal", "cuivre", "argent", "or", "platine", "mithril", "plastique",
+    "verre", "pierre précieuse", "pierre"
+};
+
 staticfn void mk_trap_statue(coordxy, coordxy);
 staticfn int dng_bottom(d_level *lev);
 staticfn void hole_destination(d_level *);
@@ -124,7 +133,7 @@ burnarmor(struct monst *victim)
             if (item) {
                 mat_idx = objects[item->otyp].oc_material;
                 Sprintf(buf, "%s %s", helm_simple_name(item),
-                        de(materialnm[mat_idx]));
+                        de(materialnm_fr[mat_idx]));
             }
             if (!burn_dmg(item, item ? buf : "casque"))
                 continue;

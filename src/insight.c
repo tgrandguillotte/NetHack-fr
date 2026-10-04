@@ -626,8 +626,8 @@ background_enlightenment(int unused_mode UNUSED, int final)
     /* "You are left-handed." won't work well if polymorphed into something
        without hands; use "You are normally left-handed." in that situation */
     Sprintf(buf, "%s%s",
-            (!strcmp(body_part(HANDED), "handed")
-             || !strcmp(body_part(HANDED), "droitier")) ? "" : "normalement ",
+            (!strcmp(body_part(HANDED), "à mains")
+             || !strcmp(body_part(HANDED), "handed")) ? "" : "normalement ",
             URIGHTY ? (flags.female ? "droitière" : "droitier")
                     : (flags.female ? "gauchère" : "gaucher"));
     you_are(buf, "");
@@ -1156,9 +1156,9 @@ status_enlightenment(int mode, int final)
     heldmon[0] = '\0'; /* lint suppression */
     if (u.ustuck) { /* includes u.uswallow */
         Strcpy(heldmon, a_monnam(u.ustuck));
-        if ((!strcmp(heldmon, "it") || !strcmp(heldmon, "quelque chose"))
+        if ((!strcmp(heldmon, "il") || !strcmp(heldmon, "quelque chose"))
             && (!has_mgivenname(u.ustuck)
-                || (strcmp(MGIVENNAME(u.ustuck), "it") != 0
+                || (strcmp(MGIVENNAME(u.ustuck), "il") != 0
                     && strcmp(MGIVENNAME(u.ustuck), "quelque chose") != 0)))
             Strcpy(heldmon, "une créature invisible");
     }

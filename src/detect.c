@@ -1270,7 +1270,7 @@ use_crystal_ball(struct obj **optr)
 
     if (Hallucination) {
         nomul(-rnd(charged ? 4 : 2));
-        gm.multi_reason = "gazing into a Magic 8-Ball (tm)";
+        gm.multi_reason = "en train de scruter une Boule Magique 8 (tm)";
         gn.nomovemsg = "";
 
         if (!charged) {
@@ -1324,7 +1324,7 @@ use_crystal_ball(struct obj **optr)
 
     You("scrutez %s...", the(xname(obj)));
     nomul(-rnd(charged ? 10 : 2));
-    gm.multi_reason = "gazing into a crystal ball";
+    gm.multi_reason = "en train de scruter une boule de cristal";
     gn.nomovemsg = "";
 
     if (!charged) {

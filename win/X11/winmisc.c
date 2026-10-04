@@ -1311,7 +1311,7 @@ X11_player_selection_prompts(void)
             else
                 panic("no available ROLE+race+gender+alignment combinations");
         }
-        Sprintf(qbuf, "Choose your %s Role", s_suffix(plbuf));
+        Sprintf(qbuf, "Choisissez le rôle de votre %s", plbuf);
         popup =
             make_menu("player_selection", qbuf, player_select_translations,
                       "quit", ps_quit, "random", ps_random, num_roles,
@@ -1384,7 +1384,7 @@ X11_player_selection_prompts(void)
             flags.initrace = availindex;
             free((genericptr_t) choices), choices = 0;
         } else {
-            Sprintf(qbuf, "Pick your %s race", s_suffix(plbuf));
+            Sprintf(qbuf, "Choisissez la race de votre %s", plbuf);
             popup =
                 make_menu("race_selection", qbuf, race_select_translations,
                           "quit", ps_quit, "random", ps_random, num_races,
@@ -1456,7 +1456,7 @@ X11_player_selection_prompts(void)
             flags.initgend = availindex;
             free((genericptr_t) choices), choices = 0;
         } else {
-            Sprintf(qbuf, "Your %s gender?", s_suffix(plbuf));
+            Sprintf(qbuf, "Sexe de votre %s ?", plbuf);
             popup =
                 make_menu("gender_selection", qbuf, gend_select_translations,
                           "quit", ps_quit, "random", ps_random, num_gends,
@@ -1526,7 +1526,7 @@ X11_player_selection_prompts(void)
             flags.initalign = availindex;
             free((genericptr_t) choices), choices = 0;
         } else {
-            Sprintf(qbuf, "Your %s alignment?", s_suffix(plbuf));
+            Sprintf(qbuf, "Alignement de votre %s ?", plbuf);
             popup = make_menu("alignment_selection", qbuf,
                               algn_select_translations, "quit", ps_quit,
                               "random", ps_random, num_algns, choices,

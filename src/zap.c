@@ -2181,7 +2181,7 @@ bhito(struct obj *obj, struct obj *otmp)
         if (svc.context.bypasses) {
             return 0;
         } else {
-            debugpline1("%s for a moment.", Tobjnam(obj, "pulsate"));
+            debugpline1("%s for a moment.", Tobjnam(obj, "palpiter"));
             obj->bypass = 0;
         }
     }

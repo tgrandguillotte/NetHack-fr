@@ -282,7 +282,7 @@ attack_checks(
 
             Strcpy(lmonbuf, l_monnam(mtmp));
             /* might be unseen if invisible and hero can't see invisible */
-            notseen = !strcmp(lmonbuf, "it"); /* note: not strcmpi() */
+            notseen = !strcmp(lmonbuf, "il"); /* x_monnam(): "il" si non vu */
             if (!Blind && Hallucination)
                 pline("%s %s %s %s !",
                       notseen ? "Une" : (fr_genre(lmonbuf) == FR_FEM)

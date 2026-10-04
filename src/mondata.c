@@ -925,6 +925,15 @@ name_to_monplus(
         str += 3;
     else if (!strncmp(str, "the ", 4))
         str += 4;
+    /* articles francais */
+    else if (!strncmpi(str, "les ", 4) || !strncmpi(str, "une ", 4)
+             || !strncmpi(str, "des ", 4))
+        str += 4;
+    else if (!strncmpi(str, "le ", 3) || !strncmpi(str, "la ", 3)
+             || !strncmpi(str, "un ", 3))
+        str += 3;
+    else if (!strncmpi(str, "l'", 2))
+        str += 2;
 
     slen = strlen(str);
     term = str + slen;

@@ -911,8 +911,8 @@ peffect_paralysis(struct obj *otmp)
                   fr_adj_accord("collé", makeplural(body_part(FOOT))),
                   au(surface(u.ux, u.uy)));
         nomul(-(rn1(10, 25 - 12 * bcsign(otmp))));
-        /* not translated: botl.c compares the "frozen" prefix */
-        gm.multi_reason = "frozen by a potion";
+        /* botl.c accepte le prefixe "figé" */
+        gm.multi_reason = "figé par une potion";
         gn.nomovemsg = You_can_move_again;
         exercise(A_DEX, FALSE);
     }
@@ -2075,8 +2075,8 @@ potionbreathe(struct obj *obj)
         if (!Free_action) {
             pline("%s semble vous retenir.", Something);
             nomul(-rnd(5));
-            /* not translated: botl.c compares the "frozen" prefix */
-            gm.multi_reason = "frozen by a potion";
+            /* botl.c accepte le prefixe "figé" */
+            gm.multi_reason = "figé par une potion";
             gn.nomovemsg = You_can_move_again;
             exercise(A_DEX, FALSE);
         } else

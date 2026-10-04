@@ -1191,7 +1191,7 @@ hitmu(struct monst *mtmp, struct attack *mattk)
 
                 Strcpy(Amonbuf, Amonnam(mtmp));
                 /* mtmp might be invisible with hero unable to see same */
-                if (!strcmp(Amonbuf, "It") /* note: not strcmpi() */
+                if (!strcmp(Amonbuf, "Il") /* note: not strcmpi() */
                     || !strcmp(Amonbuf, "Quelque chose"))
                     Strcpy(Amonbuf, Something);
                 pline("%s était caché%s sous %s !", Amonbuf, accord(Amonbuf), what);

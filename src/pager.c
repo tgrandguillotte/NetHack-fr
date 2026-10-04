@@ -2293,8 +2293,14 @@ do_supplemental_info(
     if (is_marauder && (strlen(name) < (BUFSZ - 1))) {
         char fullname[BUFSZ];
 
-        bp = strstri(name, " of ");
-        bp2 = strstri(name, " the Fence");
+        int gangoff = 4; /* strlen(" de ") */
+
+        /* christen_orc() : "<Nom> de <Gang>" ou "<Nom> d'<Gang>" ;
+           dokick.c : "<Nom> le Receleur" */
+        if ((bp = strstri(name, " de ")) == 0
+            && (bp = strstri(name, " d'")) != 0)
+            gangoff = 3;
+        bp2 = strstri(name, " le Receleur");
 
         if (bp || bp2) {
             Strcpy(fullname, name);
@@ -2313,7 +2319,7 @@ do_supplemental_info(
 
                 if (bp) {
                     textp = suptext1;
-                    gang = bp + 4;
+                    gang = bp + gangoff;
                     *bp = '\0';
                 } else {
                     textp = suptext2;

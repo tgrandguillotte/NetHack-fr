@@ -1115,7 +1115,7 @@ hurtle(int dx, int dy, int range, boolean verbose)
         return; /* paranoia */
 
     nomul(-range);
-    gm.multi_reason = "moving through the air";
+    gm.multi_reason = "en train de voler dans les airs";
     gn.nomovemsg = ""; /* it just happens */
     if (verbose) {
         if (range > 1)

@@ -4364,9 +4364,10 @@ static int hpbar_percent, hpbar_crit_hp;
 extern const struct conditions_t conditions[CONDITION_COUNT];
 
 static const char *const encvals[3][6] = {
-    { "", "Chargé",   "Accablé",  "Éreinté",  "Surmené",   "Surchargé"  },
-    { "", "Charg",    "Accab",    "Érein",    "Surmen",    "Surch"      },
-    { "", "Chg",      "Acc",      "Ére",      "Smn",       "Sch"        }
+    /* memes libelles que enc_stat[] de botl.c */
+    { "", "Chargé",   "Stressé",  "Tendu",    "Exténué",   "Surchargé"  },
+    { "", "Charg",    "Stress",   "Tend",     "Exté",      "Surch"      },
+    { "", "Chg",      "Strs",     "Tdu",      "Ext",       "Sch"        }
 };
 #define blPAD BL_FLUSH
 #define MAX_PER_ROW 19

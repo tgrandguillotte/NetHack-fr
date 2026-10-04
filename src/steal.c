@@ -143,7 +143,11 @@ unresponsive(void)
     return (unconscious() || is_fainted()
             || (gm.multi_reason
                 && (!strncmp(gm.multi_reason, "frozen", 6)
-                    || !strncmp(gm.multi_reason, "paralyzed", 9))));
+                    || !strncmp(gm.multi_reason, "paralyzed", 9)
+                    /* textes francais */
+                    || !strncmp(gm.multi_reason, "figé", strlen("figé"))
+                    || !strncmp(gm.multi_reason, "paralysé",
+                                strlen("paralysé")))));
 }
 
 /* called via (*ga.afternmv)() when hero finishes taking off armor that
@@ -544,7 +548,7 @@ steal(struct monst *mtmp, char *objnambuf)
                 named++;
                 /* the following is to set multi for later on */
                 nomul(-armordelay);
-                gm.multi_reason = "taking off clothes";
+                gm.multi_reason = "en train de se déshabiller";
                 gn.nomovemsg = 0;
                 remove_worn_item(otmp, TRUE);
                 otmp->cursed = curssv;
