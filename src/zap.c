@@ -4565,11 +4565,11 @@ zhitu(
         break;
     case ZT_ACID:
         if (Acid_resistance) {
-            pline("%s ne vous fait pas mal.", The(hliquid("acid")));
+            pline("%s ne vous fait pas mal.", The(hliquid("acide")));
             monstseesu(M_SEEN_ACID);
             dam = 0;
         } else {
-            pline("%s vous brûle !", The(hliquid("acid")));
+            pline("%s vous brûle !", The(hliquid("acide")));
             dam = d(nd, 6);
             exercise(A_STR, FALSE);
             monstunseesu(M_SEEN_ACID);
@@ -5291,7 +5291,7 @@ zap_over_floor(
                 Soundeffect(se_soft_crackling, 100);
                 if (see_it)
                     pline("%s gèle un instant.",
-                          The(hliquid(lavawall ? "lava" : "water")));
+                          The(hliquid(lavawall ? "lave" : "eau")));
                 else
                     You_hear("un léger craquement.");
                 rangemod -= 1000; /* stop */
@@ -5326,11 +5326,11 @@ zap_over_floor(
                 if (see_it) {
                     if (lava)
                         Norep("%s refroidit et se solidifie.",
-                              The(hliquid("lava")));
+                              The(hliquid("lave")));
                     else if (moat)
                         Norep("%s se couvre d'un pont de glace !", The(buf));
                     else
-                        Norep("%s gèle.", The(hliquid("water")));
+                        Norep("%s gèle.", The(hliquid("eau")));
                     newsym(x, y);
                 } else if (!lava) {
                     You_hear("un craquement.");

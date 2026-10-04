@@ -671,7 +671,7 @@ disco_typename(int otyp)
                                   non-magic so pre-discovered, only applies
                                   to magic harp and will only be seen if
                                   magic harp has been 'called' something) */
-                               : "harp");
+                               : "harpe");
 
         if (!actualn) { /* won't happen; used to pacify static analyzer */
             ;

@@ -1912,7 +1912,7 @@ seffect_fire(struct obj **sobjp)
     if (confused) {
         if (Underwater) {
             pline("Un peu %s autour de vous se vaporise.",
-                  de(hliquid("water")));
+                  de(hliquid("eau")));
         }
         else if (Fire_resistance) {
             shieldeff(u.ux, u.uy);
@@ -1933,7 +1933,7 @@ seffect_fire(struct obj **sobjp)
     }
     if (Underwater) {
         pline("%s autour de vous se vaporise violemment !",
-              The(hliquid("water")));
+              The(hliquid("eau")));
     } else {
         if (sblessed) {
             if (!already_known)

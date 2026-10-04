@@ -335,8 +335,8 @@ convert_arg(char c)
         str = "loyal";
         break;
     case 'x':
-        /* "vous %x" */
-        str = Blind ? "sentez" : "voyez";
+        /* "vous pouvez %x" : infinitif */
+        str = Blind ? "sentir" : "voir";
         break;
     case 'Z':
         /* nom interne anglais (compare ailleurs) ; affichage en francais */
@@ -352,6 +352,42 @@ convert_arg(char c)
         break;
     }
     Strcpy(gc.cvt_buf, str);
+}
+
+/* VF : ajoute 'sub' a la sortie en contractant "de le" -> "du",
+   "de les" -> "des", "à le" -> "au", "à les" -> "aux", "de A..." -> "d'A..." */
+staticfn void
+cvt_append(char *out_line, char **ccp, const char *sub)
+{
+    char *cc = *ccp;
+    size_t n = (size_t) (cc - out_line);
+    boolean art_le = (!strncmp(sub, "le ", 3) || !strncmp(sub, "Le ", 3)),
+            art_les = (!strncmp(sub, "les ", 4) || !strncmp(sub, "Les ", 4));
+
+    *cc = '\0';
+    if ((n == 3 || (n > 3 && cc[-4] == ' ')) && !strncmp(cc - 3, "de ", 3)) {
+        if (art_le) {
+            Strcpy(cc - 3, "du ");
+            sub += 3;
+        } else if (art_les) {
+            Strcpy(cc - 3, "des ");
+            sub += 4;
+        } else if (fr_elision(sub)) {
+            Strcpy(cc - 3, "d'");
+        }
+    } else if ((n == 3 || (n > 3 && cc[-4] == ' '))
+               && !strncmp(cc - 3, "\xC3\xA0 ", 3)) { /* "à " */
+        if (art_le) {
+            Strcpy(cc - 3, "au ");
+            sub += 3;
+        } else if (art_les) {
+            Strcpy(cc - 3, "aux ");
+            sub += 4;
+        }
+    }
+    cc = eos(out_line);
+    Strcpy(cc, sub);
+    *ccp = cc + strlen(sub);
 }
 
 staticfn void
@@ -374,12 +410,10 @@ convert_line(char *in_line, char *out_line)
                 switch (*(++c)) {
                 /* insert "a"/"an" prefix */
                 case 'A':
-                    Strcat(cc, An(gc.cvt_buf));
-                    cc += strlen(cc);
+                    cvt_append(out_line, &cc, An(gc.cvt_buf));
                     continue; /* for */
                 case 'a':
-                    Strcat(cc, an(gc.cvt_buf));
-                    cc += strlen(cc);
+                    cvt_append(out_line, &cc, an(gc.cvt_buf));
                     continue; /* for */
 
                 /* capitalize */
@@ -424,17 +458,14 @@ convert_line(char *in_line, char *out_line)
                 case 't':
                     if (!strncmpi(gc.cvt_buf, "the ", 4)
                         || !strncmpi(gc.cvt_buf, "les ", 4)) {
-                        Strcat(cc, &gc.cvt_buf[4]);
-                        cc += strlen(cc);
+                        cvt_append(out_line, &cc, &gc.cvt_buf[4]);
                         continue; /* for */
                     } else if (!strncmpi(gc.cvt_buf, "le ", 3)
                                || !strncmpi(gc.cvt_buf, "la ", 3)) {
-                        Strcat(cc, &gc.cvt_buf[3]);
-                        cc += strlen(cc);
+                        cvt_append(out_line, &cc, &gc.cvt_buf[3]);
                         continue; /* for */
                     } else if (!strncmpi(gc.cvt_buf, "l'", 2)) {
-                        Strcat(cc, &gc.cvt_buf[2]);
-                        cc += strlen(cc);
+                        cvt_append(out_line, &cc, &gc.cvt_buf[2]);
                         continue; /* for */
                     }
                     break;
@@ -443,8 +474,7 @@ convert_line(char *in_line, char *out_line)
                     --c; /* undo switch increment */
                     break;
                 }
-                Strcat(cc, gc.cvt_buf);
-                cc += strlen(gc.cvt_buf);
+                cvt_append(out_line, &cc, gc.cvt_buf);
                 break;
             }
             FALLTHROUGH;

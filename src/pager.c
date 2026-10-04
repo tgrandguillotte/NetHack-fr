@@ -1169,7 +1169,7 @@ add_cmap_descr(
 
     if (glyph == NO_GLYPH) {
         /* use x_str [almost] as-is */
-        if (!strcmp(x_str, "water")) {
+        if (!strcmp(x_str, "eau")) {
             /* duplicate some transformations performed by waterbody_name() */
             if (idx == S_pool)
                 x_str = "bassin d'eau";
@@ -1392,7 +1392,7 @@ do_screen_description(
                 oc_ptr = def_oc_syms[i].explain;
                 /* for added fun, engravings are shown with the same symbol
                    as S_rock which is why we want to shorten this */
-                if (i == ROCK_CLASS && !strcmp(oc_ptr, "boulder or statue")) {
+                if (i == ROCK_CLASS && !strcmp(oc_ptr, "rocher ou statue")) {
                     if (sym == bouldersym)
                         oc_ptr = "rocher"; /* discard "or statue" */
                     else if (glyph_is_statue(glyph))
