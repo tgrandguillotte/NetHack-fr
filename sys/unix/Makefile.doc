@@ -33,7 +33,8 @@ GUIDEBOOK ?= Guidebook		# regular ASCII file
 # recognize the option.  Sigh.
 #
 # col is unnecessary, but harmless, with groff.  See grotty(1).
-COLCMD ?= LC_ALL=C.UTF-8 col -bx
+# version francaise : sortie UTF-8, traits d'union U+2010 ramenes a l'ASCII
+COLCMD ?= LC_ALL=C.UTF-8 col -bx | sed 's/\xe2\x80\x90/-/g'
 #COLCMD ?= col -b
 #COLCMD ?= $(STRIPBS)
 

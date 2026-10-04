@@ -5,7 +5,8 @@ ifneq "$(GIT)" "0"
 #Get the hash of the last update to Guidebook.mn
 GB_LAST_COMMIT := $(shell git log -n 1 --pretty=format:%H -- Guidebook.mn)
 ifneq "$(GB_LAST_COMMIT)" ""
-GB_DATESTAMP := $(shell git show -s --format=%cd --date=format:'%B %d, %Y' $(GB_LAST_COMMIT))
+# version francaise : date au format "25 septembre 2026"
+GB_DATESTAMP := $(shell git show -s --format=%cd --date=format:'%d %m %Y' $(GB_LAST_COMMIT) | awk '{split("janvier février mars avril mai juin juillet août septembre octobre novembre décembre",m," "); d=$$1+0; print (d==1?"1er":d), m[$$2+0], $$3}')
 endif   # GB_LAST_COMMIT
 ifneq "$(GB_DATESTAMP)" ""
 DOC_EXTRAS += Guidebook.dated.mn Guidebook.dated.tex

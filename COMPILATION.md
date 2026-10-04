@@ -122,6 +122,16 @@ Voir `sys/windows/Install.windows`, puis selon votre chaîne d'outils :
 * `src/noms_en.c` conserve les noms anglais d'origine des objets, monstres et
   éléments de terrain : les niveaux Lua (`dat/*.lua`) les utilisent pour
   désigner objets et monstres, et ils restent acceptés pour les vœux.
+* Le manuel du joueur (Guidebook) est traduit dans ses deux sources,
+  `doc/Guidebook.mn` (roff) et `doc/Guidebook.tex` (LaTeX). Après avoir
+  modifié `Guidebook.mn`, régénérez la version texte (UTF-8) avec groff et
+  `col` (paquets `groff` et `bsdextrautils` sous Debian/Ubuntu) :
+
+  ```sh
+  sh sys/unix/setup.sh sys/unix/hints/linux.501
+  make -C doc Guidebook.txt
+  ```
+
 * Pour vérifier rapidement un fichier C modifié sans tout recompiler :
 
   ```sh
