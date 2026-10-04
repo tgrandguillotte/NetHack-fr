@@ -100,3 +100,6 @@ util/*.exp
 submodules/CHKSUMS.tmp
 sys/amiga/regex/
 __pycache__/
+
+# répertoire de jeu créé par "make install" (installation locale)
+playground/

@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compiler NetHack",
+            "type": "shell",
+            "command": "bash .devcontainer/build.sh",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Compiler NetHack (tty + curses, propre)",
+            "type": "shell",
+            "command": "bash .devcontainer/build.sh curses clean",
+            "group": "build",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Lancer NetHack",
+            "type": "shell",
+            "command": "cd playground && ./nethack",
+            "presentation": { "focus": true, "panel": "dedicated" },
+            "problemMatcher": []
+        }
+    ]
+}
