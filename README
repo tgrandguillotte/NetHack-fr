@@ -1,152 +1,187 @@
-         NetHack 5.0.1 -- General information
+         NetHack 5.0.1 -- Informations générales
 
+Ce dépôt contient une version française de NetHack : les messages du jeu,
+les noms d'objets et de monstres, l'aide et les textes de quête ont été
+traduits en français.  Ce fichier est la traduction du document d'origine.
+Les conventions de traduction sont décrites dans doc/TRADUCTION.md, et des
+instructions de compilation rapides se trouvent dans le fichier
+COMPILATION.md à la racine du dépôt.
 
-NetHack 5.0 is an enhancement to the dungeon exploration game NetHack,
-which is a distant descendent of Rogue and Hack, and a direct descendent
-of NetHack 3.6.
-
-NetHack 5.0.1 work-in-progress is not a release of NetHack. It consists
-primarily of bug fixes for 5.0.0 for an upcoming 5.0.1 release.
-
-The file doc/fixes5-0-1.txt in the source distribution is being updated with
-a list of fixes as they are committed.
-
-Because 5.0.1 work-in-progress is not a release, there are likely to still
-be bugs. Please don't treat NetHack-5.0.1 work-in-progress as released code.
-Use the most recent NetHack 5.0.0 release if stability is paramount.
-
-We're making the 5.0.1 work-in-progress available ahead of its release so
-that you can observe, test out, and contribute to its continuing development.
-Constructive suggestions, GitHub pull requests, and bug reports are all
-welcome and encouraged.
-
-
-NetHack 5.0 has made some general architectural improvements to the game or
-to its building process. Among them, 5.0 has:
-
- *  The source code is compliant with the C99 standard.
-
- *  removes barriers to building NetHack on one platform and operating system,
-    for later execution on another (possibly quite different) platform and/or
-    operating system. That capability is generally known as "cross-compiling."
-    See the file "Cross-compiling" in the top-level folder for more information
-    on that.
-
- *  The build-time "yacc and lex"-based level compiler, the
-    "yacc and lex"-based dungeon compiler, and the quest text file processing
-    previously done by NetHack's "makedefs" utility, have been replaced with
-    Lua text alternatives that are loaded and processed by the game during play.
+Les liens vers le dépôt et la page de contact officiels de NetHack donnés
+plus bas restent valables pour le jeu d'origine.  En revanche, les rapports
+de bogues concernant la traduction ne doivent PAS être envoyés à l'équipe de
+développement de NetHack.
 
                         - - - - - - - - - - -
 
-Please read items (1), (2) and (3) BEFORE doing anything with your new code.
+NetHack 5.0 est une amélioration du jeu d'exploration de donjon NetHack,
+lointain descendant de Rogue et de Hack, et descendant direct de
+NetHack 3.6.
 
-1.  Unpack the code in a dedicated new directory.  We will refer to that
-    directory as the 'Top' directory.  It makes no difference what you
-    call it.
+La version de travail de NetHack 5.0.1 n'est pas une version publiée de
+NetHack.  Elle se compose principalement de corrections de bogues de la
+5.0.0, en vue d'une prochaine version 5.0.1.
 
-2.  Having unpacked, you should have a file called 'Files' in your Top
-    directory.
+Le fichier doc/fixes5-0-1.txt de la distribution source est tenu à jour avec
+la liste des corrections, au fur et à mesure de leur intégration.
 
-    This file contains the list of all the files you now SHOULD
-    have in each directory.  Please check the files in each directory
-    against this list to make sure that you have a complete set.
+La version de travail 5.0.1 n'étant pas une version publiée, elle contient
+probablement encore des bogues.  Ne considérez pas la version de travail de
+NetHack-5.0.1 comme du code publié.  Utilisez la version publiée la plus
+récente de NetHack 5.0.0 si la stabilité est primordiale.
 
-    This file also contains a list of what files are created during
-    the build process.
-
-    The names of the directories listed should not be changed unless you
-    are ready to go through the makefiles and the makedefs program and change
-    all the directory references in them.
-
-3.  Before you do anything else, please read carefully the file called
-    "license" in the 'dat' subdirectory.  It is expected that you comply
-    with the terms of that license, and we are very serious about it.
-
-4.  If you are attempting to build NetHack on one platform/processor, to
-    produce a game on a different platform/processor it may behoove you to
-    read the file "Cross-compiling" in your Top directory.
-
-5.  If everything is in order, you can now turn to trying to get the program
-    to compile and run on your particular system.  It is worth mentioning
-    that the default configuration is SysV/Sun/Solaris2.x (simply because
-    the code was housed on such a system).
-
-    The files sys/*/Install.*, or sys/*/NewInstall.* were written to guide
-    you in configuring the program for your operating system.  The files
-    win/*/Install.* are available, where necessary, to help you in
-    configuring the program for particular windowing environments.
-    Reading them, and the man pages, should answer most of your questions.
+Nous mettons la version de travail 5.0.1 à disposition avant sa publication
+afin que vous puissiez observer et tester son développement en cours, et y
+contribuer.  Les suggestions constructives, les pull requests GitHub et les
+rapports de bogues sont tous les bienvenus et encouragés.
 
 
-    At the time of the most recent official release, NetHack 5.0, it had
-    been tested to run and/or compile on:
+NetHack 5.0 apporte quelques améliorations générales à l'architecture du jeu
+ou à son processus de compilation.  Entre autres, la version 5.0 :
 
-        Intel Pentium or better running Linux, BSDI
-            [compiles, runs]
-        Intel Pentium or better running Windows 10 or 11
-            [compiles, runs]
-        Intel-based, or Apple M1, M2, M3, M4, M5 Macs running
-            macOS 10.11 (El Capitan) to macOS 26 (Tahoe)
-            [compiles, runs]
-            (follow the instructions in sys/unix/NewInstall.unx)
-        Intel 80386 or greater running MS-DOS with DPMI
-            [cross-compiles on Linux, runs on MS-DOS, emulator/dosbox]
-            built via djgpp compiler (native or Linux-hosted cross-compiler)
-        AmigaOS 3.0 or later
-            [cross-compiles on Linux or macOS, runs on Amiga or emulator]
-            Running requires Kickstart 39+
-            6 MB free RAM minimum (8 MB recommended)
-            Hard drive with ~5 MB free space
+ *  a un code source conforme à la norme C99.
 
-    There has also been some success runing/comiling on:
-        OpenVMS (aka VMS) V8.4 on Alpha and on Integrity/Itanium/IA64
-        OpenVMS (ask VMS) V9.2-3 on x86-64
+ *  supprime les obstacles à la compilation de NetHack sur une plate-forme et
+    un système d'exploitation, pour une exécution ultérieure sur une autre
+    plate-forme et/ou un autre système d'exploitation (éventuellement très
+    différents).  Cette possibilité est généralement appelée « compilation
+    croisée » (cross-compiling).  Consultez le fichier « Cross-compiling » du
+    dossier racine pour plus d'informations à ce sujet.
+
+ *  remplace le compilateur de niveaux basé sur « yacc et lex » utilisé lors
+    de la compilation, le compilateur de donjons basé sur « yacc et lex »,
+    ainsi que le traitement des fichiers de textes de quête autrefois
+    effectué par l'utilitaire « makedefs » de NetHack, par des équivalents
+    textuels en Lua, chargés et traités par le jeu pendant la partie.
 
                         - - - - - - - - - - -
 
-If you have problems building the game, or you find bugs in it, we recommend
-filing a bug report from our "Contact Us" web page at:
+Veuillez lire les points (1), (2) et (3) AVANT de faire quoi que ce soit avec
+votre nouveau code.
+
+1.  Décompressez le code dans un nouveau répertoire dédié.  Nous appellerons
+    ce répertoire le répertoire « Top ».  Le nom que vous lui donnez n'a
+    aucune importance.
+
+2.  Après décompression, vous devriez trouver un fichier nommé « Files »
+    dans votre répertoire Top.
+
+    Ce fichier contient la liste de tous les fichiers que vous DEVRIEZ
+    maintenant avoir dans chaque répertoire.  Veuillez comparer les fichiers
+    de chaque répertoire à cette liste pour vous assurer que vous disposez
+    d'un ensemble complet.
+
+    Ce fichier contient également la liste des fichiers créés pendant le
+    processus de compilation.
+
+    Les noms des répertoires listés ne doivent pas être modifiés, à moins que
+    vous ne soyez prêt à parcourir les makefiles et le programme makedefs
+    pour y changer toutes les références aux répertoires.
+
+3.  Avant toute autre chose, veuillez lire attentivement le fichier nommé
+    « license » dans le sous-répertoire « dat ».  Vous êtes tenu de respecter
+    les termes de cette licence, et nous y tenons très sérieusement.
+
+4.  Si vous essayez de compiler NetHack sur une plate-forme ou un processeur
+    pour produire un jeu destiné à une plate-forme ou un processeur
+    différent, il peut être utile de lire le fichier « Cross-compiling » de
+    votre répertoire Top.
+
+5.  Si tout est en ordre, vous pouvez maintenant essayer de compiler et
+    d'exécuter le programme sur votre système.  Signalons que la
+    configuration par défaut est SysV/Sun/Solaris2.x (simplement parce que
+    le code était hébergé sur un tel système).
+
+    Les fichiers sys/*/Install.* ou sys/*/NewInstall.* ont été rédigés pour
+    vous guider dans la configuration du programme pour votre système
+    d'exploitation.  Les fichiers win/*/Install.* sont disponibles, si
+    nécessaire, pour vous aider à configurer le programme pour des
+    environnements de fenêtrage particuliers.  Leur lecture, ainsi que celle
+    des pages de manuel, devrait répondre à la plupart de vos questions.
+
+
+    Au moment de la dernière version officielle, NetHack 5.0, le jeu avait
+    été testé (exécution et/ou compilation) sur :
+
+        Intel Pentium ou supérieur sous Linux, BSDI
+            [compile, fonctionne]
+        Intel Pentium ou supérieur sous Windows 10 ou 11
+            [compile, fonctionne]
+        Mac à processeur Intel ou Apple M1, M2, M3, M4, M5 sous
+            macOS 10.11 (El Capitan) à macOS 26 (Tahoe)
+            [compile, fonctionne]
+            (suivez les instructions de sys/unix/NewInstall.unx)
+        Intel 80386 ou supérieur sous MS-DOS avec DPMI
+            [compilation croisée sous Linux, fonctionne sous MS-DOS,
+            émulateur/dosbox]
+            compilé avec le compilateur djgpp (natif ou compilateur croisé
+            hébergé sous Linux)
+        AmigaOS 3.0 ou ultérieur
+            [compilation croisée sous Linux ou macOS, fonctionne sur Amiga
+            ou émulateur]
+            L'exécution nécessite Kickstart 39+
+            6 Mo de RAM libre au minimum (8 Mo recommandés)
+            Disque dur avec environ 5 Mo d'espace libre
+
+    Des essais d'exécution et de compilation ont également été concluants
+    sur :
+        OpenVMS (alias VMS) V8.4 sur Alpha et sur Integrity/Itanium/IA64
+        OpenVMS (alias VMS) V9.2-3 sur x86-64
+
+                        - - - - - - - - - - -
+
+Si vous rencontrez des problèmes pour compiler le jeu, ou si vous y trouvez
+des bogues, nous vous recommandons de soumettre un rapport de bogue depuis
+notre page web « Contact Us » :
     https://www.nethack.org/common/contact.html
-Please include the version information from #version or the command line
-option --version in the appropriate field.
+Veuillez indiquer dans le champ approprié les informations de version
+fournies par #version ou par l'option de ligne de commande --version.
+(Rappel : les bogues propres à la traduction française ne doivent pas être
+signalés par ce moyen.)
 
-A public repository of the latest NetHack code that we've made
-available can be obtained via git here:
+Un dépôt public du code de NetHack le plus récent que nous avons mis à
+disposition peut être obtenu via git ici :
     https://github.com/NetHack/NetHack
-      or
+      ou
     https://sourceforge.net/p/nethack/NetHack/
 
-When sending correspondence, please observe the following:
-o Please be sure to include your machine type, OS, and patchlevel.
-o Please avoid sending us binary files (e.g. save files or bones files).
-  If you have found a bug and think that your save file would aid in solving
-  the problem, send us a description in words of the problem, your machine
-  type, your operating system, and the version of NetHack.  Tell us that you
-  have a save file, but do not actually send it.
-  You may then be contacted by a member of the development team with the
-  address of a specific person to send the save file to.
-o Though we make an effort to reply to each bug report, it may take some
-  time before you receive feedback.  This is especially true during the
-  period immediately after a new release, when we get the most bug reports.
-o We don't give hints for playing the game.
-o Don't bother to ask when the next version will be out or you can expect
-  to receive a stock answer.
+Lorsque vous nous écrivez, veuillez respecter les points suivants :
+o Veillez à indiquer votre type de machine, votre système d'exploitation et
+  votre niveau de correctifs (patchlevel).
+o Évitez de nous envoyer des fichiers binaires (par exemple des fichiers de
+  sauvegarde ou des fichiers d'ossements (bones)).
+  Si vous avez trouvé un bogue et pensez que votre fichier de sauvegarde
+  aiderait à résoudre le problème, envoyez-nous une description du problème
+  en toutes lettres, votre type de machine, votre système d'exploitation et
+  la version de NetHack.  Indiquez-nous que vous disposez d'un fichier de
+  sauvegarde, mais ne l'envoyez pas.
+  Un membre de l'équipe de développement pourra alors vous contacter et vous
+  donner l'adresse d'une personne précise à qui envoyer le fichier.
+o Bien que nous nous efforcions de répondre à chaque rapport de bogue, il
+  peut s'écouler un certain temps avant que vous receviez une réponse.  C'est
+  particulièrement vrai dans la période qui suit immédiatement une nouvelle
+  version, lorsque nous recevons le plus de rapports de bogues.
+o Nous ne donnons pas d'astuces pour jouer.
+o Inutile de demander quand sortira la prochaine version : vous recevriez
+  une réponse toute faite.
 
-If you want to submit a patch for the NetHack source code via email directly,
-you can direct it to this address:
+Si vous souhaitez soumettre directement par e-mail un correctif (patch) pour
+le code source de NetHack, vous pouvez l'adresser à :
     nethack-bugs (at) nethack.org
 
-If a feature is not accepted you are free, of course, to post the patches
-to the net yourself and let the marketplace decide their worth.
+Si une fonctionnalité n'est pas acceptée, vous êtes bien sûr libre de
+publier vous-même les correctifs sur le net et de laisser le public juger de
+leur valeur.
 
-All of this amounts to the following:  If you decide to apply a free-lanced
-patch to your NetHack 5.0 code, you are welcome to do so, of course, but we
-won't be able to provide support or receive bug reports for it.
+En résumé : si vous décidez d'appliquer un correctif indépendant à votre
+code de NetHack 5.0, vous êtes bien sûr libre de le faire, mais nous ne
+pourrons ni fournir d'assistance ni recevoir de rapports de bogues à son
+sujet.
 
-In our own patches, we will assume that your code is synchronized with ours.
+Dans nos propres correctifs, nous supposerons que votre code est synchronisé
+avec le nôtre.
 
-                  -- Good luck, and happy Hacking --
+                  -- Bonne chance, et bon Hacking --
 
 # $NHDT-Date: 1779926755 2026/05/28 00:05:55 $ $NHDT-Branch: NetHack-5.0 $:$NHDT-Revision: 1.113 $
 # Copyright (c) 2012 by Michael Allison

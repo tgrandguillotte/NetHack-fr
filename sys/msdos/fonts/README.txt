@@ -1,7 +1,8 @@
-The script makefont.lua converts the Terminus fonts from the BDF sources to
-PSF version 2 for use by the MS-DOS NetHack. The directory sys/msdos/fonts
-receives the converted fonts.
+Le script makefont.lua convertit les polices Terminus des sources BDF au
+format PSF version 2, utilisé par NetHack sous MS-DOS. Le répertoire
+sys/msdos/fonts reçoit les polices converties.
 
-makefont.lua is specifically meant for use with NetHack; it rearranges the
-input glyphs so the first 256 positions conform to IBM437. The fonts can then
-support IBMGraphics without using the Unicode table.
+makefont.lua est conçu spécifiquement pour NetHack : il réordonne les
+glyphes d'entrée afin que les 256 premières positions soient conformes à
+IBM437. Les polices peuvent alors prendre en charge IBMGraphics sans
+recourir à la table Unicode.

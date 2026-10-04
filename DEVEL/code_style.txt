@@ -2,38 +2,44 @@
 # Copyright (c) 2015 by Derek S. Ray
 # NetHack may be freely redistributed.  See license for details.
 
-NetHack DevTeam Coding Style
-============================
+[Note : ce fichier est la traduction française du document d'origine
+« code_style.txt » de NetHack.]
 
-NetHack is written in C, with a little bit of C++ to access platform
-libraries. This coding style document is concerned primarily with the style
-used for C source files. We do not have a defined style for C++ files, but C++
-should be styled in keeping with C.
+Style de codage de la DevTeam de NetHack
+========================================
 
-The code base in C files was, close to the 3.6 release, reformatted using a
-version of the clang-format tool patched to support K&R-style argument
-declarations. Due to some incompatibilities, the patch is not publicly
-available and clang-format is not expected to be regularly used.  Since then,
-function declarations and definitions have been switched to ANSI.
+NetHack est écrit en C, avec un peu de C++ pour accéder aux bibliothèques
+des plates-formes. Ce document de style de codage porte principalement sur
+le style utilisé pour les fichiers source C. Nous n'avons pas défini de style
+pour les fichiers C++, mais le C++ doit être mis en forme dans l'esprit du C.
 
-Developers should do their best to adhere to the coding style to promote
-legible, easy-to-edit code. Legibility is paramount, so in some cases, it may
-be better not to fully adhere to the style guidelines.
+Peu avant la version 3.6, le code des fichiers C a été reformaté à l'aide
+d'une version de l'outil clang-format modifiée pour prendre en charge les
+déclarations d'arguments à la K&R. En raison de certaines incompatibilités,
+ce correctif n'est pas disponible publiquement et clang-format n'est pas
+destiné à être utilisé régulièrement.  Depuis, les déclarations et
+définitions de fonctions sont passées au style ANSI.
 
-Recipes for common text editors can be found at the end of this file.
+Les développeurs doivent faire de leur mieux pour respecter le style de
+codage, afin de favoriser un code lisible et facile à modifier. La lisibilité
+prime : dans certains cas, il peut donc être préférable de ne pas suivre
+entièrement les règles de style.
 
-Indentation and Spacing
------------------------
+Des recettes pour les éditeurs de texte courants figurent à la fin de ce
+fichier.
 
-The basic indentation is 4 spaces wide. All indentation is done using space
-characters, not tabs.
+Indentation et espacement
+-------------------------
 
-Lines should be at most 78 characters wide. If a line would be longer than the
-limit, the line should be wrapped and the wrapped portion should be aligned
-with the parentheses or brackets containing the wrap. If there is no set of
-parentheses or brackets, the line should be indented four spaces. Wrapping
-should normally occur after a comma or before a binary operator, when
-possible:
+L'indentation de base est de 4 espaces. Toute l'indentation se fait avec des
+caractères espace, et non des tabulations.
+
+Les lignes doivent faire au plus 78 caractères. Si une ligne doit dépasser
+cette limite, elle doit être coupée et la partie renvoyée à la ligne doit
+être alignée sur les parenthèses ou crochets qui contiennent la coupure.
+S'il n'y a pas de parenthèses ni de crochets, la ligne doit être indentée de
+quatre espaces. La coupure doit normalement se faire après une virgule ou
+avant un opérateur binaire, lorsque c'est possible :
 
     int index
         = SomeExcessivelyLongExpression;
@@ -42,16 +48,18 @@ possible:
           arg2, (cond13
                  && cond2));
 
-Single blank lines should be used wherever convenient to improve readability.
+Des lignes vides isolées doivent être utilisées chaque fois que cela améliore
+la lisibilité.
 
-Functions and Control Statements
---------------------------------
+Fonctions et instructions de contrôle
+-------------------------------------
 
-For a function definition, the return type, declarator, and opening brace
-should each appear on a line of their own. Arguments are defined in the following
-parenthesis, per ANSI.  There are two general styles.  One with no comments, where
-arguments are added one after another, with a wrap aligning to the first argument
-if there is an overflow.
+Dans une définition de fonction, le type de retour, le déclarateur et
+l'accolade ouvrante doivent chacun figurer sur une ligne distincte. Les
+arguments sont définis dans les parenthèses qui suivent, selon la norme
+ANSI.  Il existe deux styles généraux.  L'un sans commentaires, où les
+arguments se suivent les uns après les autres, avec en cas de dépassement un
+renvoi à la ligne aligné sur le premier argument.
 
     void
     foo(int i, char c)
@@ -66,7 +74,7 @@ if there is an overflow.
         /* function body */
     }
 
-Alternatively, arguments can be one per line if they are commented:
+Sinon, les arguments peuvent être placés un par ligne s'ils sont commentés :
 
     void
     long_function_name(int first_arg,                /* main operation */
@@ -78,7 +86,7 @@ Alternatively, arguments can be one per line if they are commented:
         /* function body */
     }
 
-If the function takes no parameters:
+Si la fonction ne prend pas de paramètres :
 
     int
     long_function_name(void)
@@ -86,16 +94,16 @@ If the function takes no parameters:
         /* function body */
     }
 
-Opening braces of control statements appear on the same line as the control
-statement:
+L'accolade ouvrante d'une instruction de contrôle figure sur la même ligne
+que l'instruction de contrôle :
 
     if (condition) {
         /* body */
     }
 
-Else statements and the while statements of do-while blocks appear on the same
-line as the closing brace of the if or do statement. Otherwise, closing braces
-always get a line of their own.
+Les instructions else et les instructions while des blocs do-while figurent
+sur la même ligne que l'accolade fermante de l'instruction if ou do. Dans les
+autres cas, l'accolade fermante a toujours sa propre ligne.
 
     if (condition) {
         /* body */
@@ -107,10 +115,10 @@ always get a line of their own.
         /* body */
     }
 
-If a control block has only a single statement, it can appear on a line of its
-own, with an indent. If the statement is a null statement, then it should be
-expressed as an empty set block, not with a semicolon, because many compilers
-will warn if a null statement is used:
+Si un bloc de contrôle ne contient qu'une seule instruction, celle-ci peut
+figurer seule sur sa ligne, indentée. S'il s'agit d'une instruction vide,
+elle doit être exprimée par un bloc vide et non par un point-virgule, car de
+nombreux compilateurs émettent un avertissement en cas d'instruction vide :
 
     if (condition)
         fcall();
@@ -119,9 +127,10 @@ will warn if a null statement is used:
     } else
         fcall();
 
-If multiple control blocks are being used in a row, it may be more readable to
-use braces even for single statements, and they should be used if they improve
-readability. The following is an example of poor usage:
+Si plusieurs blocs de contrôle se suivent, il peut être plus lisible
+d'utiliser des accolades même pour des instructions uniques, et il faut les
+utiliser si elles améliorent la lisibilité. Voici un exemple de mauvaise
+pratique :
 
     if (condition) {
         /* long body */
@@ -131,10 +140,11 @@ readability. The following is an example of poor usage:
         /* very long body */
     }
 
-Switch statements should have the case labels unindented, and the statements
-should be indented normally. The default case should occur last unless there's
-a compelling reason not to, and fallthroughs should be explicitly marked as
-such with a comment, to avoid Yeenoghu getting the touch of death again:
+Dans les instructions switch, les étiquettes case ne sont pas indentées et
+les instructions sont indentées normalement. Le cas default doit venir en
+dernier, sauf raison impérieuse, et les passages au cas suivant
+(fallthrough) doivent être signalés explicitement par un commentaire, pour
+éviter que Yeenoghu ne récupère à nouveau le toucher de mort :
 
     switch (condition) {
     case FOO:
@@ -149,9 +159,10 @@ such with a comment, to avoid Yeenoghu getting the touch of death again:
         statement;
     }
 
-Variables should never be declared in a condition or a for loop
-initialization, and if an assignment is used as a condition, it should be
-wrapped in an additional set of parentheses for clarity:
+Les variables ne doivent jamais être déclarées dans une condition ni dans
+l'initialisation d'une boucle for, et si une affectation sert de condition,
+elle doit être placée dans une paire de parenthèses supplémentaire par souci
+de clarté :
 
     int *p;
     if ((p = fcall())) {
@@ -163,101 +174,108 @@ wrapped in an additional set of parentheses for clarity:
         /* body */
     }
 
-Variable names to avoid
------------------------
+Noms de variables à éviter
+--------------------------
 
-    near, far    Some compilers and cross-compilers that target old
-                 processors with segmented architectures may treat
-                 those as keywords. It is safest to just avoid them.
+    near, far    Certains compilateurs et compilateurs croisés ciblant
+                 d'anciens processeurs à architecture segmentée peuvent les
+                 traiter comme des mots-clés. Le plus sûr est de les éviter.
 
-    NEARDATA     Some data is marked with this define; the Amiga port uses
-                 it to mark data items to be used with a short addressing mode.
-                 You don't need to use this.
+    NEARDATA     Certaines données sont marquées avec cette macro ; le
+                 portage Amiga l'utilise pour marquer les données à utiliser
+                 avec un mode d'adressage court. Vous n'avez pas besoin de
+                 l'utiliser.
 
-static vs staticfn
+static ou staticfn
 ------------------
 
-The staticfn macro evaluates to either "static" or to nothing (see config.h).
-If possible, functions in src/*.c that would otherwise be marked static should
-be marked staticfn so platforms that do not name static functions in their
-stack traces can be forced to do so; this means function names cannot be
-reused.  Never use staticfn with data.
+La macro staticfn vaut soit « static », soit rien (voir config.h).  Si
+possible, les fonctions de src/*.c qui seraient autrement marquées static
+doivent être marquées staticfn, afin que l'on puisse forcer les plates-formes
+qui ne nomment pas les fonctions statiques dans leurs traces d'appels à le
+faire ; cela implique que les noms de fonctions ne peuvent pas être
+réutilisés.  N'utilisez jamais staticfn pour des données.
 
-Spaces in Expressions
----------------------
+Espaces dans les expressions
+----------------------------
 
-Spaces should appear around binary operators, after commas, after a C-style
-cast, and after the keyword in a control statement. They should not appear
-between a function name and the opening parenthesis of a function call, nor
-immediately inside a pair of parentheses:
+Les espaces doivent figurer autour des opérateurs binaires, après les
+virgules, après une conversion de type (cast) à la C et après le mot-clé
+d'une instruction de contrôle. Ils ne doivent figurer ni entre le nom d'une
+fonction et la parenthèse ouvrante d'un appel de fonction, ni immédiatement
+à l'intérieur d'une paire de parenthèses :
 
     foo(i, j, l);
     if ((boolean) condition) {
         /* body */
     }
 
-Casts and sizeof
-----------------
+Conversions de type et sizeof
+-----------------------------
 
-Casts should separate the cast operator and its expression with a space:
+Une conversion de type doit séparer l'opérateur de conversion de son
+expression par une espace :
     '(char *) str'
-'sizeof (type)' requires the parentheses.  'sizeof expression' does not;
-using them is not wrong but omitting them avoids some visual clutter.
-Using them without the separating space gives the false impression of a
-function call or macro-with-argument(s) expansion; 'sizeof' is an operator
-and the parentheses required for '(type)' are to treat it like a cast.
+'sizeof (type)' exige les parenthèses.  'sizeof expression' ne les exige
+pas ; les utiliser n'est pas une erreur, mais les omettre évite d'encombrer
+visuellement le code.  Les utiliser sans l'espace de séparation donne la
+fausse impression d'un appel de fonction ou de l'expansion d'une macro avec
+argument(s) ; 'sizeof' est un opérateur, et les parenthèses exigées autour
+de '(type)' servent à le traiter comme une conversion de type.
 
-Comments
---------
+Commentaires
+------------
 
-Some block comments are undecorated, just split into reasonable width lines:
+Certains commentaires de bloc sont sans décoration, simplement découpés en
+lignes de largeur raisonnable :
     /* this is
        a comment */
-They usually don't include sentence punctuation.
+Ils ne comportent généralement pas de ponctuation de phrase.
 
-Others are more elaborate:
+D'autres sont plus élaborés :
     /*
      * This is
      * another comment.
      */
-This style is usually used with sentence punctuation, particularly if they
-contain more than one sentence.
+Ce style s'emploie généralement avec une ponctuation de phrase, en
+particulier s'ils contiennent plus d'une phrase.
 
-End-of-line comments which need to span lines
+Les commentaires de fin de ligne qui doivent s'étendre sur plusieurs lignes
     somecode(); /* this comment
                  * is ok */
-should start every continuation line with an asterisk, otherwise clang-format
-would convert them into a block comment
+doivent commencer chaque ligne de continuation par un astérisque, sinon
+clang-format les convertirait en commentaire de bloc
     othercode(); /* this comment
                     should be avoided */
-because it would be converted into
+car ce commentaire serait converti en
     othercode();
     /* this comment
        should be avoided */
-if another bulk reformatting ever gets performed.  Similarly, multiple
-comments intended to read as one
+si un nouveau reformatage global était un jour effectué.  De même, plusieurs
+commentaires destinés à être lus comme un seul
     morecode(); /* start of comment */
                 /* more of comment  */
                 /* end of comment   */
-are deprecated because they will end up losing the indentation of the
-followup lines if reformatted.
+sont déconseillés, car les lignes suivantes perdraient leur indentation en
+cas de reformatage.
 
-Many files end with
+De nombreux fichiers se terminent par
     /*filename*/
-usually preceded by a blank line.  This was intended as a workaround for a
-comment--somewhere, possibly in Amiga or Atari code--that stated that some
-compiler or other didn't always process the last line of the file.  If that
-last line is a comment, nothing is lost.  The real issue almost certainly
-was source file(s) that didn't end in newline.  These days we try to force
-the final newline for every file, prior to release if not always maintained
-day-to-day.  The name at the end can still be worthwhile when editing or
-browsing multiple files.
+généralement précédé d'une ligne vide.  Il s'agissait d'un contournement
+pour un commentaire - quelque part, peut-être dans le code Amiga ou Atari -
+indiquant qu'un certain compilateur ne traitait pas toujours la dernière
+ligne du fichier.  Si cette dernière ligne est un commentaire, rien n'est
+perdu.  Le véritable problème venait presque certainement de fichiers source
+qui ne se terminaient pas par un saut de ligne.  Aujourd'hui, nous essayons
+d'imposer le saut de ligne final dans chaque fichier, au moins avant chaque
+version, à défaut de le maintenir au jour le jour.  Le nom à la fin peut
+toujours être utile lorsqu'on édite ou parcourt plusieurs fichiers.
 
-Vim Configuration
-=================
+Configuration de Vim
+====================
 
-For vim, the following settings are encouraged when editing NetHack code, to
-ensure that indentation is done correctly:
+Pour vim, les réglages suivants sont recommandés lors de l'édition du code de
+NetHack, afin que l'indentation soit correcte :
 
     set shiftwidth=4
     set softtabstop=4
@@ -269,11 +287,11 @@ ensure that indentation is done correctly:
     set filetype=c
 
 
-Visual Studio Configuration
-===========================
+Configuration de Visual Studio
+==============================
 
-In Visual Studio under Tools->Options->Text Editor->C/C++, you can set the
-following options to obtain desired behavior:
+Dans Visual Studio, sous Tools->Options->Text Editor->C/C++, vous pouvez
+définir les options suivantes pour obtenir le comportement souhaité :
 
 [Tabs]
 Indenting: Smart
@@ -281,21 +299,20 @@ Tab size: 4
 Indent size: 4
 Insert Spaces
 
-There are a number of other options under [Formatting] that should be
-checked (Indentation, New Lines, Spacing, and Wrapping), but there are so
-many entries that reproducing them here is impractical. Fortunately, the
-options are in plain English, so walking through them with a copy of
-this Guide handy and making changes as required will suffice.
+Il existe sous [Formatting] un certain nombre d'autres options à vérifier
+(Indentation, New Lines, Spacing et Wrapping), mais les entrées sont si
+nombreuses qu'il serait peu pratique de les reproduire ici. Heureusement, les
+options sont rédigées en anglais courant : il suffira de les parcourir avec
+ce guide sous la main et d'effectuer les modifications nécessaires.
 
-Emacs Configuration
-===================
+Configuration d'Emacs
+=====================
 
-There are no doubt umpteen different ways to handle this in Emacs.
-Putting the following in ~/.emacs.el is one
+Il existe sans doute une multitude de façons de gérer cela dans Emacs.
+En voici une, à placer dans ~/.emacs.el :
 
 (defun hook-c ()
   (setq c-set-style "k&r")
   (setq c-basic-offset 4)
   (setq indent-tabs-mode nil))
 (add-hook 'c-mode-common-hook 'hook-c)
-

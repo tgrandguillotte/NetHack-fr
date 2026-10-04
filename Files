@@ -1,27 +1,33 @@
-This is a listing of all files in a full NetHack 5.0 distribution, organized
-in their standard manner on a UNIX system.  It indicates which files are
-necessary for which versions, so that you can tell which files may be deleted
-from or not transferred to your system if you wish.
+[Traduction française du fichier Files d'origine de NetHack.]
 
-(Note: we ignore various dot files related to git.)
+Voici la liste de tous les fichiers d'une distribution complète de
+NetHack 5.0, organisés selon leur disposition standard sur un système UNIX.
+Elle indique quels fichiers sont nécessaires à quelles versions, afin que
+vous sachiez lesquels vous pouvez supprimer de votre système, ou ne pas y
+transférer, si vous le souhaitez.
+
+(Remarque : nous ne tenons pas compte des divers fichiers cachés liés à git.)
 
 .:
-(files in top directory)
+(fichiers du répertoire principal)
 .clang-format        Contributing.md      Cross-compiling
 Files                Porting              README
 azure-pipelines.yml
 
+(fichier propre à la version française)
+COMPILATION.md
+
 DEVEL:
-(files for people developing changes to NetHack)
+(fichiers pour ceux qui développent des modifications de NetHack)
 Developer.txt      VERSION            code_features.txt  code_style.txt
 git_recipes.txt    gitinfo.pl         nhgitset.pl
 
 DEVEL/DOTGIT:
-(file for people developing changes to NetHack)
+(fichier pour ceux qui développent des modifications de NetHack)
 TARGET
 
 DEVEL/hooksdir:
-(files for people developing changes to NetHack)
+(fichiers pour ceux qui développent des modifications de NetHack)
 NHadd               NHgithook.pm        NHsubst
 NHtext              TARGET              applypatch-msg
 commit-msg          nhhelp              nhsub
@@ -31,7 +37,7 @@ pre-auto-gc         pre-commit          pre-push
 pre-rebase          prepare-commit-msg
 
 dat:
-(files for all versions)
+(fichiers pour toutes les versions)
 Arc-fila.lua  Arc-filb.lua  Arc-goal.lua  Arc-loca.lua  Arc-strt.lua
 Bar-fila.lua  Bar-filb.lua  Bar-goal.lua  Bar-loca.lua  Bar-strt.lua
 Cav-fila.lua  Cav-filb.lua  Cav-goal.lua  Cav-loca.lua  Cav-strt.lua
@@ -65,7 +71,7 @@ usagehlp      valley.lua    water.lua     wizard1.lua   wizard2.lua
 wizard3.lua   wizhelp
 
 doc:
-(files for all versions)
+(fichiers pour toutes les versions)
 Gbk-1pg-pfx.mn     Gbk-1pg-sfx.mn     Guidebook.mn       Guidebook.tex
 Guidebook.txt      config.nh          dlb.6              dlb.txt
 fixes1-0.txt       fixes1-4-f.txt     fixes2-2.txt       fixes2-3-e.txt
@@ -83,11 +89,14 @@ mn.txt             mnh.7              mnh.txt            nethack.6
 nethack.txt        options.txt        recover.6          recover.txt
 sound.txt          tmac.n             tmac.nh            window.txt
 
+(fichier propre à la version française)
+TRADUCTION.md
+
 include:
-(files for X versions)
+(fichiers pour les versions X)
 tile2x11.h  winX.h      xwindow.h   xwindowp.h
 
-(files for all versions)
+(fichiers pour toutes les versions)
 align.h       amiconf.h     artifact.h    artilist.h    attrib.h
 botl.h        color.h       config.h      config1.h     context.h
 coord.h       cstd.h        decl.h        defsym.h      dgn_file.h
@@ -107,25 +116,28 @@ tosconf.h     tradstdc.h    trap.h        unixconf.h    vision.h
 vmsconf.h     warnings.h    weight.h      winami.h      wincurs.h
 windconf.h    winprocs.h    wintype.h     you.h         youprop.h
 
-(file for tty versions)
+(fichier pour les versions tty)
 wintty.h
 
+(fichier propre à la version française)
+francais.h
+
 nhlua:
-(files in top directory)
+(fichiers du répertoire principal)
 README_NHLUA     nhlua-update.sh
 
 nhlua/lua:
-(files in top directory)
+(fichiers du répertoire principal)
 Makefile  README
 
 nhlua/lua/doc:
-(files in top directory)
+(fichiers du répertoire principal)
 OSIApproved.png  contents.html    index.css        logo.png
 lua.1            lua.css          luac.1           manual.css
 manual.html      readme.html
 
 nhlua/lua/src:
-(files in top directory)
+(fichiers du répertoire principal)
 Makefile    lapi.c      lapi.h      lauxlib.c   lauxlib.h   lbaselib.c
 lcode.c     lcode.h     lcorolib.c  lctype.c    lctype.h    ldblib.c
 ldebug.c    ldebug.h    ldo.c       ldo.h       ldump.c     lfunc.c
@@ -139,42 +151,42 @@ luaconf.h   lualib.h    lundump.c   lundump.h   lutf8lib.c  lvm.c
 lvm.h       lzio.c      lzio.h
 
 outdated/dat:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 symbols
 
 outdated/include:
-(file for GNOME versions)
+(fichier pour les versions GNOME)
 winGnome.h
 
-(files for all versions)
+(fichiers pour toutes les versions)
 beconf.h    def_os2.h   os2conf.h   system.h    trampoli.h  wceconf.h
 
-(files for various Macintosh versions)
+(fichiers pour diverses versions Macintosh)
 mac-carbon.h  mac-qt.h      mac-term.h    macpopup.h
 
 outdated/sys/atari:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 Install.tos
 
 outdated/sys/be:
-(files for BeOS version - untested for 5.0)
+(fichiers pour la version BeOS - non testés pour la 5.0)
 README    bemain.c
 
 outdated/sys/msdos:
-(files for deprecated real mode msdos version)
+(fichiers pour l'ancienne version msdos en mode réel, obsolète)
 Makefile.BC   Makefile.MSC  SCHEMA35.MSC  moveinit.pat  ovlinit.c
 schema1.BC    schema2.BC    schema3.MSC
 
 outdated/sys/os2:
-(files for OS/2 version - untested for 5.0)
+(fichiers pour la version OS/2 - non testés pour la 5.0)
 Install.os2   Makefile.os2  nhpmico.uu    os2.c
 
 outdated/sys/unix:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 README.linux    cross-amiga.sh
 
 outdated/sys/unix/hints:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 cross-amiga         linux               linux-chroot
 linux-qt4           linux-qt5           linux-x11
 macosx              macosx10.5          macosx10.7
@@ -183,15 +195,15 @@ macosx10.14         solaris             solaris-playground
 unix
 
 outdated/sys/unix/hints/include:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 cross-amiga-post  cross-amiga-pre
 
 outdated/sys/vms:
-(files that are no longer maintained for current game code)
+(fichiers qui ne sont plus maintenus pour le code actuel du jeu)
 lev_lex.h
 
 outdated/sys/wince:
-(files for Windows CE and PocketPC - untested for 5.0)
+(fichiers pour Windows CE et PocketPC - non testés pour la 5.0)
 Install.ce    bootstrp.mak  celib.c       cesetup.bat   cesound.c
 defaults.nh   keypad.uu     menubar.uu    mhaskyn.c     mhaskyn.h
 mhcmd.c       mhcmd.h       mhcolor.c     mhcolor.h     mhdlg.c
@@ -204,15 +216,16 @@ resource.h    winMS.h       winhack.c     winhack.rc    winhcksp.rc
 winmain.c
 
 outdated/sys/wince/ceinc:
-(header files for Windows CE and PocketPC - untested for 5.0)
+(fichiers d'en-tête pour Windows CE et PocketPC - non testés pour la 5.0)
 assert.h  errno.h   fcntl.h
 
 outdated/sys/wince/ceinc/sys:
-(sys/stat.h for Windows CE and PocketPC - untested for 3.6.2)
+(sys/stat.h pour Windows CE et PocketPC - non testé pour la 3.6.2)
 stat.h
 
 outdated/win/Qt3:
-(files for the Qt 3 widget library - X11, Windows, Mac OS X, or Qtopia)
+(fichiers pour la bibliothèque graphique Qt 3 - X11, Windows, Mac OS X ou
+Qtopia)
 Info.plist           Install.Qt           knethack.lnk
 knh-mini.xpm         knh.xpm              qpe-nethack.control
 qt3_clust.cpp        qt3_clust.h          qt3_kde0.h
@@ -221,7 +234,7 @@ qt3tableview.cpp     qt3tableview.h       tileedit.cpp
 tileedit.h
 
 outdated/win/gnome:
-(files for GNOME versions - untested for 5.0)
+(fichiers pour les versions GNOME - non testés pour la 5.0)
 README      gn_xpms.h   gnaskstr.c  gnaskstr.h  gnbind.c    gnbind.h
 gnglyph.c   gnglyph.h   gnmain.c    gnmain.h    gnmap.c     gnmap.h
 gnmenu.c    gnmenu.h    gnmesg.c    gnmesg.h    gnomeprv.h  gnopts.c
@@ -230,23 +243,23 @@ gnstatus.h  gntext.c    gntext.h    gnworn.c    gnworn.h    gnyesno.c
 gnyesno.h   mapbg.xpm
 
 sound/fmod:
-(file in top directory)
+(fichier du répertoire principal)
 fmod.c
 
 sound/mac68ksound:
-(file in top directory)
+(fichier du répertoire principal)
 mac68ksound.c
 
 sound/macsound:
-(file in top directory)
+(fichier du répertoire principal)
 macsound.m
 
 sound/qtsound:
-(file in top directory)
+(fichier du répertoire principal)
 README.md
 
 sound/wav:
-(files in top directory)
+(fichiers du répertoire principal)
 README                       attributions.txt
 sa2_xpleveldown.uu           sa2_xplevelup.uu
 se_squeak_A.uu               se_squeak_B.uu
@@ -282,11 +295,11 @@ sound_Wooden_Harp_G.uu       uu2wav.cmd
 uu2wav.sh
 
 sound/windsound:
-(file in top directory)
+(fichier du répertoire principal)
 windsound.c
 
 src:
-(files for all versions)
+(fichiers pour toutes les versions)
 allmain.c   alloc.c     apply.c     artifact.c  attrib.c    ball.c
 bones.c     botl.c      calendar.c  cfgfiles.c  cmd.c       coloratt.c
 date.c      dbridge.c   decl.c      detect.c    dig.c       display.c
@@ -310,12 +323,15 @@ trap.c      u_init.c    uhitm.c     utf8map.c   vault.c     version.c
 vision.c    weapon.c    were.c      wield.c     windows.c   wizard.c
 wizcmds.c   worm.c      worn.c      write.c     zap.c
 
+(fichiers propres à la version française)
+fr_genres.txt  francais.c     noms_en.c
+
 submodules:
-(files in top directory)
+(fichiers du répertoire principal)
 pdcurses     pdcursesmod
 
 sys/amiga:
-(files for Amiga versions)
+(fichiers pour les versions Amiga)
 NHinfo.uu        README.amiga     amidos.c         amifont.uu
 amifont8.uu      amii.hlp         amimenu.c        amirip.c
 amistack.c       amiwind.c        bmp2iff_host.c   clipwin.c
@@ -326,7 +342,7 @@ winext.h         winfuncs.c       winkey.c         winproto.h
 winreq.c         winstr.c         xpm2iff_host.c
 
 sys/atari:
-(files for Atari version)
+(fichiers pour la version Atari)
 README.Crosscompiling  README.tos             atarifnt.uue
 bmp2img_host.c         crashlog.c             crashlog.h
 install-toolchain.sh   keytrans.h             nethack.cnf
@@ -334,15 +350,15 @@ nethack.mnu            run-hatari.sh          sbrk.c
 setup.g                tos.c                  unx2atar.sed
 
 sys/libnh:
-(files in top directory)
+(fichiers du répertoire principal)
 README.md    libnhmain.c  sysconf
 
 sys/libnh/test:
-(files in top directory)
+(fichiers du répertoire principal)
 README.md  libtest.c  run.sh
 
 sys/mac68k:
-(files for 68K Macintosh versions)
+(fichiers pour les versions Macintosh 68K)
 BUILD.md            Files.r             Install.mw
 MacHelp             NHDeflts            NHrsrc.hqx
 NHsound.hqx         README              ReadMe.txt
@@ -359,13 +375,13 @@ nhmenus.r           nhsize.r            nhtiles_template.r
 nhtitle.r           nhvers.r            scsidriver.bin
 
 sys/mac68k/tools:
-(files for 68K Macintosh versions)
+(fichiers pour les versions Macintosh 68K)
 decode_hqx.py          dump_rsrc.py           encode_hqx.py
 make_info.py           make_scsi_image2.py    retro68_elf2mac.patch
 rsrc_to_rez.py         strip_rsrc.py          wav2snd.py
 
 sys/msdos:
-(files for MSDOS version)
+(fichiers pour la version MSDOS)
 Install.dos              Makefile.GCC             exceptn.S.patch
 fetch-cross-compiler.sh  font.c                   font.h
 msdos.c                  msdoshlp.txt             nhlua.h
@@ -375,50 +391,52 @@ sysconf                  tile2bin.c               vesa.h
 video.c                  vidtxt.c                 vidvesa.c
 vidvga.c
 
-(files for running MSDOS binary under Windows)
+(fichiers pour exécuter le binaire MSDOS sous Windows)
 nhico.uu  nhpif.uu
 
 sys/msdos/fonts:
-(files for MSDOS version)
+(fichiers pour la version MSDOS)
 README.txt    makefont.lua  nh-u16b.bdf   nh-u16v.bdf   nh-u18b.bdf
 nh-u20b.bdf   nh-u22b.bdf   nh-u24b.bdf   nh-u28b.bdf   nh-u32b.bdf
 
 sys/share:
-(Berkeley random number file, which may be included in any version)
+(fichier de nombres aléatoires de Berkeley, utilisable dans toute version)
 random.c
 
-(Berkeley uudecode file, which may be used in build process of any version)
+(fichier uudecode de Berkeley, utilisable lors de la compilation de toute
+version)
 uudecode.c
 
-(file for MSDOS, Amiga versions)
+(fichier pour les versions MSDOS et Amiga)
 NetHack.cnf  pcmain.c     pctty.c
 
-(file for MSDOS, OS/2, and VMS versions)
+(fichier pour les versions MSDOS, OS/2 et VMS)
 termcap
 
-(file for VMS version)
+(fichier pour la version VMS)
 tclib.c
 
-(files for MSDOS, Amiga versions)
+(fichiers pour les versions MSDOS et Amiga)
 pcsys.c   pcunix.c
 
-(files for OS/2 version - untested for 5.0)
+(fichiers pour la version OS/2 - non testés pour la 5.0)
 Makefile.lib  termcap.uu
 
-(files for UNIX and Be versions)
+(fichiers pour les versions UNIX et Be)
 ioctl.c    unixtty.c
 
-(posix regex for versions that include regex in their C library)
+(regex POSIX pour les versions dont la bibliothèque C inclut les regex)
 posixregex.c
 
-(c++ regex code for versions that can build a C++ module and link it in)
+(code regex C++ pour les versions capables de compiler et d'intégrer un
+module C++)
 cppregex.cpp
 
-(pmatch regex for other versions)
+(regex pmatch pour les autres versions)
 pmatchregex.c
 
 sys/unix:
-(files for UNIX versions)
+(fichiers pour les versions UNIX)
 Install.unx     Makefile.check  Makefile.dat    Makefile.doc
 Makefile.src    Makefile.top    Makefile.utl    NewInstall.unx
 README.hints    README.xcode    XCode.xcconfig  depend.awk
@@ -427,34 +445,34 @@ setup.sh        sysconf         unixmain.c      unixres.c
 unixunix.c
 
 sys/unix/NetHack.xcodeproj:
-(file for macOS Xcode)
+(fichier pour Xcode sous macOS)
 project.pbxproj
 
 sys/unix/NetHack.xcodeproj/project.xcworkspace:
-(file for macOS Xcode)
+(fichier pour Xcode sous macOS)
 contents.xcworkspacedata
 
 sys/unix/NetHack.xcodeproj/project.xcworkspace/xcshareddata:
-(files for macOS Xcode)
+(fichiers pour Xcode sous macOS)
 IDEWorkspaceChecks.plist      WorkspaceSettings.xcsettings
 
 sys/unix/NetHack.xcodeproj/xcshareddata/xcschemes:
-(files for macOS Xcode)
+(fichiers pour Xcode sous macOS)
 NetHack.xcscheme   makedefs.xcscheme  recover.xcscheme
 
 sys/unix/hints:
-(files for configuring UNIX NetHack versions)
+(fichiers de configuration des versions UNIX de NetHack)
 bsd.501        linux-minimal  linux.501      macOS.501      macosx.sh
 
 sys/unix/hints/include:
-(files for configuring UNIX NetHack versions)
+(fichiers de configuration des versions UNIX de NetHack)
 compiler.501       cross-post.501     cross-pre1.501     cross-pre2.501
 dirs-perms.501     gbdates-post.501   gbdates-pre.501    linuxdistro.501
 misc.501           multisnd-post.501  multisnd1-pre.501  multisnd2-pre.501
 multiw-1.501       multiw-2.501       response.501       whichbsd.501
 
 sys/vms:
-(files for VMS version)
+(fichiers pour la version VMS)
 Install.vms       Install501.vms    Makefile.dat      Makefile.doc
 Makefile.src      Makefile.top      Makefile.utl      Makefile_dat.vms
 Makefile_doc.vms  Makefile_src.vms  Makefile_top.vms  Makefile_utl.vms
@@ -464,7 +482,7 @@ vmsmain.c         vmsmisc.c         vmssetup.com      vmstty.c
 vmsunix.c
 
 sys/windows:
-(files for Windows 10/11 version)
+(fichiers pour la version Windows 10/11)
 GNUmakefile         GNUmakefile.depend  Install.windows
 Makefile.nmake      build-msys2.txt     build-nmake.txt
 build-vs.txt        console.rc          consoletty.c
@@ -475,7 +493,7 @@ win10.c             win10.h             win32api.h
 windmain.c          windsys.c           winos.h
 
 sys/windows/vs:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 NetHack.sln                   NetHackPackage.appxmanifest
 NetHackPackage.wapproj        NetHackProperties.props
 Package.StoreAssociation.xml  ScreenShot.PNG
@@ -487,11 +505,11 @@ dirs.props                    dll.props
 files.props                   sfctool.sln
 
 sys/windows/vs/FetchPrereq:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 fetchprereq.nmake    fetchprereq.vcxproj
 
 sys/windows/vs/Images:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 BadgeLogo.scale-100.png
 BadgeLogo.scale-125.png
 BadgeLogo.scale-150.png
@@ -546,86 +564,89 @@ Wide310x150Logo.scale-200.png
 Wide310x150Logo.scale-400.png
 
 sys/windows/vs/NetHack:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 NetHack.vcxproj    afternethack.proj
 
 sys/windows/vs/NetHackW:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 NetHackW.vcxproj
 
 sys/windows/vs/PDCurses:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 PDCurses.vcxproj
 
 sys/windows/vs/PDCursesGui:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 pdcursesgui.vcxproj
 
 sys/windows/vs/dlb:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 afterdlb.proj  dlb.vcxproj
 
 sys/windows/vs/fetchctags:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 fetchctags.nmake    fetchctags.vcxproj
 
 sys/windows/vs/hacklib:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 hacklib.vcxproj
 
 sys/windows/vs/lualib:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 lualib.vcxproj
 
 sys/windows/vs/makedefs:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 aftermakedefs.proj  makedefs.vcxproj
 
 sys/windows/vs/package:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 package.nmake    package.vcxproj
 
 sys/windows/vs/recover:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 afterrecover.proj  recover.vcxproj
 
 sys/windows/vs/sfctool:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 sfctool.vcxproj
 
 sys/windows/vs/sftags:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 aftersftags.proj  sftags.vcxproj
 
 sys/windows/vs/tile2bmp:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 aftertile2bmp.proj  tile2bmp.vcxproj
 
 sys/windows/vs/tilemap:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 aftertilemap.proj  tilemap.vcxproj
 
 sys/windows/vs/tiles:
-(file for Visual Studio Community builds)
+(fichier pour les compilations avec Visual Studio Community)
 tiles.vcxproj
 
 sys/windows/vs/uudecode:
-(files for Visual Studio Community builds)
+(fichiers pour les compilations avec Visual Studio Community)
 afteruudecode.proj  uudecode.vcxproj
 
 test:
-(files for testing)
+(fichiers de test)
 README.md     test_cnf.lua  test_des.lua  test_lev.lua  test_obj.lua
 test_sel.lua  test_shk.lua  test_src.lua  testmove.lua  testwish.lua
 
 util:
-(files for all versions)
+(fichiers pour toutes les versions)
 dlb_main.c         makedefs.c         mdgrep.h           mdgrep.pl
 panic.c            recover.c          sfctool.c          sfexpasc.c
 sftags.c           stripbs.c          tile2pict.c        tile2pict_quant.h
 
+(fichier propre à la version française)
+gen_fr_genres.py
+
 win/Qt:
-(files for the Qt 4 or 5 widget library - X11, Windows, Mac OS X)
+(fichiers pour la bibliothèque graphique Qt 4 ou 5 - X11, Windows, Mac OS X)
 Qt-issues.txt  qt_bind.cpp    qt_bind.h      qt_click.cpp   qt_click.h
 qt_clust.cpp   qt_clust.h     qt_delay.cpp   qt_delay.h     qt_glyph.cpp
 qt_glyph.h     qt_icon.cpp    qt_icon.h      qt_inv.cpp     qt_inv.h
@@ -639,7 +660,7 @@ qt_win.h       qt_xcmd.cpp    qt_xcmd.h      qt_xpms.h      qt_yndlg.cpp
 qt_yndlg.h
 
 win/X11:
-(files for X versions)
+(fichiers pour les versions X)
 Install.X11     NetHack.ad      Window.c        X11-issues.txt
 dialogs.c       ibm.bdf         nethack.rc      nh10.bdf
 nh32icon        nh56icon        nh72icon        nh_icon.xpm
@@ -649,43 +670,43 @@ winmesg.c       winmisc.c       winstat.c       wintext.c
 winval.c
 
 win/chain:
-(files for stacking window systems)
+(fichiers pour l'empilement d'interfaces)
 wc_chainin.c   wc_chainout.c  wc_trace.c
 
 win/curses:
-(files in top directory)
+(fichiers du répertoire principal)
 Bugs.txt    Readme.txt  Todo.txt    cursdial.c  cursdial.h  cursinit.c
 cursinit.h  cursinvt.c  cursinvt.h  cursmain.c  cursmesg.c  cursmesg.h
 cursmisc.c  cursmisc.h  cursstat.c  cursstat.h  curswins.c  curswins.h
 
 win/gem:
-(files for GEM versions)
+(fichiers pour les versions GEM)
 Install.gem  gem_rsc.h    gem_rsc.uu   gem_rso.uu   gr_rect.c    gr_rect.h
 load_img.c   load_img.h   rip.uu       title.uu     title2.uu    wingem.c
 wingem.h     wingem1.c
 
 win/macosx:
-(files for macosx versions)
+(fichiers pour les versions macosx)
 NetHackGuidebook.applescript  NetHackRecover.applescript
 NetHackTerm.applescript       recover.pl
 
 win/share:
-(files for versions using optional tiles)
+(fichiers pour les versions utilisant les tuiles optionnelles)
 bmptiles.c     decals.txt     gifread.c      giftiles.c     monsters.txt
 nhicns.uu      nhsplash.xpm   objects.txt    other.txt      pngtiles.c
 ppmwrite.c     renumtiles.pl  thintile.c     tile.doc       tile.h
 tile2bmp.c     tilemap.c      tileset.c      tiletext.c     tiletxt.c
 
 win/shim:
-(file in top directory)
+(fichier du répertoire principal)
 winshim.c
 
 win/tty:
-(files for tty versions)
+(fichiers pour les versions tty)
 getline.c  termcap.c  topl.c     wintty.c
 
 win/win32:
-(files for Windows versions - tested up to Windows 11)
+(fichiers pour les versions Windows - testés jusqu'à Windows 11)
 NetHackW.c             NetHackW.exe.manifest  NetHackW.rc
 mhaskyn.c              mhaskyn.h              mhdlg.c
 mhdlg.h                mhfont.c               mhfont.h
@@ -702,56 +723,63 @@ record.uu              resource.h             rip.uu
 splash.uu              tiles-mingw32.mak      tiles.mak
 winMS.h
 
-This is a list of files produced by auxiliary programs.  They can all be
-regenerated from the files in the distribution.
+Voici la liste des fichiers produits par des programmes auxiliaires.  Ils
+peuvent tous être régénérés à partir des fichiers de la distribution.
 
 dat:
-(files generated by makedefs at playground creation time)
+(fichiers générés par makedefs lors de la création du répertoire de jeu)
 data     options  oracles  rumors
 
-(files generated for Qt interface on macOS)
+(fichiers générés pour l'interface Qt sous macOS)
 Info.plist    nethack.icns
 
-(files generated for windows at compile time)
+(fichiers générés pour Windows lors de la compilation)
 dlb.lst   porthelp
 
-(files generated for windows gui at compile time)
+(fichiers générés pour l'interface graphique Windows lors de la compilation)
 guioptions
 
-(files generated for windows tty at compile time)
+(fichiers générés pour Windows tty lors de la compilation)
 ttyoptions
 
-(tile files optionally generated for X ports at playground creation time)
+(fichiers de tuiles générés en option pour les portages X lors de la
+création du répertoire de jeu)
 pet_mark.xbm  rip.xpm       x11tiles
 
 src:
-(files for win32 that are moved into src at compile time)
+(fichiers win32 déplacés dans src lors de la compilation)
 GNUmakefile  Makefile
 
-(files generated by 'moc' for Qt interface at compile time)
+(fichiers générés par « moc » pour l'interface Qt lors de la compilation)
 qt_kde0.moc   qt_main.moc   qt_map.moc    qt_menu.moc   qt_msg.moc
 qt_plsel.moc  qt_set.moc    qt_stat.moc   qt_xcmd.moc   qt_yndlg.moc
 
-(file generated by makedefs -m but unused in 5.0)
+(fichier généré par makedefs -m mais inutilisé dans la 5.0)
 monstr.c
 
-(file optionally generated by tilemap at compile time)
+(fichier propre à la version française, généré par util/gen_fr_genres.py
+à partir de src/fr_genres.txt)
+fr_genres.h
+
+(fichier généré en option par tilemap lors de la compilation)
 tile.c
 
 sys/windows:
-(file generated by uudecode at compile time)
+(fichier généré par uudecode lors de la compilation)
 nethack.ico
 
 util:
-(file generated for unix at compile time if various tiles utilities are built)
+(fichier généré pour unix lors de la compilation si divers utilitaires de
+tuiles sont compilés)
 tiletxt.c
 
-(file generated for windows at compile time)
+(fichier généré pour Windows lors de la compilation)
 uudecode.exe
 
-NOTE: If your binaries were compiled with the data librarian (DLB) option,
-      your playground will not contain all of the files listed here.  All
-      of the files listed as being required for the playground must still
-      have been built by your compiler, but the DLB code will roll them up
-      into another file (or files).
+NOTE : si vos binaires ont été compilés avec l'option de bibliothécaire de
+       données (DLB), votre répertoire de jeu (playground) ne contiendra pas
+       tous les fichiers listés ici.  Tous les fichiers indiqués comme
+       nécessaires au répertoire de jeu doivent tout de même avoir été
+       produits lors de la compilation, mais le code DLB les regroupe dans
+       un autre fichier (ou plusieurs).
 

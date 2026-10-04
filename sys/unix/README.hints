@@ -1,92 +1,100 @@
-The sys/unix/hints subfolder contains Makefile content building blocks
-for various platforms and purposes.
+[Traduction française du document d'origine sys/unix/README.hints.]
 
-The sys/unix/hints/include subfolder contains Makefile content that
-is included in the distributed Makefiles.
+Le sous-répertoire sys/unix/hints contient des blocs de contenu de Makefile
+pour diverses plates-formes et divers usages.
 
-
-[.501 hints]
-
-
-There are two .501 series hints files provided with NetHack:
-    linux.501    for use on Linux
-    macOS.501    for use on macOS
-
-Those will also pull in content from sys/unix/hints/include/*.501,
-that is shared between the linux.501 and macOS.501 hints files.
-
-[.501 make build options]
+Le sous-répertoire sys/unix/hints/include contient du contenu de Makefile
+qui est inclus dans les Makefiles distribués.
 
 
-Here are some options that can be specified on the make command
-line to trigger specific build behavior. These are not mutually
-exclusive and multiple build options can be specified in many
-cases to include support for multiple features. Some of the options
-require prerequisite packages to be available on your build machine.
+[Fichiers d'indications (hints) .501]
 
-make WANT_WIN_TTY=1           Include support for the TTY interface (default).
-make WANT_WIN_CURSES=1        Include support for the curses interface.
-make WANT_WIN_X11=1           Include support for the X11 interface.
-make WANT_WIN_Qt=1            Include support for Qt interface, defaults to Qt5.
-make WANT_WIN_QT5=1           Include support for Qt5 interface.
-make WANT_WIN_QT6=1           Include support for Qt6 interface. Only one Qtx
-                              option can be specified.
-make WANT_WIN_ALL=1           Include support for TTY,curses,X11, and Qt.
-make WANT_WINCHAIN=1          Include support for WINCHAIN.
-make WANT_LIBNH=1             Include support for libnh NetHack library.
 
-make WANT_DEFAULT=tty         Make tty the default interface if multiple window
-                              interfaces were specified.
-make WANT_DEFAULT=curses      Make curses the default interface if multiple window
-                              interfaces were specified.
-make WANT_DEFAULT=X11         Make X11 the default interface if multiple window
-                              interfaces were specified.
-make WANT_DEFAULT=Qt          Make Qt the default interface if multiple window
-                              interfaces were specified.
+Deux fichiers d'indications (hints) de la série .501 sont fournis avec
+NetHack :
+    linux.501    à utiliser sous Linux
+    macOS.501    à utiliser sous macOS
 
-make musl=1                   Build with settings appropriate for linking with
-                              musl libc, instead of glibc. This causes
-                              NOCRASHREPORT to be defined, and avoids the use
-                              of 'col' during the build.
-make resp=1                   Place the majority of the compiler switches into
-                              a response file to de-clutter the build compiler
-                              command lines and eliminate some of the
-                              unsightly wrapping that occurs.
-make CROSS_TO_MSDOS=1 package Cross-compile for an MSDOS target package.
-make CROSS_TO_WASM=1          Cross-compile for a WASM target.
-make CROSS_TO_MIPS=1          Cross-compile for a mips target.
+Ils incorporent aussi le contenu de sys/unix/hints/include/*.501, qui est
+commun aux fichiers d'indications linux.501 et macOS.501.
 
-make WANT_BUNDLE=1            For macOS.501 only, place the build results into
-                              a macOS bundle layout.
-make WANT_MACSOUND=1          For macOS.501, include support for built-in macOS
-                              sound libraries.
-make WANT_SPEECH=1            If one of the sound libraries was included, also
-                              include speech synthesis support (Recent macOS
-                              build that also includes WANT_MACSOUND=1).
+[Options de compilation de make pour .501]
 
-make WANT_ASAN=1              Include support for the address sanitizer in the
-                              build.
 
-make WANT_UBSAN=1             Include support for the undefined behaviour
-                              sanitizer in the build.
+Voici quelques options que l'on peut indiquer sur la ligne de commande de
+make pour obtenir un comportement particulier de la compilation. Elles ne
+s'excluent pas mutuellement et, dans bien des cas, plusieurs options peuvent
+être indiquées pour inclure la prise en charge de plusieurs fonctionnalités.
+Certaines options nécessitent que des paquets prérequis soient disponibles
+sur votre machine de compilation.
 
-make WANT_SHARED_INSTALL=1    Place the results of the install/update portion
-                              of the build into a shared area on a multiuser
-                              system.
+make WANT_WIN_TTY=1           Inclut l'interface TTY (par défaut).
+make WANT_WIN_CURSES=1        Inclut l'interface curses.
+make WANT_WIN_X11=1           Inclut l'interface X11.
+make WANT_WIN_Qt=1            Inclut l'interface Qt (Qt5 par défaut).
+make WANT_WIN_QT5=1           Inclut l'interface Qt5.
+make WANT_WIN_QT6=1           Inclut l'interface Qt6. Une seule option Qtx
+                              peut être indiquée.
+make WANT_WIN_ALL=1           Inclut les interfaces TTY, curses, X11 et Qt.
+make WANT_WINCHAIN=1          Inclut la prise en charge de WINCHAIN.
+make WANT_LIBNH=1             Inclut la bibliothèque NetHack libnh.
 
-make WANT_SOURCE_INSTALL=1    Place the results of the install/update portion
-                              of the build into a subfolder of the source
-                              tree, rather than in a system-wide shared area.
-                              (This is now the default if WANT_SHARED_INSTALL=1
-                              wasn't specified)  
+make WANT_DEFAULT=tty         Fait de tty l'interface par défaut si plusieurs
+                              interfaces (window ports) ont été indiquées.
+make WANT_DEFAULT=curses      Fait de curses l'interface par défaut si
+                              plusieurs interfaces ont été indiquées.
+make WANT_DEFAULT=X11         Fait de X11 l'interface par défaut si plusieurs
+                              interfaces ont été indiquées.
+make WANT_DEFAULT=Qt          Fait de Qt l'interface par défaut si plusieurs
+                              interfaces ont été indiquées.
 
-make WANT_NHUUID=1            Include support for a unique game identifier.
-                              On Linux, libuuid and its headers must be installed
-                              and available for this to build and link correctly.
-                                sudo apt install uuid-dev on Debian/Ubuntu
-                              or
-                                sudo dnf install libuuid-devel on Fedora
+make musl=1                   Compile avec des réglages adaptés à l'édition de
+                              liens avec la libc musl au lieu de la glibc.
+                              NOCRASHREPORT est alors défini, et 'col' n'est
+                              pas utilisé pendant la compilation.
+make resp=1                   Place la plupart des options du compilateur dans
+                              un fichier de réponses (response file) pour
+                              alléger les lignes de commande de compilation
+                              et éviter une partie des retours à la ligne
+                              disgracieux qui en résultent.
+make CROSS_TO_MSDOS=1 package Compilation croisée vers un paquet pour MSDOS.
+make CROSS_TO_WASM=1          Compilation croisée vers une cible WASM.
+make CROSS_TO_MIPS=1          Compilation croisée vers une cible mips.
 
-make VIEWDEPRECATIONS=1       Turn off the suppression of -Wdeprecated and
-                              -Wdeprecated-declarations warnings
+make WANT_BUNDLE=1            Pour macOS.501 uniquement : place le résultat de
+                              la compilation dans un bundle macOS.
+make WANT_MACSOUND=1          Pour macOS.501 : inclut la prise en charge des
+                              bibliothèques sonores intégrées de macOS.
+make WANT_SPEECH=1            Si l'une des bibliothèques sonores est incluse,
+                              inclut aussi la synthèse vocale (compilation
+                              macOS récente incluant aussi WANT_MACSOUND=1).
+
+make WANT_ASAN=1              Inclut dans la compilation la prise en charge de
+                              l'address sanitizer.
+
+make WANT_UBSAN=1             Inclut dans la compilation la prise en charge de
+                              l'undefined behaviour sanitizer.
+
+make WANT_SHARED_INSTALL=1    Place le résultat de la partie install/update de
+                              la compilation dans un emplacement partagé d'un
+                              système multi-utilisateur.
+
+make WANT_SOURCE_INSTALL=1    Place le résultat de la partie install/update de
+                              la compilation dans un sous-répertoire de
+                              l'arborescence des sources plutôt que dans un
+                              emplacement partagé à l'échelle du système.
+                              (C'est désormais le comportement par défaut si
+                              WANT_SHARED_INSTALL=1 n'a pas été indiqué.)
+
+make WANT_NHUUID=1            Inclut la prise en charge d'un identifiant
+                              unique de partie. Sous Linux, libuuid et ses
+                              en-têtes doivent être installés et disponibles
+                              pour que la compilation et l'édition de liens
+                              réussissent.
+                                sudo apt install uuid-dev sous Debian/Ubuntu
+                              ou
+                                sudo dnf install libuuid-devel sous Fedora
+
+make VIEWDEPRECATIONS=1       Désactive la suppression des avertissements
+                              -Wdeprecated et -Wdeprecated-declarations.
 

@@ -1,88 +1,98 @@
-                     NetHack 5.0 for 68k Macintosh
-                     =============================
+                   NetHack 5.0 pour Macintosh 68k
+                   ==============================
 
-Requirements
-------------
-    - A Macintosh with a 68020 or later CPU.
-    - System 7.0 or later, with 32-bit addressing enabled
-      (Memory control panel; reboot after changing it).
-    - 6 MB of free RAM minimum; 8 MB is the preferred partition.
-    - Color is optional: tiles need a 4-bit or 8-bit screen,
-      black & white Macs play in ASCII.
+(Traduction française du document d'origine en anglais.)
+
+Configuration requise
+---------------------
+    - Un Macintosh doté d'un processeur 68020 ou plus récent.
+    - System 7.0 ou ultérieur, avec l'adressage 32 bits activé
+      (tableau de bord Mémoire ; redémarrez après la modification).
+    - 6 Mo de RAM libre au minimum ; 8 Mo est la partition conseillée.
+    - La couleur est facultative : les tuiles exigent un écran 4 ou
+      8 bits ; les Mac noir et blanc jouent en ASCII.
 
 Installation
 ------------
-The game is distributed two ways; pick one:
+Le jeu est distribué sous deux formes ; choisissez-en une :
 
-NetHack.img -- a complete, ready-to-play SCSI disk image (Apple
-Partition Map + HFS volume "NetHack 5.0").  Attach it as a disk in
-QEMU, or copy it onto a BlueSCSI SD card.  Nothing to install:
-boot, open the volume, double-click NetHack.
+NetHack.img -- une image disque SCSI complète, prête à jouer (Apple
+Partition Map + volume HFS « NetHack 5.0 »). Attachez-la comme disque
+dans QEMU, ou copiez-la sur une carte SD BlueSCSI. Rien à installer :
+démarrez, ouvrez le volume et double-cliquez sur NetHack.
 
-NetHack.sit -- a StuffIt archive for installing onto an existing
-system.  Expand it ON THE MAC with StuffIt Expander (expanding on
-another machine loses resource forks).  It contains:
+NetHack.sit -- une archive StuffIt pour installer le jeu sur un système
+existant. Décompressez-la SUR LE MAC avec StuffIt Expander (la
+décompresser sur une autre machine fait perdre les « resource forks »).
+Elle contient :
 
-    NetHack             the application
-    Recover             crash-recovery application
-    nhdat               packed game data (levels, Lua, text)
-    NetHack Defaults    configuration file (editable TEXT)
-    Guidebook           how to play NetHack
-    Read Me             this file
+    NetHack             l'application
+    Recover             application de récupération après plantage
+    nhdat               données du jeu empaquetées (niveaux, Lua, textes)
+    NetHack Defaults    fichier de configuration (TEXT modifiable)
+    Guidebook           comment jouer à NetHack
+    Read Me             ce fichier
     license, symbols
 
-Keep everything in one folder and double-click NetHack.  Save
-files, level files, and the record (high score) file are created
-in the same folder during play.
+Gardez tout dans un même dossier et double-cliquez sur NetHack. Les
+fichiers de sauvegarde, les fichiers de niveau et le fichier record
+(meilleurs scores) sont créés dans ce même dossier pendant la partie.
 
-Display Modes
--------------
-On a color screen the map starts in graphical tiles; choose
-"Tile Mode" from the File menu at any time during play to switch
-between tiles and ASCII.  Black & white screens always use ASCII.
+Modes d'affichage
+-----------------
+Sur un écran couleur, la carte démarre en tuiles graphiques ; choisissez
+« Tile Mode » dans le menu File à tout moment de la partie pour basculer
+entre tuiles et ASCII. Les écrans noir et blanc utilisent toujours
+l'ASCII.
 
-The map lives in its own window: drag it where you like, resize
-it, and on larger screens use its scrollbars.  Window positions
-and sizes (per display mode) are remembered across games in
-"NetHack Preferences" in the System Folder's Preferences folder.
+La carte occupe sa propre fenêtre : déplacez-la où vous voulez,
+redimensionnez-la et, sur les grands écrans, utilisez ses barres de
+défilement. Les positions et tailles des fenêtres (pour chaque mode
+d'affichage) sont mémorisées d'une partie à l'autre dans « NetHack
+Preferences », dans le dossier Préférences du Dossier Système.
 
-You can click on the map to move there, and the message-line
-prompts offer clickable buttons for yes/no questions.
+Vous pouvez cliquer sur la carte pour vous y déplacer, et les invites de
+la ligne de messages proposent des boutons cliquables pour les questions
+oui/non.
 
 Configuration
 -------------
-Edit "NetHack Defaults" with any text editor (SimpleText works);
-the comments in the file describe each option.  Useful entries:
+Modifiez « NetHack Defaults » avec n'importe quel éditeur de texte
+(SimpleText convient) ; les commentaires du fichier décrivent chaque
+option. Entrées utiles :
 
-    OPTIONS=!tiled_map          start in ASCII even on color screens
-    OPTIONS=menucolors          colored inventory entries
+    OPTIONS=!tiled_map          démarrer en ASCII même sur écran couleur
+    OPTIONS=menucolors          entrées d'inventaire en couleur
 
-Menu color patterns use shell-style globs, so wrap them in '*':
+Les motifs de couleur des menus utilisent des jokers de type shell ;
+entourez-les donc de '*' :
 
     MENUCOLOR="* cursed *"=red
     MENUCOLOR="* blessed *"=cyan
 
-Crashed Games
--------------
-Checkpointing is on by default.  After a crash or power loss the
-next start will refuse to begin a new game while the crashed
-game's files are present.  Run the Recover application and choose
-the crashed game's ".0" file (the level files are named after your
-character: "1Brunhilda.0", "1Brunhilda.1", ...) to rebuild a save
-file you can restore from.  To abandon the crashed game instead,
-delete those numbered files from the game folder.
+Parties plantées
+----------------
+Les points de reprise (checkpoint) sont activés par défaut. Après un
+plantage ou une coupure de courant, le démarrage suivant refusera de
+commencer une nouvelle partie tant que les fichiers de la partie plantée
+sont présents. Lancez l'application Recover et choisissez le fichier
+« .0 » de la partie plantée (les fichiers de niveau portent le nom de
+votre personnage : « 1Brunhilda.0 », « 1Brunhilda.1 », ...) pour
+reconstruire un fichier de sauvegarde que vous pourrez restaurer. Pour
+abandonner plutôt la partie plantée, supprimez ces fichiers numérotés du
+dossier du jeu.
 
-Notes
------
-Save files and bones files from earlier NetHack versions do not
-work with 5.0.
+Remarques
+---------
+Les fichiers de sauvegarde et les fichiers d'os (bones) des versions
+antérieures de NetHack ne fonctionnent pas avec la 5.0.
 
-Source code and build instructions (Retro68 cross-compile):
-    https://github.com/ingpaschke/NetHack -- see sys/mac68k/BUILD.md
+Code source et instructions de compilation (compilation croisée Retro68) :
+    https://github.com/ingpaschke/NetHack -- voir sys/mac68k/BUILD.md
 
-Based on the classic Macintosh port by Dean Luick, Kevin Hugo,
-Mark Modrall, Jon W{tte, David Hairston, and Michael Hamel.
-Revived for NetHack 5.0 by Ingo Paschke.
+Basé sur le portage Macintosh classique de Dean Luick, Kevin Hugo,
+Mark Modrall, Jon W{tte, David Hairston et Michael Hamel.
+Ressuscité pour NetHack 5.0 par Ingo Paschke.
 
-This is not an official NetHack port; please send bug
-reports, suggestions, and comments to ipaschke@lpclabs.de.
+Ce n'est pas un portage officiel de NetHack ; veuillez envoyer rapports
+de bogues, suggestions et commentaires à ipaschke@lpclabs.de.
