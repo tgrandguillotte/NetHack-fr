@@ -83,6 +83,9 @@ extern char *fr_upstart(char *);
 
 /* nombres ordinaux : 1 -> "1er", 2 -> "2e" ; ordin() suit cette regle */
 
+/* nom d'affichage francais d'un donjon (dungeon.c) */
+extern const char *dname_fr(const char *);
+
 /* noms anglais d'origine (src/noms_en.c), pour les recherches par nom */
 extern const char *const en_obj_names[];
 extern const char *const en_obj_descrs[];

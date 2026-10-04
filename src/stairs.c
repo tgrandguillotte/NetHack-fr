@@ -194,9 +194,12 @@ stairs_description(
     d_level tolev;
     const char *stairs, *updown;
 
+    nhUse(stcase);
     tolev = sway->tolev;
-    stairs = sway->isladder ? "ladder" : stcase ? "staircase" : "stairs";
-    updown = sway->up ? "up" : "down";
+    /* VF : "escalier montant", "échelle descendante"... */
+    stairs = sway->isladder ? "échelle" : "escalier";
+    updown = sway->isladder ? (sway->up ? "montante" : "descendante")
+                            : (sway->up ? "montant" : "descendant");
 
     if (!known_branch_stairs(sway)) {
         /* ordinary stairs or branch stairs to not-yet-visited branch */
@@ -206,30 +209,28 @@ stairs_description(
                                     || single_level_branch(&tolev)); /* knox */
             int to_dlev = specialdepth ? dunlev(&tolev) : depth(&tolev);
 
-            Sprintf(eos(outbuf), " to level %d", to_dlev);
+            Sprintf(eos(outbuf), " vers le niveau %d", to_dlev);
         }
     } else if (u.uz.dnum == 0 && u.uz.dlevel == 1 && sway->up) {
-        /* stairs up from level one are a special case; they are marked
-           as having been traversed because the hero obviously started
-           the game by coming down them, but the remote side varies
-           depending on whether the Amulet is being carried */
-        Sprintf(outbuf, "%s%s %s %s",
-                !u.uhave.amulet ? "" : "branch ",
-                stairs, updown,
-                !u.uhave.amulet ? "out of the dungeon"
-                /* minimize our expectations about what comes next */
+        Sprintf(outbuf, "%s %s%s %s", stairs, updown,
+                !u.uhave.amulet ? "" : " de branche",
+                !u.uhave.amulet ? "menant hors du donjon"
                 : (on_level(&tolev, &earth_level)
                    || on_level(&tolev, &air_level)
                    || on_level(&tolev, &fire_level)
                    || on_level(&tolev, &water_level))
-                  ? "to the Elemental Planes"
-                  : "to the end game");
+                  ? "vers les Plans élémentaires"
+                  : "vers la fin du jeu");
     } else {
+        char dn[BUFSZ];
+
         /* known branch stairs; tacking on destination level is too verbose */
-        Sprintf(outbuf, "branch %s %s to %s",
-                stairs, updown, svd.dungeons[tolev.dnum].dname);
-        /* dungeons[].dname is capitalized; undo that for "The <Branch>" */
-        (void) strsubst(outbuf, "The ", "the ");
+        Strcpy(dn, dname_fr(svd.dungeons[tolev.dnum].dname));
+        if (!strncmp(dn, "Les ", 4) || !strncmp(dn, "Le ", 3)
+            || !strncmp(dn, "La ", 3) || !strncmp(dn, "L'", 2))
+            dn[0] = lowc(dn[0]);
+        Sprintf(outbuf, "%s %s de branche vers %s", stairs, updown, dn);
+        (void) strsubst(outbuf, "vers les ", "vers les ");
     }
     return outbuf;
 }

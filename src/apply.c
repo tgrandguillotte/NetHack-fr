@@ -3965,8 +3965,8 @@ do_break_wand(struct obj *obj)
     boolean shop_damage = FALSE;
     boolean fillmsg = FALSE;
     char confirm[QBUFSZ], buf[BUFSZ];
-    boolean is_fragile = (objdescr_is(obj, "balsa")
-                          || objdescr_is(obj, "glass"));
+    boolean is_fragile = (objdescr_is(obj, "en balsa")
+                          || objdescr_is(obj, "en verre"));
 
     if (nohands(gy.youmonst.data)) {
         You_cant("briser %s sans mains !", yname(obj));

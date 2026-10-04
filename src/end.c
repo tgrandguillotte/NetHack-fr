@@ -1587,7 +1587,7 @@ really_done(int how)
                     (u.uz.dlevel < 0) ? "avez trépassé" : fr_ends(how));
         } else {
             /* more conventional demise */
-            const char *where = svd.dungeons[u.uz.dnum].dname;
+            const char *where = dname_fr(svd.dungeons[u.uz.dnum].dname);
 
             if (Is_astralevel(&u.uz))
                 where = "le Plan astral";

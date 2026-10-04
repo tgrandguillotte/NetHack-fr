@@ -1070,7 +1070,7 @@ outentry(int rank, struct toptenentry *t1, boolean so)
 
             Strcat(linebuf, " dans ");
             w = eos(linebuf);
-            Strcat(linebuf, svd.dungeons[t1->deathdnum].dname);
+            Strcat(linebuf, dname_fr(svd.dungeons[t1->deathdnum].dname));
             /* "dans Les Mines" -> "dans les Mines" */
             if (!strncmp(w, "Le ", 3) || !strncmp(w, "La ", 3)
                 || !strncmp(w, "Les ", 4) || !strncmp(w, "L'", 2))

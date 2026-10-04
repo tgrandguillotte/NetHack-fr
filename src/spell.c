@@ -474,7 +474,7 @@ study_book(struct obj *spellbook)
 
     /* attempting to read dull book may make hero fall asleep */
     if (!confused && !Sleep_resistance
-        && objdescr_is(spellbook, "dull")) {
+        && objdescr_is(spellbook, "terne")) {
         const char *eyes;
         int dullbook = rnd(25) - ACURR(A_WIS);
 

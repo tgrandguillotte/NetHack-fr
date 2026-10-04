@@ -390,7 +390,7 @@ can_blnd(
         o = (mdef == &gy.youmonst) ? gi.invent : mdef->minvent;
         for (; o; o = o->nobj)
             if ((o->owornmask & W_ARMH)
-                && objdescr_is(o, "visored helmet"))
+                && objdescr_is(o, "casque à visière"))
                 return FALSE;
     }
 
@@ -1368,17 +1368,17 @@ raceptr(struct monst *mtmp)
 }
 
 typedef const char *const locoverbs[4];
-static locoverbs levitate = { "float", "Float", "wobble", "Wobble" },
-                 flys = { "fly", "Fly", "flutter", "Flutter" },
-                 flyl = { "fly", "Fly", "stagger", "Stagger" },
-                 slither = { "slither", "Slither", "falter", "Falter" },
+static locoverbs levitate = { "flotter", "Flotter", "vaciller", "Vaciller" },
+                 flys = { "voler", "Voler", "voleter", "Voleter" },
+                 flyl = { "voler", "Voler", "tituber", "Tituber" },
+                 slither = { "ramper", "Ramper", "chanceler", "Chanceler" },
                  /* it would be useful to incorporate "swim" but we lack
                   * sufficient information to know whether water is involved
                  swim = { "swim", "Swim", "flop", "Flop" },
                   */
-                 ooze = { "ooze", "Ooze", "tremble", "Tremble" },
-                 immobile = { "wiggle", "Wiggle", "pulsate", "Pulsate" },
-                 crawl = { "crawl", "Crawl", "falter", "Falter" };
+                 ooze = { "suinter", "Suinter", "trembler", "Trembler" },
+                 immobile = { "gigoter", "Gigoter", "palpiter", "Palpiter" },
+                 crawl = { "ramper", "Ramper", "chanceler", "Chanceler" };
 
 const char *
 locomotion(const struct permonst *ptr, const char *def)
@@ -1421,16 +1421,16 @@ on_fire(struct permonst *mptr, struct attack *mattk)
     case PM_FIRE_VORTEX:
     case PM_FIRE_ELEMENTAL:
     case PM_SALAMANDER:
-        what = "already on fire";
+        what = "déjà en feu";
         break;
     case PM_WATER_ELEMENTAL:
     case PM_FOG_CLOUD:
     case PM_STEAM_VORTEX:
-        what = "boiling";
+        what = "en ébullition";
         break;
     case PM_ICE_VORTEX:
     case PM_GLASS_GOLEM:
-        what = "melting";
+        what = "en train de fondre";
         break;
     case PM_STONE_GOLEM:
     case PM_CLAY_GOLEM:
@@ -1439,10 +1439,10 @@ on_fire(struct permonst *mptr, struct attack *mattk)
     case PM_EARTH_ELEMENTAL:
     case PM_DUST_VORTEX:
     case PM_ENERGY_VORTEX:
-        what = "heating up";
+        what = "en train de chauffer";
         break;
     default:
-        what = (mattk->aatyp == AT_HUGS) ? "being roasted" : "on fire";
+        what = (mattk->aatyp == AT_HUGS) ? "en train de rôtir" : "en feu";
         break;
     }
     return what;
@@ -1457,7 +1457,7 @@ msummon_environ(struct permonst *mptr, const char **cloud)
                 : (mptr->mlet == S_LIGHT) ? PM_YELLOW_LIGHT
                   : monsndx(mptr));
 
-    *cloud = "cloud"; /* default is "cloud of <something>" */
+    *cloud = "nuage"; /* default is "cloud of <something>" */
     switch (mndx) {
     case PM_WATER_DEMON:
     case PM_AIR_ELEMENTAL:
@@ -1465,34 +1465,34 @@ msummon_environ(struct permonst *mptr, const char **cloud)
     case PM_FOG_CLOUD:
     case PM_ICE_VORTEX:
     case PM_FREEZING_SPHERE:
-        what = "vapor";
+        what = "vapeur";
         break;
     case PM_STEAM_VORTEX:
-        what = "steam";
+        what = "vapeur brûlante";
         break;
     case PM_ENERGY_VORTEX:
     case PM_SHOCKING_SPHERE:
-        *cloud = "shower"; /* "shower of sparks" instead of "cloud of..." */
-        what = "sparks";
+        *cloud = "gerbe"; /* "shower of sparks" instead of "cloud of..." */
+        what = "étincelles";
         break;
     case PM_EARTH_ELEMENTAL:
     case PM_DUST_VORTEX:
-        what = "dust";
+        what = "poussière";
         break;
     case PM_FIRE_ELEMENTAL:
     case PM_FIRE_VORTEX:
     case PM_FLAMING_SPHERE:
     /*case PM_SALAMANDER:*/
-        *cloud = "ball"; /* "ball of flame" instead of "cloud of..." */
-        what = "flame";
+        *cloud = "boule"; /* "ball of flame" instead of "cloud of..." */
+        what = "feu";
         break;
     case PM_ANGEL: /* actually any 'A'-class */
     case PM_YELLOW_LIGHT: /* any 'y'-class */
-        *cloud = "flash"; /* "flash of light" instead of "cloud of..." */
-        what = "light";
+        *cloud = "éclair"; /* "flash of light" instead of "cloud of..." */
+        what = "lumière";
         break;
     default:
-        what = "smoke";
+        what = "fumée";
         break;
     }
     return what;

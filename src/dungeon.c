@@ -2249,7 +2249,7 @@ tport_menu(
 
 /* version francaise : nom d'affichage d'un donjon ; les noms internes
    (dat/dungeon.lua) restent en anglais car ils sont compares */
-staticfn const char *
+const char *
 dname_fr(const char *dname)
 {
     static const struct {
