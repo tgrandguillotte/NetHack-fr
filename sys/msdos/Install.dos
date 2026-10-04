@@ -2,135 +2,144 @@
 	   Copyright (c) NetHack PC Development Team 1990-2026.
        NetHack may be freely redistributed.  See license for details.
        ==============================================================
-              Instructions for compiling and installing
-		     NetHack 5.0 on a DOS system
+           Instructions de compilation et d'installation de
+		    NetHack 5.0 sur un système DOS
          ======================================================
-                   (or, How to make PC NetHack 5.0)
-        Last revision: $NHDT-Date: 1596508786 2021/06/04 08:45:00 $
+             (ou, comment fabriquer PC NetHack 5.0)
+        Dernière révision : $NHDT-Date: 1596508786 2021/06/04 08:45:00 $
 
-Credit for a runnable full PC NetHack 5.0 goes to the PC Development team
-of Paul Winner, Kevin Smolkowski, Michael Allison, Yitzhak Sapir, Bill Dyer,
-Timo Hakulinen, Yamamoto Keizo, Mike Threepoint, Mike Stephenson,
-Stephen White, Ken Washikita and Janet Walz.  The present port is based
-on the previous effort of Pierre Martineau, Stephen Spackman, Steve Creps, Mike
-Threepoint, Mike Stephenson, Norm Meluch and Don Kneller.
+      (Traduction française du document d'origine en anglais.)
 
-CONTENTS:
+Le mérite d'un PC NetHack 5.0 complet et fonctionnel revient à l'équipe de
+développement PC composée de Paul Winner, Kevin Smolkowski, Michael Allison,
+Yitzhak Sapir, Bill Dyer, Timo Hakulinen, Yamamoto Keizo, Mike Threepoint,
+Mike Stephenson, Stephen White, Ken Washikita et Janet Walz. Le présent
+portage repose sur les travaux antérieurs de Pierre Martineau, Stephen
+Spackman, Steve Creps, Mike Threepoint, Mike Stephenson, Norm Meluch et Don
+Kneller.
 
-        I.   Dispelling the Myths
-        II.  Compiling on Linux or macOS via cross-compiler
-        Appendix A - Additional Notes
-        Appendix D - Contacting Us
+SOMMAIRE :
 
-I.  Dispelling the Myths:
+        I.   Dissiper les mythes
+        II.  Compiler sous Linux ou macOS avec un compilateur croisé
+        Annexe A - Remarques supplémentaires
+        Annexe D - Nous contacter
 
-    Compiling NetHack is not as easy as it sounds, nor as hard as it looks,
-    however it will behoove you to read this entire file through before
-    beginning the task.
+I.  Dissiper les mythes :
+
+    Compiler NetHack n'est pas aussi facile qu'il y paraît, ni aussi
+    difficile qu'il en a l'air ; toutefois, vous auriez tout intérêt à lire
+    ce fichier en entier avant de vous lancer.
 
 
-II. There once was a time when people built NetHack right on their DOS machine.
-    The arcane recipe often involved flat cylinders known as "floppy disks",
-    much gnashing of teeth, squeezing large things into small spaces, and
-    required the sacrifice of copious amounts of time and coffee.
+II. Il fut un temps où l'on compilait NetHack directement sur sa machine DOS.
+    La recette ésotérique faisait souvent appel à des cylindres plats nommés
+    « disquettes », à moult grincements de dents, à l'art de faire entrer de
+    grandes choses dans de petits espaces, et exigeait le sacrifice de
+    quantités copieuses de temps et de café.
 
-    These days, to compile your copy of NetHack on Linux or macOS machine you
-    can use Andrew Wu's djgpp cross-compiler from:
+    De nos jours, pour compiler votre exemplaire de NetHack sur une machine
+    Linux ou macOS, vous pouvez utiliser le compilateur croisé djgpp
+    d'Andrew Wu :
         https://github.com/andrewwutw/build-djgpp
-    downloaded from:
+    téléchargeable depuis :
         https://github.com/andrewwutw/build-djgpp/releases/download/v3.0/ 
-    a DOS-extender (for including in msdos packaging) from:
+    un extenseur DOS (à inclure dans le paquet msdos) depuis :
         http://sandmann.dotster.com/cwsdpmi/csdpmi7b.zip
-    and Lua from:
+    et Lua depuis :
         http://www.lua.org/ftp/lua-5.4.8.tar.gz
 
-    If you want the DOSVGA build, to support higher resolutions and Unicode
-    symbols, you also need:
-        pdcursesmod from:
+    Si vous voulez la version DOSVGA, qui gère des résolutions plus élevées
+    et les symboles Unicode, il vous faut aussi :
+        pdcursesmod, depuis :
             https://github.com/Bill-Gray/PDCursesMod.git
-            (Name this lib/pdcurmod for the native build)
-        Terminus fonts from:
+            (Nommez-le lib/pdcurmod pour la compilation native)
+        les polices Terminus, depuis :
             https://sourceforge.net/projects/terminus-font/files/terminus-font-4.49/terminus-font-4.49.1.tar.gz
-            (Name this lib/terminus for the native build)
-    If not, you also need:
-        pdcurses from:
+            (Nommez-les lib/terminus pour la compilation native)
+    Sinon, il vous faut aussi :
+        pdcurses, depuis :
             https://github.com/wmcbrine/PDCurses.git
 
-    - A bash script to download the above-mentioned djgpp cross-compiler and
-      associated support pieces for either linux or macOS is available:
+    - Un script bash qui télécharge le compilateur croisé djgpp mentionné
+      ci-dessus et les éléments associés, pour Linux ou macOS, est
+      disponible :
         sys/msdos/fetch-cross-compiler.sh
 
-    That script won't install anything, it just does file fetches and stores
-    them in subfolders of lib. The linux.501 and macOS.501 hints files are
-    configured to find the cross-compiler there if you add
+    Ce script n'installe rien : il se contente de télécharger des fichiers
+    et de les ranger dans des sous-dossiers de lib. Les fichiers
+    d'indications (hints) linux.501 et macOS.501 sont configurés pour y
+    trouver le compilateur croisé si vous ajoutez
         CROSS_TO_MSDOS=1
-    on your make command line.
+    à votre ligne de commande make.
 
-    Note: Both the fetch-cross-compiler.sh bash script and the msdos
-    cross-compile and package procedures require unzip and zip to be available
-    on your host build system.
+    Remarque : le script bash fetch-cross-compiler.sh comme les procédures
+    de compilation croisée et d'empaquetage msdos exigent que unzip et zip
+    soient disponibles sur votre système hôte de compilation.
 
-    On your linux host:
+    Sur votre hôte Linux :
 
         cd sys/unix ; sh setup.sh hints/linux.501 ; cd ../..
 
-    On your macOS host:
+    Sur votre hôte macOS :
 
         cd sys/unix ; sh setup.sh hints/macOS.501 ; cd ../..
 
-    The MSDOS cross-compile can then be carried out by specifying
-    CROSS_TO_MSDOS=1 on the make command line:
+    La compilation croisée MSDOS s'effectue ensuite en indiquant
+    CROSS_TO_MSDOS=1 sur la ligne de commande make :
 
         make CROSS_TO_MSDOS=1 package
 
-    You can explicitly include tty and curses support if desired. The default
-    you'll end up with if you don't specify any WANT_ command line options
-    is a tty-only cross-compile build:
+    Vous pouvez inclure explicitement la prise en charge de tty et de curses
+    si vous le souhaitez. Si vous ne précisez aucune option WANT_ sur la
+    ligne de commande, vous obtiendrez par défaut une compilation croisée
+    tty seule :
 
         make WANT_WIN_TTY=1 WANT_WIN_CURSES=1 CROSS_TO_MSDOS=1 package
 
-    Add WANT_DOSVGA for a curses build that supports higher resolutions,
-    external fonts and Unicode symbols:
+    Ajoutez WANT_DOSVGA pour une version curses qui gère des résolutions
+    plus élevées, des polices externes et les symboles Unicode :
 
         make WANT_WIN_TTY=1 WANT_WIN_CURSES=1 CROSS_TO_MSDOS=1 WANT_DOSVGA=1 package
 
-    For the TTY interface, use NO_TILES=1 to drop support for tiles. The
-    resulting TTY interface can still support Unicode if that is enabled
-    in include/config.h.
+    Pour l'interface TTY, utilisez NO_TILES=1 pour supprimer la prise en
+    charge des tuiles. L'interface TTY obtenue peut encore gérer Unicode si
+    celui-ci est activé dans include/config.h.
 
-    For the TTY interface, use NO_GRAPHICS=1 to drop all graphics support, and
-    build a NetHack that outputs through the standard output channel.  This
-    configuration requires ANSI.SYS, or an equivalent driver such as NANSI.SYS.
-    The curses interface will still use graphics if WANT_DOSVGA=1 is set.
+    Pour l'interface TTY, utilisez NO_GRAPHICS=1 pour supprimer toute prise
+    en charge graphique et obtenir un NetHack qui écrit sur la sortie
+    standard. Cette configuration exige ANSI.SYS, ou un pilote équivalent
+    comme NANSI.SYS. L'interface curses utilisera tout de même le mode
+    graphique si WANT_DOSVGA=1 est défini.
 
-    NO_GRAPHICS=1 takes priority of NO_TILES=1.
+    NO_GRAPHICS=1 a priorité sur NO_TILES=1.
 
-    Result: The "make package" target will bundle all of the necessary
-            components to run NetHack on msdos into a folder:
+    Résultat : la cible « make package » rassemble tous les composants
+            nécessaires pour exécuter NetHack sous msdos dans un dossier :
                 targets/msdos/pkg
-            and then it zips the contents of that folder into:
+            puis compresse le contenu de ce dossier dans :
                 targets/msdos/NH500DOS.ZIP
 
-    Also note that building the msdos targets using the make command
-    above, does not preclude you from building local linux or macOS
-    targets as well. Just drop the CROSS_TO_MSDOS=1 from the make
-    command line. That's because the cross-compiler hints additions are
-    enclosed inside ifdef sections and won't interfere with the
-    non-cross-compile build in that case.
+    Notez également que compiler les cibles msdos avec la commande make
+    ci-dessus ne vous empêche pas de compiler aussi des cibles locales
+    Linux ou macOS : il suffit de retirer CROSS_TO_MSDOS=1 de la ligne de
+    commande make. En effet, les ajouts des indications (hints) pour la
+    compilation croisée sont placés dans des sections ifdef et
+    n'interfèrent pas, dans ce cas, avec la compilation non croisée.
 
-Appendix A - Additional Notes
+Annexe A - Remarques supplémentaires
 
-1. In your game directory, review the settings in defaults.nh and adjust
-    them according to your style of play.
+1. Dans votre répertoire de jeu, passez en revue les réglages de defaults.nh
+    et ajustez-les selon votre style de jeu.
 
-2. Play NetHack.  If it works, you're done!
+2. Jouez à NetHack. Si cela fonctionne, vous avez terminé !
 
-Appendix B - Common Difficulties Encountered
+Annexe B - Difficultés courantes
 
-  i) The cross-compile stops with an error about "No rule to make target
-     '../lib/djgpp/djgpp-patch/src/libc/go32/exceptn.S'"
+  i) La compilation croisée s'arrête avec une erreur du type « No rule to
+     make target '../lib/djgpp/djgpp-patch/src/libc/go32/exceptn.S' »
 
-     For example:
+     Par exemple :
          make CROSS_TO_MSDOS=1 package
          ( cd src ; make nethack )
          make[1]: Entering directory '/home/johndoe/NHsource/src'
@@ -144,17 +153,18 @@ Appendix B - Common Difficulties Encountered
          make[1]: Leaving directory '/home/johndoe/NHsource/src'
          make: *** [Makefile:1531: nethack] Error 2
 
-     That result usually indicates that you haven't successfully run
-     the bash script to fetch the cross-compiler. Try again:
+     Ce résultat indique généralement que vous n'avez pas exécuté avec
+     succès le script bash qui télécharge le compilateur croisé.
+     Réessayez :
          sys/msdos/fetch-cross-compiler.sh
 
-  ii) The cross-compile stops with an error "libfl.so.2: cannot open
-      shared object file: No such file or directory.
+  ii) La compilation croisée s'arrête avec l'erreur « libfl.so.2: cannot
+      open shared object file: No such file or directory ».
 
-      This indicates that your host system does not have the flex
-      library installed, and the cross-compiler needs it to be.
-      On Ubuntu systems, you can easily rectify this issue by
-      just installing the flex shared library as follows:
+      Cela signifie que la bibliothèque flex n'est pas installée sur votre
+      système hôte, alors que le compilateur croisé en a besoin. Sur les
+      systèmes Ubuntu, vous pouvez facilement corriger ce problème en
+      installant simplement la bibliothèque partagée flex comme suit :
 
           sudo apt install libfl2
 
@@ -165,14 +175,13 @@ Appendix B - Common Difficulties Encountered
                  libfl2
              0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 
-Appendix D - Contacting the Development Team
+Annexe D - Contacter l'équipe de développement
 
-    If you discover a bug and wish to report it, or if you have comments
-    or suggestions we recommend using
-    our "Contact Us" web page at:
+    Si vous découvrez un bogue et souhaitez le signaler, ou si vous avez
+    des commentaires ou des suggestions, nous vous recommandons
+    d'utiliser notre page web « Contact Us » à l'adresse :
         https://www.nethack.org/common/contact.html
 
-    If you don't have access to the web, or you want to send us a patch
-    to the NetHack source code feel free to drop us a line c/o:
+    Si vous n'avez pas accès au web, ou si vous voulez nous envoyer un
+    correctif du code source de NetHack, n'hésitez pas à nous écrire à :
         DevTeam (at) nethack.org
-

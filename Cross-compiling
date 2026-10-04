@@ -1,367 +1,397 @@
-Cross-compiling NetHack 5.0 Last edit: April 26, 2026
+Compilation croisée de NetHack 5.0 -- Dernière modification : 26 avril 2026
 
-The NetHack 5.0 build process differs from the build process of previous
-versions in some important ways. Those differences make it possible to use
-a cross-compiler running on one platform (the "host" platform of the build)
-to produce a binary NetHack package that can execute on an entirely different
-platform.
+[Traduction française du document d'origine « Cross-compiling » de NetHack.]
 
-Part A Contents:
-    A1. Why cross-compile?
-    A2. Building NetHack 3.6 (before)
-    A3. Building NetHack 5.0 (going forward)
-    A4. How was the build procedure reduced to 5 steps?
-    A5. How can I help with the cross-compiling initiative?
+Le processus de compilation de NetHack 5.0 diffère de celui des versions
+précédentes sur plusieurs points importants. Ces différences permettent
+d'utiliser un compilateur croisé fonctionnant sur une plateforme (la
+plateforme « hôte » de la compilation) pour produire un paquet binaire de
+NetHack capable de s'exécuter sur une plateforme entièrement différente.
 
-Part B Contents:
-    B1. Two sets of compiles and procedures
-    B2. What needs to be built and executed on the HOST?
-    B3. What needs to be built for the TARGET?
-    B4. Case sample: msdos
-    B5. Case sample: amiga
-    B6. Case sample: Web Assembly, libnh
-    B7. Case sample: mips
+Sommaire de la partie A :
+    A1. Pourquoi la compilation croisée ?
+    A2. La compilation de NetHack 3.6 (avant)
+    A3. La compilation de NetHack 5.0 (désormais)
+    A4. Comment la compilation a-t-elle été réduite à 5 étapes ?
+    A5. Comment contribuer à l'initiative de compilation croisée ?
+
+Sommaire de la partie B :
+    B1. Deux ensembles de compilations et de procédures
+    B2. Que faut-il compiler et exécuter sur l'HÔTE ?
+    B3. Que faut-il compiler pour la CIBLE ?
+    B4. Exemple : msdos
+    B5. Exemple : amiga
+    B6. Exemple : Web Assembly, libnh
+    B7. Exemple : mips
 
 --------------------------------------------------------------------------------
- Part A - Cross-compiling NetHack
+ Partie A - La compilation croisée de NetHack
 --------------------------------------------------------------------------------
 
-  +--------------------------+
-  | A1. Why cross-compile?   |
-  +--------------------------+
-
-By using cross-compilers on host platforms with fast processors, plenty of RAM
-and storage resources, and an available cross-compiler, it may be possible to
-keep or resurrect a working version of NetHack on platforms that are now too
-constrained to carry out the build process natively on the platform anymore.
-
-Some of the constraints in carrying out a native build on the desired target
-may include, but not necessarily be limited to, any of the following:
-
-  o Access: Somebody with a working knowledge of the NetHack build process may
-    not have the desired target build platform available to them. Conversely,
-    somebody with a keen knowledge of the target platform, and access to it,
-    may not be all that familiar with the NetHack build process.
-
-  o Resources: Address space limitations, insufficient RAM, low amounts of disk
-    storage, slow processor performance, may impede the ability to execute the
-    compile process on the target platform.
-
-  o Compilers: Some of the native compilers on historical platforms may only
-    support the dialect of C that was popular when the platform and compiler
-    were in their prime.
-
-Another useful potential result of cross-compiling, is that it paves the way
-for carrying out test and production builds of NetHack for multiple target
-platforms through automated steps carried out on the host platform(s).
-
-
-  +-------------------------------------+
-  | A2. Building NetHack 3.6 (before)   |
-  +-------------------------------------+
-
-Very generally, the build of NetHack in past versions required the following
-steps to be carried out:
-
-    1. Compile and link util/makedefs.
-    2. Run makedefs repeatedly with different command line options to produce
-       several output files that are required for:
-        (a) additional build steps to follow, including some header
-            files: pm.h, onames.h, date.h.
-        (b) creation of files, containing information required by,
-            or about the game during its execution, that are stored in a
-            portable, platform-independent way, that need to be inserted
-            into the game package.
-        (c) creation of files containing information required by, or about
-            the game during its execution, that are stored in an architecture
-            and/or platform and/or operating system dependent way, that need
-            to be inserted into the game package (the quest text format is
-            one example).
-    3. Compile and link the level compiler. This step needs to execute
-       work-alike tools to lex and yacc, or needs to build pre-built lex and
-       yacc output (.c, .h files) that are provided in the sys/share part of
-       the NetHack source code tree.
-    4. Execute the level compiler to read dat/*.des files and create
-       a set of binary output files that are architecture and/or operating
-       system dependent on the build platform, for use by the game during
-       its execution.
-    5. Compile and link the dungeon compiler. Like the level compiler, this
-       step needs to execute work-alike tools to lex and yacc, or needs to
-       build pre-built lex and yacc output (.c, .h files) that are provided
-       in the sys/share part of the NetHack source code tree.
-    6. Execute the dungeon compiler to read dat/dungeon.def and create
-       a set of binary output files that are architecture and/or operating
-       system dependent on the build platform, for use by the game during
-       its execution.
-    7. Compile and link several less critical utilities such as uudecode,
-       tile-generation utilities, and so forth, all of which need to execute
-       on the build platform during the build process to produce output files
-       for use during the game, that are reasonably portable (not architecture
-       and/or operating system dependent; only the output of the utilities
-       becomes part of the game package, not the executable utilities
-       themselves.
-    8. Compile and link the game itself.
-    9. Package the game and its required files including the output from
-       previous steps 2b, 2c, 4, 6, 7 and 8 above.
-
-Steps 1, 2a, 2b, 7, and 9 above are not impediments to cross-compiling NetHack.
-
-Steps 2c, 3, 4, 5, 6 and 8 above are impediments to cross-compiling NetHack.
-
-That's because the files that those steps produce are very much tied to the
-platform where the build of NetHack is being carried out. Variations between
-platforms (such as 32-bit vs 64-bit, integer sizes, pointer sizes, processor
-byte order, data alignment requirements, struct padding and the way bitfields
-are stored) impact the portability of those data files between different
-platforms and operating systems. If all those things happen to match, the files
-might, just might, be usable across platforms, but the chances are against it,
-and that certainly cannot be counted on.
-
   +------------------------------------------+
-  | A3. Building NetHack 5.0 (going forward) |
+  | A1. Pourquoi la compilation croisée ?    |
   +------------------------------------------+
 
-Again, very generally, the build of NetHack in 5.0 requires the following
-steps to be carried out:
+En utilisant des compilateurs croisés sur des plateformes hôtes dotées de
+processeurs rapides, de beaucoup de mémoire vive et de stockage, et pour
+lesquelles un compilateur croisé est disponible, il peut être possible de
+conserver ou de faire revivre une version fonctionnelle de NetHack sur des
+plateformes désormais trop limitées pour y mener la compilation de façon
+native.
 
-    1. Compile and link util/makedefs.
-    2. Run makedefs repeatedly with different command line options to produce
-       several required output files that contain information required by the
-       game, or contain information about the game during its execution, that
-       are stored in a portable, platform-independent way, that need to be
-       inserted into the game package (makedefs -d, -o, -r, -h, -s).
-    3. Compile and link several less critical utilities such as uudecode,
-       tile-generation utilities, and so forth, all of which need to execute
-       on the build platform during the build process to produce output files
-       for use during the game, that are reasonably portable (not architecture
-       and/or operating system dependent; only the output of the utilities
-       becomes part of the game package, not the executable utilities
-       themselves.
-    4. Compile and link the game components for the TARGET; that includes
-       NetHack itself, Lua, and any optional regular-expression or window port
-       libraries that you plan to link into the NetHack game executable.
-    5. Package the game and its required files including the output from
-       previous steps 2, 3 and 4 above.
+Parmi les contraintes qui peuvent empêcher une compilation native sur la
+cible souhaitée, on peut citer, sans s'y limiter, les suivantes :
 
-Step 4 is now the only impediment to cross-compiling NetHack. That impediment
-is resolved by executing step 4 using a cross-compiler that runs on the build (host)
-platform to produce a resulting binary for the target platform, instead of
-executing the native compiler.
+  o Accès : une personne connaissant bien le processus de compilation de
+    NetHack peut ne pas disposer de la plateforme cible souhaitée.
+    Inversement, une personne connaissant bien la plateforme cible, et y
+    ayant accès, peut ne pas être très familière du processus de compilation
+    de NetHack.
 
-  +-----------------------------------------------------+
-  | A4. How was the build procedure reduced to 5 steps? |
-  +-----------------------------------------------------+
+  o Ressources : un espace d'adressage limité, une mémoire vive insuffisante,
+    un faible espace disque ou un processeur lent peuvent empêcher d'exécuter
+    la compilation sur la plateforme cible.
 
-The following are among several design changes planned in NetHack 5.0,
-and these specific changes are what altered the build process to make
-cross-compiling possible:
+  o Compilateurs : certains compilateurs natifs de plateformes historiques ne
+    prennent en charge que le dialecte du C en vogue à l'époque où la
+    plateforme et le compilateur étaient à leur apogée.
 
-    o  There is no creation of platform-dependent files, such as the quest
-       text files, by makedefs during the build process. Instead, the quest
-       text files have been converted to Lua and are inserted into the game
-       package for processing by the embedded Lua during execution of NetHack.
+Autre avantage potentiel de la compilation croisée : elle ouvre la voie à des
+compilations de test et de production de NetHack pour plusieurs plateformes
+cibles, au moyen d'étapes automatisées exécutées sur la ou les plateformes
+hôtes.
 
-    o  There is no build-time level compiler involved. Instead, the level
-       descriptions have been converted to Lua and are inserted into the game
-       package for processing by the embedded Lua during execution of NetHack.
 
-    o  There is no build-time dungeon compiler involved. Instead, the dungeon
-       description has been converted to Lua and is inserted into the game
-       package for processing by the embedded Lua during execution of NetHack.
+  +----------------------------------------------+
+  | A2. La compilation de NetHack 3.6 (avant)    |
+  +----------------------------------------------+
 
-    o  Some of the build and option information that was formerly produced
-       during build time by makedefs, and contained information about the
-       build-platform specifically, is now produced at runtime within the
-       game under a cross-compiled build. As such, it now produces information
-       applicable to the target NetHack environment, not the build environment.
+Dans les grandes lignes, la compilation de NetHack dans les versions
+précédentes nécessitait les étapes suivantes :
 
-  +------------------------------------------------------------+
-  | A5. How can I help with the cross-compiling initiative?    |
-  +------------------------------------------------------------+
+    1. Compiler et lier util/makedefs.
+    2. Exécuter makedefs plusieurs fois avec différentes options de ligne de
+       commande afin de produire plusieurs fichiers de sortie nécessaires à :
+        (a) des étapes de compilation ultérieures, dont certains fichiers
+            d'en-tête : pm.h, onames.h, date.h.
+        (b) la création de fichiers contenant des informations nécessaires
+            au jeu, ou concernant le jeu, pendant son exécution, stockées de
+            manière portable et indépendante de la plateforme, et qui doivent
+            être intégrés au paquet du jeu.
+        (c) la création de fichiers contenant des informations nécessaires
+            au jeu, ou concernant le jeu, pendant son exécution, stockées de
+            manière dépendante de l'architecture, de la plateforme ou du
+            système d'exploitation, et qui doivent être intégrés au paquet du
+            jeu (le format des textes de quête en est un exemple).
+    3. Compiler et lier le compilateur de niveaux. Cette étape nécessite
+       d'exécuter des outils équivalents à lex et yacc, ou de compiler les
+       sorties de lex et yacc préparées à l'avance (fichiers .c, .h) fournies
+       dans la partie sys/share de l'arborescence des sources de NetHack.
+    4. Exécuter le compilateur de niveaux pour lire les fichiers dat/*.des et
+       créer un ensemble de fichiers binaires dépendants de l'architecture ou
+       du système d'exploitation de la plateforme de compilation, utilisés
+       par le jeu pendant son exécution.
+    5. Compiler et lier le compilateur de donjon. Comme pour le compilateur
+       de niveaux, cette étape nécessite d'exécuter des outils équivalents à
+       lex et yacc, ou de compiler les sorties de lex et yacc préparées à
+       l'avance (fichiers .c, .h) fournies dans la partie sys/share de
+       l'arborescence des sources de NetHack.
+    6. Exécuter le compilateur de donjon pour lire dat/dungeon.def et créer
+       un ensemble de fichiers binaires dépendants de l'architecture ou du
+       système d'exploitation de la plateforme de compilation, utilisés par
+       le jeu pendant son exécution.
+    7. Compiler et lier plusieurs utilitaires moins essentiels, comme
+       uudecode, les utilitaires de génération de tuiles, etc., qui doivent
+       tous s'exécuter sur la plateforme de compilation pendant la
+       compilation afin de produire des fichiers utilisés par le jeu,
+       raisonnablement portables (non dépendants de l'architecture ou du
+       système d'exploitation ; seule la sortie de ces utilitaires fait
+       partie du paquet du jeu, pas les exécutables des utilitaires
+       eux-mêmes).
+    8. Compiler et lier le jeu lui-même.
+    9. Empaqueter le jeu et les fichiers dont il a besoin, y compris la
+       sortie des étapes 2b, 2c, 4, 6, 7 et 8 ci-dessus.
 
-    o  If you have a favourite target platform (let's call it XX-Platform for
-       example purposes) that you'd like to see NetHack be able to run on, do
-       some research to find out if a cross-compiler exists that:
-           - produces output for XX-Platform.
-           - executes on a platform that you use and love (Linux, Windows,
-             macOS are some examples of platforms that have cross-compilers
-             for other targets available)
+Les étapes 1, 2a, 2b, 7 et 9 ci-dessus ne font pas obstacle à la compilation
+croisée de NetHack.
 
-    o  Then, make the community, devteam, and others aware that you're starting
-       a cross-compile of NetHack for XX-Platform. You might need to ask some
-       "starting out" questions initially, and as you get deeper into it, you
-       might need to ask some tougher questions.
+Les étapes 2c, 3, 4, 5, 6 et 8 ci-dessus font obstacle à la compilation
+croisée de NetHack.
 
-    o  Perhaps consider forking from NetHack on GitHub, and do the
-       cross-compiler work there in your fork. Strive to get it to a point where
-       it's ready to play-test on XX-Platform, or perhaps even use an emulator
-       of XX-Platform if one is available. We live in a time where plenty do.
+En effet, les fichiers produits par ces étapes sont étroitement liés à la
+plateforme sur laquelle NetHack est compilé. Les différences entre
+plateformes (32 bits ou 64 bits, taille des entiers, taille des pointeurs,
+ordre des octets du processeur, contraintes d'alignement des données,
+remplissage des structures et stockage des champs de bits) affectent la
+portabilité de ces fichiers de données entre plateformes et systèmes
+d'exploitation. Si tous ces éléments se trouvent concorder, les fichiers
+pourraient, peut-être, être utilisables d'une plateforme à l'autre, mais les
+chances sont faibles, et on ne peut certainement pas compter dessus.
 
-       Doing your work on a GitHub fork has the following advantages:
-           - It will make it really simple to integrate your work back into
-             the NetHack source tree if that's one of your goals.
-           - It will make it possible and straightforward to merge upstream
-             NetHack changes into your work for the XX-Platform cross-compile
-             so that it stays current with the game as it evolves.
-           - You may get help from others in the form of suggestions, or
-             pull-requests, or offers to join the development. Chances are,
-             you aren't the only person out there that would like to
-             establish/resurrect/maintain NetHack on XX-Platform.
+  +-------------------------------------------------+
+  | A3. La compilation de NetHack 5.0 (désormais)   |
+  +-------------------------------------------------+
 
-       Have fun!
+Là encore dans les grandes lignes, la compilation de NetHack 5.0 nécessite
+les étapes suivantes :
+
+    1. Compiler et lier util/makedefs.
+    2. Exécuter makedefs plusieurs fois avec différentes options de ligne de
+       commande afin de produire plusieurs fichiers de sortie obligatoires,
+       contenant des informations nécessaires au jeu, ou concernant le jeu,
+       pendant son exécution, stockées de manière portable et indépendante
+       de la plateforme, et qui doivent être intégrés au paquet du jeu
+       (makedefs -d, -o, -r, -h, -s).
+    3. Compiler et lier plusieurs utilitaires moins essentiels, comme
+       uudecode, les utilitaires de génération de tuiles, etc., qui doivent
+       tous s'exécuter sur la plateforme de compilation pendant la
+       compilation afin de produire des fichiers utilisés par le jeu,
+       raisonnablement portables (non dépendants de l'architecture ou du
+       système d'exploitation ; seule la sortie de ces utilitaires fait
+       partie du paquet du jeu, pas les exécutables des utilitaires
+       eux-mêmes).
+    4. Compiler et lier les composants du jeu pour la CIBLE ; cela comprend
+       NetHack lui-même, Lua, ainsi que les éventuelles bibliothèques
+       optionnelles d'expressions régulières ou d'interface (window port)
+       que vous prévoyez de lier dans l'exécutable du jeu NetHack.
+    5. Empaqueter le jeu et les fichiers dont il a besoin, y compris la
+       sortie des étapes 2, 3 et 4 ci-dessus.
+
+L'étape 4 est désormais le seul obstacle à la compilation croisée de NetHack.
+Cet obstacle est levé en exécutant l'étape 4 avec un compilateur croisé qui
+fonctionne sur la plateforme de compilation (hôte) et produit un binaire pour
+la plateforme cible, au lieu d'utiliser le compilateur natif.
+
+  +----------------------------------------------------------------+
+  | A4. Comment la compilation a-t-elle été réduite à 5 étapes ?   |
+  +----------------------------------------------------------------+
+
+Voici quelques-unes des modifications de conception prévues dans
+NetHack 5.0 ; ce sont précisément celles qui ont modifié le processus de
+compilation pour rendre la compilation croisée possible :
+
+    o  makedefs ne crée plus, pendant la compilation, de fichiers dépendants
+       de la plateforme, comme les fichiers de textes de quête. Les textes
+       de quête ont été convertis en Lua et sont intégrés au paquet du jeu
+       pour être traités par le Lua embarqué pendant l'exécution de NetHack.
+
+    o  Il n'y a plus de compilateur de niveaux au moment de la compilation.
+       Les descriptions de niveaux ont été converties en Lua et sont
+       intégrées au paquet du jeu pour être traitées par le Lua embarqué
+       pendant l'exécution de NetHack.
+
+    o  Il n'y a plus de compilateur de donjon au moment de la compilation.
+       La description du donjon a été convertie en Lua et est intégrée au
+       paquet du jeu pour être traitée par le Lua embarqué pendant
+       l'exécution de NetHack.
+
+    o  Une partie des informations de compilation et d'options, autrefois
+       produites par makedefs au moment de la compilation et décrivant la
+       plateforme de compilation, est désormais produite à l'exécution, au
+       sein du jeu, dans une compilation croisée. Elle fournit donc des
+       informations sur l'environnement NetHack cible, et non sur
+       l'environnement de compilation.
+
+  +------------------------------------------------------------------+
+  | A5. Comment contribuer à l'initiative de compilation croisée ?   |
+  +------------------------------------------------------------------+
+
+    o  Si vous avez une plateforme cible favorite (appelons-la
+       « plateforme XX » pour l'exemple) sur laquelle vous aimeriez voir
+       fonctionner NetHack, cherchez s'il existe un compilateur croisé qui :
+           - produit du code pour la plateforme XX ;
+           - s'exécute sur une plateforme que vous utilisez et appréciez
+             (Linux, Windows et macOS sont des exemples de plateformes pour
+             lesquelles des compilateurs croisés vers d'autres cibles
+             existent).
+
+    o  Ensuite, informez la communauté, la devteam et les autres que vous
+       entreprenez une compilation croisée de NetHack pour la plateforme XX.
+       Vous aurez peut-être d'abord quelques questions de débutant à poser,
+       puis, à mesure que vous avancerez, des questions plus pointues.
+
+    o  Envisagez de créer un fork de NetHack sur GitHub et d'y mener le
+       travail sur la compilation croisée. Efforcez-vous d'arriver à une
+       version prête à être testée en jeu sur la plateforme XX, ou
+       éventuellement sur un émulateur de la plateforme XX s'il en existe
+       un. Nous vivons à une époque où ils sont nombreux.
+
+       Travailler sur un fork GitHub présente les avantages suivants :
+           - Il sera très simple de réintégrer votre travail dans
+             l'arborescence des sources de NetHack si c'est l'un de vos
+             objectifs.
+           - Il sera possible et facile de fusionner les modifications
+             amont de NetHack dans votre travail de compilation croisée pour
+             la plateforme XX, afin qu'il reste à jour à mesure que le jeu
+             évolue.
+           - D'autres pourront vous aider sous forme de suggestions, de
+             pull requests ou de propositions de participation. Il y a de
+             fortes chances que vous ne soyez pas la seule personne à
+             vouloir établir, faire revivre ou maintenir NetHack sur la
+             plateforme XX.
+
+       Amusez-vous bien !
 
 -----------------------------------------------------------------------------
- Part B - Cross-compiling details
+ Partie B - Détails de la compilation croisée
 -----------------------------------------------------------------------------
 
-Part B Contents:
-    B1. Two sets of compiles and procedures
-    B2. What needs to be built and executed on the HOST?
-    B3. What needs to be built for the TARGET?
-    B4. Case sample: msdos
+Sommaire de la partie B :
+    B1. Deux ensembles de compilations et de procédures
+    B2. Que faut-il compiler et exécuter sur l'HÔTE ?
+    B3. Que faut-il compiler pour la CIBLE ?
+    B4. Exemple : msdos
 
-  +-----------------------------------------+
-  | B1. Two sets of compiles and procedures |
-  +-----------------------------------------+
+  +------------------------------------------------------+
+  | B1. Deux ensembles de compilations et de procédures  |
+  +------------------------------------------------------+
 
-The HOST is the platform/place that you're running the build procedures using
-the native compiler/linker, and the cross-compiler/linker that runs on the HOST
-to build the game for a TARGET platform.
+L'HÔTE est la plateforme sur laquelle vous exécutez les procédures de
+compilation, avec le compilateur et l'éditeur de liens natifs, ainsi que le
+compilateur et l'éditeur de liens croisés qui s'exécutent sur l'HÔTE pour
+compiler le jeu à destination d'une plateforme CIBLE.
 
-You have to:
-    1. Build mandatory utilities on the HOST.
-    2. Execute the mandatory utilities to generate components that will be used
-       during step 4 to build the game itself, or that will generate components
-       that will become part of the TARGET game package.
-    3. Build optional or enhancing utilities on the HOST, execute those
-       optional or enhancing utilities on the HOST to generate components that
-       will become part of the TARGET game package.
-    4. Execute a supported cross-compiler to compile the rest of the game
-       components like NetHack, Lua, and any optional libraries (the word
-       "supported", in this sense, means a compiler that runs on your HOST
-       build platform, and generates output executable files for the TARGET
-       platform).
+Vous devez :
+    1. Compiler les utilitaires obligatoires sur l'HÔTE.
+    2. Exécuter les utilitaires obligatoires pour générer des composants qui
+       serviront à l'étape 4 pour compiler le jeu lui-même, ou qui
+       généreront des composants faisant partie du paquet du jeu pour la
+       CIBLE.
+    3. Compiler les utilitaires optionnels ou d'amélioration sur l'HÔTE, et
+       les exécuter sur l'HÔTE pour générer des composants faisant partie du
+       paquet du jeu pour la CIBLE.
+    4. Exécuter un compilateur croisé pris en charge pour compiler le reste
+       des composants du jeu, comme NetHack, Lua et les éventuelles
+       bibliothèques optionnelles (« pris en charge » désigne ici un
+       compilateur qui s'exécute sur votre plateforme de compilation HÔTE et
+       produit des fichiers exécutables pour la plateforme CIBLE).
 
-It should be mentioned that you can execute the cross-compile build approach
-to generate binaries for the same platform as the host, where the HOST
-compiler and the TARGET compiler are the same.
+Précisons que vous pouvez utiliser la méthode de compilation croisée pour
+produire des binaires destinés à la même plateforme que l'hôte, le
+compilateur de l'HÔTE et celui de la CIBLE étant alors le même.
 
 
   +------------------------------------------------------+
-  | B2. What needs to be built and executed on the HOST? |
+  | B2. Que faut-il compiler et exécuter sur l'HÔTE ?    |
   +------------------------------------------------------+
 
-On the HOST, here are the mandatory things that have to be built.
+Voici les éléments obligatoires à compiler sur l'HÔTE.
 
-    a) Using the HOST native compiler, build  HOST native utility makedefs
+    a) Avec le compilateur natif de l'HÔTE, compiler l'utilitaire natif
+       makedefs de l'HÔTE
 
-       Compile and link the following with these compiler switches:
+       Compiler et lier les fichiers suivants avec ces options de
+       compilation :
          -DCROSSCOMPILE
-       from sources: util/makedefs.c, src/mdlib.c, src/monst.c, src/objects.c
-                     src/date.c, src/alloc.c
+       sources : util/makedefs.c, src/mdlib.c, src/monst.c, src/objects.c
+                 src/date.c, src/alloc.c
 
-    b) Execute HOST native makedefs utility, util/makedefs, as follows:
-          Required for complete packaging of the game, but not the C source
-          game compile:
+    b) Exécuter l'utilitaire natif makedefs de l'HÔTE, util/makedefs, comme
+       suit :
+          Nécessaire pour l'empaquetage complet du jeu, mais pas pour la
+          compilation des sources C du jeu :
               util/makedefs -d
               util/makedefs -r
               util/makedefs -h
               util/makedefs -s
 
-    c) Using the HOST native compiler, build these additional utilities if your
-       target platform requires components that they produce. It is important
-       to note that all of the required source files need to be compiled to
-       native obj files for linking into the HOST-side utility. Some of the
-       source files (src/monst.c, src/objects.c) were likely already compiled
-       as native HOST-side obj files in order to build the native HOST utility
-       'makedefs' HOST utility above, and you don't need to compile them again
-       for use in linking other HOST utilities if the HOST-native obj files
-       produced from them are still around.
+    c) Avec le compilateur natif de l'HÔTE, compiler ces utilitaires
+       supplémentaires si votre plateforme cible a besoin des composants
+       qu'ils produisent. Notez bien que tous les fichiers sources
+       nécessaires doivent être compilés en fichiers objets natifs pour être
+       liés dans l'utilitaire côté HÔTE. Certains fichiers sources
+       (src/monst.c, src/objects.c) ont probablement déjà été compilés en
+       fichiers objets natifs côté HÔTE pour produire l'utilitaire natif
+       makedefs ci-dessus ; il n'est pas nécessaire de les recompiler pour
+       lier d'autres utilitaires de l'HÔTE si les fichiers objets natifs
+       correspondants sont toujours présents.
 
-       NOTE: There are some source files that need to be compiled for linking
-       into utilities that are needed on the HOST side, but that are also
-       needed again later as TARGET obj files for linking into the TARGET
-       executable, and therefore must be compiled twice.
-       They include: src/drawing.c, src/objects.c, src/monst.c,
-       src/alloc.c, util/panic.c. It is important to keep the compiled
-       HOST-side obj files produced by the HOST native compiler distinct from
-       the TARGET-side obj files produced by the cross-compiler. That can be
-       accomplished either by naming the generated object files a little
-       differently (perhaps with a suffix) between the HOST-side and the
-       TARGET-side, or by placing the HOST-side obj files and the TARGET-side
-       obj files into distinct, different directories during the build process.
-       Use whatever method works best for your cross-compile effort and tools.
+       NOTE : certains fichiers sources doivent être compilés pour être liés
+       dans des utilitaires nécessaires côté HÔTE, mais aussi, plus tard,
+       sous forme de fichiers objets pour la CIBLE afin d'être liés dans
+       l'exécutable CIBLE ; ils doivent donc être compilés deux fois.
+       Il s'agit de : src/drawing.c, src/objects.c, src/monst.c,
+       src/alloc.c, util/panic.c. Il est important de bien distinguer les
+       fichiers objets côté HÔTE, produits par le compilateur natif de
+       l'HÔTE, des fichiers objets côté CIBLE, produits par le compilateur
+       croisé. Pour cela, vous pouvez nommer différemment les fichiers objets
+       générés côté HÔTE et côté CIBLE (par exemple avec un suffixe), ou
+       placer les fichiers objets côté HÔTE et côté CIBLE dans des
+       répertoires distincts pendant la compilation. Utilisez la méthode qui
+       convient le mieux à votre projet de compilation croisée et à vos
+       outils.
 
           util/dlb
 
-                   from sources: src/dlb.c, src/dlb_main.c, src/alloc.c,
+                   sources :     src/dlb.c, src/dlb_main.c, src/alloc.c,
                                  util/panic.c
-                   purpose:      For packaging up many files that are
-                                 required components of the TARGET game
-                                 into a single nhdat or nhdat370 combined
-                                 file
+                   rôle :        regrouper de nombreux fichiers qui sont
+                                 des composants obligatoires du jeu CIBLE
+                                 dans un seul fichier combiné nhdat ou
+                                 nhdat370
 
           util/uudecode
 
-                   from sources: sys/share/uudecode.c
-                   purpose:      convert some binary files, that are
-                                 distributed in the NetHack sources in
-                                 uuencoded format, back into their
-                                 original binary state
+                   sources :     sys/share/uudecode.c
+                   rôle :        reconvertir dans leur état binaire
+                                 d'origine certains fichiers binaires
+                                 distribués dans les sources de NetHack au
+                                 format uuencodé
           util/tilemap
 
-                   from sources: win/share/tilemap.c
-                   purpose:      produce output file src/tile.c that is
-                                 required for building TARGET packages with
-                                 tile support
+                   sources :     win/share/tilemap.c
+                   rôle :        produire le fichier src/tile.c, nécessaire
+                                 pour compiler des paquets CIBLE avec prise
+                                 en charge des tuiles
 
           util/tile2bmp
 
-                   from sources: win/share/tile2bmp.c, win/share/tiletext.c,
+                   sources :     win/share/tile2bmp.c, win/share/tiletext.c,
                                  win/share/tilemap.c, src/drawing.c,
                                  src/monst.c, src/objects.c
-                   purpose:      Read win/share/monsters.txt,
-                                 win/share/objects.txt and win/share/other.txt
-                                 files and produce a .bmp file.
+                   rôle :        lire les fichiers win/share/monsters.txt,
+                                 win/share/objects.txt et win/share/other.txt
+                                 et produire un fichier .bmp.
 
           util/gif2txt
 
-                   from sources: win/share/gifread.c, win/share/tiletext.c,
+                   sources :     win/share/gifread.c, win/share/tiletext.c,
                                  win/share/tilemap.c, src/drawing.c,
                                  src/monst.c, src/objects.c,
                                  src/alloc.c, util/panic.c
-                   purpose:      Read win/share/monsters.txt,
-                                 win/share/objects.txt and win/share/other.txt
-                                 files and produce a .gif file.
+                   rôle :        lire les fichiers win/share/monsters.txt,
+                                 win/share/objects.txt et win/share/other.txt
+                                 et produire un fichier .gif.
 
           util/ppmwrite
 
-                   from sources: win/share/ppmwrite.c, win/share/tiletext.c,
+                   sources :     win/share/ppmwrite.c, win/share/tiletext.c,
                                  win/share/tilemap.c, src/drawing.c,
                                  src/monst.c, src/objects.c,
                                  src/alloc.c, util/panic.c
-                   purpose:      Read win/share/monsters.txt,
-                                 win/share/objects.txt and win/share/other.txt
-                                 files and produce a .ppm file.
+                   rôle :        lire les fichiers win/share/monsters.txt,
+                                 win/share/objects.txt et win/share/other.txt
+                                 et produire un fichier .ppm.
 
 
   +--------------------------------------------+
-  | B3. What needs to be built for the TARGET? |
+  | B3. Que faut-il compiler pour la CIBLE ?   |
   +--------------------------------------------+
 
 
-For the TARGET side, here are the mandatory things that have to be built via
-the HOST-executed cross-compiler that generates code for the TARGET platform.
+Côté CIBLE, voici les éléments obligatoires à compiler avec le compilateur
+croisé exécuté sur l'HÔTE, qui génère du code pour la plateforme CIBLE.
 
-Using the cross-compiler, build the following targets:
+Avec le compilateur croisé, compilez les cibles suivantes :
 
-    a) NetHack sources (core is mandatory)
+    a) Sources de NetHack (le cœur est obligatoire)
 
-       With the cross-compiler and linker for the TARGET platform,
-       cross-compile and link with these compiler switches:
-         -DCROSSCOMPILE and -DCROSSCOMPILE_TARGET
+       Avec le compilateur croisé et l'éditeur de liens de la plateforme
+       CIBLE, compilez et liez avec ces options de compilation :
+         -DCROSSCOMPILE et -DCROSSCOMPILE_TARGET
 
-       core sources (2024): src/allmain.c, src/alloc.c, src/apply.c,
+       sources du cœur (2024) :
+                           src/allmain.c, src/alloc.c, src/apply.c,
                            src/artifact.c, src/attrib.c, src/ball.c,
                            src/bones.c, src/botl.c, src/calendar.c,
                            src/coloratt.c, src/cmd.c, src/dbridge.c,
@@ -401,22 +431,23 @@ Using the cross-compiler, build the following targets:
                            src/worm.c, src/worn.c, src/write.c, src/zap.c,
                            sys/share/cppregex.cpp
 
-       tty sources:        win/tty/getline.c, win/tty/termcap.c,
+       sources tty :       win/tty/getline.c, win/tty/termcap.c,
                            win/tty/topl.c, win/tty/wintty.c
 
-       generated (if req'd):
+       générés (si nécessaire) :
                           src/tile.c
 
-       plus your platform-specific source files that contain main, typically
-       *main.c, and unix support in *unix.c, tty support in *tty.c, and other
-       system support in *sys.c as well as others sources pertaining to your
-       specific target platform(s).
+       plus les fichiers sources propres à votre plateforme : celui qui
+       contient main, généralement *main.c, la prise en charge unix dans
+       *unix.c, la prise en charge tty dans *tty.c, les autres fonctions
+       système dans *sys.c, ainsi que les autres sources relatives à votre
+       ou vos plateformes cibles.
 
-    b) Lua (mandatory in 5.0)
+    b) Lua (obligatoire dans la 5.0)
 
           lib/lua-5.4.8/src
 
-                   from sources: lua.c, lapi.c, lauxlib.c, lbaselib.c, lcode.c,
+                   sources :     lua.c, lapi.c, lauxlib.c, lbaselib.c, lcode.c,
                                  lcorolib.c, lctype.c, ldblib.c, ldebug.c,
                                  ldo.c, ldump.c, lfunc.c, lgc.c, linit.c,
                                  liolib.c, llex.c, lmathlib.c, lmem.c,
@@ -425,19 +456,21 @@ Using the cross-compiler, build the following targets:
                                  lstrlib.c, ltable.c, ltablib.c, ltm.c,
                                  lundump.c, lutf8lib.c, lvm.c, lzio.c,
                                  lbitlib.c
-                   purpose:      links into the game executable to interpret
-                                 lua level description files, lua dungeon
-                                 description files, and a lua quest text file.
+                   rôle :        lié dans l'exécutable du jeu pour
+                                 interpréter les fichiers lua de description
+                                 des niveaux, de description du donjon et le
+                                 fichier lua des textes de quête.
 
-    d) recover (optional if desired/required; some targets have recover
-       functionality built into NetHack itself)
+    d) recover (optionnel, selon vos souhaits ou besoins ; sur certaines
+       cibles, la fonctionnalité de recover est intégrée à NetHack même)
 
-    c) Additional optional library packages/obj files as required
+    c) Bibliothèques ou fichiers objets optionnels supplémentaires, selon
+       les besoins
 
           lib/pdcurses/...
-          or lib/pdcursesmod/...
+          ou lib/pdcursesmod/...
 
-                   from sources: addch.c, addchstr.c, addstr.c, attr.c, beep.c,
+                   sources :     addch.c, addchstr.c, addstr.c, attr.c, beep.c,
                                  bkgd.c, border.c, clear.c, color.c, delch.c,
                                  deleteln.c, getch.c, getstr.c, getyx.c,
                                  inch.c, inchstr.c, initscr.c, inopts.c,
@@ -448,132 +481,138 @@ Using the cross-compiler, build the following targets:
                                  slk.c, termattr.c, touch.c, util.c, window.c,
                                  debug.c, pdcclip.c, pdcdisp.c, pdcgetsc.c,
                                  pdckbd.c, pdcutil.c
-                   purpose:      underlying curses platform support for some
-                                 target platforms where inclusion of the
-                                 NetHack curses window port in win/curses is
-                                 desired
+                   rôle :        prise en charge de curses sous-jacente pour
+                                 certaines plateformes cibles où l'on
+                                 souhaite inclure l'interface (window port)
+                                 curses de NetHack située dans win/curses
 
   +-------------------------+
-  | B4. Case sample: msdos  |
+  | B4. Exemple : msdos     |
   +-------------------------+
 
-Cross-compiler used:     Andrew Wu's djgpp cross-compiler
-Cross-compiler url:      https://github.com/andrewwutw/build-djgpp
-Cross-compiler pre-built binary downloads:
+Compilateur croisé utilisé :  compilateur croisé djgpp d'Andrew Wu
+URL du compilateur croisé :   https://github.com/andrewwutw/build-djgpp
+Binaires précompilés du compilateur croisé :
     https://github.com/andrewwutw/build-djgpp/releases
 
-    Cross-compiler bits tested:
+    Éléments testés pour la compilation croisée :
            https://github.com/andrewwutw/build-djgpp
-       and the pre-built binary for your platform from:
+       et le binaire précompilé pour votre plateforme, depuis :
            https://github.com/andrewwutw/build-djgpp/releases
-       and a DOS-extender (for including in msdos packaging) from
+       et un extenseur DOS (à inclure dans le paquet msdos), depuis :
            http://sandmann.dotster.com/cwsdpmi/csdpmi7b.zip
-       and pdcurses from:
+       et pdcurses, depuis :
            https://github.com/wmcbrine/PDCurses.git
-       or pdcursesmod from:
+       ou pdcursesmod, depuis :
            https://github.com/Bill-Gray/PDCursesMod.git
 
-    - A bash script to download that djgpp cross-compiler and associated
-      pieces for either linux or macOS is available:
+    - Un script bash permettant de télécharger ce compilateur croisé djgpp
+      et les éléments associés, pour linux ou macOS, est disponible :
 
            bash sys/msdos/fetch-cross-compiler.sh
 
-    That script won't install anything, it just does file fetches and stores
-    them in subfolders of lib. The linux.501 and macOS.501 hints files are
-    configured to find the cross-compiler there if you add
+    Ce script n'installe rien : il se contente de télécharger des fichiers
+    et de les ranger dans des sous-dossiers de lib. Les fichiers
+    d'indications (hints) linux.501 et macOS.501 sont configurés pour y
+    trouver le compilateur croisé si vous ajoutez
         CROSS_TO_MSDOS=1
-    on your make command line.
+    à votre ligne de commande make.
 
-    Note: Both the fetch-cross-compiler.sh bash script and the msdos
-    cross-compile and package procedures require unzip and zip to be available
-    on your host build system.
+    Remarque : le script bash fetch-cross-compiler.sh, ainsi que les
+    procédures de compilation croisée et d'empaquetage msdos, nécessitent
+    que unzip et zip soient disponibles sur votre système de compilation
+    hôte.
 
-    On your linux host:
+    Sur votre hôte linux :
 
         cd sys/unix ; sh setup.sh hints/linux.501 ; cd ../..
 
-    On your macOS host:
+    Sur votre hôte macOS :
 
         cd sys/unix ; sh setup.sh hints/macOS.501 ; cd ../..
 
-    The MSDOS cross-compile can then be carried out by specifying
-    CROSS_TO_MSDOS=1 on the make command line:
+    La compilation croisée pour MSDOS peut ensuite être effectuée en
+    indiquant CROSS_TO_MSDOS=1 sur la ligne de commande make :
 
         make CROSS_TO_MSDOS=1 all
         make CROSS_TO_MSDOS=1 package
 
-    You can explicitly include tty and curses support if desired. The default
-    you'll end up with is a tty-only cross-compile build:
+    Vous pouvez inclure explicitement la prise en charge de tty et de curses
+    si vous le souhaitez. Par défaut, vous obtiendrez une compilation croisée
+    avec tty seulement :
 
         make WANT_WIN_TTY=1 WANT_WIN_CURSES=1 CROSS_TO_MSDOS=1 package
 
-    Result: The "make package" target will bundle all of the necessary
-            components to run NetHack on msdos into a folder:
-                targets/msdos/pkg
-            and then it zips the contents of that folder into:
-                targets/msdos/nh370dos.zip
+    Résultat : la cible « make package » rassemble tous les composants
+               nécessaires pour exécuter NetHack sous msdos dans un dossier :
+                   targets/msdos/pkg
+               puis compresse le contenu de ce dossier dans :
+                   targets/msdos/nh370dos.zip
 
-    Also note that building the msdos targets using the make command
-    above, does not preclude you from building local linux or macOS
-    targets as well. Just drop the CROSS_TO_MSDOS=1 from the make
-    command line. That's because the cross-compiler hints additions are
-    enclosed inside ifdef sections and won't interfere with the
-    non-cross-compile build in that case.
+    Notez aussi que compiler les cibles msdos avec la commande make
+    ci-dessus ne vous empêche pas de compiler également des cibles locales
+    linux ou macOS. Il suffit de retirer CROSS_TO_MSDOS=1 de la ligne de
+    commande make. En effet, les ajouts pour le compilateur croisé dans les
+    fichiers d'indications sont placés dans des sections ifdef et
+    n'interfèrent pas, dans ce cas, avec la compilation non croisée.
 
   +-------------------------+
-  | B5. Case sample: amiga  |
+  | B5. Exemple : amiga     |
   +-------------------------+
 
-Disclaimer: This is a minimal recipe, just to help someone else get
-            started if they have a desire to get a full cross-compile of
-            NetHack going for the Amiga.
+Avertissement : il s'agit d'une recette minimale, destinée simplement à
+                aider quelqu'un d'autre à démarrer s'il souhaite mettre en
+                place une compilation croisée complète de NetHack pour
+                l'Amiga.
 
-Cross-compiler used:     bebbo's amiga-gcc
-Cross-compiler url:      https://github.com/AmigaPorts/m68k-amigaos-gcc
-Author of 5.0 support:   Ingo Paschke
-  
-    To our knowledge, a pre-built copy of the cross-compiler isn't available,
-    so you will likely have to obtain the cross-compiler sources via git and
-    build it on your system.
+Compilateur croisé utilisé :  amiga-gcc de bebbo
+URL du compilateur croisé :   https://github.com/AmigaPorts/m68k-amigaos-gcc
+Auteur de la prise en charge 5.0 : Ingo Paschke
 
-    The build prerequisite packages for building the compiler on Ubuntu can be
-    easily obtained:
+    À notre connaissance, il n'existe pas de version précompilée de ce
+    compilateur croisé ; vous devrez donc probablement récupérer ses
+    sources avec git et le compiler sur votre système.
+
+    Les paquets prérequis pour compiler le compilateur sous Ubuntu
+    s'obtiennent facilement :
 
         sudo apt install make wget git gcc g++ lhasa libgmp-dev \
             libmpfr-dev libmpc-dev flex bison gettext texinfo ncurses-dev \
             autoconf rsync libreadline-dev
 
-    The build prerequisite packages for macOS via homebrew are documented but
-    not tested by us any of us to date.
+    Les paquets prérequis pour macOS via homebrew sont documentés, mais
+    n'ont été testés par aucun d'entre nous à ce jour.
 
         brew install bash wget make lhasa gmp mpfr libmpc flex gettext \
             gnu-sed texinfo gcc@12 make autoconf bison
 
-    After installing the prerequisite packages and the cross-compiler
-    the build is straightforward:
+    Une fois les paquets prérequis et le compilateur croisé installés, la
+    compilation est simple :
 
-    Create the /opt/amiga directory for holding the compiler and tools.
+    Créez le répertoire /opt/amiga qui contiendra le compilateur et les
+    outils.
             sudo mkdir /opt/amiga
             sudo chgrp users /opt/amiga
             sudo chmod 775 /opt/amiga
             sudo usermod -a -G users username
-        (you may have to log off and back on)
+        (il vous faudra peut-être vous déconnecter puis vous reconnecter)
 
-    Build the cross-compiler.
+    Compilez le compilateur croisé.
             git clone https://github.com/AmigaPorts/m68k-amigaos-gcc.git amiga-gcc
             cd amiga-gcc
             make update
 
-        The compiler pieces are installed in /opt/amiga by default, and the 
-        NetHack Makefiles expect them there.
+        Les éléments du compilateur sont installés par défaut dans
+        /opt/amiga, et les Makefiles de NetHack s'attendent à les y trouver.
 
-        If you prefer, you can alter the prefix before you build if you want.
-        The instructions for doing so were spelled out at the time of this writing at:
+        Si vous le préférez, vous pouvez modifier le préfixe avant la
+        compilation. Au moment de la rédaction, la marche à suivre était
+        décrite à l'adresse :
 
             https://github.com/AmigaPorts/m68k-amigaos-gcc
-            Makefile adjustments will be needed, however.
+            Il faudra toutefois adapter les Makefiles.
 
-        On your linux host:
+        Sur votre hôte linux :
 
         # Clone NetHack 5.0 source
         cd NetHack
@@ -582,11 +621,13 @@ Author of 5.0 support:   Ingo Paschke
         make CROSS_TO_AMIGA=1 all
         make CROSS_TO_AMIGA=1 package
 
-        The distribution ZIP is created at targets/amiga/NH501AMI.ZIP (or NH501AMIn.ZIP where
-        n is a sequence number for the revision of the binary)..
+        L'archive ZIP de distribution est créée sous
+        targets/amiga/NH501AMI.ZIP (ou NH501AMIn.ZIP, où n est un numéro de
+        séquence indiquant la révision du binaire).
 
-        On your macOS host, the Amiga cross-compile can be carried out by specifying
-        CROSS_TO_AMIGA=1 on the make command line:
+        Sur votre hôte macOS, la compilation croisée pour Amiga peut être
+        effectuée en indiquant CROSS_TO_AMIGA=1 sur la ligne de commande
+        make :
 
         # Clone NetHack 5.0 source
         cd NetHack
@@ -595,56 +636,60 @@ Author of 5.0 support:   Ingo Paschke
         make CROSS_TO_AMIGA=1 all
         make CROSS_TO_AMIGA=1 package
 
-    Result: The "make package" target will bundle the (hopefully) necessary
-            components to run NetHack on an Amiga into a folder:
-                targets/amiga/pkg
-            and then it zips the contents of that folder into:
-                targets/amiga/NH370AMI.ZIP
+    Résultat : la cible « make package » rassemble les composants
+               (normalement) nécessaires pour exécuter NetHack sur un Amiga
+               dans un dossier :
+                   targets/amiga/pkg
+               puis compresse le contenu de ce dossier dans :
+                   targets/amiga/NH370AMI.ZIP
 
-    Display Modes
-    -------------
-    Two display modes are available, selected in nethack.cnf:
+    Modes d'affichage
+    -----------------
+    Deux modes d'affichage sont disponibles, à choisir dans nethack.cnf :
 
-       Text mode (AMII):
+       Mode texte (AMII) :
        OPTIONS=symset:AmigaFont
 
-       Tile mode (AMIV):
+       Mode tuiles (AMIV) :
        OPTIONS=windowtype:amiv
 
-      Tile mode auto-selects tiles32.iff (32 colors, 5 bitplanes) when the
-      screen supports 32+ colors, otherwise tiles16.iff (16 colors, 4 planes).
+      Le mode tuiles choisit automatiquement tiles32.iff (32 couleurs,
+      5 plans de bits) lorsque l'écran prend en charge 32 couleurs ou plus,
+      et sinon tiles16.iff (16 couleurs, 4 plans).
 
-    For further details about playing the game, and setting up your NetHack
-    configuration, please see the following file:
+    Pour plus de détails sur le jeu et sur la configuration de NetHack,
+    consultez le fichier suivant :
          sys/amiga/README.amiga
 
 
   +--------------------------------+
-  | B6. Case sample: Web Assembly  |
+  | B6. Exemple : Web Assembly     |
   +--------------------------------+
 
-Credit: The initial Web Assembly cross compile was found in a pull request:
-            https://github.com/NetHack/NetHack/pull/385
-        by apowers313. The pull request was merged with some accompanying
-        NetHack source tree integration changes in early October 2020.
+Remerciements : la compilation croisée initiale pour Web Assembly provient
+                d'une pull request :
+                    https://github.com/NetHack/NetHack/pull/385
+                d'apowers313. Elle a été fusionnée, accompagnée de quelques
+                modifications d'intégration dans l'arborescence des sources
+                de NetHack, début octobre 2020.
 
-Cross-compiler used: emscripten
-Cross-compiler url: https://emscripten.org/docs/getting_started/downloads.html
+Compilateur croisé utilisé : emscripten
+URL du compilateur croisé :  https://emscripten.org/docs/getting_started/downloads.html
 
-    Here's a brief guide to obtaining the cross-compiler sources via git and
-    building it on your system.
+    Voici un bref guide pour récupérer les sources du compilateur croisé
+    avec git et le compiler sur votre système.
 
-    For Ubuntu, the build prerequisite packages for building the compiler can
-    be easily obtained:
+    Sous Ubuntu, les paquets prérequis pour compiler le compilateur
+    s'obtiennent facilement :
 
         sudo apt-get install python3 cmake default-jre
 
-    For macOS, you will need to install Xcode, git, cmake, Python 3.5 or newer
-    (at time of this writing).
+    Sous macOS, vous devrez installer Xcode, git, cmake et Python 3.5 ou
+    plus récent (au moment de la rédaction).
 
-    After installing the prerequisite packages above, obtain the cross-compiler
-    via git and build it from the directory of your choice using steps similar
-    to these:
+    Une fois les paquets prérequis ci-dessus installés, récupérez le
+    compilateur croisé avec git et compilez-le depuis le répertoire de votre
+    choix, avec des étapes semblables à celles-ci :
 
             git clone https://github.com/emscripten-core/emsdk.git
             cd emsdk
@@ -653,74 +698,77 @@ Cross-compiler url: https://emscripten.org/docs/getting_started/downloads.html
             ./emsdk activate latest
             source ./emsdk_env.sh
 
-    The steps above reflect what was outlined at this url at the time
-    of writing:
+    Les étapes ci-dessus reprennent ce qui était décrit à cette adresse au
+    moment de la rédaction :
 
             https://emscripten.org/docs/getting_started/downloads.html
 
-    That is the definitive source and trumps anything documented here.
+    C'est la source de référence, qui prévaut sur tout ce qui est documenté
+    ici.
 
-    On your linux host, prepare to cross-compile NetHack as follows:
+    Sur votre hôte linux, préparez la compilation croisée de NetHack ainsi :
 
         cd sys/unix ; sh setup.sh hints/linux.501 ; cd ../..
 
-    On your macOS host, prepare to cross-compile NetHack as follows:
+    Sur votre hôte macOS, préparez la compilation croisée de NetHack ainsi :
 
         cd sys/unix ; sh setup.sh hints/macOS.501 ; cd ../..
 
-    Then, cross-compile to targets/wasm as follows:
+    Effectuez ensuite la compilation croisée vers targets/wasm ainsi :
 
         make CROSS_TO_WASM=1
 
-    You can build src/libnh.a from pull request 385 as follows:
+    Vous pouvez compiler src/libnh.a, issue de la pull request 385, ainsi :
 
         make WANT_LIBNH=1
 
-    Do not add any additional windowport interfaces to your build
-    (such as WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 or
-    WANT_WIN_QT=1) as those aren't applicable to the Web Assembly
-    or nethacklib builds. A "shim" pseudo-windowport is included
-    from pull request 385.
+    N'ajoutez aucune autre interface (window port) à votre compilation
+    (comme WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 ou
+    WANT_WIN_QT=1), car elles ne s'appliquent pas aux compilations
+    Web Assembly ou nethacklib. Une pseudo-interface « shim », issue de la
+    pull request 385, est incluse.
 
-    Result: As mentioned, the wasm cross-compile will end up in
-            targets/wasm and the nethacklib.a will end up in
-            src.
+    Résultat : comme indiqué, la compilation croisée wasm se retrouvera
+               dans targets/wasm et nethacklib.a dans src.
 
-    The cross-compiler hints additions are enclosed inside ifdef sections
-    and shouldn't interfere with the non-cross-compile builds using
-    hints/linux.501 or hints/macOS.501.
+    Les ajouts pour le compilateur croisé dans les fichiers d'indications
+    sont placés dans des sections ifdef et ne devraient pas interférer avec
+    les compilations non croisées utilisant hints/linux.501 ou
+    hints/macOS.501.
 
 
   +--------------------------------+
-  | B7. Case sample: mips          |
+  | B7. Exemple : mips             |
   +--------------------------------+
 
-Cross-compiler used: gcc-mipsel-linux-gnu, g++-mipsel-linux-gnu
-Cross-compiler url:
+Compilateur croisé utilisé : gcc-mipsel-linux-gnu, g++-mipsel-linux-gnu
+URL du compilateur croisé :
 
-    Here's a brief guide to obtaining the cross-compiler sources on an
-    Ubuntu system and building NetHack with it.
+    Voici un bref guide pour obtenir le compilateur croisé sur un système
+    Ubuntu et compiler NetHack avec.
 
-    For Ubuntu, the build prerequisite packages for building the compiler can
-    be obtained, but be advised that the last Ubuntu release to include the
-    necessary packages was Ubuntu 24.04:
+    Sous Ubuntu, les paquets prérequis peuvent être obtenus, mais sachez
+    que la dernière version d'Ubuntu à inclure les paquets nécessaires est
+    Ubuntu 24.04 :
         sudo apt install gcc-mipsel-linux-gnu
         sudo apt install g++-mipsel-linux-gnu
 
-    On your linux host, prepare to cross-compile NetHack as follows:
+    Sur votre hôte linux, préparez la compilation croisée de NetHack ainsi :
         cd sys/unix ; sh setup.sh hints/linux.501 ; cd ../..
 
-    Then, cross-compile to targets/mips as follows:
+    Effectuez ensuite la compilation croisée vers targets/mips ainsi :
         make CROSS_TO_MIPS=1 fetch-ncurses
         make CROSS_TO_MIPS=1 package
 
-    Do not add any additional windowport interfaces to your build
-    (such as WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 or
-    WANT_WIN_QT=1) as those aren't applicable to the mips cross-compile.
+    N'ajoutez aucune autre interface (window port) à votre compilation
+    (comme WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 ou
+    WANT_WIN_QT=1), car elles ne s'appliquent pas à la compilation croisée
+    mips.
 
-    The cross-compiler hints additions are enclosed inside ifdef sections
-    and shouldn't interfere with the non-cross-compile builds using
-    hints/linux.501 or hints/macOS.501.
+    Les ajouts pour le compilateur croisé dans les fichiers d'indications
+    sont placés dans des sections ifdef et ne devraient pas interférer avec
+    les compilations non croisées utilisant hints/linux.501 ou
+    hints/macOS.501.
 
 
 ---

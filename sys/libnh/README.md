@@ -1,64 +1,66 @@
-# About
-This creates a library for NetHack that can be incorporated into other programs. There are two different libraries that are currently available:
-* libnethack.a - a binary Unix library
-* nethack.js / nethack.wasm - a [WebAssembly / WASM](https://webassembly.org/) library for use in JavaScript programs (both nodejs and browser)
+# À propos
+*(Traduction française du document d'origine README.md.)*
 
-## Build
-This library has only been built on MacOS, but should work on Linux and other unix-ish platforms. If you have problems, start by stealing hints files from the `sys/unix/hints` for your platform. Contributions for other platforms are happily accepted.
+Ceci crée une bibliothèque NetHack pouvant être intégrée à d'autres programmes. Deux bibliothèques différentes sont actuellement disponibles :
+* libnethack.a - une bibliothèque binaire Unix
+* nethack.js / nethack.wasm - une bibliothèque [WebAssembly / WASM](https://webassembly.org/) destinée aux programmes JavaScript (nodejs comme navigateur)
 
-Building the WASM module requires that you have the [emscripten toolchain / sdk installed](https://emscripten.org/docs/getting_started/downloads.html).
+## Compilation
+Cette bibliothèque n'a été compilée que sous MacOS, mais devrait fonctionner sous Linux et d'autres plateformes de type Unix. En cas de problème, commencez par reprendre les fichiers d'indications (hints) de `sys/unix/hints` correspondant à votre plateforme. Les contributions pour d'autres plateformes sont les bienvenues.
 
-Generally the build is the same as the unix build:
+La compilation du module WASM nécessite que la [chaîne d'outils / le SDK emscripten soit installé](https://emscripten.org/docs/getting_started/downloads.html).
 
-[Edit Oct 4, 2020: Use the existing Makefile and hints, hints/include system for cross-compiles]
+De manière générale, la compilation est identique à la compilation Unix :
+
+[Modification du 4 octobre 2020 : utiliser le Makefile et les hints existants, ainsi que le système hints/include pour la compilation croisée]
 1. `cd sys/unix`
 2. `./setup.sh hints/macOS.501`
 3. `cd ../..`
-4. For `libnethack.a`: `make WANT_LIBNH=1 all`
-5. For `nethack.js`: `make CROSS_TO_WASM=1 all`
+4. Pour `libnethack.a` : `make WANT_LIBNH=1 all`
+5. Pour `nethack.js` : `make CROSS_TO_WASM=1 all`
 
-[Original text was:]
+[Texte d'origine :]
 1. `cd sys/lib`
-2. For `libnethack.a`: `./setup.sh hints/macOS.501`; for `nethack.js`: `./setup.sh hints/wasm`
+2. Pour `libnethack.a` : `./setup.sh hints/macOS.501` ; pour `nethack.js` : `./setup.sh hints/wasm`
 3. `cd ../..`
 4. `make`
 
 
-[Edit Oct 4, 2020:]
-Resulting libraries will be in the `targets/wasm` directory for `CROSS_TO_WASM=1`.
-Resulting libraries will be in the `src` directory for `WANT_LIBNH=1`.
+[Modification du 4 octobre 2020 :]
+Les bibliothèques produites se trouveront dans le répertoire `targets/wasm` avec `CROSS_TO_WASM=1`.
+Les bibliothèques produites se trouveront dans le répertoire `src` avec `WANT_LIBNH=1`.
 
-[Original text:]
-Resulting libraries will be in the `src` directory.
+[Texte d'origine :]
+Les bibliothèques produites se trouveront dans le répertoire `src`.
 
-WASM also has a npm module that can be published out of `sys/lib/npm-library`. After building the `nethack.js` it can be published by:
+Pour WASM, il existe aussi un module npm qui peut être publié depuis `sys/lib/npm-library`. Une fois `nethack.js` compilé, il peut être publié ainsi :
 1. `cd sys/lib/npm-library`
 2. `npm publish`
 
-## API: libnethack.a
-The API is two functions:
-* `nhmain(int argc, char *argv[])` - The main function for NetHack that configures the program and runs the `moveloop()` until the game is over. The arguments to this function are the [command line arguments](https://nethackwiki.com/wiki/Options) to NetHack.
-* `shim_graphics_set_callback(shim_callback_t cb)` - A single function that sets a callback to gather graphics events: write a string to screen, get user input, etc. Your job is to pass in a callback and handle all the requested rendering events to show NetHack on the screen. The callback is `void shim_callback_t(const char *name, void *ret_ptr, const char *fmt,  ...)`
-  * `name` is the name of the [window function](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt) that needs to be handled
-  * `ret_ptr` is a pointer to a memory space for the return value. The type expected to be returned in this pointer is described by the first character of the `fmt` string.
-  * `fmt` is a string that describes the signature of the callback. The first character in the string is the return type and any additional characters describe the variable arguments: `i` for integer, `s` for string, `p` for pointer, `c` for character, `v` for void. For example, if format is "vis" the callback will have no return (void), the first argument will be an integer, and the second argument will be a string. If format is "iii" the callback must return an integer, and both the arguments passed in will be integers.
-  * [Variadic arguments](https://www.gnu.org/software/libc/manual/html_node/Variadic-Example.html): a variable number and type of arguments depending on the `window function` that is being called. The arguments associated with each `name` are described in the [NetHack window.txt](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt).
+## API : libnethack.a
+L'API se compose de deux fonctions :
+* `nhmain(int argc, char *argv[])` - La fonction principale de NetHack, qui configure le programme et exécute `moveloop()` jusqu'à la fin de la partie. Les arguments de cette fonction sont les [arguments de ligne de commande](https://nethackwiki.com/wiki/Options) de NetHack.
+* `shim_graphics_set_callback(shim_callback_t cb)` - Une fonction unique qui définit une fonction de rappel (callback) chargée de recevoir les événements graphiques : écrire une chaîne à l'écran, obtenir une saisie de l'utilisateur, etc. À vous de fournir une fonction de rappel et de traiter tous les événements de rendu demandés pour afficher NetHack à l'écran. La fonction de rappel est `void shim_callback_t(const char *name, void *ret_ptr, const char *fmt,  ...)`
+  * `name` est le nom de la [fonction de fenêtrage](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt) à traiter
+  * `ret_ptr` est un pointeur vers un espace mémoire destiné à la valeur de retour. Le type attendu dans ce pointeur est indiqué par le premier caractère de la chaîne `fmt`.
+  * `fmt` est une chaîne qui décrit la signature de la fonction de rappel. Le premier caractère de la chaîne est le type de retour, et les caractères suivants décrivent les arguments variables : `i` pour un entier, `s` pour une chaîne, `p` pour un pointeur, `c` pour un caractère, `v` pour void. Par exemple, si le format est "vis", la fonction de rappel ne renvoie rien (void), le premier argument est un entier et le second une chaîne. Si le format est "iii", la fonction de rappel doit renvoyer un entier, et les deux arguments transmis sont des entiers.
+  * [Arguments variadiques](https://www.gnu.org/software/libc/manual/html_node/Variadic-Example.html) : un nombre et des types d'arguments variables selon la `window function` appelée. Les arguments associés à chaque `name` sont décrits dans le fichier [window.txt de NetHack](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt).
 
-Where is the header file for the API you ask? There isn't one. It's three functions, just drop the forward declarations at the top of your file (or create your own header). It's more work figuring out how to install and copy around header files than it's worth for such a small API. If you disagree, feel free to submit a PR to fix it. :)
+Où est le fichier d'en-tête de l'API, me direz-vous ? Il n'y en a pas. Il s'agit de trois fonctions : placez simplement les déclarations anticipées en tête de votre fichier (ou créez votre propre en-tête). Trouver comment installer et copier des fichiers d'en-tête demanderait plus de travail que cela n'en vaut la peine pour une API aussi petite. Si vous n'êtes pas d'accord, n'hésitez pas à proposer une PR pour y remédier. :)
 
-## API: nethack.js
-The WebAssembly API has a similar signature to `libnethack.a` with minor syntactic differences:
-* `main(int argc, char argv[])` - The main function for NetHack
-* `shim_graphics_set_callback(char *cbName)` - A `String` representing a name of a callback function. The callback function be registered as `globalThis[cbName] = function yourCallback(name, ... args) { /* your stuff */ }`. Note that [globalThis](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/globalThis) points to `window` in browsers and `global` in node.js.
-  * `name` is the name of the [window function](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt) that needs to be handled
-  * `... args` is a variable number and type of arguments depending on the `window function` that is being called. The arguments associated with each `name` are described in the [NetHack window.txt](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt)
-  * The function must return the value expected for the specified `name`
+## API : nethack.js
+L'API WebAssembly a une signature semblable à celle de `libnethack.a`, à quelques différences syntaxiques près :
+* `main(int argc, char argv[])` - La fonction principale de NetHack
+* `shim_graphics_set_callback(char *cbName)` - Une `String` représentant le nom d'une fonction de rappel. La fonction de rappel doit être enregistrée sous la forme `globalThis[cbName] = function yourCallback(name, ... args) { /* your stuff */ }`. Notez que [globalThis](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/globalThis) désigne `window` dans les navigateurs et `global` dans node.js.
+  * `name` est le nom de la [fonction de fenêtrage](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt) à traiter
+  * `... args` est un nombre et des types d'arguments variables selon la `window function` appelée. Les arguments associés à chaque `name` sont décrits dans le fichier [window.txt de NetHack](https://github.com/NetHack/NetHack/blob/NetHack-3.7/doc/window.txt)
+  * La fonction doit renvoyer la valeur attendue pour le `name` indiqué
 
 
-## API Stability
-The "shim graphics" API should generally be stable. I aspire to replace the command line arguments (argc / argv) with a structure of options, so the `nhmain()` and `main()` functions may change at some point.
+## Stabilité de l'API
+L'API « shim graphics » devrait en général rester stable. J'aimerais remplacer les arguments de ligne de commande (argc / argv) par une structure d'options ; les fonctions `nhmain()` et `main()` pourraient donc changer à un moment donné.
 
-## libnethack.a example
+## Exemple pour libnethack.a
 ``` c
 #include <stdio.h>
 
@@ -76,7 +78,7 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-## nethack.js example
+## Exemple pour nethack.js
 ``` js
 const path = require("path");
 
