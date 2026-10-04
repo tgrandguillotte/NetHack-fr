@@ -87,7 +87,7 @@
 #define PCHAR2(idx, ch, sym, tilenm, desc, clr) PCHAR(idx, ch, sym, desc, clr)
 #endif
 
-    PCHAR2( 0, ' ',  S_stone,  "dark part of a room", "roche",  NO_COLOR)
+    PCHAR2( 0, ' ',  S_stone,  "dark part of a room", "pierre",  NO_COLOR)
     PCHAR2( 1, '|',  S_vwall,  "vertical wall", "mur vertical",  CLR_GRAY)
     PCHAR2( 2, '-',  S_hwall,  "horizontal wall", "mur horizontal",  CLR_GRAY)
     PCHAR2( 3, '-',  S_tlcorn, "top left corner wall", "coin de mur haut gauche",  CLR_GRAY)
