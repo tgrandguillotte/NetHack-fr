@@ -369,7 +369,7 @@ You(const char *line, ...)
     char *tmp;
 
     va_start(the_args, line);
-    vpline(YouMessage(tmp, "You ", line), the_args);
+    vpline(YouMessage(tmp, "Vous ", line), the_args);
     va_end(the_args);
 }
 
@@ -380,7 +380,7 @@ Your(const char *line, ...)
     char *tmp;
 
     va_start(the_args, line);
-    vpline(YouMessage(tmp, "Your ", line), the_args);
+    vpline(YouMessage(tmp, "Votre ", line), the_args);
     va_end(the_args);
 }
 
@@ -392,9 +392,9 @@ You_feel(const char *line, ...)
 
     va_start(the_args, line);
     if (Unaware)
-        YouPrefix(tmp, "You dream that you feel ", line);
+        YouPrefix(tmp, "Vous rêvez que vous ", line);
     else
-        YouPrefix(tmp, "You feel ", line);
+        YouPrefix(tmp, "Vous ", line);
     vpline(strcat(tmp, line), the_args);
     va_end(the_args);
 }
@@ -406,7 +406,7 @@ You_cant(const char *line, ...)
     char *tmp;
 
     va_start(the_args, line);
-    vpline(YouMessage(tmp, "You can't ", line), the_args);
+    vpline(YouMessage(tmp, "Vous ne pouvez pas ", line), the_args);
     va_end(the_args);
 }
 
@@ -417,7 +417,7 @@ pline_The(const char *line, ...)
     char *tmp;
 
     va_start(the_args, line);
-    vpline(YouMessage(tmp, "The ", line), the_args);
+    vpline(YouMessage(tmp, "", line), the_args);
     va_end(the_args);
 }
 
@@ -428,7 +428,7 @@ There(const char *line, ...)
     char *tmp;
 
     va_start(the_args, line);
-    vpline(YouMessage(tmp, "There ", line), the_args);
+    vpline(YouMessage(tmp, "", line), the_args);
     va_end(the_args);
 }
 
@@ -442,11 +442,11 @@ You_hear(const char *line, ...)
         return;
     va_start(the_args, line);
     if (Underwater)
-        YouPrefix(tmp, "You barely hear ", line);
+        YouPrefix(tmp, "Vous entendez à peine ", line);
     else if (Unaware)
-        YouPrefix(tmp, "You dream that you hear ", line);
+        YouPrefix(tmp, "Vous rêvez que vous entendez ", line);
     else
-        YouPrefix(tmp, "You hear ", line);  /* Deaf-aware */
+        YouPrefix(tmp, "Vous entendez ", line);  /* Deaf-aware */
     vpline(strcat(tmp, line), the_args);
     va_end(the_args);
 }
@@ -459,11 +459,11 @@ You_see(const char *line, ...)
 
     va_start(the_args, line);
     if (Unaware)
-        YouPrefix(tmp, "You dream that you see ", line);
+        YouPrefix(tmp, "Vous rêvez que vous voyez ", line);
     else if (Blind) /* caller should have caught this... */
-        YouPrefix(tmp, "You sense ", line);
+        YouPrefix(tmp, "Vous percevez ", line);
     else
-        YouPrefix(tmp, "You see ", line);
+        YouPrefix(tmp, "Vous voyez ", line);
     vpline(strcat(tmp, line), the_args);
     va_end(the_args);
 }
