@@ -2,123 +2,130 @@
 # Copyright (c) 2015 by Michael Allison
 # NetHack may be freely redistributed.  See license for details.
 
-Developer-useful info about code features, assumptions, purpose,
-rationale, etc.
+[Note : ce fichier est la traduction française du document d'origine
+« code_features.txt » de NetHack.]
+
+Informations utiles aux développeurs sur les fonctionnalités du code, les
+hypothèses retenues, leur but, leur justification, etc.
 
 ==============================================
-FEATURE_NOTICE Alerts for a Release
+FEATURE_NOTICE : alertes pour une nouvelle version
 
-There is a code mechanism for alerting players to a change in behavior
-over prior versions of the game.
+Il existe un mécanisme dans le code pour avertir les joueurs d'un changement
+de comportement par rapport aux versions précédentes du jeu.
 
-Here's how to do it:
-   o Where the change in behavior needs to alert the player,
-     - Add an 'if statement' to invoke the alert behavior
-       if the condition is met, for example
+Voici comment procéder :
+   o À l'endroit où le changement de comportement doit alerter le joueur,
+     - Ajoutez une instruction « if » qui déclenche l'alerte si la
+       condition est remplie, par exemple
           if (flags.suppress_alert < FEATURE_NOTICE_VER(3.6.0))
              pline("Note: and explain the change here.");
-     - The example above will alert the users for a new feature
-       added in 3.6.0 via a one-liner via pline(), but you
-       could get more elaborate (just make sure it is all done
-       in the 'if' code block.
+     - L'exemple ci-dessus alertera les utilisateurs au sujet d'une
+       fonctionnalité ajoutée en 3.6.0, par un message d'une ligne via
+       pline(), mais vous pouvez faire plus élaboré (assurez-vous
+       simplement que tout se fait dans le bloc de code du « if »).
 
-Once the user finds the alert no longer useful, or becoming 
-annoying, they can set the "suppress_alert" option.
-      - The user can only set the suppress_alert to the current 
-        version, not future versions. That restriction is done
-        so that the feature can be used for new things in new
-        releases.
-      - The suppression can be done interactively mid game with
-        the 'O' command, or via 
+Lorsque l'utilisateur estime que l'alerte n'est plus utile, ou qu'elle
+devient agaçante, il peut définir l'option « suppress_alert ».
+      - L'utilisateur ne peut régler suppress_alert que sur la version
+        courante, et non sur des versions futures. Cette restriction
+        permet d'utiliser cette fonctionnalité pour les nouveautés des
+        versions suivantes.
+      - La suppression peut se faire de façon interactive en cours de
+        partie avec la commande 'O', ou via
            OPTIONS=suppress_alert:3.6.0
-        in the user's config file.
+        dans le fichier de configuration de l'utilisateur.
 
 ==============================================
-PREFIXES_IN_USE and NOCWD_ASSUMPTIONS
+PREFIXES_IN_USE et NOCWD_ASSUMPTIONS
 
-Those provide a storage mechanism for holding the paths to various different
-types of files. Those paths are stored in the fqn_prefix[] array. They are a
-mechanism for enabling separation of the different files that NetHack needs. 
+Ces macros fournissent un mécanisme de stockage des chemins vers différents
+types de fichiers. Ces chemins sont stockés dans le tableau fqn_prefix[]. Il
+s'agit d'un mécanisme permettant de séparer les différents fichiers dont
+NetHack a besoin.
 
-The prefixes are added to the beginning of file names  by various routines in
-files.c immediately prior to opening one of the types of files that the game
-uses.
+Les préfixes sont ajoutés au début des noms de fichiers par diverses routines
+de files.c, juste avant l'ouverture de l'un des types de fichiers utilisés
+par le jeu.
 
-They aren't about config file options (although config file options would be
-one way to set non-default values for some of the paths in the fqn_prefix[]
-array). Obviously the very first path needed (now sysconfdir, previously
-configdir) isn't viable for setting via config file options, but the game
-still needs to hunt it down "someplace."  When the "someplace" is figured
-out, that place (path) would be stored in fqn_prefix[SYSCONPREFIX].  How it
-gets stored in fqn_prefix[SYSCONPREFIX] is up to us as developers.
+Il ne s'agit pas d'options du fichier de configuration (même si ces options
+seraient un moyen de donner des valeurs autres que celles par défaut à
+certains chemins du tableau fqn_prefix[]). Évidemment, le tout premier chemin
+nécessaire (aujourd'hui sysconfdir, auparavant configdir) ne peut pas être
+défini par une option du fichier de configuration, mais le jeu doit tout de
+même le dénicher « quelque part ».  Une fois ce « quelque part » déterminé,
+cet emplacement (chemin) est stocké dans fqn_prefix[SYSCONPREFIX].  La façon
+dont il y est stocké relève de nos choix de développeurs.
 
-Any of the fqn_prefix[] entries can be set somehow. It could be done in port
-startup code; in options processing; in config file processing; by 
-translating a system environment variable such as USERPROFILE; whatever 
-you/we want.  The point is that NOCWD_ASSUMPTIONS and PREFIXES_IN_USE are
-there to ensure that there is a place to store that path information.  The
-code to *utilize* the information is already in files.c (see fqname()).
+N'importe quelle entrée de fqn_prefix[] peut être définie d'une manière ou
+d'une autre : dans le code de démarrage d'un portage, lors du traitement des
+options, lors du traitement du fichier de configuration, en traduisant une
+variable d'environnement du système comme USERPROFILE, ou de toute autre
+façon souhaitée.  L'essentiel est que NOCWD_ASSUMPTIONS et PREFIXES_IN_USE
+garantissent qu'il existe un endroit où stocker ces chemins.  Le code qui
+*exploite* ces informations se trouve déjà dans files.c (voir fqname()).
 
-There is a fqn_prefix[] entry for holding the path to each of the following:
+Il existe une entrée de fqn_prefix[] pour stocker le chemin de chacun des
+éléments suivants :
     PREFIX        NAME
 0 HACKPREFIX     hackdir
-1 LEVELPREFIX    leveldir    location to create level files
-2 SAVEPREFIX     savedir location to create/read saved games
-3 BONESPREFIX    bonesir location to create/read bones
-4 DATAPREFIX     datadir location to read data.base etc.
-5 SCOREPREFIX    scoredir    location to read/write scorefile
-6 LOCKPREFIX     lockdir     location to create/read lock files
-7 SYSCONFPREFIX  sysconfdir  location to read SYSCF_FILE
-8 CONFIGPREFIX   configdir   location to read user configuration file
-9 TROUBLEPREFIX  troubledir  location to place panic files etc.
+1 LEVELPREFIX    leveldir    où créer les fichiers de niveau
+2 SAVEPREFIX     savedir     où créer/lire les parties sauvegardées
+3 BONESPREFIX    bonesir     où créer/lire les fichiers bones
+4 DATAPREFIX     datadir     où lire data.base, etc.
+5 SCOREPREFIX    scoredir    où lire/écrire le fichier des scores
+6 LOCKPREFIX     lockdir     où créer/lire les fichiers de verrou
+7 SYSCONFPREFIX  sysconfdir  où lire SYSCF_FILE
+8 CONFIGPREFIX   configdir   où lire le fichier de configuration utilisateur
+9 TROUBLEPREFIX  troubledir  où placer les fichiers panic, etc.
 
-To recap, they are about enabling "different paths for different things", and
-separation of:
-- read-only stuff from read-write stuff.
-- sysadmin stuff from user-writable stuff.
+En résumé, ils servent à permettre « des chemins différents pour des choses
+différentes », et à séparer :
+- ce qui est en lecture seule de ce qui est en lecture-écriture ;
+- ce qui relève de l'administrateur système de ce qui est modifiable par
+  l'utilisateur ;
 etc.
 
 ==============================================
-REGULAR EXPRESSIONS
+EXPRESSIONS RÉGULIÈRES
 
-There are multiple regular expression libraries supported. Currently, one (and
-only one) of the following files should be linked into a built:
+Plusieurs bibliothèques d'expressions régulières sont prises en charge.
+Actuellement, un (et un seul) des fichiers suivants doit être lié lors de la
+compilation :
   sys/share/cppregex.cpp
   sys/share/posixregex.c
   sys/share/pmatchregex.c
 
-This provides a way to access different system regular expression libraries,
-or fall back onto pmatch() if none is available. cppregex.cpp uses the regular
-expression library in the C++11 standard, and is the default on Windows.
-posixregex.c uses the POSIX regular expression library, and is the default on
-POSIX. pmatchregex.c is the fallback.
+Cela permet d'accéder à différentes bibliothèques d'expressions régulières
+du système, ou de se rabattre sur pmatch() si aucune n'est disponible.
+cppregex.cpp utilise la bibliothèque d'expressions régulières de la norme
+C++11 ; c'est le choix par défaut sous Windows.  posixregex.c utilise la
+bibliothèque d'expressions régulières POSIX ; c'est le choix par défaut sur
+les systèmes POSIX.  pmatchregex.c sert de solution de repli.
 
-Configuration files written using either of the two true regex engines are
-compatible with one another, as the regular expressions are both POSIX
-extended regular expressions. Configuration files written using the fallback
-engine are incompatible.
+Les fichiers de configuration écrits pour l'un ou l'autre des deux vrais
+moteurs d'expressions régulières sont compatibles entre eux, car il s'agit
+dans les deux cas d'expressions régulières étendues POSIX. Les fichiers de
+configuration écrits pour le moteur de repli ne sont pas compatibles.
 
-Additional regular expression implementations can be written. The full
-interface documentation is in sys/share/posixregex.c
+D'autres implémentations d'expressions régulières peuvent être écrites. La
+documentation complète de l'interface se trouve dans sys/share/posixregex.c
 
 ===========================================================
-HEADER FILE NOTES
+NOTES SUR LES FICHIERS D'EN-TÊTE
 
-hack.h defines values that are available to all NetHack source files,
-contains enums for use in all NetHack source files, and contains a
-number of struct definitions for use in all NetHack source files.
-hack.h does not contain variable declarations or variable definitions.
+hack.h définit des valeurs disponibles pour tous les fichiers source de
+NetHack, contient des enums et un certain nombre de définitions de struct
+destinés à tous les fichiers source de NetHack.
+hack.h ne contient ni déclarations ni définitions de variables.
 
-decl.h and decl.c are related: decl.h contains the extern declarations
-for variables that are defined in decl.c. These variables are global
-and available to all NetHack source files.
-decl.c variable definitions are generally laid out in much the same
-order as their corresponding declarations in decl.h.
+decl.h et decl.c sont liés : decl.h contient les déclarations extern des
+variables définies dans decl.c. Ces variables sont globales et disponibles
+pour tous les fichiers source de NetHack.
+Les définitions de variables de decl.c suivent en général à peu près le même
+ordre que les déclarations correspondantes de decl.h.
 
-A new header file cstd.h was added to coincide with 5.0's switch to
-C99. It contains calls to some C99 standard header files.
+Un nouveau fichier d'en-tête, cstd.h, a été ajouté lors du passage de la
+version 5.0 au C99. Il inclut certains fichiers d'en-tête standard du C99.
 
-=================== NEXT FEATURE ==========================
-
-
-
+=================== FONCTIONNALITÉ SUIVANTE ==========================

@@ -741,10 +741,12 @@ bill_dummy_object(struct obj *otmp)
 }
 
 /* alteration types; must match COST_xxx macros in hack.h */
+/* version francaise : participes passes ("Vous avez annulé cette...") */
 static const char *const alteration_verbs[] = {
-    "cancel", "drain", "uncharge", "unbless", "uncurse", "disenchant",
-    "degrade", "dilute", "erase", "burn", "neutralize", "destroy", "splatter",
-    "bite", "open", "break the lock on", "rust", "rot", "tarnish", "crack",
+    "annulé", "drainé", "déchargé", "ôté la bénédiction de",
+    "levé la malédiction de", "désenchanté", "dégradé", "dilué", "effacé",
+    "brûlé", "neutralisé", "détruit", "éclaboussé", "mordu", "ouvert",
+    "forcé la serrure de", "rouillé", "pourri", "terni", "fêlé",
 };
 
 /* possibly bill for an object which the player has just modified */
@@ -754,7 +756,7 @@ costly_alteration(struct obj *obj, int alter_type)
     coordxy ox, oy;
     char objroom;
     boolean learn_bknown;
-    const char *those, *them;
+    const char *those, *them, *onam;
     struct monst *shkp = 0;
 
     if (alter_type < 0 || alter_type >= SIZE(alteration_verbs)) {
@@ -785,10 +787,15 @@ costly_alteration(struct obj *obj, int alter_type)
             return;
     }
 
-    if (obj->quan == 1L)
-        those = "that", them = "it";
-    else
-        those = "those", them = "them";
+    onam = simpleonames(obj);
+    if (obj->quan == 1L) {
+        boolean fem = (fr_genre(onam) == FR_FEM);
+
+        those = fem ? "cette" : fr_elision(onam) ? "cet" : "ce";
+        them = fem ? "la" : "le";
+    } else {
+        those = "ces", them = "les";
+    }
 
     /* when shopkeeper describes the object as being uncursed or unblessed
        hero will know that it is now uncursed; will also make the feedback
@@ -803,9 +810,8 @@ costly_alteration(struct obj *obj, int alter_type)
         if (shkp) {
             SetVoice(shkp, 0, 80, 0);
         }
-        verbalize("You %s %s %s, you pay for %s!",
-                  alteration_verbs[alter_type], those, simpleonames(obj),
-                  them);
+        verbalize("Vous avez %s %s %s, vous %s payez !",
+                  alteration_verbs[alter_type], those, onam, them);
         bill_dummy_object(obj);
         break;
     case OBJ_FLOOR:
@@ -815,8 +821,10 @@ costly_alteration(struct obj *obj, int alter_type)
             if (shkp) {
                 SetVoice(shkp, 0, 80, 0);
             }
-            verbalize("You %s %s, you pay for %s!",
-                      alteration_verbs[alter_type], those, them);
+            verbalize("Vous avez %s %s, vous %s payez !",
+                      alteration_verbs[alter_type],
+                      (obj->quan == 1L) ? "cela" : "tout cela",
+                      (obj->quan == 1L) ? "le" : "les");
             bill_dummy_object(obj);
         } else {
             (void) stolen_value(obj, ox, oy, FALSE, FALSE);
@@ -1618,7 +1626,7 @@ shrink_glob(
             pline("%s %s.", globnambuf,
                   /* globs always have quantity 1 so we don't need otense()
                      because the verb always references a singular item */
-                  gone ? "dissolves completely" : "shrinks");
+                  gone ? "se dissout complètement" : "rétrécit");
         updinv = TRUE;
     } else if (contnr) {
         /* when in a container, it might be nested so find outermost one */
@@ -1642,13 +1650,14 @@ shrink_glob(
                however, always say the bag is lighter for the 'gone' case */
             if (gone || (shrink && topcontnr->owt != old_top_owt)
                 || near_capacity() != go.oldcap)
-                pline("%s %s%s lighter.", Yname2(topcontnr),
+                pline("%s %s%s plus %s.", Yname2(topcontnr),
                       /* containers also always have quantity 1 */
-                      (topcontnr->owt != old_top_owt) ? "becomes" : "seems",
+                      (topcontnr->owt != old_top_owt) ? "devient" : "semble",
                       /* TODO?  maybe also skip "slightly" if description
                          is changing (from "very large" to "large",
                          "large" to "medium", or "medium to "small") */
-                      !gone ? " slightly" : "");
+                      !gone ? " légèrement" : "",
+                      fr_adj_accord("léger", xname(topcontnr)));
             updinv = TRUE;
         }
     }
@@ -1665,11 +1674,16 @@ shrink_glob(
 
         if (seeit) {
             newsym(ox, oy);
-            if ((ox != u.ux || oy != u.uy) && !strncmp(globnambuf, "The ", 4))
-                /* fortunately none of the glob adjectives warrant "An " */
-                (void) strsubst(globnambuf, "The ", "A ");
+            if (ox != u.ux || oy != u.uy) {
+                if (!strncmp(globnambuf, "La ", 3))
+                    (void) strsubst(globnambuf, "La ", "Une ");
+                else if (!strncmp(globnambuf, "Le ", 3))
+                    (void) strsubst(globnambuf, "Le ", "Un ");
+                else if (!strncmp(globnambuf, "L'", 2))
+                    (void) strsubst(globnambuf, "L'", "Un ");
+            }
             /* again, quantity is always 1 so no need for otense()/vtense() */
-            pline("%s fades away.", globnambuf);
+            pline("%s disparaît.", globnambuf);
         }
     } else {
         /* schedule next shrink ~25 turns from now */
@@ -1733,7 +1747,9 @@ maybe_adjust_light(struct obj *obj, int old_range)
             *buf = '\0';
             if (iflags.last_msg == PLNMSG_OBJ_GLOWS)
                 /* we just saw "The <obj> glows <color>." from dipping */
-                Strcpy(buf, (obj->quan == 1L) ? "It" : "They");
+                Strcpy(buf, (fr_genre(xname(obj)) == FR_FEM)
+                              ? ((obj->quan == 1L) ? "Elle" : "Elles")
+                              : ((obj->quan == 1L) ? "Il" : "Ils"));
             else if (carried(obj) || cansee(ox, oy))
                 Strcpy(buf, Yname2(obj));
             if (*buf) {
@@ -1742,9 +1758,9 @@ maybe_adjust_light(struct obj *obj, int old_range)
                    when changing intensity, using "less brightly" is
                    straightforward for dimming, but we need "brighter"
                    rather than "more brightly" for brightening; ugh */
-                pline("%s %s %s%s.", buf, otense(obj, "shine"),
-                      (abs(delta) > 1) ? "much " : "",
-                      (delta > 0) ? "brighter" : "less brightly");
+                pline("%s %s %s%s.", buf, otense(obj, "briller"),
+                      (abs(delta) > 1) ? "beaucoup " : "",
+                      (delta > 0) ? "plus fort" : "moins fort");
             }
         }
     }
@@ -2889,15 +2905,15 @@ hornoplenty(
                 if (obj->otyp == POT_OIL)
                     fixup_oil(obj, (struct obj *) NULL);
             }
-            what = (obj->quan > 1L) ? "Some potions" : "A potion";
+            what = (obj->quan > 1L) ? "Des potions" : "Une potion";
         } else {
             obj = mkobj(FOOD_CLASS, FALSE);
             if (obj->otyp == FOOD_RATION && !rn2(7))
                 obj->otyp = LUMP_OF_ROYAL_JELLY;
-            what = "Some food";
+            what = "De la nourriture";
         }
         ++objcount;
-        pline("%s %s out.", what, vtense(what, "spill"));
+        pline("%s %s.", what, vtense(what, "jaillir"));
         obj->blessed = horn->blessed;
         obj->cursed = horn->cursed;
         obj->owt = weight(obj);
@@ -2911,14 +2927,14 @@ hornoplenty(
         if (!tipping) {
             obj = hold_another_object(obj,
                                       u.uswallow
-                                        ? "Oops!  %s out of your reach!"
+                                        ? "Oups !  %s hors de votre portée !"
                                         : (Is_airlevel(&u.uz)
                                            || Is_waterlevel(&u.uz)
                                            || levl[u.ux][u.uy].typ < IRONBARS
                                            || levl[u.ux][u.uy].typ >= ICE)
-                                          ? "Oops!  %s away from you!"
-                                          : "Oops!  %s to the floor!",
-                                      The(aobjnam(obj, "slip")), (char *) 0);
+                                          ? "Oups !  %s loin de vous !"
+                                          : "Oups !  %s par terre !",
+                                      The(aobjnam(obj, "glisser")), (char *) 0);
             nhUse(obj);
         } else if (targetbox) {
             add_to_container(targetbox, obj);
@@ -2938,8 +2954,8 @@ hornoplenty(
                 if (IS_ALTAR(levl[u.ux][u.uy].typ))
                     doaltarobj(obj); /* does its own drop message */
                 else
-                    pline("%s %s to the %s.", Doname2(obj),
-                          otense(obj, "drop"), surface(u.ux, u.uy));
+                    pline("%s %s sur %s.", Doname2(obj),
+                          otense(obj, "tomber"), the(surface(u.ux, u.uy)));
                 dropy(obj);
             }
         }
@@ -3841,9 +3857,9 @@ pudding_merge_message(struct obj *otmp, struct obj *otmp2)
     if ((!Blind && visible) || inpack) {
         if (Hallucination) {
             if (onfloor) {
-                You_see("parts of the floor melting!");
+                You_see("des parties du sol fondre !");
             } else if (inpack) {
-                Your("pack reaches out and grabs something!");
+                Your("sac s'étire et attrape quelque chose !");
             }
             /* even though we can see where they should be,
              * they'll be out of our view (minvent or container)
@@ -3852,14 +3868,17 @@ pudding_merge_message(struct obj *otmp, struct obj *otmp2)
             boolean adj = ((otmp->ox != u.ux || otmp->oy != u.uy)
                            && (otmp2->ox != u.ux || otmp2->oy != u.uy));
 
-            pline("The %s%s coalesce%s.",
-                  (onfloor && adj) ? "adjacent " : "",
-                  makeplural(obj_typename(otmp->otyp)),
-                  inpack ? " inside your pack" : "");
+            char globs[BUFSZ];
+
+            Strcpy(globs, makeplural(obj_typename(otmp->otyp)));
+            pline("Les %s%s%s fusionnent%s.", globs,
+                  (onfloor && adj) ? " " : "",
+                  (onfloor && adj) ? fr_adj_accord("adjacent", globs) : "",
+                  inpack ? " dans votre sac" : "");
         }
     } else {
         Soundeffect(se_faint_sloshing, 25);
-        You_hear("a faint sloshing sound.");
+        You_hear("un léger clapotis.");
     }
 }
 

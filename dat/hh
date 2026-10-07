@@ -1,160 +1,165 @@
-y k u   7 8 9   Move commands:
- \|/     \|/            yuhjklbn: go one step in specified direction
-h-.-l   4-.-6           YUHJKLBN: go in specified direction until you
- /|\     /|\                        hit a wall or run into something
-b j n   1 2 3           g<dir>:   run in direction <dir> until something
-      numberpad                     interesting is seen
-                        G<dir>,   same, except a branching corridor isn't
- <  up                  ^<dir>:     considered interesting (the ^ in this
-                                    case means the Control key, not a caret)
- >  down                m<dir>:   move without picking up objects/fighting
-                        F<dir>:   fight even if you don't sense a monster
-                If the number_pad option is set, the digit keys move instead.
-                Depending on the platform, Shift digit (on the numberpad),
-                Meta digit, or Alt digit will invoke the YUHJKLBN commands.
-                Control <dir> may or may not work when number_pad is enabled,
-                depending on the platform's capabilities.
-                Digit '5' acts as 'G' prefix, unless number_pad is set to 2
-                in which case it acts as 'g' instead.
-                If number_pad is set to 3, the roles of 1,2,3 and 7,8,9 are
-                reversed; when set to 4, behaves same as 3 combined with 2.
-                If number_pad is set to -1, alphabetic movement commands are
-                used but 'y' and 'z' are swapped.
+y k u   7 8 9   Commandes de déplacement :
+ \|/     \|/            yuhjklbn : un pas dans la direction indiquée
+h-.-l   4-.-6           YUHJKLBN : avancer dans la direction indiquée
+ /|\     /|\                       jusqu'à heurter un mur ou quelque chose
+b j n   1 2 3           g<dir> :   courir dans la direction <dir> jusqu'à
+    pavé numérique                 voir quelque chose d'intéressant
+                        G<dir>,    idem, sauf qu'un embranchement de couloir
+ <  monter              ^<dir> :   n'est pas jugé intéressant (ici, ^
+                                   désigne la touche Contrôle, pas un
+                                   accent circonflexe)
+ >  descendre           m<dir> :   avancer sans ramasser ni combattre
+                        F<dir> :   combattre même sans percevoir de monstre
+                Si l'option number_pad est activée, ce sont les chiffres
+                qui déplacent.
+                Selon la plateforme, Maj + chiffre (sur le pavé numérique),
+                Méta + chiffre ou Alt + chiffre déclenchent les commandes
+                YUHJKLBN.
+                Contrôle + <dir> peut fonctionner ou non quand number_pad est
+                activé, selon les capacités de la plateforme.
+                Le chiffre '5' sert de préfixe 'G', sauf si number_pad vaut 2,
+                auquel cas il sert de préfixe 'g'.
+                Si number_pad vaut 3, les rôles de 1,2,3 et 7,8,9 sont
+                inversés ; s'il vaut 4, il se comporte comme 3 combiné à 2.
+                Si number_pad vaut -1, les commandes de déplacement
+                alphabétiques sont utilisées, mais 'y' et 'z' sont échangés.
 
-General commands:
-?     help      display one of several informative texts
-#quit quit      end the game without saving current game
-S     save      save the game (to be continued later) and exit
-                [to restore, play again and use the same character name;
-                use #quit to quit without saving]
-!     sh        escape to some SHELL (if allowed; 'exit' to resume play)
-^Z    suspend   suspend the game (independent of your current suspend char)
-                [on UNIX(tm)-based systems, use the 'fg' command to resume]
-O     options   set options
-/     what-is   tell what a map symbol represents
-\     known     display list of what's been discovered
-|     perminv   interact with persistent inventory window instead of hero+map
-v     chronicle display a list of important events
-V     version   display version number
-^A    again     redo the previous command
-^R    redraw    redraw the screen
-^P    prevmsg   repeat previous message (consecutive ^P's repeat earlier ones)
-#               introduces an extended command (#? for a list of them)
-&     what-does describe the command a keystroke invokes
+Commandes générales :
+?     help      afficher l'un des textes d'information
+#quit quit      terminer la partie sans sauvegarder
+S     save      sauvegarder la partie (pour la continuer plus tard) et quitter
+                [pour reprendre, rejouez avec le même nom de personnage ;
+                utilisez #quit pour quitter sans sauvegarder]
+!     sh        passer dans un SHELL (si permis ; 'exit' pour reprendre)
+^Z    suspend   suspendre la partie (indépendamment de votre touche suspend)
+                [sur les systèmes de type UNIX(tm), reprenez avec 'fg']
+O     options   régler les options
+/     what-is   indiquer ce que représente un symbole de la carte
+\     known     afficher la liste de ce qui a été découvert
+|     perminv   agir sur la fenêtre d'inventaire permanent au lieu de la carte
+v     chronicle afficher la liste des événements importants
+V     version   afficher le numéro de version
+^A    again     refaire la commande précédente
+^R    redraw    redessiner l'écran
+^P    prevmsg   répéter le message précédent (des ^P successifs remontent
+                plus loin)
+#               introduit une commande étendue (#? pour en avoir la liste)
+&     what-does décrire la commande déclenchée par une touche
 
-Control characters are depicted as '^' followed by a letter.  Depress Ctrl
-or Control like a shift key then type the letter.  Control characters are
-case-insensitive; ^D is the same as ^d, Ctrl+d is same as Ctrl+Shift+d.
-There are a few non-letter control characters; nethack uses ^[ as a synonym
-for Escape (or vice versa) and ^_ for #retravel but none of the others.
+Les caractères de contrôle sont notés '^' suivi d'une lettre.  Maintenez Ctrl
+(ou Contrôle) comme une touche Maj puis tapez la lettre.  Les caractères de
+contrôle ne tiennent pas compte de la casse : ^D équivaut à ^d, et Ctrl+d à
+Ctrl+Maj+d.  Il existe quelques caractères de contrôle non alphabétiques ;
+nethack utilise ^[ comme synonyme d'Échap (ou l'inverse) et ^_ pour
+#retravel, mais aucun des autres.
 
-Game commands:
-^D    kick      kick (a door, or something else)
-^T    Tport     teleport (if you can)
-^X    show      show your attributes
-a     apply     apply or use a tool (pick-axe, key, camera, etc.)
-A     takeoffall  choose multiple items of armor, accessories, and weapons
-                to take off, remove, unwield (uses same amount of game time
-                as removing them individually with T,R,w- would take)
-c     close     close a door
-C     call      name a monster, an individual object, or a type of object
-d     drop      drop an object.  d7a:  drop seven items of object 'a'
-D     Drop      drop selected types of objects
-e     eat       eat something
-E     engrave   write a message in the dust on the floor  (E-  use fingers)
-f     fire      fire ammunition from quiver
-F     fight     followed by direction, fight a monster
-i     invent    list your inventory (all objects you are carrying)
-I     Invent    list selected parts of your inventory; for example
-                  I(  list all tools, or  I"  list all amulets
-                  IB  list all items known to be blessed
-                  IU  uncursed, or  IC  cursed, or  IX  unknown bless state
-                  Iu  when in a shop, list unpaid objects being carried
-                  Ix  in a shop, list any fees and used-up shop-owned items
-o     open      open a door
-p     pay       pay your bill (in a shop)
-P     puton     put on an accessory (ring, amulet, etc; can be used to wear
-                armor too, but armor items aren't listed as likely candidates)
-q     quaff     drink something (potion, water, etc)
-Q     quiver    select ammunition for quiver (use '#quit' to quit)
-r     read      read a scroll or spellbook
-R     remove    remove an accessory (ring, amulet, etc; can be used to take
-                off armor too)
-s     search    search for secret doors, hidden traps and monsters
-t     throw     throw or shoot a weapon
-T     takeoff   take off some armor; can be used to remove accessories too,
-                but those aren't listed as likely candidates)
-w     wield     wield a weapon  (w-  wield nothing to unwield current weapon)
-W     wear      wear an item of armor; can be used to put on accessories too,
-                but those aren't listed as likely candidates)
-x     xchange   swap wielded and secondary weapons
-X     twoweapon toggle two-weapon combat if role allows that
-z     zap       zap a wand  (use y instead of z if number_pad is -1)
-Z     Zap       cast a spell  (use Y instead of Z if number_pad is -1)
-<     up        go up the stairs
->     down      go down the stairs
-^     trap_id   identify a previously found trap
-),[,=,",(       show current items of specified symbol in use
-*               show combination of ),[,=,",( all at once
-$     gold      count your gold
-+     spells    list the spells you know; also rearrange them if desired
-`     classkn   display known items for one class of objects
-_     travel    move via a shortest-path algorithm to a point on the map
-^_    retravel  resume travelling toward previously specified destination
-.     rest      wait a moment
-,     pickup    pick up all you can carry
-@               toggle "pickup" (auto pickup) option on and off
-:     look      look at what is here
-;     farlook   look at what is somewhere else by selecting a map location
-                (for a monster on top of one or more objects, only describes
-                that monster; for a pile of objects, only describes top one)
+Commandes de jeu :
+^D    kick      donner un coup de pied (dans une porte ou autre chose)
+^T    Tport     se téléporter (si vous le pouvez)
+^X    show      afficher vos caractéristiques
+a     apply     appliquer ou utiliser un outil (pioche, clé, appareil photo...)
+A     takeoffall  choisir plusieurs pièces d'armure, accessoires et armes à
+                ôter, retirer ou lâcher (prend autant de temps de jeu que
+                de les retirer un par un avec T, R, w-)
+c     close     fermer une porte
+C     call      nommer un monstre, un objet individuel ou un type d'objet
+d     drop      poser un objet.  d7a :  poser sept exemplaires de l'objet 'a'
+D     Drop      poser des types d'objets choisis
+e     eat       manger quelque chose
+E     engrave   écrire un message dans la poussière  (E- : avec les doigts)
+f     fire      tirer les munitions du carquois
+F     fight     suivi d'une direction, combattre un monstre
+i     invent    lister votre inventaire (tous les objets que vous portez)
+I     Invent    lister certaines parties de votre inventaire ; par exemple
+                  I(  tous les outils, ou  I"  toutes les amulettes
+                  IB  tous les objets connus comme bénis
+                  IU  non maudits, ou  IC  maudits, ou  IX  état inconnu
+                  Iu  dans une boutique, les objets impayés que vous portez
+                  Ix  dans une boutique, les frais et objets consommés
+o     open      ouvrir une porte
+p     pay       payer votre facture (dans une boutique)
+P     puton     mettre un accessoire (anneau, amulette, etc. ; sert aussi à
+                revêtir une armure, mais les armures ne sont pas proposées)
+q     quaff     boire quelque chose (potion, eau, etc.)
+Q     quiver    choisir les munitions du carquois (#quit pour quitter)
+r     read      lire un parchemin ou un grimoire
+R     remove    retirer un accessoire (anneau, amulette, etc. ; sert aussi à
+                ôter une armure)
+s     search    chercher portes secrètes, pièges et monstres cachés
+t     throw     lancer ou tirer une arme
+T     takeoff   ôter une pièce d'armure ; sert aussi à retirer les
+                accessoires, mais ils ne sont pas proposés
+w     wield     manier une arme  (w- : ne rien manier, lâcher l'arme actuelle)
+W     wear      revêtir une pièce d'armure ; sert aussi à mettre les
+                accessoires, mais ils ne sont pas proposés
+x     xchange   échanger l'arme maniée et l'arme secondaire
+X     twoweapon activer/désactiver le combat à deux armes si le rôle le permet
+z     zap       utiliser une baguette  (y au lieu de z si number_pad vaut -1)
+Z     Zap       lancer un sort  (Y au lieu de Z si number_pad vaut -1)
+<     up        monter l'escalier
+>     down      descendre l'escalier
+^     trap_id   identifier un piège déjà trouvé
+),[,=,",(       montrer les objets utilisés correspondant à ce symbole
+*               montrer à la fois ),[,=,",(
+$     gold      compter votre or
++     spells    lister les sorts connus ; permet aussi de les réordonner
+`     classkn   afficher les objets connus d'une classe d'objets
+_     travel    voyager par le plus court chemin jusqu'à un point de la carte
+^_    retravel  reprendre le voyage vers la destination indiquée auparavant
+.     rest      attendre un moment
+,     pickup    ramasser tout ce que vous pouvez porter
+@               activer/désactiver l'option "pickup" (ramassage automatique)
+:     look      regarder ce qu'il y a ici
+;     farlook   regarder ce qu'il y a ailleurs en choisissant une case
+                (pour un monstre sur un ou plusieurs objets, ne décrit que
+                le monstre ; pour un tas d'objets, ne décrit que le dessus)
 
-Keyboards that have a meta key (some use Alt for that, so typing Alt as a
-shift plus 'e' would generate 'M-e') can also use these extended commands
-via the meta modifier as an alternative to using the # prefix.  Unlike
-control characters, meta characters are case-sensitive so M-a is different
-from M-A.  Type the latter with two keys used as shifts, Meta+Shift+a.
+Les claviers dotés d'une touche méta (certains utilisent Alt pour cela : Alt
+tenue avec 'e' produit alors 'M-e') peuvent aussi invoquer ces commandes
+étendues avec le modificateur méta au lieu du préfixe #.  Contrairement aux
+caractères de contrôle, les caractères méta tiennent compte de la casse : M-a
+diffère de M-A.  Tapez ce dernier avec deux modificateurs, Méta+Maj+a.
 
-M-?             display extended command help (if the platform allows this)
-M-2   twoweapon toggle two-weapon combat (unless number_pad is enabled)
-M-a   adjust    adjust inventory letters
-M-A   annotate  add a one-line note to the current dungeon level (see M-O)
-M-c   chat      talk to someone
-M-C   conduct   view optional challenges
-M-d   dip       dip an object into something
-M-e   enhance   show weapon and spell skills, can improve them if eligible
-M-f   force     force a lock
-M-g   genocided list genocided and extinct monster types, if any
-M-i   invoke    invoke an object's special powers
-M-j   jump      jump to another location
-M-l   loot      loot a box on the floor
-M-m   monster   when polymorphed, use monster's special ability
-M-n   name      name a monster, an individual object, or a type of object
-M-N   name      synonym for M-n  (both are the same as C)
-M-o   offer     offer a sacrifice to the gods
-M-O   overview  display information about visited levels and annotations
-M-p   pray      pray to the gods for help
-M-q   quit      stop playing without saving game (use S to save and exit)
-M-r   rub       rub a lamp or a stone
-M-R   ride      mount or dismount saddled steed
-M-s   sit       sit down
-M-t   turn      turn undead if role allows that
-M-T   tip       upend a container to dump out its contents
-M-u   untrap    untrap something
-M-V   vanquished list number and type of vanquished monsters
-M-v   version   print compile time options for this version
-M-w   wipe      wipe off your face
-M-X   explore   switch from regular play to non-scoring explore mode
+M-?             afficher l'aide des commandes étendues (si possible)
+M-2   twoweapon activer/désactiver le combat à deux armes (sauf number_pad)
+M-a   adjust    réorganiser les lettres de l'inventaire
+M-A   annotate  ajouter une note d'une ligne au niveau actuel (voir M-O)
+M-c   chat      parler à quelqu'un
+M-C   conduct   voir les défis facultatifs
+M-d   dip       tremper un objet dans quelque chose
+M-e   enhance   voir les compétences d'armes et de sorts, et les améliorer
+M-f   force     forcer une serrure
+M-g   genocided lister les types de monstres génocidés ou éteints
+M-i   invoke    invoquer les pouvoirs spéciaux d'un objet
+M-j   jump      sauter à un autre endroit
+M-l   loot      piller une boîte posée au sol
+M-m   monster   une fois métamorphosé, utiliser la capacité du monstre
+M-n   name      nommer un monstre, un objet individuel ou un type d'objet
+M-N   name      synonyme de M-n  (tous deux équivalent à C)
+M-o   offer     offrir un sacrifice aux dieux
+M-O   overview  informations sur les niveaux visités et leurs annotations
+M-p   pray      prier les dieux de vous aider
+M-q   quit      arrêter sans sauvegarder (S pour sauvegarder et quitter)
+M-r   rub       frotter une lampe ou une pierre
+M-R   ride      monter ou descendre d'une monture sellée
+M-s   sit       s'asseoir
+M-t   turn      repousser les morts-vivants si le rôle le permet
+M-T   tip       renverser un contenant pour en vider le contenu
+M-u   untrap    désamorcer quelque chose
+M-V   vanquished lister le nombre et le type des monstres vaincus
+M-v   version   afficher les options de compilation de cette version
+M-w   wipe      vous essuyer le visage
+M-X   explore   passer du jeu normal au mode exploration (sans score)
 
-If the 'number_pad' option is on, keys usually used for movement can be
-used for various commands:
+Si l'option 'number_pad' est activée, les touches habituelles de déplacement
+servent à diverses commandes :
 
-n               followed by number of times to repeat the next command
-h     help      display one of several informative texts, like '?'
-j     jump      jump to another location
-k     kick      kick something (usually a door)
-l     loot      loot a box on the floor
-N     name      name an item or type of object
-u     untrap    untrap something (usually a trapped object)
+n               suivi du nombre de répétitions de la commande suivante
+h     help      afficher l'un des textes d'information, comme '?'
+j     jump      sauter à un autre endroit
+k     kick      donner un coup de pied (en général dans une porte)
+l     loot      piller une boîte posée au sol
+N     name      nommer un objet ou un type d'objet
+u     untrap    désamorcer quelque chose (en général un objet piégé)
 
-Additional commands are available in debug mode (also known as wizard mode).
+D'autres commandes sont disponibles en mode débogage (ou mode wizard).

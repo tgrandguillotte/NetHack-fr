@@ -1056,16 +1056,16 @@ function make_dig_engraving(data)
    local ty = data.y - pos.y;
    local dig = "";
    if (tx == 0 and ty == 0) then
-      dig = " here";
+      dig = " ici";
    else
       if (tx < 0 or tx > 0) then
-         dig = string.format(" %i %s", math.abs(tx), (tx > 0) and "east" or "west");
+         dig = string.format(" %i vers l'%s", math.abs(tx), (tx > 0) and "est" or "ouest");
       end
       if (ty < 0 or ty > 0) then
-         dig = dig .. string.format(" %i %s", math.abs(ty), (ty > 0) and "south" or "north");
+         dig = dig .. string.format(" %i vers le %s", math.abs(ty), (ty > 0) and "sud" or "nord");
       end
    end
-   des.engraving({ coord = pos, type = "burn", text = "Dig" .. dig });
+   des.engraving({ coord = pos, type = "burn", text = "Creusez" .. dig });
 end
 
 -- postprocess callback: turn room walls into trees

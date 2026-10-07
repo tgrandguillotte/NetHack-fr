@@ -207,7 +207,7 @@ static const char *const shkhealthfoods[] = {
  * generated annotations for #overview.  If Null, the first name gets used.
  */
 const struct shclass shtypes[] = {
-    { "general store", NULL,
+    { "bazar", NULL,
       RANDOM_CLASS,
       42,
       D_SHOP,
@@ -218,7 +218,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkgeneral },
-    { "used armor dealership", "armor shop",
+    { "magasin d'armures d'occasion", "armurerie",
       ARMOR_CLASS,
       14,
       D_SHOP,
@@ -229,7 +229,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkarmors },
-    { "second-hand bookstore", "scroll shop",
+    { "bouquinerie", "boutique de parchemins",
       SCROLL_CLASS,
       10,
       D_SHOP,
@@ -240,7 +240,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkbooks },
-    { "liquor emporium", "potion shop",
+    { "cave à liqueurs", "boutique de potions",
       POTION_CLASS,
       10,
       D_SHOP,
@@ -251,7 +251,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkliquors },
-    { "antique weapons outlet", "weapon shop",
+    { "magasin d'armes anciennes", "boutique d'armes",
       WEAPON_CLASS,
       5,
       D_SHOP,
@@ -262,7 +262,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkweapons },
-    { "delicatessen", "food shop",
+    { "épicerie fine", "épicerie",
       FOOD_CLASS,
       5,
       D_SHOP,
@@ -273,7 +273,7 @@ const struct shclass shtypes[] = {
         { 3, -ICE_BOX },
         { 0, 0 } },
       shkfoods },
-    { "jewelers", "ring shop",
+    { "bijouterie", "boutique d'anneaux",
       RING_CLASS,
       3,
       D_SHOP,
@@ -284,7 +284,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkrings },
-    { "quality apparel and accessories", "wand shop",
+    { "boutique de prêt-à-porter et accessoires", "boutique de baguettes",
       WAND_CLASS,
       3,
       D_SHOP,
@@ -293,7 +293,7 @@ const struct shclass shtypes[] = {
         { 5, -ELVEN_CLOAK },
         { 0, 0 } },
       shkwands },
-    { "hardware store", "tool shop",
+    { "quincaillerie", "boutique d'outils",
       TOOL_CLASS,
       3,
       D_SHOP,
@@ -304,7 +304,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shktools },
-    { "rare books", "bookstore",
+    { "librairie ancienne", "librairie",
       SPBOOK_CLASS,
       3,
       D_SHOP,
@@ -315,7 +315,7 @@ const struct shclass shtypes[] = {
         { 0, 0 },
         { 0, 0 } },
       shkbooks },
-    { "health food store", "vegetarian food shop",
+    { "boutique diététique", "épicerie végétarienne",
       FOOD_CLASS,
       2,
       D_SHOP,
@@ -330,7 +330,7 @@ const struct shclass shtypes[] = {
      * probability of zero.  They are only created via the special level
      * loader.
      */
-    { "lighting store", "lighting shop",
+    { "magasin de luminaires", "boutique de luminaires",
       TOOL_CLASS,
       0,
       D_SHOP,
@@ -458,8 +458,8 @@ mkshobj_at(const struct shclass *shp, int sx, int sy, boolean mkspecl)
     int atype;
 
     /* 3.6 tribute */
-    if (mkspecl && (!strcmp(shp->name, "rare books")
-                    || !strcmp(shp->name, "second-hand bookstore"))) {
+    if (mkspecl && (!strcmp(shp->name, "librairie ancienne")
+                    || !strcmp(shp->name, "bouquinerie"))) {
         struct obj *novel = mksobj_at(SPE_NOVEL, sx, sy, FALSE, FALSE);
 
         if (novel)
@@ -758,7 +758,7 @@ stock_room(int shp_indx, struct mkroom *sroom)
             n--;
         else if (inside_shop(sx, sy - 1))
             n++;
-        Sprintf(buf, "Closed for inventory");
+        Sprintf(buf, "Fermé pour inventaire");
         make_engr_at(m, n, buf, NULL, 0L, DUST);
         if (levl[m][n].typ != CORR && levl[m][n].typ != ROOM)
             levl[m][n].typ = (Is_special(&u.uz)

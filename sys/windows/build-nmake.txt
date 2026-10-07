@@ -1,21 +1,23 @@
-Building NetHack using the Visual Studio nmake from the command line
+Compilation de NetHack avec le nmake de Visual Studio en ligne de commande
 
-Prerequisite Requirements:
+(Traduction française du document d'origine build-nmake.txt.)
+
+Prérequis :
 
   o Visual Studio Community
-        A copy of Microsoft Visual Studio Community needs to
-        be installed on your machine. See:
+        Une copie de Microsoft Visual Studio Community doit être
+        installée sur votre machine. Voir :
         https://visualstudio.microsoft.com/vs/community/
 
 
-The build Makefiles and procedures produce two executables:
-    a. A TTY and curses version of NetHack in nethack.exe
-    b. A Windows and curses graphical version in nethackw.exe.
+Les Makefiles et procédures de compilation produisent deux exécutables :
+    a. une version TTY et curses de NetHack dans nethack.exe ;
+    b. une version graphique Windows et curses dans nethackw.exe.
 
-You can use one of the following build environments:
+Vous pouvez utiliser l'un des environnements de compilation suivants :
 
 /---------------------------------------------\
-|    Directories for a Windows NetHack build  |
+|  Répertoires d'une compilation pour Windows |
 \---------------------------------------------/
 
                (NetHack-top)
@@ -37,106 +39,106 @@ You can use one of the following build environments:
 
 
 /-----------------------------------------------------------\
-| Building From the Command Line Using nmake from one of the |
-| Visual Studio Community versions                           |
+| Compilation en ligne de commande avec le nmake de l'une   |
+| des versions de Visual Studio Community                   |
 \-----------------------------------------------------------/
 
-Building
+Compilation
 
-Two different versions of NetHack will be built for Windows from the
-command line using the Makefile approach:
-    A tty port utilizing the Win32 Console I/O subsystem Console,
-    and a curses interface in an executable called NetHack.exe.
+Deux versions différentes de NetHack pour Windows seront compilées en
+ligne de commande avec l'approche par Makefile :
+    une version tty utilisant le sous-système d'E/S console Win32,
+    ainsi qu'une interface curses, dans un exécutable nommé NetHack.exe ;
         NetHack
-    A Win32 native port built on the Windows API Graphical NetHack,
-    and graphical curses in an executable called NetHackW.exe.
+    une version Win32 native, graphique, reposant sur l'API Windows,
+    ainsi qu'une interface curses graphique, dans un exécutable nommé
+    NetHackW.exe.
 
-The Makefile configurations will build both; NetHack.exe and NetHackW.exe
-and will be able to use the same datafiles, save files and bones files.
+Les configurations de Makefile compilent les deux, NetHack.exe et
+NetHackW.exe, qui pourront utiliser les mêmes fichiers de données, de
+sauvegarde et d'os (bones).
 
-Since the last official release of NetHack, compilers and computer
-architectures have evolved and you can now choose whether to build
-a 32-bit x86 version, or a 64-bit x64 version.  The default Makefile
-is set up for a 32-bit x86 version, but that's only because it will
-run on the most number of existing Windows environments. Change it if you
-want. Be aware that NetHack's save files and bones files in the 5.0.1
-release have not yet evolved enough to allow them to interchange between
-the 32-bit version and the 64-bit version (or between different platforms).
-That may change in future.
+Depuis la dernière version officielle de NetHack, les compilateurs et les
+architectures ont évolué ; vous pouvez désormais choisir de compiler une
+version x86 32 bits ou une version x64 64 bits. Le Makefile par défaut
+est configuré pour une version x86 32 bits, uniquement parce qu'elle
+fonctionnera sur le plus grand nombre d'environnements Windows existants.
+Modifiez-le si vous le souhaitez. Sachez que les fichiers de sauvegarde
+et d'os de la version 5.0.1 de NetHack n'ont pas encore suffisamment
+évolué pour être interchangeables entre la version 32 bits et la version
+64 bits (ni entre plateformes différentes). Cela pourrait changer à
+l'avenir.
 
-I. Dispelling the Myths:
+I. Dissiper les idées reçues :
 
-    Compiling NetHack for Windows is not as easy as it sounds, nor as hard
-    as it looks, however it will behoove you to read this entire section
-    through before beginning the task.
+    Compiler NetHack pour Windows n'est pas aussi facile qu'il y paraît,
+    ni aussi difficile qu'on pourrait le croire ; il est toutefois
+    préférable de lire toute cette section avant de commencer.
 
-    We have provided a Visual Studio nmake Makefile.make in
-    sys/windows/Makefile.nmake, which you use from the Windows command
-    line.
+    Nous fournissons un Makefile pour le nmake de Visual Studio dans
+    sys/windows/Makefile.nmake, à utiliser depuis la ligne de commande
+    Windows.
 
 
-II. To compile your copy of NetHack on a Windows machine:
+II. Pour compiler votre copie de NetHack sur une machine Windows :
 
-Setting Up
+Préparation
 
-1.  Change your current directory to the sys\windows subfolder of the nethack
-    source tree, if you are at the top of the NetHack source tree.
+1.  Placez-vous dans le sous-dossier sys\windows de l'arborescence des
+    sources de NetHack, si vous êtes à la racine de cette arborescence.
         cd sys\windows.
 
-2.  Execute
+2.  Exécutez
         .\nhsetup.bat
-    to place copies of the Makefiles in
-    the src subfolder. The file sys\windows\Makefile.nmake will copied
-    to a file src\Makefile.
+    pour copier les Makefiles dans le sous-dossier src. Le fichier
+    sys\windows\Makefile.nmake sera copié dans un fichier src\Makefile.
         .\nhsetup.bat
-3.  Execute
+3.  Exécutez
         .\fetch.bat lua
-    to place a copy of Lua into the lib subfolder of the NetHack source
-    tree. NetHack 5.0 for Windows requires 3rd party Lua source that is not part
-    of the NetHack distribution or repository.
+    pour placer une copie de Lua dans le sous-dossier lib de
+    l'arborescence des sources de NetHack. NetHack 5.0 pour Windows
+    nécessite les sources de Lua, un projet tiers qui ne fait pas partie
+    de la distribution ni du dépôt de NetHack.
 
-4.  If you want to include support of the optional curses interface in your
-    build, execute
+4.  Si vous voulez inclure dans votre compilation la prise en charge de
+    l'interface curses (facultative), exécutez
         .\fetch.cmd pdcursesmod
-    to place a copy pdcursesmod into the lib subfolder of the NetHack
-    tree.
+    pour placer une copie de pdcursesmod dans le sous-dossier lib de
+    l'arborescence NetHack.
 
-5.  Change your current directory to the src subfolder of the nethack
-    source tree. The following command assumes you are still in the
-    sys\windows folder from steps #1 and #2 above:
+5.  Placez-vous dans le sous-dossier src de l'arborescence des sources de
+    NetHack. La commande suivante suppose que vous êtes toujours dans le
+    dossier sys\windows, comme aux étapes 1 et 2 ci-dessus :
         cd ..\..\src
 
-Compiling
+Compilation
 
-6.  Now that everything is set up, you should be ready to start the
-    process.
+6.  Maintenant que tout est en place, vous êtes prêt à lancer le
+    processus.
 
-    Your current directory should be the NetHack src directory.
+    Votre répertoire courant doit être le répertoire src de NetHack.
 
-    Issue these following command:
+    Lancez la commande suivante :
 	    nmake package
 
-    If all goes well, intermediate NetHack files will be placed in the
-    binary subfolder of the NetHack tree, and the final NetHack package
-    for windows will be in the package subfolder.
+    Si tout se passe bien, les fichiers intermédiaires de NetHack seront
+    placés dans le sous-dossier binary de l'arborescence NetHack, et le
+    paquet final de NetHack pour Windows sera dans le sous-dossier package.
 
-Notes:
+Remarques :
 
-N1. To rebuild NetHack after changing something, change your current directory
-    to src and issue the appropriate command for your compiler:
+N1. Pour recompiler NetHack après une modification, placez-vous dans src
+    et lancez la commande adaptée à votre compilateur :
 
-    For Microsoft compiler:
+    Pour le compilateur Microsoft :
         nmake package
 
-N2. Depending on the build and compiler and tools used above, the
-    package produced by the build will be either contain:
-      - a 32-bit (x86) .exe file,
-        which should run on any recent Win32 environment.
-    or
-      - a 64-bit (x64) .exe file,
-        which should run on any 64-bit Windows O/S.
+N2. Selon la compilation, le compilateur et les outils utilisés ci-dessus,
+    le paquet produit contiendra :
+      - soit un fichier .exe 32 bits (x86),
+        qui devrait fonctionner sur tout environnement Win32 récent ;
+      - soit un fichier .exe 64 bits (x64),
+        qui devrait fonctionner sur tout système Windows 64 bits.
 
-    **Note**: saved games and bones files are NOT compatible between the
-    32-bit and the 64-bit versions at this time.
-
-
+    **Remarque** : les parties sauvegardées et les fichiers d'os ne sont
+    PAS compatibles entre les versions 32 bits et 64 bits pour l'instant.

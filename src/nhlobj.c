@@ -199,11 +199,11 @@ l_obj_objects_to_table(lua_State *L)
 
     lua_newtable(L);
 
-    if (OBJ_NAME(objects[otyp]))
-        nhl_add_table_entry_str(L, "name", OBJ_NAME(objects[otyp]));
-    if (OBJ_DESCR(objects[otyp]))
-        nhl_add_table_entry_str(L, "descr",
-                                OBJ_DESCR(objects[otyp]));
+    /* VF : les scripts Lua manipulent les noms anglais d'origine */
+    if (en_obj_names[otyp])
+        nhl_add_table_entry_str(L, "name", en_obj_names[otyp]);
+    if (en_obj_descrs[otyp])
+        nhl_add_table_entry_str(L, "descr", en_obj_descrs[otyp]);
     if (o->oc_uname)
         nhl_add_table_entry_str(L, "uname", o->oc_uname);
 
@@ -262,11 +262,10 @@ l_obj_to_table(lua_State *L)
     nhl_add_table_entry_int(L, "ox", obj->ox);
     nhl_add_table_entry_int(L, "oy", obj->oy);
     nhl_add_table_entry_int(L, "otyp", obj->otyp);
-    if (OBJ_NAME(objects[obj->otyp]))
-        nhl_add_table_entry_str(L, "otyp_name", OBJ_NAME(objects[obj->otyp]));
-    if (OBJ_DESCR(objects[obj->otyp]))
-        nhl_add_table_entry_str(L, "otyp_descr",
-                                OBJ_DESCR(objects[obj->otyp]));
+    if (en_obj_names[obj->otyp])
+        nhl_add_table_entry_str(L, "otyp_name", en_obj_names[obj->otyp]);
+    if (en_obj_descrs[obj->otyp])
+        nhl_add_table_entry_str(L, "otyp_descr", en_obj_descrs[obj->otyp]);
     nhl_add_table_entry_int(L, "owt", obj->owt);
     nhl_add_table_entry_int(L, "quan", obj->quan);
     nhl_add_table_entry_int(L, "spe", obj->spe);
@@ -326,7 +325,7 @@ l_obj_to_table(lua_State *L)
         && (obj->otyp == TIN || obj->otyp == CORPSE || obj->otyp == EGG
             || obj->otyp == FIGURINE || obj->otyp == STATUE))
         nhl_add_table_entry_str(L, "corpsenm_name",
-                                mons[obj->corpsenm].pmnames[NEUTRAL]);
+                                en_mon_names[obj->corpsenm][NEUTRAL]);
     /* TODO: leashmon, fromsink, novelidx, record_achieve_special */
     nhl_add_table_entry_int(L, "usecount", obj->usecount);
     /* TODO: spestudied */

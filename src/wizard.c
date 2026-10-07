@@ -75,11 +75,14 @@ amulet(void)
             if (ttmp->ttyp == MAGIC_PORTAL) {
                 int du = distu(ttmp->tx, ttmp->ty);
                 if (du <= 9)
-                    pline("%s hot!", Tobjnam(amu, "feel"));
+                    pline("%s %s !", Tobjnam(amu, "sembler"),
+                          fr_adj_accord("brûlant", xname(amu)));
                 else if (du <= 64)
-                    pline("%s very warm.", Tobjnam(amu, "feel"));
+                    pline("%s très %s.", Tobjnam(amu, "sembler"),
+                          fr_adj_accord("chaud", xname(amu)));
                 else if (du <= 144)
-                    pline("%s warm.", Tobjnam(amu, "feel"));
+                    pline("%s %s.", Tobjnam(amu, "sembler"),
+                          fr_adj_accord("tiède", xname(amu)));
                 /* else, the amulet feels normal */
                 break;
             }
@@ -96,7 +99,7 @@ amulet(void)
             mtmp->msleeping = 0;
             if (!m_next2u(mtmp))
                 You(
-      "get the creepy feeling that somebody noticed your taking the Amulet.");
+      "avez l'inquiétante impression que quelqu'un a remarqué que vous preniez l'Amulette.");
             return;
         }
     }
@@ -441,7 +444,7 @@ tactics(struct monst *mtmp)
 
                 if ((otmp = on_ground(which_arti(targ))) != 0) {
                     if (cansee(mtmp->mx, mtmp->my))
-                        pline("%s picks up %s.", Monnam(mtmp),
+                        pline("%s ramasse %s.", Monnam(mtmp),
                               distant_name(otmp, doname));
                     obj_extract_self(otmp);
                     (void) mpickobj(mtmp, otmp);
@@ -720,7 +723,7 @@ resurrect(void)
 
     if (!svc.context.no_of_wizards) {
         /* make a new Wizard */
-        verb = "kill";
+        verb = "me tuer";
         mtmp = makemon(&mons[PM_WIZARD_OF_YENDOR], u.ux, u.uy, MM_NOWAIT);
         /* affects experience; he's not coming back from a corpse
            but is subject to repeated killing like a revived corpse */
@@ -728,7 +731,7 @@ resurrect(void)
             mtmp->mrevived = 1;
     } else {
         /* look for a migrating Wizard */
-        verb = "elude";
+        verb = "m'échapper";
         mmtmp = &gm.migrating_mons;
         while ((mtmp = *mmtmp) != 0) {
             if (mtmp->iswiz
@@ -772,9 +775,9 @@ resurrect(void)
         mtmp->mtame = 0, mtmp->mpeaceful = 0; /* paranoia */
         set_malign(mtmp);
         if (!Deaf) {
-            pline("A voice booms out...");
+            pline("Une voix tonne...");
             SetVoice(mtmp, 0, 80, 0);
-            verbalize("So thou thought thou couldst %s me, fool.", verb);
+            verbalize("Ainsi tu pensais pouvoir %s, insensé.", verb);
         }
     }
 }
@@ -790,11 +793,12 @@ intervene(void)
     switch (which) {
     case 0:
     case 1:
-        You_feel("vaguely nervous.");
+        You_feel("vous sentez vaguement nerveu%s.", flags.female ? "se" : "x");
         break;
     case 2:
         if (!Blind)
-            You("notice a %s glow surrounding you.", hcolor(NH_BLACK));
+            You("remarquez une lueur %s qui vous entoure.",
+                fr_adj(hcolor(NH_BLACK), FR_FEM, FALSE));
         rndcurse();
         break;
     case 3:
@@ -822,23 +826,23 @@ wizdeadorgone(void)
 }
 
 static const char *const random_insult[] = {
-    "antic",      "blackguard",   "caitiff",    "chucklehead",
-    "coistrel",   "craven",       "cretin",     "cur",
-    "dastard",    "demon fodder", "dimwit",     "dolt",
-    "fool",       "footpad",      "imbecile",   "knave",
-    "maledict",   "miscreant",    "niddering",  "poltroon",
-    "rattlepate", "reprobate",    "scapegrace", "varlet",
-    "villein", /* (sic.) */
-    "wittol",     "worm",         "wretch",
+    "bouffon",    "canaille",     "félon",      "benêt",
+    "faquin",     "couard",       "crétin",     "chien",
+    "pleutre",    "pâture à démons", "nigaud",  "balourd",
+    "fou",        "tire-laine",   "imbécile",   "fripon",
+    "maudit",     "mécréant",     "capon",      "poltron",
+    "écervelé",   "réprouvé",     "vaurien",    "maraud",
+    "vilain", /* (sic.) */
+    "cocu",       "ver de terre", "misérable",
 };
 
 static const char *const random_malediction[] = {
-    "Hell shall soon claim thy remains,", "I chortle at thee, thou pathetic",
-    "Prepare to die, thou", "Resistance is useless,",
-    "Surrender or die, thou", "There shall be no mercy, thou",
-    "Thou shalt repent of thy cunning,", "Thou art as a flea to me,",
-    "Thou art doomed,", "Thy fate is sealed,",
-    "Verily, thou shalt be one dead"
+    "L'Enfer réclamera bientôt ta dépouille,", "Je me ris de toi, pathétique",
+    "Prépare-toi à mourir,", "Toute résistance est inutile,",
+    "Rends-toi ou meurs,", "Il n'y aura point de pitié,",
+    "Tu te repentiras de ta ruse,", "Tu n'es qu'une puce pour moi,",
+    "Tu es perdu,", "Ton sort est scellé,",
+    "En vérité, tu vas mourir,"
 };
 
 /* Insult or intimidate the player */
@@ -849,22 +853,22 @@ cuss(struct monst *mtmp)
         return;
     if (mtmp->iswiz) {
         if (!rn2(5)) { /* typical bad guy action */
-            pline("%s laughs fiendishly.", Monnam(mtmp));
+            pline("%s ricane diaboliquement.", Monnam(mtmp));
         } else if (u.uhave.amulet && !rn2(SIZE(random_insult))) {
             SetVoice(mtmp, 0, 80, 0);
-            verbalize("Relinquish the amulet, %s!",
+            verbalize("Rends-moi l'amulette, %s !",
                       ROLL_FROM(random_insult));
         } else if (u.uhp < 5 && !rn2(2)) { /* Panic */
             SetVoice(mtmp, 0, 80, 0);
-            verbalize(rn2(2) ? "Even now thy life force ebbs, %s!"
-                             : "Savor thy breath, %s, it be thy last!",
+            verbalize(rn2(2) ? "Déjà ta force vitale s'épuise, %s !"
+                             : "Savoure ton souffle, %s, c'est ton dernier !",
                       ROLL_FROM(random_insult));
         } else if (mtmp->mhp < 5 && !rn2(2)) { /* Parthian shot */
             SetVoice(mtmp, 0, 80, 0);
-            verbalize(rn2(2) ? "I shall return." : "I'll be back.");
+            verbalize(rn2(2) ? "Je reviendrai." : "On se reverra !");
         } else {
             SetVoice(mtmp, 0, 80, 0);
-            verbalize("%s %s!",
+            verbalize("%s %s !",
                       ROLL_FROM(random_malediction),
                       ROLL_FROM(random_insult));
         }
@@ -875,7 +879,7 @@ cuss(struct monst *mtmp)
           + QT_ANGELIC);*/
     } else {
         if (!rn2(is_minion(mtmp->data) ? 100 : 5))
-            pline("%s casts aspersions on your ancestry.", Monnam(mtmp));
+            pline("%s insulte vos ancêtres.", Monnam(mtmp));
         else
             com_pager("demon_cuss");
     }

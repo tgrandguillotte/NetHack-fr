@@ -418,7 +418,7 @@ curses_choose_character(void)
     prompt[count_off] = '\0';
     Snprintf(choice, sizeof(choice), "%s%c", tmpchoice, '\033');
     if (strchr(tmpchoice, 't')) {       /* Tutorial mode */
-        mvaddstr(0, 1, "New? Press t to enter a tutorial.");
+        mvaddstr(0, 1, "Nouveau ? Appuyez sur t pour suivre le tutoriel.");
     }
 
     /* Add capital letters as choices that aren't displayed */
@@ -482,7 +482,7 @@ curses_choose_character(void)
         choices[n] = (const char *) 0;
         if (n > 1)
             sel = curses_character_dialog(choices,
-                                        "Choose one of the following roles:");
+                                        "Choisissez l'un des rôles suivants :");
         else
             sel = 0;
         if (sel >= 0)
@@ -544,7 +544,7 @@ curses_choose_character(void)
             /* Permit the user to pick, if there is more than one */
             if (n > 1)
                 sel = curses_character_dialog(choices,
-                                        "Choose one of the following races:");
+                                        "Choisissez l'une des races suivantes :");
             else
                 sel = 0;
             if (sel >= 0)
@@ -604,7 +604,7 @@ curses_choose_character(void)
             /* Permit the user to pick, if there is more than one */
             if (n > 1)
                 sel = curses_character_dialog(choices,
-                                      "Choose one of the following genders:");
+                                      "Choisissez l'un des sexes suivants :");
             else
                 sel = 0;
             if (sel >= 0)
@@ -662,7 +662,7 @@ curses_choose_character(void)
             /* Permit the user to pick, if there is more than one */
             if (n > 1)
                 sel = curses_character_dialog(choices,
-                                   "Choose one of the following alignments:");
+                                   "Choisissez l'un des alignements suivants :");
             else
                 sel = 0;
             if (sel >= 0)
@@ -717,12 +717,12 @@ curses_character_dialog(const char **choices, const char *prompt)
     /* Random Selection */
     identifier.a_int = ROLE_RANDOM;
     curses_add_menu(wid, &nul_glyphinfo, &identifier, '*', 0,
-                    A_NORMAL, clr, "Random", MENU_ITEMFLAGS_NONE);
+                    A_NORMAL, clr, "Au hasard", MENU_ITEMFLAGS_NONE);
 
     /* Quit prompt */
     identifier.a_int = ROLE_NONE;
     curses_add_menu(wid, &nul_glyphinfo, &identifier, 'q', 0,
-                    A_NORMAL, clr, "Quit", MENU_ITEMFLAGS_NONE);
+                    A_NORMAL, clr, "Quitter", MENU_ITEMFLAGS_NONE);
     curses_end_menu(wid, prompt);
     ret = curses_select_menu(wid, PICK_ONE, &selected);
     if (ret == 1) {

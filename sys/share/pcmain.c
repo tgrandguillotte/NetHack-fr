@@ -135,7 +135,7 @@ _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);*/
      * the game is exited.
      */
     if (getcwd(orgdir, sizeof orgdir) == (char *) 0)
-        error("NetHack: current directory path too long");
+        error("NetHack : chemin du répertoire courant trop long");
 #ifndef NO_SIGNAL
     signal(SIGINT,
            (SIG_RET_TYPE) nethack_exit); /* restore original directory */
@@ -279,7 +279,7 @@ _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);*/
 
 #ifdef NOCWD_ASSUMPTIONS
     if (!validate_prefix_locations(failbuf)) {
-        raw_printf("Some invalid directory locations were specified:\n\t%s\n",
+        raw_printf("Des emplacements de répertoires invalides ont été indiqués :\n\t%s\n",
                    failbuf);
         nethack_exit(EXIT_FAILURE);
     }
@@ -319,7 +319,7 @@ _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);*/
                 dir = argv[0];
             }
             if (!*dir)
-                error("Flag -d must be followed by a directory name.");
+                error("L'option -d doit être suivie d'un nom de répertoire.");
             Strcpy(gh.hackdir, dir);
         }
         if (argc > 1) {
@@ -350,7 +350,7 @@ _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);*/
  */
     if (!dlb_init()) {
         pline(
-            "%s\n%s\n%s\n%s\n\nNetHack was unable to open the required file "
+            "%s\n%s\n%s\n%s\n\nNetHack n'a pas pu ouvrir le fichier nécessaire "
             "\"%s\".%s",
             copyright_banner_line(1), copyright_banner_line(2),
             copyright_banner_line(3), copyright_banner_line(4), DLBFILE,
@@ -436,7 +436,7 @@ _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);*/
      */
     nhfp = create_levelfile(0, (char *) 0);
     if (!nhfp) {
-        raw_print("Cannot create lock file");
+        raw_print("Impossible de créer le fichier verrou");
     } else {
         svh.hackpid = 1;
         Sfo_int(nhfp, &svh.hackpid, "svh.hackpid");
@@ -465,15 +465,15 @@ attempt_restore:
             iflags.news = FALSE;
         }
 #endif
-        pline("Restoring save file...");
+        pline("Restauration de la sauvegarde...");
         mark_synch(); /* flush output */
 
         if (dorecover(nhfp)) {
             resuming = TRUE; /* not starting new game */
             if (discover)
-                You("are in non-scoring discovery mode.");
+                You("êtes en mode découverte, sans score.");
             if (discover || wizard) {
-                if (y_n("Do you want to keep the save file?") == 'n')
+                if (y_n("Voulez-vous conserver la sauvegarde ?") == 'n')
                     (void) delete_savefile();
                 else {
                     nh_compress(fqname(gs.SAVEF, SAVEPREFIX, 0));
@@ -502,7 +502,7 @@ attempt_restore:
         }
         newgame();
         if (discover)
-            You("are in non-scoring discovery mode.");
+            You("êtes en mode découverte, sans score.");
     }
 
 #ifndef NO_SIGNAL
@@ -556,7 +556,7 @@ process_options(int argc, char *argv[])
                 argv++;
                 (void) strncpy(svp.plname, argv[0], sizeof(svp.plname) - 1);
             } else
-                raw_print("Player name expected after -u");
+                raw_print("Nom de joueur attendu après -u");
             break;
 #ifndef AMIGA
         case 'I':
@@ -625,7 +625,7 @@ process_options(int argc, char *argv[])
                 flags.initrole = i;
                 break;
             } else
-                raw_printf("\nUnknown switch: %s", argv[0]);
+                raw_printf("\nOption inconnue : %s", argv[0]);
         /* FALL THROUGH */
         case '?':
             nhusage();
@@ -649,8 +649,8 @@ nhusage(void)
     /* -role still works for those cases which aren't already taken, but
      * is deprecated and will not be listed here.
      */
-    (void) Sprintf(buf2, "\nUsage:\n%s [-d dir] -s [-r race] [-p profession] "
-                         "[maxrank] [name]...\n       or",
+    (void) Sprintf(buf2, "\nUsage :\n%s [-d dir] -s [-r race] [-p profession] "
+                         "[maxrank] [name]...\n       ou",
                    gh.hname);
     ADD_USAGE(buf2);
 
@@ -684,7 +684,7 @@ chdirx(const char *dir, boolean wr)
     static char thisdir[] = ".";
 #endif
     if (dir && chdir(dir) < 0) {
-        error("Cannot chdir to %s.", dir);
+        error("Impossible d'aller dans le répertoire %s.", dir);
     }
 
 #ifndef AMIGA

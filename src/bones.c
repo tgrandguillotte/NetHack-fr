@@ -418,11 +418,11 @@ savebones(int how, time_t when, struct obj *corpse)
     if (nhfp) {
         close_nhfile(nhfp);
         if (wizard) {
-            if (y_n("Bones file already exists.  Replace it?") == 'y') {
+            if (y_n("Le fichier d'os existe déjà. Le remplacer ?") == 'y') {
                 if (delete_bonesfile(&u.uz))
                     goto make_bones;
                 else
-                    pline("Cannot unlink old bones.");
+                    pline("Impossible de supprimer les anciens os.");
             }
         }
         /* compression can change the file's name, so must
@@ -669,7 +669,7 @@ getbones(void)
     } else {
         ok = TRUE;
         if (wizard) {
-            if (y_n("Get bones?") == 'n') {
+            if (y_n("Charger les os ?") == 'n') {
                 close_nhfile(nhfp);
                 compress_bonesfile();
                 program_state.reading_bonesfile = 0;
@@ -694,7 +694,7 @@ getbones(void)
         if (strcmp(bonesid, oldbonesid) != 0) {
             char errbuf[BUFSZ];
 
-            Sprintf(errbuf, "This is bones level '%s', not '%s'!",
+            Sprintf(errbuf, "Ceci est le niveau d'os '%s', pas '%s' !",
                     oldbonesid, bonesid);
             if (wizard) {
                 pline1(errbuf);
@@ -738,7 +738,7 @@ getbones(void)
     u.uroleplay.numbones++;
 
     if (wizard) {
-        if (y_n("Unlink bones?") == 'n') {
+        if (y_n("Supprimer les os ?") == 'n') {
             compress_bonesfile();
             return ok;
         }
@@ -805,9 +805,9 @@ fix_ghostly_obj(struct obj *obj)
         case ORCISH_BOW:
         case YUMI:
         case BOOMERANG:
-            You("make adjustments to %s to suit your %s hand.",
+            You("ajustez %s pour l'adapter à votre main %s.",
                 the(xname(obj)),
-                URIGHTY ? "right" : "left");
+                URIGHTY ? "droite" : "gauche");
             break;
         default:
             break;

@@ -1,92 +1,98 @@
 Copyright (c) NetHack Development Team 1990-2026
 NetHack may be freely redistributed.  See license for details.
 ==============================================================
-  Instructions for compiling NetHack 5.0 on a Windows system
-      (only tested on Windows 10/11 or later)
+  Instructions de compilation de NetHack 5.0 sous Windows
+      (testé uniquement sous Windows 10/11 ou ultérieur)
 ==============================================================
 Last revision: $NHDT-Date: 1782065703 2026/06/21 18:15:03 $
 
-See file dat\History for credits and history of NetHack for Windows.
+(Traduction française du document d'origine Install.windows.)
+
+Consultez le fichier dat\History pour les remerciements et l'historique
+de NetHack pour Windows.
 
 /-----------------------------------------------------------------------\
-| Download a prebuilt package of NetHack for Windows from NetHack.org   |
+| Télécharger un paquet précompilé de NetHack pour Windows (NetHack.org)|
 \----------------------------------------------------------- -----------/
 
-  In your web browser, navigate to
+  Dans votre navigateur web, rendez-vous à l'adresse
       https://www.nethack.org/v501/ports/download-win.html
-  and follow the instructions there.
+  et suivez les instructions qui s'y trouvent.
 
 /-----------------------------------------------------------------------\
-| Build and package NetHack for Windows yourself                        |
+| Compiler et empaqueter NetHack pour Windows vous-même                 |
 \----------------------------------------------------------- -----------/
 
-We provide documentation for the follow three different approaches
-and tool suites that may be used to compile and package
-NetHack for Windows:
+Nous fournissons une documentation pour les trois approches et suites
+d'outils suivantes, qui permettent de compiler et d'empaqueter
+NetHack pour Windows :
 
-    1. With the Visual Studio Integrated Development Environment (IDE).
-       The steps are documented in sys/windows/build-vs.txt.
+    1. Avec l'environnement de développement intégré (IDE) Visual Studio.
+       Les étapes sont décrites dans sys/windows/build-vs.txt.
 
-    2. At the Windows command line, using Visual Studio's nmake.exe.
-       The steps are documented in sys/windows/build-nmake.txt.
+    2. En ligne de commande Windows, avec le nmake.exe de Visual Studio.
+       Les étapes sont décrites dans sys/windows/build-nmake.txt.
 
-    3. At the bash shell using MSYS2.
-       The steps are documented in sys/windows/build-msys2.txt.
+    3. Dans le shell bash de MSYS2.
+       Les étapes sont décrites dans sys/windows/build-msys2.txt.
 
 /--------------------------------------------------------------\
-|   Executing NetHack from zip file                            |
+|   Exécuter NetHack depuis le fichier zip                     |
 \--------------------------------------------------------------/
 
-Executing NetHack on your machine
+Exécuter NetHack sur votre machine
 
-    Unzip the files to a folder on your machine, from
-    Windows explorer right-click | Extract all...
-    or by using tar:
-        Windows command prompt:
+    Décompressez les fichiers dans un dossier de votre machine, depuis
+    l'Explorateur Windows (clic droit | Extraire tout...)
+    ou avec tar :
+        Invite de commandes Windows :
            tar -xf nethack-370-win-x64.zip
 
-        MSYS2 bash shell:
+        Shell bash de MSYS2 :
            /c/Windows/System32/tar -xf nethack-370-win-x64.zip
 
-    Run NetHack.exe or NetHackW.exe from the folder where you unzipped.
+    Lancez NetHack.exe ou NetHackW.exe depuis le dossier de décompression.
 
-    Your personal config file, if it doesn't exist, will be created
-    from a template file the first time you fire up NetHack.
+    Votre fichier de configuration personnel, s'il n'existe pas, sera créé
+    à partir d'un modèle lors du premier lancement de NetHack.
 
-    If you want to edit your actual personal config file you can
-    reference the file as follows:
+    Si vous voulez modifier votre fichier de configuration personnel, vous
+    pouvez y accéder comme suit :
 
-        From Windows cmd command prompt:
+        Depuis l'invite de commandes Windows (cmd) :
         %USERPROFILE%\nethack\.nethackrc
 
-        From Windows powershell:
+        Depuis Windows PowerShell :
         $env:USERPROFILE\nethack\.nethackrc
 
-        From MSYS2 bash shell:
+        Depuis le shell bash de MSYS2 :
         $USERPROFILE/nethack/.nethackrc
 
 
-    If you want to see where NetHack expects to find the other files it
-    utilizes, you can issue the following command:
+    Si vous voulez savoir où NetHack s'attend à trouver les autres
+    fichiers qu'il utilise, vous pouvez lancer la commande suivante :
         nethack --showpaths
 
 
-Play NetHack.
+Jouez à NetHack.
 
 /--------------------------------------------------------------\
-|          If you experience a problem                         |
+|          En cas de problème                                  |
 \--------------------------------------------------------------/
 
-    If you discover a bug and wish to report it, or if you have comments
-    or suggestions we recommend using our "Contact Us" web page at:
+    Si vous découvrez un bogue et souhaitez le signaler, ou si vous avez
+    des commentaires ou des suggestions, nous vous recommandons
+    d'utiliser notre page web « Contact Us » :
         https://www.nethack.org/common/contact.html
 
-    If you don't have access to the web, or you want to send us a patch
-    to the NetHack source code feel free to drop us a line c/o:
+    Si vous n'avez pas accès au web, ou si vous voulez nous envoyer un
+    correctif pour le code source de NetHack, n'hésitez pas à nous écrire
+    à l'adresse :
         DevTeam (at) nethack.org
 
-    The development team also monitors the NetHack issues page on GitHub:
+    L'équipe de développement suit aussi la page des tickets (issues) de
+    NetHack sur GitHub :
         https://github.com/NetHack/NetHack/issues
 
 
- Happy NetHacking!
+ Bon jeu avec NetHack !

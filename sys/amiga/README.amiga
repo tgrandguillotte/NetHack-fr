@@ -1,48 +1,54 @@
-                        NetHack 5.0 for Amiga
-                        ====================
+                        NetHack 5.0 pour Amiga
+                        ======================
 
-Requirements
-------------
-    - AmigaOS 3.0 or later (Kickstart 39+)
-    - 6 MB free RAM minimum (8 MB recommended)
-    - Hard drive with ~5 MB free space
+(Traduction française du document d'origine en anglais.)
 
-Recommended: RTG graphics card (Picasso96/CyberGraphX) for best
-tile rendering. Native AGA/OCS/ECS chipsets are supported.
+Configuration requise
+---------------------
+    - AmigaOS 3.0 ou ultérieur (Kickstart 39+)
+    - 6 Mo de RAM libre au minimum (8 Mo conseillés)
+    - Disque dur avec ~5 Mo d'espace libre
+
+Conseillé : carte graphique RTG (Picasso96/CyberGraphX) pour un
+meilleur rendu des tuiles. Les jeux de puces natifs AGA/OCS/ECS sont
+pris en charge.
 
 
 Installation
 ------------
-Extract NH501AMI.ZIP (or NH501AMIn.ZIP if there's a an updated
-binary, where 'n' is a digit suffix) somewhere on your hard drive
-(e.g. into Work:). You'll get a NetHack drawer with everything inside.
+Décompressez NH501AMI.ZIP (ou NH501AMIn.ZIP s'il existe un binaire mis à
+jour, 'n' étant un suffixe numérique) quelque part sur votre disque dur
+(par exemple dans Work:). Vous obtiendrez un tiroir NetHack contenant
+tout le nécessaire.
 
-To play from Workbench, open the NetHack drawer and double-click the
-nethack icon.
+Pour jouer depuis le Workbench, ouvrez le tiroir NetHack et
+double-cliquez sur l'icône nethack.
 
-To play from a Shell:
+Pour jouer depuis un Shell :
 
     Work:NetHack/nethack
 
-To redirect to a different install -- for example to test two versions
-side by side -- set the NETHACKDIR (or HACKDIR) environment variable
-before launching:
+Pour utiliser une autre installation -- par exemple pour tester deux
+versions côte à côte -- définissez la variable d'environnement
+NETHACKDIR (ou HACKDIR) avant le lancement :
 
     setenv NETHACKDIR Work:games/nethack-dev/
     Work:games/nethack-dev/nethack
 
 
-Display Modes
--------------
-The shipped nethack.cnf selects tile mode (AMIV).  AMIV needs a screen
-with at least 4 bitplanes (16 colours) and ~384 KB free chip RAM; on
-machines that don't qualify, the binary automatically falls back to
-text mode (AMII) at startup with a short note explaining why.
+Modes d'affichage
+-----------------
+Le fichier nethack.cnf fourni sélectionne le mode tuiles (AMIV). AMIV
+exige un écran d'au moins 4 plans de bits (16 couleurs) et ~384 Ko de
+mémoire chip libre ; sur les machines qui ne remplissent pas ces
+conditions, le binaire se replie automatiquement au démarrage sur le
+mode texte (AMII), avec une courte note expliquant pourquoi.
 
-Tile mode auto-selects tiles32.iff (32 colors, 5 bitplanes) when the
-screen supports 32+ colors, otherwise tiles16.iff (16 colors, 4 planes).
+Le mode tuiles choisit automatiquement tiles32.iff (32 couleurs, 5 plans
+de bits) lorsque l'écran gère au moins 32 couleurs, sinon tiles16.iff
+(16 couleurs, 4 plans).
 
-To force text mode unconditionally, edit nethack.cnf:
+Pour forcer le mode texte dans tous les cas, modifiez nethack.cnf :
 
     #OPTIONS=windowtype:amiv
     OPTIONS=windowtype:amii
@@ -51,80 +57,84 @@ To force text mode unconditionally, edit nethack.cnf:
 
 Configuration
 -------------
-Edit nethack.cnf for game options.  Defaults shipped:
+Modifiez nethack.cnf pour les options de jeu. Valeurs fournies par
+défaut :
 
-    OPTIONS=windowtype:amiv     - tile graphics
-    OPTIONS=number_pad:1        - numpad movement; '5' is run prefix
-    OPTIONS=time,showexp        - turn count, experience visible
-    OPTIONS=lit_corridor        - show lit corridors
-    OPTIONS=menucolors          - colored inventory items
+    OPTIONS=windowtype:amiv     - graphismes en tuiles
+    OPTIONS=number_pad:1        - déplacement au pavé numérique ;
+                                  '5' est le préfixe de course
+    OPTIONS=time,showexp        - nombre de tours et expérience visibles
+    OPTIONS=lit_corridor        - afficher les couloirs éclairés
+    OPTIONS=menucolors          - objets d'inventaire en couleur
 
-For extended commands, hit '#' and start typing the name.  Tab fills in
-as far as the prefix is unambiguous, and tapping Tab again walks through
-the rest of the matches one by one.  If you'd rather just pick from a
-list, '?' brings up the full menu.
+Pour les commandes étendues, tapez '#' puis commencez à taper le nom.
+Tab complète tant que le préfixe n'est pas ambigu, et appuyer de nouveau
+sur Tab fait défiler une à une les autres correspondances. Si vous
+préférez choisir dans une liste, '?' affiche le menu complet.
 
-ALT+letter gets you to the common ones in one keystroke -- ALT+L for
-#loot, ALT+F for #force, and so on.  That shortcut rides on 'altmeta',
-which is on by default and simply tells NetHack to treat ALT as the Meta
-key.  Leave it on unless your keymap needs ALT to type characters, in
-which case turn it off:
+ALT+lettre donne accès aux plus courantes en une seule frappe -- ALT+L
+pour #loot, ALT+F pour #force, etc. Ce raccourci repose sur 'altmeta',
+activée par défaut, qui indique simplement à NetHack de traiter ALT
+comme la touche Meta. Laissez-la activée, sauf si votre disposition de
+clavier a besoin d'ALT pour taper des caractères ; dans ce cas,
+désactivez-la :
 
     OPTIONS=!altmeta
 
-The symbol commands have spelled-out names too, which come in handy when
-altmeta is off: @ = #autopickup, \ = #known, | = #perminv.
+Les commandes à symbole ont aussi des noms en toutes lettres, bien
+pratiques lorsque altmeta est désactivée : @ = #autopickup,
+\ = #known, | = #perminv.
 
-One UAE gotcha: the ALT shortcuts do nothing under its default keyboard
-handling.  Switch UAE to "accurate keyboard emulation" and they'll start
-working.
+Un piège sous UAE : les raccourcis ALT ne font rien avec la gestion du
+clavier par défaut. Passez UAE en « accurate keyboard emulation » et ils
+se mettront à fonctionner.
 
-Menu color examples (after OPTIONS=menucolors):
+Exemples de couleurs de menu (après OPTIONS=menucolors) :
 
     MENUCOLOR=" blessed "=green
     MENUCOLOR=" cursed "=red
     MENUCOLOR=" uncursed "=cyan
 
 
-Building from Source
---------------------
-Cross-compilation from Linux using bebbo's m68k-amigaos-gcc toolchain
-(https://franke.ms/git/bebbo/amiga-gcc):
+Compilation à partir des sources
+--------------------------------
+Compilation croisée depuis Linux avec la chaîne d'outils
+m68k-amigaos-gcc de bebbo (https://franke.ms/git/bebbo/amiga-gcc) :
 
-    # Install toolchain to /opt/amiga
-    # Clone NetHack 5.0 source
+    # Installer la chaîne d'outils dans /opt/amiga
+    # Cloner les sources de NetHack 5.0
     cd NetHack
     sys/unix/setup.sh sys/unix/hints/linux.501
     make CROSS_TO_AMIGA=1 fetch-regex
     make CROSS_TO_AMIGA=1 all
     make CROSS_TO_AMIGA=1 package
 
-The distribution ZIP is created at targets/amiga/NH501AMI.ZIP
-(or targets/amiga/NH501AMIn.ZIP, where n is a sequential revision
-number for the binary)..
+Le ZIP de distribution est créé dans targets/amiga/NH501AMI.ZIP
+(ou targets/amiga/NH501AMIn.ZIP, où n est un numéro de révision
+séquentiel du binaire).
 
-Toolchain requirements:
+Exigences pour la chaîne d'outils :
 
-    - m68k-amigaos-gcc (bebbo's amigaos-cross-toolchain in /opt/amiga)
-    - -noixemul (libnix) for linking
-    - -m68000 for maximum compatibility (or -m68020/040/060)
-
-
-Known Issues
-------------
-    - Native Amiga compilation (SAS/C, DICE) is not supported;
-      cross-compilation with GCC is required
+    - m68k-amigaos-gcc (amigaos-cross-toolchain de bebbo dans /opt/amiga)
+    - -noixemul (libnix) pour l'édition de liens
+    - -m68000 pour une compatibilité maximale (ou -m68020/040/060)
 
 
-Credits
--------
-Olaf Seibert first ported NetHack 2.3 and 3.0 to the Amiga.
+Problèmes connus
+----------------
+    - La compilation native sur Amiga (SAS/C, DICE) n'est pas prise en
+      charge ; la compilation croisée avec GCC est obligatoire
+
+
+Remerciements
+-------------
+Olaf Seibert a le premier porté NetHack 2.3 et 3.0 sur Amiga.
 Richard Addison, Andrew Church, Jochen Erwied, Mark Gooderum,
-Ken Lorber, Greg Olson, Mike Passaretti, and Gregg Wonderly
-polished and extended the 3.0 and 3.1 ports.  Andrew Church,
-Ken Lorber, and Gregg Wonderly are responsible for the 3.2 port.
-Janne Salmijärvi resurrected the Amiga port for 3.3 and
-Teemu Suikki joined before 3.4.0.
+Ken Lorber, Greg Olson, Mike Passaretti et Gregg Wonderly ont
+peaufiné et étendu les portages 3.0 et 3.1. Andrew Church,
+Ken Lorber et Gregg Wonderly sont responsables du portage 3.2.
+Janne Salmijärvi a ressuscité le portage Amiga pour la 3.3, et
+Teemu Suikki l'a rejoint avant la 3.4.0.
 
-Updated for NetHack 5.0, cross compile fixes and 32 color tile support by Ingo
-Paschke in 2026.
+Mise à jour pour NetHack 5.0, corrections de la compilation croisée et
+prise en charge des tuiles 32 couleurs par Ingo Paschke en 2026.

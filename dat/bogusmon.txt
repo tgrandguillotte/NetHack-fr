@@ -2,7 +2,7 @@
 # Copyright (c) 2016 by Pasi Kallinen
 # NetHack may be freely redistributed.  See license for details.
 #
-# Hallucinatory monsters
+# Hallucinatory monsters (monstres hallucinatoires)
 #
 #
 # prefix codes:
@@ -13,171 +13,171 @@
 # equals        =  gender not specified, personal name
 
 # misc.
-jumbo shrimp
-giant pigmy
-gnu
-killer penguin
-giant cockroach
-giant slug
-maggot
-pterodactyl
-tyrannosaurus rex
-basilisk
-beholder
-nightmare
-efreeti
-marid
-rot grub
-bookworm
-master lichen
-shadow
-hologram
-jester
-attorney
-sleazoid
-killer tomato
-amazon
+crevette géante
+pygmée géant
+gnou
+manchot tueur
+cafard géant
+limace géante
+asticot
+ptérodactyle
+tyrannosaure
+basilic
+tyrannœil
+cauchemar
+éfrit
+maride
+ver putride
+rat de bibliothèque
+maître lichen
+ombre ténébreuse
+hologramme
+bouffon
+avocat
+sale type
+tomate tueuse
+amazone
 robot
-battlemech
+mécha de combat
 rhinovirus
-harpy
-lion-dog
-rat-ant
-Y2K bug
-angry mariachi
-arch-pedant
-bluebird of happiness
-cardboard golem
-duct tape golem
-diagonally moving grid bug
-evil overlord
-newsgroup troll
-ninja pirate zombie robot
-octarine dragon
-plaid unicorn
-gonzo journalist
-lag monster
-loan shark
-possessed waffle iron
-poultrygeist
-stuffed raccoon puppet
+harpie
+chien-lion
+rat-fourmi
+bogue de l'an 2000
+mariachi en colère
+archipédant
+oiseau bleu du bonheur
+golem de carton
+golem de ruban adhésif
+insecte de grille qui marche en diagonale
+seigneur des ténèbres
+troll de forum
+robot zombie pirate ninja
+dragon octarine
+licorne écossaise
+journaliste gonzo
+monstre de latence
+requin usurier
+gaufrier possédé
+poulet-tergeist
+marionnette de raton laveur empaillé
 viking
-wee green blobbie
-wereplatypus
-hag of bolding
-blancmange
-raging nerd
-spelling bee
-land octopus
-frog prince
-pigasus
-_Semigorgon
-conventioneer
-large microbat
-small megabat
-uberhulk
-tofurkey
+p'tit blob vert
+ornithorynque-garou
+sorcière sans fond
+blanc-manger
+geek enragé
+abeille de la dictée
+pieuvre terrestre
+prince grenouille
+cochon pégase
+_Semigorgone
+congressiste
+grand microchiroptère
+petit mégachiroptère
+hypercolosse
+dinde au tofu
 +Dudley
-shrinking violet
-shallow one
-spherical cow
-electric giraffe
-steam dragon
+violette timide
+peu-profond
+vache sphérique
+girafe électrique
+dragon à vapeur
 omnibus
-slinky
-maxotaur
-millitaur
-octahedron
-dungeon core
+ressort farceur
+maxotaure
+millitaure
+octaèdre
+cœur de donjon
 quale
 holloway
-chiasmus
-giant tetrapod
+chiasme
+tétrapode géant
 voussoir
-barking spider
-frog cloud
-toothsayer
-third eye
-owlpug
-pugasus
-acorn
-red dot
-robot chicken
+araignée aboyeuse
+nuage de grenouilles
+dentomancien
+troisième œil
+hibou-carlin
+carlin pégase
+gland
+point rouge
+poulet robot
 doozer
-poison cackler
+ricaneur venimeux
 lhurgoyf
 phelddagrif
 tiktaalik
-weremoustache
-rapier tapir
-choplet
-pommelbug
-quest sprout
+moustache-garou
+tapir rapière
+côtelette
+insecte pommeau
+pousse de quête
 
 # Quendor (Zork, &c.)
 grue
-Christmas-tree monster
-luck sucker
+monstre de sapin de Noël
+suceur de chance
 paskald
 brogmoid
-dornbeast
+dornbête
 
 # Moria
-Ancient Multi-Hued Dragon
-+Evil Iggy
+Ancien Dragon Multicolore
++Iggy le Malfaisant
 
 # Rogue V5 http://rogue.rogueforge.net/vade-mecum/
-rattlesnake
-ice monster
-phantom
+serpent à sonnette
+monstre de glace
+phantasme
 quagga
-aquator
-griffin
-emu
-kestrel
-xeroc
-venus flytrap
+aquateur
+griffon
+émeu
+crécerelle
+xéroc
+dionée attrape-mouche
 
 # Wizardry
-creeping coins
+pièces rampantes
 
 # Greek legend
-hydra
-siren
+hydre
+sirène
 
 # Monty Python
-killer bunny
+lapin tueur
 
 # The Princess Bride
-rodent of unusual size
+rongeur de taille inhabituelle
 
 # Wallace & Gromit
-were-rabbit
+lapin-garou
 
 # "Only you can prevent forest fires!
 +Smokey Bear
 
 # Discworld
-Luggage
-vampiric watermelon
+Bagage
+pastèque vampirique
 
 # Lord of the Rings
 Ent
 
 # Xanth
-tangle tree
-nickelpede
-wiggle
+arbre enchevêtreur
+nickelpède
+frétilleur
 
 # Lewis Carroll
-white rabbit
+lapin blanc
 snark
 
 # Dr. Dolittle
-pushmi-pullyu
+pousse-moi-tire-toi
 
 # The Smurfs
-smurf
+schtroumpf
 
 # Star Trek
 tribble
@@ -191,7 +191,7 @@ Ewok
 Totoro
 
 # Nausicaa
-ohmu
+ômu
 
 # Sailor Moon
 youma
@@ -204,7 +204,7 @@ nyaasu
 +King Kong
 
 # old L of SH
-earthquake beast
+bête sismique
 
 # Robotech
 Invid
@@ -219,30 +219,30 @@ boomer
 Dalek
 
 # HGttG
-microscopic space fleet
-Ravenous Bugblatter Beast of Traal
+flotte spatiale microscopique
+Bête Bugblatter Vorace de Traal
 
 # The Tough Guide to Fantasyland
-leathery-winged avian
+volatile aux ailes de cuir
 
 # TMNT
-teenage mutant ninja turtle
+tortue ninja
 
 # Usagi Yojimbo
-samurai rabbit
+lapin samouraï
 
 # Cerebus
-aardvark
+oryctérope
 
 # Little Shop of Horrors
 =Audrey II
 
-# 50's rock 'n' roll
-witch doctor
-one-eyed one-horned flying purple people eater
+# replaces a 50's rock 'n' roll song reference
+sorcier guérisseur
+dévoreur violet de touristes
 
 # saccharine kiddy TV
-+Barney the dinosaur
++Barney le dinosaure
 
 # Angband
 +Morgoth
@@ -251,32 +251,32 @@ one-eyed one-horned flying purple people eater
 Vorlon
 
 # King Arthur
-questing beast
+bête glatissante
 
 # Movie
 Predator
 
 # Harry Potter
-dementor
+détraqueur
 
 # common pest
-mother-in-law
+belle-mère
 
 # Actual creatures
-praying mantis
-beluga whale
-chicken
-coelacanth
-star-nosed mole
-lungfish
-slow loris
-sea cucumber
-tapeworm
-liger
-velociraptor
-corpulent porpoise
+mante religieuse
+béluga
+poulet
+cœlacanthe
+condylure étoilé
+dipneuste
+loris lent
+concombre de mer
+ténia
+ligre
+vélociraptor
+marsouin corpulent
 quokka
-potoo
+potou
 lemming
 dhole
 
@@ -289,35 +289,35 @@ tatzelwurm
 dahu
 
 # fictitious beasts
-dropbear
-wild haggis
+koala tombeur
+haggis sauvage
 jackalope
-flying monkey
-flying pig
-hippocampus
-hippogriff
+singe volant
+cochon volant
+hippocampe
+hippogriffe
 kelpie
-catoblepas
-phoenix
-amphisbaena
+catoblépas
+phénix
+amphisbène
 
 # Unusually animate body parts
-bouncing eye
-floating nose
-wandering eye
+œil rebondissant
+nez flottant
+œil baladeur
 
 # Computerese
-buffer overflow
-dangling pointer
-walking disk drive
-floating point
-regex engine
+dépassement de tampon
+pointeur pendouillant
+lecteur de disquettes ambulant
+virgule flottante
+moteur d'expressions rationnelles
 netsplit
 wiki
-peer
+pair
 COBOL
-wire shark
-stray tab
+requin filaire
+tabulation égarée
 
 # bugs
 bohrbug
@@ -326,57 +326,57 @@ schroedinbug
 heisenbug
 
 # DooM
-cacodemon
+cacodémon
 scrag
 
 # MST3K
 +Crow T. Robot
 
 # Items and stuff
-chess pawn
-chocolate pudding
-ooblecks
-terracotta warrior
-hearse
+pion d'échecs
+pouding au chocolat
+oobleck
+guerrier en terre cuite
+corbillard
 roomba
-miniature blimp
-dust speck
+dirigeable miniature
+grain de poussière
 
 # DnD monster
-gazebo
+gazébo
 
 # SciFi elements
-gray goo
-magnetic monopole
-first category perpetual motion device
-big dumb object
+gelée grise
+monopôle magnétique
+machine à mouvement perpétuel de première espèce
+gros objet stupide
 
 # Ultima
 +Lord British
 
 # They Might Be Giants
-particle man
+homme-particule
 
 # Robot Finds Kitten
-kitten prospecting robot
+robot chercheur de chaton
 
 # Typography
 guillemet
-solidus
-obelus
-dingbat
-bold face
-boustrophedon
+barre oblique
+obèle
+vignette
+caractère gras
+boustrophédon
 ligature
-rebus
-dinkus
+rébus
+astérisme
 
 # Their actual character
-apostrophe golem
-voluptuous ampersand
+golem d'apostrophe
+esperluette voluptueuse
 
 # Web comics and animation
-+Bob the angry flower
++Bob la fleur en colère
 +Strong Bad
 +Magical Trevor
 
@@ -385,36 +385,36 @@ smakken
 mimmoth
 
 # KoL
-one-winged dewinged stab-bat
+chauve-souris poignardeuse désailée à une aile
 
 # deities
-Invisible Pink Unicorn
-Flying Spaghetti Monster
+Licorne Rose Invisible
+Monstre en Spaghetti Volant
 
 # Monkey Island
-three-headed monkey
+singe à trois têtes
 +El Pollo Diablo
 
 # modern folklore
-little green man
+petit homme vert
 
 # Portal
-weighted Companion Cube
+cube de voyage lesté
 
 # South Park
-manbearpig
+homme-ours-cochon
 
 # internet memes
-bonsai-kitten
-tie-thulu
+chaton bonsaï
+cravate-thulhu
 +Domo-kun
-looooooooooooong cat
+chaaaaaaaaaaaaaat looooooooong
 nyan cat
 
 # the Internet is made for cat pix
-ceiling cat
-basement cat
-monorail cat
+chat du plafond
+chat de la cave
+chat monorail
 
 # POWDER
 tridude
@@ -425,40 +425,40 @@ orcus cosmicus
 # Angband
 yeek
 quylthulg
-Greater Hell Beast
+Grande Bête Infernale
 
 # Souljazz
-+Vendor of Yizard
++Vendeur de Yizard
 
 # Dungeon Crawl Stone Soup
 +Sigmund
-lernaean hydra
+hydre de Lerne
 -Ijyb
 =Gloorx Vloq
-+Blork the orc
++Blork l'orque
 
 # Wil Wheaton, John Scalzi
-unicorn pegasus kitten
+licorne pégase chaton
 
 # Minecraft
 enderman
 
 # Pun
-wight supremacist
+suprémaciste des tertres
 
 # Starcraft 2
 zergling
 
 # Feelings
-existential angst
-figment of your imagination
-flash of insight
+angoisse existentielle
+fruit de votre imagination
+éclair de génie
 
 # Fish
 ghoti
 
 # Roald Dahl
-vermicious knid
+knide vermicieux
 
 # Carcassonne
 meeple
@@ -470,93 +470,93 @@ womble
 fraggle
 
 # Harry Harrison
-stainless steel rat
+rat en acier inoxydable
 
 # The Culture
-antagonistic undecagonstring
+corde undécagonale antagoniste
 
 # Spoonerism
-mock role
+roupe des toches
 
 # Truly scary things
 clown
 mime
-peddler
-haggler
+colporteur
+marchandeur
 
-# soundex and typos of monsters
-gloating eye
-flush golem
-martyr orc
-mortar orc
-acid blog
-acute blob
-aria elemental
-aliasing priest
-aligned parasite
-aligned parquet
-aligned proctor
-baby balky dragon
-baby blues dragon
-baby caricature
-baby crochet
-baby grainy dragon
-baby bong worm
-baby long word
-baby parable worm
-barfed devil
-beer wight
-boor wight
-brawny mold
-rave spider
-clue golem
-bust vortex
-errata elemental
-elastic eel
-electrocardiogram eel
-fir elemental
-tire elemental
-flamingo sphere
-fallacy golem
-frizzed centaur
-forest centerfold
-fierceness sphere
-frosted giant
-geriatric snake
-gnat ant
-giant bath
-grant beetle
-greater snake
-grind bug
-giant mango
-glossy golem
-gnome laureate
-gnome dummy
-gooier ooze
-green slide
-guardian nacho
-hell hound pun
-high purist
-hairnet devil
-ice trowel
-killer beet
-feather golem
-lounge worm
-mountain lymph
-pager golem
-pie fiend
-prophylactic worm
-sock mole
-rogue piercer
-seesawing sphere
-simile mimic
-moldier ant
-stain vortex
-scone giant
-umbrella hulk
-vampire mace
-verbal jabberwock
-water lemon
-water melon
-winged grizzly
-yellow wight
+# soundex and typos of monsters (adapted to the French monster names)
+œil flattant
+golem de chasse d'eau
+orque martyr
+orque du Mortier
+blog acide
+blob aigu
+élémentaire d'aria
+prêtre aliéné
+parasite aligné
+parquet aligné
+proviseur aligné
+bébé dragon dorloté
+bébé dragon blues
+bébé caricadile
+bébé crochet
+bébé dragon grisonnant
+bébé vers longs
+bébé mot long
+bébé verre pourpre
+diable barbouillé
+spectre des bières
+spectre des terres
+moisissure brute
+araignée des tavernes
+golem d'arnaque
+tourbillon de poisse
+élémentaire d'erreur
+anguille élastique
+anguille électrocardiographique
+élémentaire de fou
+élémentaire de feutre
+sphère flamande
+golem de pagaille
+centaure frisé
+pin-up des forêts
+sphère géniale
+géant givré au sucre
+coule-œuvre gériatrique
+fourmi gênante
+chauve-sourire géant
+scarabée gérant
+serpent gratiné
+insecte de grill
+mangue géante
+golem glacé
+gnome lauréat
+mamie gnome
+limon grisant
+glisse verte
+nacho gardien
+calembour infernal
+grand puriste
+diable cornichon
+truelle des glaces
+betterave tueuse
+golem de plume
+ver de salon
+lymphe des montagnes
+golem de pipeau
+démon des frites
+ver propre
+taupe des chaussettes
+perceur de poche
+sphère à bascule
+petite comique
+fourmi soldée
+tourbillon de tapeur
+géant de bière
+colosse sombrero
+saigneur vampire
+jabberwock verbal
+citron des eaux
+melon des eaux
+grenouille ailée
+lumière jeune

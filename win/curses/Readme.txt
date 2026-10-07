@@ -1,116 +1,123 @@
-INTRO
-=====
+INTRODUCTION
+============
 
-The "curses" windowport is a new text-based interface for NetHack,
-using high-level curses routines to control the display.  Currently, it
-has been compiled and tested on Linux, macOS, Windows, and msdos, but it
-should also be portable to a number of other systems, such as other
-forms of UNIX and OS/2.
+(Traduction française du document d'origine Readme.txt.)
 
-Some features of this interface compared to the traditional tty
-interface include:
+L'interface (window port) « curses » est une nouvelle interface textuelle
+pour NetHack, qui s'appuie sur les routines de haut niveau de curses pour
+piloter l'affichage.  Elle a été compilée et testée sous Linux, macOS,
+Windows et msdos, mais elle devrait aussi être portable sur de nombreux
+autres systèmes, comme d'autres variantes d'UNIX et OS/2.
 
- * Dynamic window resizing (e.g. maximizing a terminal window)
- * Dynamic configurable placement of status and message windows,
- relative to the map
- * Makes better use of larger terminal windows
- * Fancier display (e.g. window borders, optional popup dialogs)
- * "cursesgraphics" option for fancier line-drawing characters for
- drawing the dungeon - this should work on most terminals/platforms
+Parmi les fonctionnalités de cette interface par rapport à l'interface tty
+traditionnelle :
+
+ * Redimensionnement dynamique des fenêtres (par exemple en agrandissant
+ une fenêtre de terminal)
+ * Placement dynamique et configurable des fenêtres d'état et de messages
+ par rapport à la carte
+ * Meilleure exploitation des grandes fenêtres de terminal
+ * Affichage plus soigné (bordures de fenêtres, boîtes de dialogue
+ surgissantes facultatives, etc.)
+ * Option « cursesgraphics » pour des caractères de tracé de lignes plus
+ élégants pour dessiner le donjon ; elle devrait fonctionner sur la
+ plupart des terminaux et plateformes
 
 
-BUILDING
-========
+COMPILATION
+===========
 
-UNIX/Linux/macOS build instructions:
+Instructions de compilation pour UNIX/Linux/macOS :
 
-Follow the instructions in
-sys/unix/Install.unx.  By default, the Makefile is setup to compile
-against ncurses.  Edit Makefile.src if you wish to compile against a
-different curses library, such as PDCurses for SDL.
-See sys/unix/NewInstall.unx for more information about building
-NetHack 5.0 and above.
+Suivez les instructions de
+sys/unix/Install.unx.  Par défaut, le Makefile est configuré pour compiler
+avec ncurses.  Modifiez Makefile.src si vous souhaitez compiler avec une
+autre bibliothèque curses, comme PDCurses pour SDL.
+Consultez sys/unix/NewInstall.unx pour plus d'informations sur la
+compilation de NetHack 5.0 et des versions ultérieures.
 
-Windows build instructions:
+Instructions de compilation pour Windows :
 
-By default, the Makefile.nmake and GNUmakefile are set up to build
-curses from the submodules/pdcurses submodules folder (assumes you
-obtained your NetHack sources via cloning a git repository),
-If you obtained your NetHack by another means, such as a zip download,
-follow the instructions in sys/windows/Install.windows.
+Par défaut, Makefile.nmake et GNUmakefile sont configurés pour compiler
+curses à partir du dossier de sous-modules submodules/pdcurses (en
+supposant que vous avez obtenu les sources de NetHack en clonant un dépôt
+git).  Si vous avez obtenu NetHack par un autre moyen, par exemple en
+téléchargeant un zip, suivez les instructions de
+sys/windows/Install.windows.
 
-If you are using a different compiler, you will have to manually modify
-the appropriate Makefile to include the curses windowport files.
+Si vous utilisez un autre compilateur, vous devrez modifier manuellement
+le Makefile approprié pour y inclure les fichiers de l'interface curses.
 
-GAMEPLAY
-========
+JEU
+===
 
-Gameplay should be similar to the tty interface for NetHack; the 
-differences are primarily visual.  This windowport supports dymanic
-resizing of the terminal window, so you can play with it to see how it
-looks best to you during a game.  Also, the align_status and
-align_message options may be set during the game, so you can experiment
-to see what arrangement looks best to you.
+Le jeu devrait se dérouler comme avec l'interface tty de NetHack ; les
+différences sont surtout visuelles.  Cette interface prend en charge le
+redimensionnement dynamique de la fenêtre du terminal : vous pouvez donc
+faire des essais en cours de partie pour trouver l'aspect qui vous
+convient le mieux.  De même, les options align_status et align_message
+peuvent être modifiées en cours de partie, ce qui vous permet d'essayer
+la disposition qui vous plaît le plus.
 
-For menus, in addition to the normal configurable keybindings for menu
-navigation descrived in the Guidebook, you can use the right and left
-arrows to forward or backward one page, respectively, and the home
-and end keys to go to the first and last pages, respectively.
+Dans les menus, en plus des raccourcis clavier configurables habituels de
+navigation décrits dans le Guidebook, vous pouvez utiliser les flèches
+droite et gauche pour avancer ou reculer d'une page, et les touches
+Début et Fin pour aller respectivement à la première et à la dernière
+page.
 
-Some configuration options that are specific to or relevant to the
-curses windowport are shown below.  Copy any of these that you like to
-your nethack configuration file (e.g. .nethackrc for UNIX or
-NetHack.cnf for Windows):
+Certaines options de configuration propres à l'interface curses, ou utiles
+avec elle, sont présentées ci-dessous.  Copiez celles qui vous plaisent
+dans votre fichier de configuration de nethack (par exemple .nethackrc sous
+UNIX ou NetHack.cnf sous Windows) :
 #
-# Use this if the binary was compiled with multiple window interfaces,
-# and curses is not the default
+# Utilisez ceci si l'exécutable a été compilé avec plusieurs interfaces
+# et que curses n'est pas l'interface par défaut
 OPTIONS=windowtype:curses
 #
-# Set this for Windows systems, or for PDCurses for SDL on any system.
-# The latter uses a cp437 font, which works with this option
+# Activez ceci sous Windows, ou avec PDCurses pour SDL sur tout système.
+# Ce dernier utilise une police cp437, qui fonctionne avec cette option
 #OPTIONS=IBMgraphics
 #
-# Set this if IBMgraphics above won't work for your system.  Mutually
-# exclusive with the above option, and should work on nearly any
-# system.
+# Activez ceci si IBMgraphics ci-dessus ne fonctionne pas sur votre
+# système.  Incompatible avec l'option précédente ; devrait fonctionner
+# sur presque tous les systèmes.
 OPTIONS=cursesgraphics
 #
-# Optionally specify the alignment of the message and status windows
-# relative to the map window.  If not specified, the code will default
-# to the locations used in the tty interface: message window on top,
-# and status window on bottom.  Placing either of these on the right or
-# left really only works well for winder terminal windows.
+# Indique éventuellement l'alignement des fenêtres de messages et d'état
+# par rapport à la fenêtre de la carte.  Sans précision, le code utilise
+# par défaut les emplacements de l'interface tty : fenêtre de messages en
+# haut et fenêtre d'état en bas.  Placer l'une d'elles à droite ou à
+# gauche ne donne vraiment de bons résultats qu'avec des fenêtres de
+# terminal plus larges.
 OPTIONS=align_message:bottom,align_status:right
 #
-# Use a small popup "window" for short prompts, e.g. "Really save?".
-# If this is not set, the message window will be used for these as is
-# done for the tty interface.
+# Utilise une petite « fenêtre » surgissante pour les questions courtes,
+# par exemple « Vraiment sauvegarder ? ».  Sinon, la fenêtre de messages
+# est utilisée, comme dans l'interface tty.
 OPTIONS=popup_dialog
 #
-# Specify the initial window size for NetHack in units of characters.
-# This is supported on PDCurses for SDL as well as PDCurses for
+# Indique la taille initiale de la fenêtre de NetHack, en caractères.
+# Pris en charge par PDCurses pour SDL ainsi que par PDCurses pour
 # Windows.
 OPTIONS=term_cols:110,term_rows:32
 #
-# Controls the usage of window borders for the main NetHack windows
-# (message, map, and status windows).  A value of 1 forces the borders
-# to be drawn, a value of 2 forces them to be off, and a value of 3
-# allows the code to decide if they should be drawn based on the size
-# of the terminal window.
+# Contrôle l'utilisation des bordures pour les fenêtres principales de
+# NetHack (messages, carte et état).  La valeur 1 force l'affichage des
+# bordures, la valeur 2 les désactive, et la valeur 3 laisse le code
+# décider de les afficher ou non selon la taille de la fenêtre du
+# terminal.
 OPTIONS=windowborders:3
 
 
 CONTACT
 =======
 
-Please send any bug reports, suggestions, patches, or miscellaneous
-feedback to me (Karl Garrison) at: kgarrison@pobox.com.  Note that as
-of this writing, I only have sporadic Internet access, so I may not get
-back to you right away.
+Merci de m'envoyer (Karl Garrison) vos rapports de bogues, suggestions,
+correctifs ou autres retours à l'adresse : kgarrison@pobox.com.  Notez
+qu'au moment où j'écris ces lignes, je n'ai qu'un accès sporadique à
+Internet ; il se peut donc que je ne vous réponde pas tout de suite.
 
-Happy Hacking!
+Bon jeu !
 
 Karl Garrison
-March, 2009
-
-
+Mars 2009

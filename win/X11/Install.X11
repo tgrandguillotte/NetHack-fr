@@ -2,169 +2,191 @@ $NHDT-Date: 1524689294 2018/04/25 20:48:14 $  $NHDT-Branch: NetHack-3.6.0 $:$NHD
 # Copyright (c) 2003 by David Cohrs
 # NetHack may be freely redistributed.  See license for details.
 
-This document describes the installation of NetHack with an X11 interface.
+(Traduction française du document d'origine Install.X11.)
 
-There are no explicit UNIX dependencies in this code, but we have only
-tested it under UNIX, using X11R4, X11R5, or X11R6.  We have two reports
-that the code also works under DesqView/X on MS-DOS with djgpp, but you
-will have to add dependencies for the X code to that makefile before you
-can use it.  Other X11R4+ platforms may work as well, with some tweaking
-likely.  Follow WIN* in sys/unix/Makefile.src for compilation hints.
+Ce document décrit l'installation de NetHack avec une interface X11.
 
-(If you try to compile it with X11R3 or earlier, you will get many errors,
-starting with complaints about XtPointer not being declared.  If you get
-around the compilation problems, you will still need a recent library of
-Athena Widgets to link against.  Once compiled, you can probably run it
-under an R3 X server, though.)
+Ce code ne comporte aucune dépendance explicite à UNIX, mais nous ne
+l'avons testé que sous UNIX, avec X11R4, X11R5 ou X11R6.  Deux
+utilisateurs nous ont signalé que le code fonctionne aussi sous DesqView/X
+sur MS-DOS avec djgpp, mais vous devrez ajouter au makefile correspondant
+les dépendances du code X avant de pouvoir l'utiliser.  D'autres
+plateformes X11R4+ peuvent aussi fonctionner, probablement au prix de
+quelques ajustements.  Suivez les WIN* de sys/unix/Makefile.src pour des
+indications de compilation.
 
-The reason this uses the Athena widget set is that the Athena widgets come
-free from MIT (like X11).  Unfortunately, the companies that resell X11
-(value subtracted er, added software; yea, yea, that's the ticket) usually
-discourage its use by either omitting the set or putting it on the
-"unsupported" portion of their tape.  If you do not have the Athena
-widgets, you may obtain them via anonymous ftp from ftp.x.org.
+(Si vous essayez de le compiler avec X11R3 ou antérieur, vous obtiendrez
+de nombreuses erreurs, à commencer par des plaintes au sujet de XtPointer
+non déclaré.  Même si vous contournez les problèmes de compilation, il
+vous faudra une bibliothèque Athena Widgets récente pour l'édition de
+liens.  Une fois compilé, vous pourrez toutefois sans doute l'exécuter sur
+un serveur X R3.)
 
-
-To use this code, define X11_GRAPHICS in include/config.h.  (You can comment
-out TTY_GRAPHICS or change DEFAULT_WINDOW_SYS if you want to, but there's
-little reason to do so.  The X11 version almost requires a config file
-for full effect, so you can just as well set windowtype there; also, you
-or someone else might just possibly be stuck in a situation where you can't
-use the X version -- over a non-blindingly-fast modem, say.)  You may also
-want to define USE_XPM or GRAPHIC_TOMBSTONE as discussed below.
-
-In src/Makefile, add $(WINX11SRC), $(WINX11OBJ), and $(WINX11LIB) to
-WINSRC, WINOBJ, and WINLIB respectively, and compile.  This will give you
-an executable supporting both X11 and tty windowing.
+Ce code utilise le jeu de widgets Athena parce que ces widgets sont fournis
+gratuitement par le MIT (comme X11).  Malheureusement, les sociétés qui
+revendent X11 (logiciel à valeur soustraite, euh, ajoutée ; oui, oui,
+c'est bien ça) en découragent généralement l'usage, soit en omettant ce
+jeu de widgets, soit en le plaçant dans la partie « non prise en charge »
+de leur bande.  Si vous n'avez pas les widgets Athena, vous pouvez les
+obtenir par ftp anonyme sur ftp.x.org.
 
 
-If you want to use the optional tiles (multicolored pictures instead of a
-replacement font), you will need to have the win/share files and change
-the VARDATND setting in the top Makefile to contain the tile files before
-you do your 'make all'.
+Pour utiliser ce code, définissez X11_GRAPHICS dans include/config.h.
+(Vous pouvez mettre en commentaire TTY_GRAPHICS ou modifier
+DEFAULT_WINDOW_SYS si vous le souhaitez, mais il y a peu de raisons de le
+faire.  La version X11 nécessite presque un fichier de configuration pour
+donner sa pleine mesure, vous pouvez donc aussi bien y définir windowtype ;
+par ailleurs, vous-même ou quelqu'un d'autre pourriez vous trouver dans
+une situation où la version X est inutilisable -- par exemple avec un
+modem pas vraiment ultrarapide.)  Vous voudrez peut-être aussi définir
+USE_XPM ou GRAPHIC_TOMBSTONE, comme expliqué plus bas.
 
-If you get a linker error referring to `substitute_tiles' then most
-likely you have overlooked the WINSRC, WINOBJ, WINLIB step above.
-Alternatively, you are building with more than one non-tty interface
-specified but haven't followed the direction in src/Makefile to remove
-all but one instance of tile.o from the WINxxxOBJ values used for WINOBJ.
+Dans src/Makefile, ajoutez $(WINX11SRC), $(WINX11OBJ) et $(WINX11LIB)
+respectivement à WINSRC, WINOBJ et WINLIB, puis compilez.  Vous obtiendrez
+un exécutable prenant en charge à la fois l'affichage X11 et tty.
 
-When using tiles, you have the option of defining USE_XPM in config.h.
-This causes NetHack to use the XPM file format for the "x11tiles" file
-rather than a custom format.  Since the XPM format can be processed by
-existing tools such as PBMPlus and XV, you can modify the tiles to suit
-your environment.  However, you need to make sure the number of tiles
-in each row of the image remains the same (currently 40), as the code
-depends on this to calculate the size of each tile. For example, you may
-magnify them for display on high-resolution screens using the following
-command:
+
+Si vous voulez utiliser les tuiles facultatives (des images en couleurs au
+lieu d'une police de remplacement), il vous faudra les fichiers de
+win/share et modifier le réglage VARDATND du Makefile principal pour qu'il
+contienne les fichiers de tuiles avant de lancer votre « make all ».
+
+Si vous obtenez une erreur d'édition de liens mentionnant
+`substitute_tiles', vous avez très probablement oublié l'étape WINSRC,
+WINOBJ, WINLIB ci-dessus.  Sinon, vous compilez avec plusieurs interfaces
+non tty sans avoir suivi l'indication de src/Makefile consistant à ne
+garder qu'une seule occurrence de tile.o dans les valeurs WINxxxOBJ
+utilisées pour WINOBJ.
+
+Lorsque vous utilisez les tuiles, vous pouvez définir USE_XPM dans
+config.h.  NetHack utilise alors le format de fichier XPM pour le fichier
+« x11tiles » au lieu d'un format spécifique.  Comme le format XPM peut être
+traité par des outils existants tels que PBMPlus et XV, vous pouvez
+adapter les tuiles à votre environnement.  Veillez toutefois à ce que le
+nombre de tuiles par ligne de l'image reste le même (actuellement 40), car
+le code s'en sert pour calculer la taille de chaque tuile.  Par exemple,
+vous pouvez les agrandir pour un affichage sur écran haute résolution avec
+la commande suivante :
     xpmtoppm x11tiles | pnmscale -xscale 1 -yscale 1.6875 |
         pnmdepth 255 | ppmquant 100 | ppmtoxpm >x11tiles_big.xpm
-To use XPM, you must have the free XPM libraries installed in your system.
-Official xpm releases can be found by ftp on:
+Pour utiliser XPM, les bibliothèques libres XPM doivent être installées sur
+votre système.  Les versions officielles de xpm sont disponibles par ftp
+sur :
     ftp.x.org       (198.4.202.8)  contrib/libraries     (Boston, USA)
     avahi.inria.fr  (138.96.12.1)  pub/xpm     (Sophia Antipolis, France)
-If you do choose to define USE_XPM, be sure to add "-lXpm" to WINX11LIB
-in src/Makefile.
+Si vous choisissez de définir USE_XPM, n'oubliez pas d'ajouter « -lXpm » à
+WINX11LIB dans src/Makefile.
 
-If you define USE_XPM in config.h, you may also define GRAPHIC_TOMBSTONE
-which causes the closing tombstone to be displayed from the image file
-specified by the "tombstone" X resource (rip.xpm by default).  In this
-case, make sure the top Makefile VARDATND also contains rip.xpm.
-
-
-Whether or not you install tile support, you can provide support for
-special graphics symbols via alternate fonts.  (The fonts and tiles
-cannot be used at the same time, but the same executable handles both.)
-The two included X11 fonts use the general NetHack map area remapping
-to represent object/dungeon/trap/effect characters (see win/X11/nethack.rc
-and the Guidebook) as monocolored symbols and monsters as monocolored
-letters.  For instance, a ruby potion will show up as a potion symbol in
-red.  It's easier to see the difference between fonts and tiles than to
-describe it. :-)  Unless you are the only one using your executable and
-you already know which you prefer, we suggest installing the optional files
-for both possibilities and letting each person decide for themselves.
-
-To use the included fonts, you will need to install one or both of them
-and then use the symbol mappings found in nethack.rc.  The fonts are found
-in nh10.bdf and ibm.bdf.  You first need to convert the bdf files to whatever
-form your X11 server recognizes (usually using a command called bdftosnf
-for R4 servers or bdftopcf for R5 servers).  Then run mkfontdir on the
-directory containing your font files (you might want to copy them to HACKDIR,
-from the top Makefile, after you've done "make install").  If these commands
-aren't familiar, talk to your local X11 guru and read the man pages.
-
-nethack.sh automatically adds HACKDIR to your font search path.  If
-you (assuming you are a system administrator) can install the fonts in your
-standard X11 font directory the relevant lines in nethack.sh can be removed.
-Alternatively, all persons playing nethack must add that "xset fp+"
-command to their .xinitrc file, or whatever file they execute when starting
-X11.  See the note below for the alternative installation procedure
-for Sun's OpenWindows.
+Si vous définissez USE_XPM dans config.h, vous pouvez aussi définir
+GRAPHIC_TOMBSTONE, qui fait afficher la pierre tombale finale à partir du
+fichier image indiqué par la ressource X « tombstone » (rip.xpm par
+défaut).  Dans ce cas, vérifiez que la variable VARDATND du Makefile
+principal contient aussi rip.xpm.
 
 
-If your X11 include files and libraries are not installed in a standard
-place (i.e. /usr/include/X11 and /usr/lib respectively) you will need to
-prepend an appropriate -I<idirectory> parameter to CFLAGS and a
--L<ldirectory> parameter to LFLAGS, setting <?directory> to the place to
-find the include and library files for X11.
+Que vous installiez ou non la prise en charge des tuiles, vous pouvez
+fournir des symboles graphiques spéciaux au moyen de polices de
+remplacement.  (Les polices et les tuiles ne peuvent pas être utilisées en
+même temps, mais le même exécutable gère les deux.)  Les deux polices X11
+fournies utilisent le remappage général de la zone de carte de NetHack
+pour représenter les caractères des objets, du donjon, des pièges et des
+effets (voir win/X11/nethack.rc et le Guidebook) sous forme de symboles
+monochromes, et les monstres sous forme de lettres monochromes.  Par
+exemple, une potion rubis apparaîtra comme un symbole de potion en rouge.
+Il est plus facile de voir la différence entre polices et tuiles que de la
+décrire. :-)  À moins que vous ne soyez le seul à utiliser votre
+exécutable et que vous sachiez déjà ce que vous préférez, nous vous
+suggérons d'installer les fichiers facultatifs pour les deux possibilités
+et de laisser chacun choisir.
+
+Pour utiliser les polices fournies, vous devrez installer l'une d'elles ou
+les deux, puis utiliser les correspondances de symboles de nethack.rc.  Les
+polices se trouvent dans nh10.bdf et ibm.bdf.  Vous devez d'abord convertir
+les fichiers bdf dans le format reconnu par votre serveur X11 (en général
+avec la commande bdftosnf pour les serveurs R4 ou bdftopcf pour les
+serveurs R5).  Lancez ensuite mkfontdir sur le répertoire contenant vos
+fichiers de polices (vous voudrez peut-être les copier dans HACKDIR, défini
+dans le Makefile principal, après avoir fait « make install »).  Si ces
+commandes ne vous sont pas familières, adressez-vous au spécialiste X11 de
+votre site et lisez les pages de manuel.
+
+nethack.sh ajoute automatiquement HACKDIR à votre chemin de recherche des
+polices.  Si vous pouvez (en supposant que vous soyez administrateur
+système) installer les polices dans votre répertoire standard de polices
+X11, les lignes concernées de nethack.sh peuvent être supprimées.  Sinon,
+toutes les personnes qui jouent à nethack doivent ajouter cette commande
+« xset fp+ » à leur fichier .xinitrc, ou au fichier qu'elles exécutent au
+démarrage de X11.  Voir la remarque ci-dessous pour la procédure
+d'installation alternative pour OpenWindows de Sun.
 
 
-Finally, to ensure NetHack's windows look the way they were intended to
-look, make sure the top Makefile VARDATND also contains NetHack.ad.  If it
-does, running nethack will automatically take the appropriate steps to
-cause this file to be used to initialize NetHack's X11 resources.
+Si vos fichiers d'en-tête et bibliothèques X11 ne sont pas installés à un
+emplacement standard (c'est-à-dire respectivement /usr/include/X11 et
+/usr/lib), vous devrez ajouter en tête de CFLAGS un paramètre
+-I<idirectory> approprié et en tête de LFLAGS un paramètre -L<ldirectory>,
+<?directory> désignant l'emplacement des fichiers d'en-tête et des
+bibliothèques de X11.
 
 
-Three icon suggestions to the window manager are supported:  nh72, nh56,
-and nh32.  Data for them comes from the source files nh72icon, nh56icon,
-and nh32icon; they are compiled into the program via #includes in winX.c.
-Selection between them is controlled by the "icon" resource in NetHack.ad;
-the default is nh72.
+Enfin, pour que les fenêtres de NetHack aient l'apparence prévue, vérifiez
+que la variable VARDATND du Makefile principal contient aussi NetHack.ad.
+Si c'est le cas, l'exécution de nethack fera automatiquement le nécessaire
+pour que ce fichier serve à initialiser les ressources X11 de NetHack.
 
 
-Sorry, an Imakefile is not included.  Unlike many X11 programs, X11
-support is only a small, optional, part of nethack, and the Makefile is
-needed for systems that don't use X11.
+Trois suggestions d'icône au gestionnaire de fenêtres sont prises en
+charge : nh72, nh56 et nh32.  Leurs données proviennent des fichiers
+sources nh72icon, nh56icon et nh32icon ; elles sont compilées dans le
+programme via des #include dans winX.c.  Le choix entre elles est contrôlé
+par la ressource « icon » de NetHack.ad ; la valeur par défaut est nh72.
 
 
-Notes for AIX 3.2:
-    1.  AIX 3.2 includes the Athena Widget Toolkit library (and other things)
-	under the /usr/lpp/X11/Xamples tree, so you will have to add
-	-L/usr/lpp/X11/Xamples/lib to LFLAGS.  If you can't find libXaw.a on
-	your first build, go into /usr/lib/X11/Xamples, read the README file,
-	and build the library.
-
-Notes for XFree86 - (on linux and BSD386 platforms)
-
-    1.  Edit src/Makefile for linux/BSD386. Use the
-	standard X11 object and library options.
-
-    2.  Follow the standard installation directions defined above.
+Désolé, aucun Imakefile n'est fourni.  Contrairement à beaucoup de
+programmes X11, la prise en charge de X11 n'est qu'une petite partie,
+facultative, de nethack, et le Makefile est nécessaire pour les systèmes
+qui n'utilisent pas X11.
 
 
-File				Description
+Remarques pour AIX 3.2 :
+    1.  AIX 3.2 inclut la bibliothèque Athena Widget Toolkit (entre autres)
+	dans l'arborescence /usr/lpp/X11/Xamples ; vous devrez donc ajouter
+	-L/usr/lpp/X11/Xamples/lib à LFLAGS.  Si libXaw.a est introuvable
+	lors de votre première compilation, allez dans
+	/usr/lib/X11/Xamples, lisez le fichier README et compilez la
+	bibliothèque.
+
+Remarques pour XFree86 (plateformes linux et BSD386)
+
+    1.  Modifiez src/Makefile pour linux/BSD386.  Utilisez les
+	options standard d'objets et de bibliothèques X11.
+
+    2.  Suivez les instructions d'installation standard décrites
+	ci-dessus.
+
+
+Fichier				Description
 ---------	---------------------------------------------------------------
-nethack.rc	- A sample configuration file for fonts nh10 and ibm.
-nh10.bdf	- A modified version of the 10x20 standard font.
-ibm.bdf		- A modified version of one of the ibm (8x14) nethack font.
-		  Must be used in conjunction with NetHack.ad or nethack.rc.
-nh32icon	- A 32x32 icon bitmap for use with window managers.
-nh56icon	- A 56x56 icon bitmap for use with window managers.
-nh72icon	- A 72x72 icon bitmap for use with window managers.
-nh_icon.xpm	- A color icon for use with window managers.
-NetHack.ad	- A sample .Xdefaults for a color screen.
+nethack.rc	- Exemple de fichier de configuration pour les polices nh10
+		  et ibm.
+nh10.bdf	- Version modifiée de la police standard 10x20.
+ibm.bdf		- Version modifiée de l'une des polices nethack ibm (8x14).
+		  À utiliser conjointement avec NetHack.ad ou nethack.rc.
+nh32icon	- Bitmap d'icône 32x32 pour les gestionnaires de fenêtres.
+nh56icon	- Bitmap d'icône 56x56 pour les gestionnaires de fenêtres.
+nh72icon	- Bitmap d'icône 72x72 pour les gestionnaires de fenêtres.
+nh_icon.xpm	- Icône en couleurs pour les gestionnaires de fenêtres.
+NetHack.ad	- Exemple de .Xdefaults pour un écran couleur.
 ../../include/Window.h
 ../../include/WindowP.h
-Window.c	- A bare-bones widget that has 16 colors and a drawing canvas.
+Window.c	- Widget minimal avec 16 couleurs et une zone de dessin.
 ../../include/winX.h
-		- Defines for the X window-port.
-win*.c		- Code for the X window-port
-dialogs.c	- A better dialog widget.  Original code (modified slightly
-		  by Dean Luick) distributed under the X copyright by Tim
-		  Theisen.  This is from his Ghostview program (which is under
-		  the GNU public license, v2 or higher).
-pet_mark.xbm	- A pet indicator bitmap for tiles.
-pilemark.xbm	- Item pile indicator for tiles.
-rip.xpm		- A graphical tombstone.
-tile2x11.c	- Converts win/share tiles for X11 use.
+		- Définitions pour l'interface (window port) X.
+win*.c		- Code de l'interface (window port) X
+dialogs.c	- Un meilleur widget de dialogue.  Code d'origine (légèrement
+		  modifié par Dean Luick) distribué sous le copyright X par
+		  Tim Theisen.  Il provient de son programme Ghostview (sous
+		  licence publique GNU, v2 ou ultérieure).
+pet_mark.xbm	- Bitmap d'indicateur d'animal familier pour les tuiles.
+pilemark.xbm	- Indicateur de pile d'objets pour les tuiles.
+rip.xpm		- Pierre tombale graphique.
+tile2x11.c	- Convertit les tuiles de win/share pour X11.

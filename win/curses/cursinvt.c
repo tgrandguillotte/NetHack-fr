@@ -157,8 +157,8 @@ curs_scroll_invt(WINDOW *win UNUSED)
         scrlmask |= 8U; /* include scroll right: } */
     (void) collect_menu_keys(menukeys, scrlmask, TRUE);
 
-    Snprintf(qbuf, sizeof qbuf, "Inventory scroll: [%s%s%s] ",
-             menukeys, *menukeys ? " " : "", "Ret Esc");
+    Snprintf(qbuf, sizeof qbuf, "Défilement de l'inventaire : [%s%s%s] ",
+             menukeys, *menukeys ? " " : "", "Entrée Échap");
 
     curses_count_window(qbuf);
     ch = getch();
@@ -273,15 +273,16 @@ pi_article_skip(const char *str)
      * else if (!strncmp(str, "the ", 4))
      *     skip = 4;
      */
-    if (str[0] == 'a') {
-        if (str[1] == ' ')
-            skip = 2;
-        else if (str[1] == 'n' && str[2] == ' ')
-            skip = 3;
-    } else if (str[0] == 't') {
-        if (str[1] == 'h' && str[2] == 'e' && str[3] == ' ')
-            skip = 4;
-    }
+    /* French articles:  "un ", "une ", "des ", "le ", "la ", "les ",
+       "l'" */
+    if (!strncmp(str, "un ", 3) || !strncmp(str, "le ", 3)
+        || !strncmp(str, "la ", 3))
+        skip = 3;
+    else if (!strncmp(str, "une ", 4) || !strncmp(str, "des ", 4)
+             || !strncmp(str, "les ", 4))
+        skip = 4;
+    else if (!strncmp(str, "l'", 2))
+        skip = 2;
 
     return skip;
 }
@@ -441,7 +442,7 @@ curs_show_invt(WINDOW *win)
             wmove(win, y, x);
             wclrtoeol(win);
         }
-        Sprintf(tmpbuf, "%c%u-%u of %u%c",
+        Sprintf(tmpbuf, "%c%u-%u sur %u%c",
                 (first_shown > 1) ? '<' : '[',
                 first_shown, last_shown, item_count,
                 (last_shown < item_count) ? '>' : ']');
@@ -456,7 +457,7 @@ curs_show_invt(WINDOW *win)
          * so we won't be obscuring an item, but that might not be the
          * situation on page 2 and definitely won't be if 'sortpack' is Off.
          */
-        Sprintf(tmpbuf, "%c%u-%u of %u%c",
+        Sprintf(tmpbuf, "%c%u-%u sur %u%c",
                 (left_col > 1) ? '{' : '[',
                 left_col, right_col, widest,
                 (right_col < widest) ? '}' : ']');

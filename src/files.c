@@ -3368,10 +3368,7 @@ reveal_paths(int code)
 
 #ifdef UNIX
     buf[0] = '\0';
-    if ((envp = nh_getenv("HOME")) != 0) {
-        copynchars(buf, envp, (int) sizeof buf - 1 - 1);
-        Strcat(buf, "/");
-    }
+    envp = NULL;
     endp = eos(buf);
     copynchars(endp, get_default_configfile(),
                (int) (sizeof buf - 1 - strlen(buf)));

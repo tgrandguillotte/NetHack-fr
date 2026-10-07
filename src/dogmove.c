@@ -284,15 +284,16 @@ dog_eat(struct monst *mtmp,
                result won't be printed */
             obj_name = distant_name(obj, doname);
             if (tunnels(mtmp->data))
-                pline_mon(mtmp, "%s digs in.", noit_Monnam(mtmp));
+                pline_mon(mtmp, "%s se met à table.", noit_Monnam(mtmp));
             else
                 pline_mon(mtmp, "%s %s %s.",
                           devour ? noit_or_your_Monnam(mtmp)
                                  : noit_Monnam(mtmp),
-                          devour ? "devours" : "eats", obj_name);
+                          devour ? "dévore" : "mange", obj_name);
         } else if (seeobj) {
             obj_name = distant_name(obj, doname);
-            pline("It %s %s.", devour ? "devours" : "eats", obj_name);
+            pline("Quelque chose %s %s.", devour ? "dévore" : "mange",
+                  obj_name);
         }
     }
     if (obj->unpaid) {
@@ -308,7 +309,7 @@ dog_eat(struct monst *mtmp,
         if (canseemon(mtmp)) {
             obj_name = distant_name(obj, doname); /* (see above) */
             if (flags.verbose)
-                pline("%s spits %s out in disgust!",
+                pline("%s recrache %s avec dégoût !",
                       Monnam(mtmp), obj_name);
         }
     } else {
@@ -335,7 +336,7 @@ dog_eat(struct monst *mtmp,
             /* edible item owned by shop has been thrown or kicked
                by hero and caught by tame or food-tameable monst */
             oprice = unpaid_cost(obj, COST_CONTENTS);
-            pline("That %s will cost you %ld %s.", objnambuf, oprice,
+            pline("%s vous coûtera %ld %s.", The(objnambuf), oprice,
                   currency(oprice));
             /* m_consume_obj() -> delobj() -> obfree() will handle the shop
                billing update */
@@ -350,12 +351,12 @@ staticfn void
 dog_starve(struct monst *mtmp)
 {
     if (mtmp->mleashed && mtmp != u.usteed)
-        Your("leash goes slack.");
+        Your("laisse se relâche.");
     else if (cansee(mtmp->mx, mtmp->my))
-        pline_mon(mtmp, "%s starves.", Monnam(mtmp));
+        pline_mon(mtmp, "%s meurt de faim.", Monnam(mtmp));
     else
-        You_feel("%s for a moment.",
-                    Hallucination ? "bummed" : "sad");
+        You_feel("vous sentez %s un instant.",
+                    Hallucination ? "patraque" : "triste");
     mondied(mtmp);
 }
 
@@ -380,11 +381,12 @@ dog_hunger(struct monst *mtmp, struct edog *edog)
                 return TRUE;
             }
             if (cansee(mtmp->mx, mtmp->my))
-                pline_mon(mtmp, "%s is confused from hunger.", Monnam(mtmp));
+                pline_mon(mtmp, "%s est désorienté%s par la faim.",
+                          Monnam(mtmp), MON_E(mtmp));
             else if (couldsee(mtmp->mx, mtmp->my))
                 beg(mtmp);
             else
-                You_feel("worried about %s.", y_monnam(mtmp));
+                You_feel("vous inquiétez pour %s.", y_monnam(mtmp));
             stop_occupation();
         } else if (svm.moves > edog->hungrytime + DOG_STARVE
                    || DEADMONSTER(mtmp)) {
@@ -459,7 +461,7 @@ dog_invent(struct monst *mtmp, struct edog *edog, int udist)
                             char *otmpname = distant_name(otmp, doname);
 
                             if (flags.verbose)
-                                pline_xy(omx, omy, "%s picks up %s.",
+                                pline_xy(omx, omy, "%s ramasse %s.",
                                       Monnam(mtmp), otmpname);
                         }
                         obj_extract_self(otmp);
@@ -1058,7 +1060,7 @@ dog_move(
     if (!Conflict && !mtmp->mconf
         && mtmp == u.ustuck && !sticks(gy.youmonst.data)) {
         unstuck(mtmp); /* swallowed case handled above */
-        You("get released!");
+        You("êtes libéré%s !", UE);
     }
 #endif
     allowflags = mon_allowflags(mtmp);
@@ -1281,8 +1283,8 @@ dog_move(
 
         if (mfp.info[chi] & ALLOW_U) {
             if (mtmp->mleashed) { /* play it safe */
-                pline_mon(mtmp, "%s breaks loose of %s leash!",
-                         Monnam(mtmp), mhis(mtmp));
+                pline_mon(mtmp, "%s se libère de sa laisse !",
+                         Monnam(mtmp));
                 m_unleash(mtmp, FALSE);
             }
             (void) mattacku(mtmp);
@@ -1306,10 +1308,10 @@ dog_move(
                                ? vobj_at(nix, niy) : 0;
             const char *what = o ? distant_name(o, doname) : something;
 
-            pline_mon(mtmp, "%s %s reluctantly %s %s.", noit_Monnam(mtmp),
-                  vtense((char *) 0, locomotion(mtmp->data, "step")),
-                  (is_flyer(mtmp->data) || is_floater(mtmp->data)) ? "over"
-                                                                   : "onto",
+            pline_mon(mtmp, "%s %s à contrecœur %s.", noit_Monnam(mtmp),
+                  (is_flyer(mtmp->data) || is_floater(mtmp->data))
+                      ? "survole"
+                      : "pose le pied sur",
                   what);
         }
         mon_track_add(mtmp, omx, omy);
@@ -1527,16 +1529,22 @@ quickmimic(struct monst *mtmp)
         if (was_leashed
             && (M_AP_TYPE(mtmp) != M_AP_MONSTER
                 || !mnum_leashable(mtmp->mappearance))) {
-            Your("leash goes slack.");
+            Your("laisse se relâche.");
             m_unleash(mtmp, FALSE);
         }
         if (glyph_at(mtmp->mx, mtmp->my) != prev_glyph)
-            You("%s %s %s where %s was!",
-                seeloc ? "see" : "sense that",
-                (what != something) ? an(what) : what,
-                seeloc ? "appear" : "has appeared", buf);
-        else
-            You("sense that %s feels rather %s-ish.", buf, what);
+        {
+            const char *awhat = (what != something) ? an(what) : what;
+
+            if (seeloc)
+                You("voyez %s apparaître là où se trouvait %s !",
+                    awhat, buf);
+            else
+                You("sentez que %s est apparu%s là où se trouvait %s !",
+                    awhat, accord(awhat), buf);
+        } else
+            You("sentez que %s se prend un peu pour %s.", buf,
+                an(what));
 
         display_nhwindow(WIN_MAP, TRUE);
     }

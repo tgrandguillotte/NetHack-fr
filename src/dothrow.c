@@ -120,31 +120,32 @@ throw_obj(struct obj *obj, int shotlimit)
         goto unsplit_stack;
     }
     if (is_art(obj, ART_MJOLLNIR) && obj != uwep) {
-        pline("%s must be wielded before it can be thrown.", The(xname(obj)));
+        pline("%s doit être manié%s avant de pouvoir être lancé%s.",
+              The(xname(obj)), accord(xname(obj)), accord(xname(obj)));
         res = ECMD_OK;
         goto unsplit_stack;
     }
     if ((is_art(obj, ART_MJOLLNIR) && ACURR(A_STR) < STR19(25))
         || (obj->otyp == BOULDER && !throws_rocks(gy.youmonst.data))) {
-        pline("It's too heavy.");
+        pline("C'est trop lourd.");
         res = ECMD_TIME;
         goto unsplit_stack;
     }
     if (!u.dx && !u.dy && !u.dz) {
-        You("cannot throw an object at yourself.");
+        You("ne pouvez pas lancer un objet sur vous-même.");
         res = ECMD_OK;
         goto unsplit_stack;
     }
     u_wipe_engr(2);
     if (!uarmg && obj->otyp == CORPSE && touch_petrifies(&mons[obj->corpsenm])
         && !Stone_resistance) {
-        You("throw %s with your bare %s.",
+        You("lancez %s à %s nues.",
             corpse_xname(obj, (const char *) 0, CXN_PFX_THE),
             /* throwing with one hand, but pluralize since the
                expression "with your bare hands" sounds better */
             makeplural(body_part(HAND)));
-        Sprintf(svk.killer.name, "throwing %s bare-handed",
-                killer_xname(obj));
+        Sprintf(svk.killer.name, "le lancer à mains nues %s",
+                du(killer_xname(obj)));
         instapetrify(svk.killer.name);
     }
     if (welded(obj)) {
@@ -242,7 +243,7 @@ throw_obj(struct obj *obj, int shotlimit)
        attempted to specify a count */
     if (multishot > 1 || shotlimit > 0) {
         /* "You shoot N arrows." or "You throw N daggers." */
-        You("%s %d %s.", gm.m_shot.s ? "shoot" : "throw",
+        You("%s %d %s.", gm.m_shot.s ? "tirez" : "lancez",
             multishot, /* (might be 1 if player gave shotlimit) */
             (multishot == 1) ? singular(obj, xname) : xname(obj));
     }
@@ -300,10 +301,10 @@ ok_to_throw(int *shotlimit_p) /* (see dothrow()) */
     gm.multi = 0; /* reset; it's been used up */
 
     if (notake(gy.youmonst.data)) {
-        You("are physically incapable of throwing or shooting anything.");
+        You("êtes physiquement incapable de lancer ou de tirer quoi que ce soit.");
         return FALSE;
     } else if (nohands(gy.youmonst.data)) {
-        You_cant("throw or shoot without hands."); /* not body_part(HAND) */
+        You_cant("lancer ni tirer sans mains."); /* not body_part(HAND) */
         return FALSE;
         /*[what about !freehand(), aside from cursed missile launcher?]*/
     }
@@ -524,7 +525,7 @@ dofire(void)
                 cmdq_add_ec(CQ_CANNED, dofire);
                 return ECMD_OK; /* haven't taken any time yet */
             } else {
-                You("have no ammunition readied.");
+                You("n'avez pas de munitions prêtes.");
             }
         } else {
             autoquiver();
@@ -532,10 +533,10 @@ dofire(void)
             if (obj) {
                 /* give feedback if quiver has now been filled */
                 uquiver->owornmask &= ~W_QUIVER; /* less verbose */
-                prinv("You ready:", obj, 0L);
+                prinv("Vous préparez :", obj, 0L);
                 uquiver->owornmask |= W_QUIVER;
             } else {
-                You("have nothing appropriate for your quiver.");
+                You("n'avez rien d'approprié pour votre carquois.");
             }
         }
     }
@@ -591,10 +592,10 @@ endmultishot(boolean verbose)
 {
     if (gm.m_shot.i < gm.m_shot.n) {
         if (verbose && !svc.context.mon_moving) {
-            You("stop %s after the %d%s %s.",
-                gm.m_shot.s ? "firing" : "throwing",
+            You("arrêtez de %s après le %d%s %s.",
+                gm.m_shot.s ? "tirer" : "lancer",
                 gm.m_shot.i, ordin(gm.m_shot.i),
-                gm.m_shot.s ? "shot" : "toss");
+                gm.m_shot.s ? "tir" : "lancer");
         }
         gm.m_shot.n = gm.m_shot.i; /* make current shot be the last */
     }
@@ -614,7 +615,7 @@ hitfloor(
     if (IS_ALTAR(levl[u.ux][u.uy].typ)) {
         doaltarobj(obj);
     } else if (verbosely) {
-        const char *verb = (obj->otyp == WAN_STRIKING) ? "strike" : "hit";
+        const char *verb = (obj->otyp == WAN_STRIKING) ? "frapper" : "heurter";
         const char *surf = surface(u.ux, u.uy);
         struct trap *t = t_at(u.ux, u.uy);
 
@@ -623,20 +624,20 @@ hitfloor(
         if (t && t->tseen) {
             switch (t->ttyp) {
             case TRAPDOOR:
-                surf = "trap door";
+                surf = "trappe";
                 break;
             case HOLE:
-                surf = "edge of the hole";
+                surf = "bord du trou";
                 break;
             case PIT:
             case SPIKED_PIT:
-                surf = "edge of the pit";
+                surf = "bord de la fosse";
                 break;
             default:
                 break;
             }
         }
-        pline("%s %s the %s.", Doname2(obj), otense(obj, verb), surf);
+        pline("%s %s %s.", Doname2(obj), otense(obj, verb), the(surf));
     }
 
     if (hero_breaks(obj, u.ux, u.uy, BRK_FROM_INV))
@@ -782,7 +783,7 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
     int ltyp, dmg = 0;
 
     if (!isok(x, y)) {
-        You_feel("the spirits holding you back.");
+        You_feel("sentez les esprits vous retenir.");
         return FALSE;
     } else if (!in_out_region(x, y)) {
         return FALSE;
@@ -802,23 +803,23 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
 
         if (IS_OBSTRUCTED(levl[x][y].typ)
             || closed_door(x, y) || odoor_diag) {
-            why = IS_TREE(ltyp) ? "bumping into a tree"
-                  : IS_OBSTRUCTED(ltyp) ? "bumping into a wall"
-                    : odoor_diag ? "bumping into a door frame"
-                      : "bumping into a closed door";
+            why = IS_TREE(ltyp) ? "une collision avec un arbre"
+                  : IS_OBSTRUCTED(ltyp) ? "une collision avec un mur"
+                    : odoor_diag ? "une collision avec un chambranle"
+                      : "une collision avec une porte fermée";
             if (odoor_diag)
-                You("hit the door frame!");
-            pline("Ouch!");
+                You("heurtez le chambranle de la porte !");
+            pline("Aïe !");
         } else if (ltyp == IRONBARS) {
-            why = "crashing into iron bars";
-            You("crash into some iron bars.  Ouch!");
+            why = "une collision avec des barreaux de fer";
+            You("vous écrasez contre des barreaux de fer.  Aïe !");
         } else if ((obj = sobj_at(BOULDER, x, y)) != 0) {
-            why = "bumping into a boulder";
-            You("bump into a %s.  Ouch!", xname(obj));
+            why = "une collision avec un rocher";
+            You("heurtez %s.  Aïe !", an(xname(obj)));
         }  else if (!may_pass) {
             /* did we hit a no-dig non-wall position? */
-            why = "touching the edge of the universe";
-            You("smack into something!");
+            why = "un contact avec le bord de l'univers";
+            You("percutez quelque chose !");
         } else if (diagonal
                    && bad_rock(gy.youmonst.data, u.ux, y)
                    && bad_rock(gy.youmonst.data, x, u.uy)) {
@@ -826,9 +827,10 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
                        && (inv_weight() + weight_cap() > WT_TOOMUCH_DIAGONAL));
 
             if (bigmonst(gy.youmonst.data) || too_much) {
-                why = "wedging into a narrow crevice";
-                You("%sget forcefully wedged into a crevice.",
-                    too_much ? "and all your belongings " : "");
+                why = "un coincement dans une crevasse étroite";
+                You("%s violemment coincé%s dans une crevasse.",
+                    too_much ? "et toutes vos affaires êtes" : "êtes",
+                    too_much ? "s" : UE);
             }
         }
         if (why) {
@@ -860,9 +862,10 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
                          | AUGMENT_IT),
                         FALSE);
         if (!glyph_is_monster(glyph) && !glyph_is_invisible(glyph))
-            You("find %s by bumping into %s.", mnam, noit_mhim(mon));
+            You("trouvez %s en vous cognant contre %s.", mnam,
+                noit_mon_nam(mon));
         else
-            You("bump into %s.", mnam);
+            You("vous cognez contre %s.", mnam);
         wakeup(mon, FALSE);
         if (!canspotmon(mon))
             map_invisible(mon->mx, mon->my);
@@ -870,7 +873,7 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
         if (touch_petrifies(mon->data)
             /* this is a bodily collision, so check for body armor */
             && !uarmu && !uarm && !uarmc) {
-            Sprintf(svk.killer.name, "bumping into %s",
+            Sprintf(svk.killer.name, "une collision avec %s",
                     an(pmname(mon->data, NEUTRAL)));
             instapetrify(svk.killer.name);
         }
@@ -887,7 +890,7 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
         && bad_rock(gy.youmonst.data, x, u.uy)) {
         /* Move at a diagonal. */
         if (Sokoban) {
-            You("come to an abrupt halt!");
+            You("vous arrêtez net !");
             return FALSE;
         }
     }
@@ -928,10 +931,11 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
             (void) drown();
             return FALSE;
         } else if (!Is_waterlevel(&u.uz) && !stopping_short) {
-            Norep("You move over %s.", an(is_moat(x, y) ? "moat" : "pool"));
+            Norep("Vous passez au-dessus %s.",
+                  du(an(is_moat(x, y) ? "douve" : "bassin")));
         }
     } else if (is_lava(x, y) && !stopping_short) {
-        Norep("You move over some lava.");
+        Norep("Vous passez au-dessus de la lave.");
     }
 
     /* FIXME:
@@ -948,7 +952,7 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
             dotrap(ttmp, NO_TRAP_FLAGS);
             return FALSE;
         } else if (ttmp->ttyp == VIBRATING_SQUARE) {
-            pline("The ground vibrates as you pass it.");
+            pline("Le sol vibre à votre passage.");
             dotrap(ttmp, NO_TRAP_FLAGS); /* doesn't print messages */
         } else if (ttmp->ttyp == FIRE_TRAP) {
             dotrap(ttmp, NO_TRAP_FLAGS);
@@ -961,7 +965,8 @@ hurtle_step(genericptr_t arg, coordxy x, coordxy y)
             return TRUE;
         } else {
             if (ttmp->tseen)
-                You("pass right over %s.", an(trapname(ttmp->ttyp, FALSE)));
+                You("passez juste au-dessus %s.",
+                    du(an(trapname(ttmp->ttyp, FALSE))));
         }
     }
     if (--*range < 0) /* make sure our range never goes negative */
@@ -1026,7 +1031,7 @@ mhurtle_step(genericptr_t arg, coordxy x, coordxy y)
     }
     if ((mtmp = m_at(x, y)) != 0 && mtmp != mon) {
         if (canseemon(mon) || canseemon(mtmp))
-            pline("%s bumps into %s.", Monnam(mon), a_monnam(mtmp));
+            pline("%s se cogne contre %s.", Monnam(mon), a_monnam(mtmp));
         wakeup(mtmp, !svc.context.mon_moving);
         /* check whether 'mon' is turned to stone by touching 'mtmp' */
         if (touch_petrifies(mtmp->data)
@@ -1042,7 +1047,7 @@ mhurtle_step(genericptr_t arg, coordxy x, coordxy y)
         }
     } else if (u_at(x, y)) {
         /* a monster has caused 'mon' to hurtle against hero */
-        pline("%s bumps into you.", Some_Monnam(mon));
+        pline("%s se cogne contre vous.", Some_Monnam(mon));
         stop_occupation();
         /* check whether 'mon' is turned to stone by touching poly'd hero */
         if (Upolyd && touch_petrifies(gy.youmonst.data)
@@ -1054,11 +1059,11 @@ mhurtle_step(genericptr_t arg, coordxy x, coordxy y)
         /* and whether hero is turned to stone by being touched by 'mon' */
         if (touch_petrifies(mon->data) && !(uarmu || uarm || uarmc)) {
             Snprintf(svk.killer.name, sizeof svk.killer.name,
-                     "being hit by %s",
+                     "un choc avec %s",
                      /* combine m_monnam() and noname_monnam():
                         "{your,a} hurtling cockatrice" w/o assigned name */
                      x_monnam(mon, mon->mtame ? ARTICLE_YOUR : ARTICLE_A,
-                              "hurtling", EXACT_NAME | SUPPRESS_NAME, FALSE));
+                              "projeté", EXACT_NAME | SUPPRESS_NAME, FALSE));
             instapetrify(svk.killer.name);
             newsym(u.ux, u.uy);
         }
@@ -1088,16 +1093,16 @@ hurtle(int dx, int dy, int range, boolean verbose)
      * for diagonal movement, give the player a message and return.
      */
     if (Punished && !carried(uball)) {
-        You_feel("a tug from the iron ball.");
+        You_feel("sentez le boulet vous retenir.");
         nomul(0);
         return;
     } else if (u.utrap) {
-        You("are anchored by the %s.",
-            (u.utraptype == TT_WEB) ? "web"
-            : (u.utraptype == TT_LAVA) ? hliquid("lava")
+        You("êtes retenu%s par %s.", UE,
+            the((u.utraptype == TT_WEB) ? "toile"
+            : (u.utraptype == TT_LAVA) ? hliquid("lave")
               : (u.utraptype == TT_INFLOOR) ? surface(u.ux, u.uy)
-                : (u.utraptype == TT_BURIEDBALL) ? "buried ball"
-                  : "trap");
+                : (u.utraptype == TT_BURIEDBALL) ? "boulet enterré"
+                  : "piège"));
         nomul(0);
         return;
     }
@@ -1110,11 +1115,14 @@ hurtle(int dx, int dy, int range, boolean verbose)
         return; /* paranoia */
 
     nomul(-range);
-    gm.multi_reason = "moving through the air";
+    gm.multi_reason = "en train de voler dans les airs";
     gn.nomovemsg = ""; /* it just happens */
-    if (verbose)
-        You("%s in the opposite direction.",
-            (range > 1) ? "hurtle" : "float");
+    if (verbose) {
+        if (range > 1)
+            You("êtes projeté%s dans la direction opposée.", UE);
+        else
+            You("flottez dans la direction opposée.");
+    }
     /* if we're in the midst of shooting multiple projectiles, stop */
     endmultishot(TRUE);
     uc.x = u.ux;
@@ -1141,7 +1149,7 @@ mhurtle(struct monst *mon, int dx, int dy, int range)
      */
     if (mon->data->msize >= MZ_HUGE || mon == u.ustuck || mon->mtrapped) {
         if (canseemon(mon))
-            pline("%s doesn't budge!", Monnam(mon));
+            pline("%s ne bouge pas d'un pouce !", Monnam(mon));
         return;
     }
 
@@ -1263,10 +1271,10 @@ toss_up(struct obj *obj, boolean hitsroof)
     /* note: obj->quan == 1 */
 
     if (!has_ceiling(&u.uz)) {
-        action = "flies up into"; /* into "the sky" or "the water above" */
+        action = "s'envole vers"; /* into "the sky" or "the water above" */
     } else if (hitsroof) {
         if (breaktest(obj)) {
-            pline("%s hits the %s.", Doname2(obj), ceiling(u.ux, u.uy));
+            pline("%s heurte %s.", Doname2(obj), the(ceiling(u.ux, u.uy)));
             breakmsg(obj, !Blind);
             /* crackable armor will return True for breaktest() but will
                usually return False for breakobj() */
@@ -1277,12 +1285,12 @@ toss_up(struct obj *obj, boolean hitsroof)
             }
             return FALSE;
         }
-        action = "hits";
+        action = "heurte";
     } else {
-        action = "almost hits";
+        action = "frôle";
     }
-    pline("%s %s the %s, then falls back on top of your %s.", Doname2(obj),
-          action, ceiling(u.ux, u.uy), body_part(HEAD));
+    pline("%s %s %s, puis vous retombe sur %s.", Doname2(obj),
+          action, the(ceiling(u.ux, u.uy)), the(body_part(HEAD)));
 
     /* object now hits you */
 
@@ -1309,17 +1317,17 @@ toss_up(struct obj *obj, boolean hitsroof)
                 /* egg ends up "all over your face"; perhaps
                    visored helmet should still save you here */
                 if (uarmh)
-                    Your("%s fails to protect you.", helm_simple_name(uarmh));
+                    Your("%s ne vous protège pas.", helm_simple_name(uarmh));
                 goto petrify;
             }
             FALLTHROUGH;
             /*FALLTHRU*/
         case CREAM_PIE:
         case BLINDING_VENOM:
-            pline("You've got it all over your %s!", body_part(FACE));
+            pline("Vous en avez plein %s !", the(body_part(FACE)));
             if (blindinc) {
                 if (otyp == BLINDING_VENOM && !Blind)
-                    pline("It blinds you!");
+                    pline("Ça vous aveugle !");
                 u.ucreamed += blindinc;
                 make_blinded(BlindedTimeout + (long) blindinc, FALSE);
                 if (!Blind)
@@ -1335,7 +1343,7 @@ toss_up(struct obj *obj, boolean hitsroof)
         hitfloor(obj, FALSE);
         gt.thrownobj = 0;
     } else if (harmless_missile(obj)) {
-        pline("It doesn't hurt.");
+        pline("Ça ne fait pas mal.");
         hitfloor(obj, FALSE);
         gt.thrownobj = 0;
     } else { /* neither potion nor other breaking object */
@@ -1384,16 +1392,16 @@ toss_up(struct obj *obj, boolean hitsroof)
             if ((less_damage && dmg < (Upolyd ? u.mh : u.uhp)) || harmless) {
                 if (!artimsg) {
                     if (!harmless) /* !harmless => less_damage here */
-                        pline("Fortunately, you are wearing a hard helmet.");
+                        pline("Heureusement, vous portez un casque rigide.");
                     else
-                        pline("Unfortunately, you are wearing %s.",
+                        pline("Malheureusement, vous portez %s.",
                               an(helm_simple_name(uarmh))); /* helm or hat */
                 }
 
             /* helmet definitely protects you when it blocks petrification */
             } else if (!petrifier) {
                 if (flags.verbose)
-                    Your("%s does not protect you.", helm_simple_name(uarmh));
+                    Your("%s ne vous protège pas.", helm_simple_name(uarmh));
             }
             /* stone missile against hero in xorn form would have been
                harmless, but hitting a worn helmet negates that */
@@ -1404,8 +1412,8 @@ toss_up(struct obj *obj, boolean hitsroof)
  petrify:
             svk.killer.format = KILLED_BY;
             /* what goes up... */
-            Strcpy(svk.killer.name, "elementary physics");
-            You("turn to stone.");
+            Strcpy(svk.killer.name, "la physique élémentaire");
+            You("vous changez en pierre.");
             if (obj)
                 dropy(obj); /* bypass most of hitfloor() */
             gt.thrownobj = 0;  /* now either gone or on floor */
@@ -1413,14 +1421,14 @@ toss_up(struct obj *obj, boolean hitsroof)
             return obj ? TRUE : FALSE;
         }
         if (is_silver && Hate_silver)
-            pline_The("silver sears you!");
+            pline_The("L'argent vous brûle !");
         if (harmless)
-            hit(thesimpleoname(obj), &gy.youmonst, " but doesn't hurt.");
+            hit(thesimpleoname(obj), &gy.youmonst, " mais ne fait pas mal.");
 
         hitfloor(obj, TRUE);
         gt.thrownobj = 0;
         if (!harmless)
-            losehp(dmg, "falling object", KILLED_BY_AN);
+            losehp(dmg, "objet qui tombe", KILLED_BY_AN);
     }
     return TRUE;
 }
@@ -1529,13 +1537,13 @@ throwit(
         boolean slipok = TRUE;
 
         if (ammo_and_launcher(obj, uwep)) {
-            pline("%s!", Tobjnam(obj, "misfire"));
+            pline("%s !", Tobjnam(obj, "partir de travers"));
         } else {
             /* only slip if it's greased or meant to be thrown */
             if (obj->greased || throwing_weapon(obj))
                 /* BUG: this message is grammatically incorrect if obj has
                    a plural name; greased gloves or boots for instance. */
-                pline("%s as you throw it!", Tobjnam(obj, "slip"));
+                pline("%s au moment du lancer !", Tobjnam(obj, "glisser"));
             else
                 slipok = FALSE;
         }
@@ -1554,8 +1562,8 @@ throwit(
                    : (u.uhp < 10 && u.uhp != u.uhpmax))
         && obj->owt > (unsigned) ((Upolyd ? u.mh : u.uhp) * 2)
         && !Is_airlevel(&u.uz)) {
-        You("have so little stamina, %s drops from your grasp.",
-            the(xname(obj)));
+        pline("Vous avez si peu d'endurance que %s vous %s des mains.",
+              the(xname(obj)), otense(obj, "tomber"));
         exercise(A_CON, FALSE);
         u.dx = u.dy = 0;
         u.dz = 1;
@@ -1584,8 +1592,8 @@ throwit(
                aklys must we wielded as primary to return when thrown */
             && iflags.returning_missile
             && !impaired) {
-            pline("%s the %s and returns to your hand!", Tobjnam(obj, "hit"),
-                  ceiling(u.ux, u.uy));
+            pline("%s %s et revient dans votre main !", Tobjnam(obj, "heurter"),
+                  the(ceiling(u.ux, u.uy)));
             obj = return_throw_to_inv(obj, wep_mask, twoweap, oldslot);
         } else if (u.dz < 0) {
             (void) toss_up(obj, rn2(5) && !Underwater);
@@ -1642,9 +1650,9 @@ throwit(
                     range++;
             } else if (obj->oclass != GEM_CLASS) {
                 range /= 2;
-                pline("You aren't wielding %s, so you throw your %s by %s.",
+                pline("Vous ne maniez pas %s, vous lancez donc %s à la %s.",
                       an(skill_name(weapon_type(obj))),
-                      weapon_descr(obj),
+                      the(weapon_descr(obj)),
                       body_part(HAND));
             }
         }
@@ -1689,7 +1697,7 @@ throwit(
                we're about to return */
             if (tethered_weapon) {
                 if (!tether_released_msg) {
-                    pline("The tether comes off your %s.",
+                    pline("La lanière se détache de votre %s.",
                            body_part(ARM));
                     tether_released_msg = TRUE;
                 }
@@ -1709,7 +1717,7 @@ throwit(
         /* missile has already been handled */
         if (tethered_weapon) {
             if (!tether_released_msg) {
-                pline("The tether comes off your %s.",
+                pline("La lanière se détache de votre %s.",
                        body_part(ARM));
                 tether_released_msg = TRUE;
             }
@@ -1729,7 +1737,7 @@ throwit(
                     sho_obj_return_to_u(obj); /* display its flight */
 
                 if (!impaired && rn2(100)) {
-                    pline("%s to your hand!", Tobjnam(obj, "return"));
+                    pline("%s dans votre main !", Tobjnam(obj, "revenir"));
                     obj = addinv_before(obj, oldslot);
                     encumber_msg();
                     /* addinv autoquivers an aklys if quiver is empty;
@@ -1759,28 +1767,31 @@ throwit(
                         if (tethered_weapon) {
                             /* Blind mods unnecessary; you know what you threw,
                              * and it is tethered to your arm */
-                            pline("Your tethered %s snaps back but the tether slips from your %s.",
-                                  simpleonames(obj), body_part(ARM));
+                            pline("%s attaché%s revient d'un coup sec mais la lanière glisse de votre %s.",
+                                  Yname2(obj), accord(simpleonames(obj)),
+                                  body_part(ARM));
                             tether_released_msg = TRUE;
                         } else {
                             pline(Blind
-                                      ? "%s lands %s your %s."
-                                      : "%s back to you, landing %s your %s.",
-                                  Blind ? Something : Tobjnam(obj, "return"),
-                                  Levitation ? "beneath" : "at",
+                                      ? "%s atterrit %s vos %s."
+                                      : "%s vers vous et atterrit %s vos %s.",
+                                  Blind ? Something : Tobjnam(obj, "revenir"),
+                                  Levitation ? "sous" : "à",
                                   makeplural(body_part(FOOT)));
                         }
                     } else {
                         dmg += rnd(3);
                         if (tethered_weapon) {
-                            Your("tethered %s returns and hits your %s!",
-                                 simpleonames(obj), body_part(ARM));
+                            pline("%s attaché%s revient et vous frappe au %s !",
+                                  Yname2(obj), accord(simpleonames(obj)),
+                                  body_part(ARM));
                         } else {
                             pline(
                                 Blind
-                                    ? "%s your %s!"
-                                    : "%s back toward you, hitting your %s!",
-                                Tobjnam(obj, Blind ? "hit" : "fly"),
+                                    ? "%s vous frappe au %s !"
+                                    : "%s vers vous et vous frappe au %s !",
+                                Blind ? The(xname(obj))
+                                      : Tobjnam(obj, "revenir"),
                                 body_part(ARM));
                         }
                         if (obj->oartifact)
@@ -1798,8 +1809,8 @@ throwit(
                             dropy(obj);
                     } else {
                         if (!tether_released_msg) {
-                            pline_The("%s tether comes off your %s.",
-                                  s_suffix(simpleonames(obj)), body_part(ARM));
+                            pline("La lanière %s se détache de votre %s.",
+                                  du(simpleonames(obj)), body_part(ARM));
                             tether_released_msg = TRUE;
                         }
                     }
@@ -1809,7 +1820,7 @@ throwit(
             } else {
                 if (tethered_weapon) {
                    if (!tether_released_msg) {
-                       pline("The tether comes off your %s.",
+                       pline("La lanière se détache de votre %s.",
                               body_part(ARM));
                        tether_released_msg = TRUE;
                     }
@@ -1823,7 +1834,7 @@ throwit(
                        capability back anyway, quivered or not shouldn't
                        matter */
                 } else {
-                    pline("%s to return!", Tobjnam(obj, "fail"));
+                    pline("%s à revenir !", Tobjnam(obj, "échouer"));
                 }
                 if (u.uswallow) {
                     swallowit(obj);
@@ -1854,7 +1865,7 @@ throwit(
                     && !is_flammable(obj))) {
                 Soundeffect(se_splash, 50);
                 pline((weight(obj) > WT_SPLASH_THRESHOLD)
-                      ? "Splash!" : "Plop!");
+                      ? "Splash !" : "Plouf !");
             }
         }
         if (flooreffects(obj, gb.bhitpos.x, gb.bhitpos.y, "fall")) {
@@ -1864,7 +1875,7 @@ throwit(
         obj_no_longer_held(obj);
         if (mon && mon->isshk && is_pick(obj)) {
             if (cansee(gb.bhitpos.x, gb.bhitpos.y))
-                pline("%s snatches up %s.", Monnam(mon), the(xname(obj)));
+                pline("%s s'empare %s.", Monnam(mon), du(the(xname(obj))));
             if (*u.ushops || obj->unpaid)
                 check_shop_obj(obj, gb.bhitpos.x, gb.bhitpos.y, FALSE);
             (void) mpickobj(mon, obj); /* may merge and free obj */
@@ -2014,7 +2025,7 @@ tmiss(struct obj *obj, struct monst *mon, boolean maybe_wakeup)
        an arrow just landing short of any target (no message in that case),
        so will realize that there is a valid target here anyway. */
     if (!canseemon(mon) || (M_AP_TYPE(mon) && M_AP_TYPE(mon) != M_AP_MONSTER))
-        pline("%s %s.", The(missile), otense(obj, "miss"));
+        pline("%s %s sa cible.", The(missile), otense(obj, "manquer"));
     else
         miss(missile, mon);
     if (maybe_wakeup && !rn2(3))
@@ -2146,10 +2157,11 @@ thitmonst(
             tmiss(obj, mon, FALSE);
             return 0;
         } else if (mon->mtame) {
-            pline("%s catches and drops %s.", Monnam(mon), the(xname(obj)));
+            pline("%s attrape %s et %s lâche.", Monnam(mon), the(xname(obj)),
+                  is_plural(obj) ? "les" : "le");
             return 0;
         } else {
-            pline("%s catches %s.", Monnam(mon), the(xname(obj)));
+            pline("%s attrape %s.", Monnam(mon), the(xname(obj)));
             return gem_accept(mon, obj);
         }
     }
@@ -2164,7 +2176,7 @@ thitmonst(
         mon->mstrategy &= ~STRAT_WAITMASK;
 
         if (mon->mcanmove) {
-            pline("%s catches %s.", Some_Monnam(mon), the(xname(obj)));
+            pline("%s attrape %s.", Some_Monnam(mon), the(xname(obj)));
             /* leader will keep tossed invocation item after you've done the
                invocation and it's become unnecessary for completion.. */
             if ((u.uevent.invoked && objects[obj->otyp].oc_unique
@@ -2177,10 +2189,10 @@ thitmonst(
                     /* just in case, identify the object so its name will
                        appear in the message */
                     fully_identify_obj(obj);
-                    verbalize("%s part in this is finished.",
-                              s_suffix(The(xname(obj))));
+                    verbalize("Le rôle %s dans cette affaire est terminé.",
+                              du(the(xname(obj))));
                     verbalize(
-               "We will guard it in case it is ever needed again, %s forbid.",
+               "Nous le garderons au cas où l'on en aurait de nouveau besoin, ce qu'à %s ne plaise.",
                               align_gname(u.ualignbase[A_ORIGINAL]));
                 }
                 if (*u.ushops || obj->unpaid) /* not very likely... */
@@ -2192,8 +2204,8 @@ thitmonst(
                 boolean next2u = monnear(mon, u.ux, u.uy);
 
                 finish_quest(obj); /* acknowledge quest completion */
-                pline("%s %s %s back to you.", Some_Monnam(mon),
-                      (next2u ? "hands" : "tosses"), the(xname(obj)));
+                pline("%s vous %s %s.", Some_Monnam(mon),
+                      (next2u ? "rend" : "renvoie"), the(xname(obj)));
                 if (!next2u)
                     sho_obj_return_to_u(obj);
                 obj = addinv(obj); /* back into your inventory */
@@ -2348,12 +2360,14 @@ thitmonst(
                 }
             }
         }
-        Strcpy(trail,
-               digests(md) ? " entrails" : is_whirly(md) ? " currents" : "");
-        monname = mon_nam(mon);
-        if (*trail)
-            monname = s_suffix(monname);
-        pline("%s into %s%s.", Tobjnam(obj, "vanish"), monname, trail);
+        if (digests(md))
+            Sprintf(trail, "les entrailles %s", du(mon_nam(mon)));
+        else if (is_whirly(md))
+            Sprintf(trail, "les courants %s", du(mon_nam(mon)));
+        else
+            Strcpy(trail, mon_nam(mon));
+        monname = trail;
+        pline("%s dans %s.", Tobjnam(obj, "disparaître"), monname);
     } else {
         tmiss(obj, mon, TRUE);
     }
@@ -2367,11 +2381,12 @@ staticfn int
 gem_accept(struct monst *mon, struct obj *obj)
 {
     static NEARDATA const char
-        nogood[]     = " is not interested in your junk.",
-        acceptgift[] = " accepts your gift.",
-        maybeluck[]  = " hesitatingly",
-        noluck[]     = " graciously",
-        addluck[]    = " gratefully";
+        nogood[]     = " ne s'intéresse pas à votre camelote.",
+        acceptgift[] = " accepte votre cadeau",
+        maybeluck[]  = " avec hésitation",
+        noluck[]     = " avec grâce",
+        addluck[]    = " avec gratitude";
+    const char *adv = "";
     char buf[BUFSZ];
     boolean is_buddy = sgn(mon->data->maligntyp) == sgn(u.ualign.type);
     boolean is_gem = objects[obj->otyp].oc_material == GEMSTONE;
@@ -2385,10 +2400,10 @@ gem_accept(struct monst *mon, struct obj *obj)
     if (obj->dknown && objects[obj->otyp].oc_name_known) {
         if (is_gem) {
             if (is_buddy) {
-                Strcat(buf, addluck);
+                adv = addluck;
                 change_luck(5);
             } else {
-                Strcat(buf, maybeluck);
+                adv = maybeluck;
                 change_luck(rn2(7) - 3);
             }
         } else {
@@ -2400,10 +2415,10 @@ gem_accept(struct monst *mon, struct obj *obj)
     } else if (has_oname(obj) || objects[obj->otyp].oc_uname) {
         if (is_gem) {
             if (is_buddy) {
-                Strcat(buf, addluck);
+                adv = addluck;
                 change_luck(2);
             } else {
-                Strcat(buf, maybeluck);
+                adv = maybeluck;
                 change_luck(rn2(3) - 1);
             }
         } else {
@@ -2415,17 +2430,19 @@ gem_accept(struct monst *mon, struct obj *obj)
     } else {
         if (is_gem) {
             if (is_buddy) {
-                Strcat(buf, addluck);
+                adv = addluck;
                 change_luck(1);
             } else {
-                Strcat(buf, maybeluck);
+                adv = maybeluck;
                 change_luck(rn2(3) - 1);
             }
         } else {
-            Strcat(buf, noluck);
+            adv = noluck;
         }
     }
     Strcat(buf, acceptgift);
+    Strcat(buf, adv);
+    Strcat(buf, ".");
     if (*u.ushops || obj->unpaid)
         check_shop_obj(obj, mon->mx, mon->my, TRUE);
     (void) mpickobj(mon, obj); /* may merge and free obj */
@@ -2519,9 +2536,9 @@ release_camera_demon(struct obj *obj, coordxy x, coordxy y)
         && (mtmp = makemon(&mons[rn2(3) ? PM_HOMUNCULUS : PM_IMP], x, y,
                            MM_NOMSG)) != 0) {
         if (canspotmon(mtmp))
-            pline("%s is released!", Hallucination
+            pline("%s est libéré !", Hallucination
                                          ? An(rndmonnam(NULL))
-                                         : "The picture-painting demon");
+                                         : "Le démon peintre");
         mtmp->mpeaceful = !obj->cursed;
         set_malign(mtmp);
     }
@@ -2563,13 +2580,16 @@ breakobj(
                 if (obj->otyp != POT_WATER && !Half_gas_damage) {
                     if (!breathless(gy.youmonst.data)) {
                         /* [what about "familiar odor" when known?] */
-                        You("smell a peculiar odor...");
+                        You("sentez une odeur étrange...");
                     } else {
                         const char *eyes = body_part(EYE);
 
                         if (eyecount(gy.youmonst.data) != 1)
                             eyes = makeplural(eyes);
-                        Your("%s %s.", eyes, vtense(eyes, "water"));
+                        pline("%s %s %s.",
+                              (eyecount(gy.youmonst.data) != 1) ? "Vos"
+                                                                : "Votre",
+                              eyes, vtense(eyes, "larmoyer"));
                     }
                 }
                 potionbreathe(obj);
@@ -2685,27 +2705,27 @@ breakmsg(struct obj *obj, boolean in_view)
     case MIRROR:
     case CRYSTAL_BALL:
     case EXPENSIVE_CAMERA:
-        to_pieces = " into a thousand pieces";
+        to_pieces = " en mille morceaux";
         FALLTHROUGH;
     /*FALLTHRU*/
     case POT_WATER: /* really, all potions */
         if (!in_view)
-            You_hear("%s shatter!", something);
+            You_hear("%s se briser !", something);
         else
-            pline("%s shatter%s%s!", Doname2(obj),
-                  (obj->quan == 1L) ? "s" : "", to_pieces);
+            pline("%s %s%s !", Doname2(obj), otense(obj, "se briser"),
+                  to_pieces);
         break;
     case EGG:
     case MELON:
-        pline("Splat!");
+        pline("Splat !");
         break;
     case CREAM_PIE:
         if (in_view)
-            pline("What a mess!");
+            pline("Quel gâchis !");
         break;
     case ACID_VENOM:
     case BLINDING_VENOM:
-        pline("Splash!");
+        pline("Splash !");
         break;
     }
 }
@@ -2717,7 +2737,7 @@ throw_gold(struct obj *obj)
     struct monst *mon;
 
     if (!u.dx && !u.dy && !u.dz) {
-        You("cannot throw gold at yourself.");
+        You("ne pouvez pas vous lancer de l'or.");
         /* If we tried to throw part of a stack, force it to merge back
            together (same as in throw_obj).  Essential for gold. */
         if (obj->o_id == svc.context.objsplit.parent_oid
@@ -2728,11 +2748,13 @@ throw_gold(struct obj *obj)
     freeinv(obj);
     if (u.uswallow) {
         const char *swallower = mon_nam(u.ustuck);
+        char swbuf[BUFSZ];
 
         if (digests(u.ustuck->data))
             /* note: s_suffix() returns a modifiable buffer */
-            swallower = strcat(s_suffix(swallower), " entrails");
-        pline_The("gold disappears into %s.", swallower);
+            swallower = strcat(strcpy(swbuf, "les entrailles "),
+                               du(swallower));
+        pline_The("L'or disparaît dans %s.", swallower);
         add_to_minv(u.ustuck, obj);
         return ECMD_TIME;
     }
@@ -2740,11 +2762,11 @@ throw_gold(struct obj *obj)
     if (u.dz) {
         if (u.dz < 0 && !Is_airlevel(&u.uz) && !Underwater
             && !Is_waterlevel(&u.uz)) {
-            pline_The("gold hits the %s, then falls back on top of your %s.",
-                      ceiling(u.ux, u.uy), body_part(HEAD));
+            pline_The("L'or heurte %s, puis vous retombe sur %s.",
+                      the(ceiling(u.ux, u.uy)), the(body_part(HEAD)));
             /* some self damage? */
             if (uarmh)
-                pline("Fortunately, you are wearing %s!",
+                pline("Heureusement, vous portez %s !",
                       an(helm_simple_name(uarmh)));
         }
         gb.bhitpos.x = u.ux;
@@ -2779,7 +2801,7 @@ throw_gold(struct obj *obj)
     if (flooreffects(obj, gb.bhitpos.x, gb.bhitpos.y, "fall"))
         return ECMD_TIME;
     if (u.dz > 0)
-        pline_The("gold hits the %s.", surface(gb.bhitpos.x, gb.bhitpos.y));
+        pline_The("L'or heurte %s.", the(surface(gb.bhitpos.x, gb.bhitpos.y)));
     place_object(obj, gb.bhitpos.x, gb.bhitpos.y);
     if (*u.ushops)
         sellobj(obj, gb.bhitpos.x, gb.bhitpos.y);

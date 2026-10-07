@@ -246,7 +246,7 @@ early_options(int *argc_p, char ***argv_p, char **hackdir_p)
                            (ArgValRequired | ArgNamOneLetter | ArgErrSilent),
                            "-directory", origarg, &argc, &argv);
                 if (!arg)
-                    error("Flag -d must be followed by a directory name.");
+                    error("L'option -d doit être suivie d'un nom de répertoire.");
                 if (*arg != 'e') { /* avoid matching -decgraphics or -debug */
                     *hackdir_p = arg;
                     if (oldargc == argc)
@@ -323,7 +323,7 @@ early_options(int *argc_p, char ***argv_p, char **hackdir_p)
                 if (nextarg[0] != '-') {
                     (void) strncpy(svp.plname, nextarg, sizeof(svp.plname) - 1);
                 } else {
-                    raw_print("Player name expected after -u\n");
+                    raw_print("Nom de joueur attendu après -u\n");
                 }
             }
 #endif
@@ -591,8 +591,8 @@ argcheck(int argc, char *argv[], enum earlyarg e_arg)
                     dump_version_info();
                     return 2; /* done */
                 } else if (!match_optname(extended_opt, "show", 4, FALSE)) {
-                    raw_printf("-%sversion can only be extended with"
-                               " -%sversion:copy or :dump or :show.\n",
+                    raw_printf("-%sversion ne peut être étendu qu'avec"
+                               " -%sversion:copy, :dump ou :show.\n",
                                dashdash, dashdash);
                     /* exit after we've reported bad command line argument */
                     return 2;

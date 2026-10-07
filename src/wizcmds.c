@@ -248,19 +248,19 @@ wiz_kill(void)
     coord cc;
     int ans;
     char c, qbuf[QBUFSZ];
-    const char *prompt = "Pick first monster to slay";
+    const char *prompt = "Choisissez le premier monstre à tuer";
     boolean save_verbose = flags.verbose,
             save_autodescribe = iflags.autodescribe;
     d_level uarehere = u.uz;
 
     cc.x = u.ux, cc.y = u.uy;
     for (;;) {
-        pline("%s:", prompt);
-        prompt = "Next monster";
+        pline("%s :", prompt);
+        prompt = "Monstre suivant";
 
         flags.verbose = FALSE;
         iflags.autodescribe = TRUE;
-        ans = getpos(&cc, TRUE, "a monster");
+        ans = getpos(&cc, TRUE, "un monstre");
         flags.verbose = save_verbose;
         iflags.autodescribe = save_autodescribe;
         if (ans < 0 || cc.x < 1)
@@ -269,17 +269,17 @@ wiz_kill(void)
         mtmp = 0;
         if (u_at(cc.x, cc.y)) {
             if (u.usteed) {
-                Sprintf(qbuf, "Kill %.110s?", mon_nam(u.usteed));
+                Sprintf(qbuf, "Tuer %.110s ?", mon_nam(u.usteed));
                 if ((c = ynq(qbuf)) == 'q')
                     break;
                 if (c == 'y')
                     mtmp = u.usteed;
             }
             if (!mtmp) {
-                Sprintf(qbuf, "%s?", Role_if(PM_SAMURAI) ? "Perform seppuku"
-                                                         : "Commit suicide");
+                Sprintf(qbuf, "%s ?", Role_if(PM_SAMURAI) ? "Faire seppuku"
+                                                          : "Vous suicider");
                 if (paranoid_query(TRUE, qbuf)) {
-                    Sprintf(svk.killer.name, "%s own player", uhis());
+                    Strcpy(svk.killer.name, "son propre joueur");
                     svk.killer.format = KILLED_BY;
                     done(DIED);
                 }
@@ -307,13 +307,13 @@ wiz_kill(void)
                         | ((tame && has_mgivenname(mtmp)) ? SUPPRESS_SADDLE
                            : 0)),
                 articl = tame ? ARTICLE_YOUR : seen ? ARTICLE_THE : ARTICLE_A;
-            const char *adjs = tame ? (!seen ? "poor, unseen" : "poor")
-                                    : (!seen ? "unseen" : (const char *) 0);
+            const char *adjs = !seen ? "invisible"
+                               : tame ? "malheureux" : (const char *) 0;
             char *Mn = x_monnam(mtmp, articl, adjs, flgs, FALSE);
 
             if (!iflags.menu_requested) {
                 /* normal case: hero is credited/blamed */
-                You("%s %s!", nonliving(mtmp->data) ? "destroy" : "kill", Mn);
+                You("%s %s !", nonliving(mtmp->data) ? "détruisez" : "tuez", Mn);
                 xkilled(mtmp, XKILL_NOMSG);
             } else { /* 'm'-prefix */
                 /* we know that monsters aren't moving because player has
@@ -322,8 +322,8 @@ wiz_kill(void)
                    need to have the mon_moving flag be True in order to
                    avoid blaming or crediting hero for their deaths */
                 svc.context.mon_moving = TRUE;
-                pline("%s is %s.", upstart(Mn),
-                      nonliving(mtmp->data) ? "destroyed" : "killed");
+                pline("%s est %s%s.", upstart(Mn),
+                      nonliving(mtmp->data) ? "détruit" : "tué", MON_E(mtmp));
                 /* Null second arg suppresses the usual message */
                 monkilled(mtmp, (char *) 0, AD_PHYS);
                 svc.context.mon_moving = FALSE;
@@ -333,7 +333,7 @@ wiz_kill(void)
             if (u.utotype || !on_level(&u.uz, &uarehere))
                 break;
         } else {
-            There("is no monster there.");
+            There("Il n'y a pas de monstre ici.");
             break;
         }
     }
@@ -362,7 +362,7 @@ wiz_load_lua(void)
                 16*1024*1024, 0, 16*1024*1024};
 
         buf[0] = '\0';
-        getlin("Load which lua file?", buf);
+        getlin("Charger quel fichier lua ?", buf);
         if (buf[0] == '\033' || buf[0] == '\0')
             return ECMD_CANCEL;
         if (!strchr(buf, '.'))
@@ -381,7 +381,7 @@ wiz_load_splua(void)
         char buf[BUFSZ];
 
         buf[0] = '\0';
-        getlin("Load which des lua file?", buf);
+        getlin("Charger quel fichier lua de niveau (des) ?", buf);
         if (buf[0] == '\033' || buf[0] == '\0')
             return ECMD_CANCEL;
         if (!strchr(buf, '.'))
@@ -414,7 +414,7 @@ int
 wiz_flip_level(void)
 {
     static const char choices[] = "0123",
-        prmpt[] = "Flip 0=randomly, 1=vertically, 2=horizontally, 3=both:";
+        prmpt[] = "Retourner 0=au hasard, 1=verticalement, 2=horizontalement, 3=les deux :";
 
     /*
      * Does not handle
@@ -452,7 +452,7 @@ wiz_level_change(void)
     int ret;
 
     buf[0] = '\0'; /* in case EDIT_GETLIN is enabled */
-    getlin("To what experience level do you want to be set?", buf);
+    getlin("À quel niveau d'expérience voulez-vous passer ?", buf);
     (void) mungspaces(buf);
     if (buf[0] == '\033' || buf[0] == '\0')
         ret = 0;
@@ -464,10 +464,10 @@ wiz_level_change(void)
         return ECMD_OK;
     }
     if (newlevel == u.ulevel) {
-        You("are already that experienced.");
+        You("avez déjà ce niveau d'expérience.");
     } else if (newlevel < u.ulevel) {
         if (u.ulevel == 1) {
-            You("are already as inexperienced as you can get.");
+            You("êtes déjà aussi inexpérimenté%s que possible.", UE);
             return ECMD_OK;
         }
         if (newlevel < 1)
@@ -476,7 +476,7 @@ wiz_level_change(void)
             losexp("#levelchange");
     } else {
         if (u.ulevel >= MAXULEV) {
-            You("are already as experienced as you can get.");
+            You("êtes déjà aussi expérimenté%s que possible.", UE);
             return ECMD_OK;
         }
         if (newlevel > MAXULEV)
@@ -502,15 +502,15 @@ wiz_telekinesis(void)
     cc.x = u.ux;
     cc.y = u.uy;
 
-    pline("Pick a monster to hurtle.");
+    pline("Choisissez un monstre à projeter.");
     do {
-        ans = getpos(&cc, TRUE, "a monster");
+        ans = getpos(&cc, TRUE, "un monstre");
         if (ans < 0 || cc.x < 1)
             return ECMD_CANCEL;
 
         if ((((mtmp = m_at(cc.x, cc.y)) != 0) && canspotmon(mtmp))
             || u_at(cc.x, cc.y)) {
-            if (!getdir("which direction?"))
+            if (!getdir("Dans quelle direction ?"))
                 return ECMD_CANCEL;
 
             if (mtmp) {
@@ -541,7 +541,7 @@ wiz_panic(void)
         return ECMD_OK;
     }
     if (paranoid_query(TRUE,
-                       "Do you want to call panic() and end your game?"))
+                       "Voulez-vous appeler panic() et mettre fin à la partie ?"))
         panic("Crash test (#panic).");
     return ECMD_OK;
 }
@@ -551,12 +551,12 @@ int
 wiz_fuzzer(void)
 {
     if (flags.suppress_alert < FEATURE_NOTICE_VER(3,7,0)) {
-        pline("The fuzz tester will make NetHack execute random keypresses.");
-        There("is no conventional way out of this mode.");
+        pline("Le testeur aléatoire va faire exécuter à NetHack des frappes au hasard.");
+        There("Il n'y a aucun moyen conventionnel de sortir de ce mode.");
     }
-    if (paranoid_query(TRUE, "Do you want to start fuzz testing?")) {
+    if (paranoid_query(TRUE, "Voulez-vous lancer le test aléatoire ?")) {
         /* Thoth, take the reins */
-        if (y_n("Do you want to call panic() after impossible()?") == 'n') {
+        if (y_n("Voulez-vous appeler panic() après impossible() ?") == 'n') {
             iflags.debug_fuzzer = fuzzer_impossible_continue;
         } else {
             iflags.debug_fuzzer = fuzzer_impossible_panic;
@@ -848,7 +848,7 @@ wiz_levltyp_legend(void)
     char buf[BUFSZ];
 
     win = create_nhwindow(NHW_TEXT);
-    putstr(win, 0, "#terrain encodings:");
+    putstr(win, 0, "Codes de #terrain :");
     putstr(win, 0, "");
     fmt = " %c - %-28s"; /* TODO: include tab-separated variant for win32 */
     *buf = '\0';
@@ -862,7 +862,7 @@ wiz_levltyp_legend(void)
         for (j = i; j < last; j += last / 2) {
             dsc = levltyp[j];
             c = !*dsc ? ' '
-                   : !strncmp(dsc, "unreachable", 11) ? '*'
+                   : !strncmp(dsc, "inaccessible", 12) ? '*'
                       /* same int-to-char conversion as wiz_map_levltyp() */
                       : (j < 10) ? '0' + j
                          : (j < 36) ? 'a' + j - 10
@@ -895,14 +895,14 @@ wiz_smell(void)
     cc.x = u.ux;
     cc.y = u.uy;
     if (!olfaction(gy.youmonst.data)) {
-        You("are incapable of detecting odors in your present form.");
+        You("êtes incapable de détecter les odeurs sous votre forme actuelle.");
         return ECMD_OK;
     }
 
-    You("can move the cursor to a monster that you want to smell.");
+    You("pouvez déplacer le curseur sur un monstre que vous voulez renifler.");
     do {
-        pline("Pick a monster to smell.");
-        ans = getpos(&cc, TRUE, "a monster");
+        pline("Choisissez un monstre à renifler.");
+        ans = getpos(&cc, TRUE, "un monstre");
         if (ans < 0 || cc.x < 0) {
             return ECMD_CANCEL; /* done */
         }
@@ -925,14 +925,14 @@ wiz_smell(void)
         /* Is it a monster? */
         if (mptr) {
             if (is_you)
-                You("surreptitiously sniff under your %s.", body_part(ARM));
+                You("reniflez discrètement sous votre %s.", body_part(ARM));
             if (!usmellmon(mptr))
-                pline("%s to not give off any smell.",
-                      is_you ? "You seem" : "That monster seems");
+                pline("%s ne dégager aucune odeur.",
+                      is_you ? "Vous semblez" : "Ce monstre semble");
             if (!glyph_is_monster(glyph))
                 map_invisible(cc.x, cc.y);
         } else {
-            You("don't smell any monster there.");
+            You("ne sentez aucun monstre ici.");
             if (glyph_is_invisible(glyph))
                 unmap_invisible(cc.x, cc.y);
         }
@@ -952,7 +952,7 @@ wiz_intrinsic(void)
 {
     if (wizard) {
         static const char wizintrinsic[] = "#wizintrinsic";
-        static const char fmt[] = "You are%s %s.";
+        static const char fmt[] = "Vous êtes%s en train de %s.";
         winid win;
         anything any;
         char buf[BUFSZ];
@@ -968,7 +968,7 @@ wiz_intrinsic(void)
         if (iflags.cmdassist) {
             /* start menu with a subtitle */
             Sprintf(buf,
-        "[Precede any selection with a count to increment by other than %d.]",
+        "[Faites précéder un choix d'un nombre pour incrémenter d'autre chose que %d.]",
                     DEFAULT_TIMEOUT_INCR);
             add_menu_str(win, buf);
         }
@@ -995,7 +995,7 @@ wiz_intrinsic(void)
             add_menu(win, &nul_glyphinfo, &any, 0, 0, ATR_NONE, clr, buf,
                      MENU_ITEMFLAGS_NONE);
         }
-        end_menu(win, "Which intrinsics?");
+        end_menu(win, "Quelles intrinsèques ?");
         n = select_menu(win, PICK_ANY, &pick_list);
         destroy_nhwindow(win);
 
@@ -1040,19 +1040,19 @@ wiz_intrinsic(void)
                 break;
             case SLIMED:
                 Sprintf(buf, fmt,
-                        !Slimed ? "" : " still", "turning into slime");
+                        !Slimed ? "" : " toujours", "vous changer en limon");
                 make_slimed(newtimeout, buf);
                 break;
             case STONED:
                 Sprintf(buf, fmt,
-                        !Stoned ? "" : " still", "turning into stone");
+                        !Stoned ? "" : " toujours", "vous changer en pierre");
                 make_stoned(newtimeout, buf, KILLED_BY, wizintrinsic);
                 break;
             case STUNNED:
                 make_stunned(newtimeout, TRUE);
                 break;
             case VOMITING:
-                Sprintf(buf, fmt, !Vomiting ? "" : " still", "vomiting");
+                Sprintf(buf, fmt, !Vomiting ? "" : " toujours", "vomir");
                 make_vomiting(newtimeout, FALSE);
                 pline1(buf);
                 break;
@@ -1075,8 +1075,8 @@ wiz_intrinsic(void)
                 if (p != GLIB)
                     incr_itimeout(&u.uprops[p].intrinsic, amt);
                 disp.botl = TRUE; /* have pline() do a status update */
-                pline("Timeout for %s %s %d.", propname,
-                      oldtimeout ? "increased by" : "set to", amt);
+                pline("Délai pour %s %s %d.", propname,
+                      oldtimeout ? "augmenté de" : "fixé à", amt);
                 break;
             }
             /* this has to be after incr_itimeout() */
@@ -1526,10 +1526,10 @@ list_migrating_mons(
             ++other;
     }
     if (here + nxtlv + other == 0) {
-        pline("No monsters currently migrating.");
+        pline("Aucun monstre n'est en migration.");
     } else {
         pline(
-      "%d mon%s pending for current level, %d for next level, %d for others.",
+      "%d monstre%s en attente pour ce niveau, %d pour le suivant, %d pour les autres.",
               here, plur(here), nxtlv, other);
         prmpt[0] = xtra[0] = '\0';
         (void) strkitten(here ? prmpt : xtra, 'c');
@@ -1538,7 +1538,7 @@ list_migrating_mons(
         Strcat(prmpt, "a q");
         if (*xtra)
             Sprintf(eos(prmpt), "%c%s", '\033', xtra);
-        c = yn_function("List which?", prmpt, 'q', TRUE);
+        c = yn_function("Lister lesquels ?", prmpt, 'q', TRUE);
         n = (c == 'c') ? here
             : (c == 'n') ? nxtlv
               : (c == 'o') ? other
@@ -1550,13 +1550,13 @@ list_migrating_mons(
             case 'c':
             case 'n':
             case 'o':
-                Sprintf(buf, "Monster%s migrating to %s:", plur(n),
-                        (c == 'c') ? "current level"
-                        : (c == 'n') ? "next level"
-                          : "'other' levels");
+                Sprintf(buf, "Monstre%s migrant vers %s :", plur(n),
+                        (c == 'c') ? "le niveau actuel"
+                        : (c == 'n') ? "le niveau suivant"
+                          : "les 'autres' niveaux");
                 break;
             default:
-                Strcpy(buf, "All migrating monsters:");
+                Strcpy(buf, "Tous les monstres en migration :");
                 break;
             }
             putstr(win, 0, buf);
@@ -1590,14 +1590,14 @@ list_migrating_mons(
                 /* minimal_monnam() appends map coordinates; strip that */
                 (void) strsubst(buf, " <0,0>", "");
                 if (has_mgivenname(mtmp)) /* if mtmp is named, include that */
-                    Sprintf(eos(buf), " named %s", MGIVENNAME(mtmp));
+                    Sprintf(eos(buf), " nommé%s %s", MON_E(mtmp), MGIVENNAME(mtmp));
                 if (c == 'o' || c == 'a')
-                    Sprintf(eos(buf), " to %d:%d", mtmp->mux, mtmp->muy);
+                    Sprintf(eos(buf), " vers %d:%d", mtmp->mux, mtmp->muy);
                 xyloc = mtmp->mtrack[0].x; /* (for legibility) */
                 if (xyloc == MIGR_EXACT_XY) {
                     x = mtmp->mtrack[1].x;
                     y = mtmp->mtrack[1].y;
-                    Sprintf(eos(buf), " at <%d,%d>", (int) x, (int) y);
+                    Sprintf(eos(buf), " en <%d,%d>", (int) x, (int) y);
                 }
                 putstr(win, 0, buf);
             }
@@ -1605,7 +1605,7 @@ list_migrating_mons(
             display_nhwindow(win, FALSE);
             destroy_nhwindow(win);
         } else if (c != 'q') {
-            pline("None.");
+            pline("Aucun.");
         }
 
     }
@@ -1625,7 +1625,7 @@ wiz_show_stats(void)
          total_misc_size, total_misc_count;
 
     win = create_nhwindow(NHW_TEXT);
-    putstr(win, 0, "Current memory statistics:");
+    putstr(win, 0, "Statistiques mémoire actuelles :");
 
     total_obj_count = total_obj_size = 0L;
     putstr(win, 0, stats_hdr);
@@ -1706,7 +1706,7 @@ RESTORE_WARNING_FORMAT_NONLITERAL
 int
 wiz_display_macros(void)
 {
-    static const char display_issues[] = "Display macro issues:";
+    static const char display_issues[] = "Problèmes de macros d'affichage :";
     char buf[BUFSZ];
     winid win;
     int glyph, test, trouble = 0, no_glyph = NO_GLYPH, max_glyph = MAX_GLYPH;
@@ -1773,7 +1773,7 @@ wiz_display_macros(void)
         }
     }
     if (!trouble)
-        putstr(win, 0, "No display macro issues detected.");
+        putstr(win, 0, "Aucun problème de macro d'affichage détecté.");
     display_nhwindow(win, FALSE);
     destroy_nhwindow(win);
     return ECMD_OK;
@@ -1783,7 +1783,7 @@ wiz_display_macros(void)
 int
 wiz_show_nhuuid(void)
 {
-    pline("The NHUUID for this game is { %s }.", svn.nhuuid);
+    pline("Le NHUUID de cette partie est { %s }.", svn.nhuuid);
     return ECMD_OK;
 }
 
@@ -1791,8 +1791,8 @@ wiz_show_nhuuid(void)
 int
 wiz_mon_diff(void)
 {
-    static const char window_title[] = "Review of monster difficulty ratings"
-                                       " [index:level]:";
+    static const char window_title[] = "Révision de la difficulté des monstres"
+                                       " [index:niveau] :";
     char buf[BUFSZ];
     winid win;
     int mhardcoded = 0, mcalculated = 0, trouble = 0, cnt = 0, mdiff = 0;
@@ -1816,14 +1816,14 @@ wiz_mon_diff(void)
             if (mlev > 50) /* hack for named demons */
                 mlev = 50;
             Snprintf(buf, sizeof buf,
-                     "%-18s [%3d:%2d]: calculated: %2d, hardcoded: %2d (%+d)",
+                     "%-18s [%3d:%2d] : calculée : %2d, codée : %2d (%+d)",
                      ptr->pmnames[NEUTRAL], cnt, mlev,
                      mcalculated, mhardcoded, mdiff);
             putstr(win, 0, buf);
         }
     }
     if (!trouble)
-        putstr(win, 0, "No monster difficulty discrepancies were detected.");
+        putstr(win, 0, "Aucun écart de difficulté des monstres n'a été détecté.");
     display_nhwindow(win, FALSE);
     destroy_nhwindow(win);
     return ECMD_OK;
@@ -1896,10 +1896,10 @@ wiz_migrate_mons(void)
 #ifdef DEBUG_MIGRATING_MONS
     inbuf[0] = inbuf[1] = '\0';
     if (tolevel.dnum || tolevel.dlevel)
-        getlin("How many random monsters to migrate to next level? [0]",
+        getlin("Combien de monstres au hasard faire migrer au niveau suivant ? [0]",
                inbuf);
     else
-        pline("Can't get there from here.");
+        pline("Impossible d'y aller depuis ici.");
     if (*inbuf == '\033' || *inbuf == '\0')
         return ECMD_OK;
 

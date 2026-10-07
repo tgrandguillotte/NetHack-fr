@@ -1034,8 +1034,8 @@ do_symset(boolean rogueflag)
                 big_desc = thissize;
         }
         if (!setcount) {
-            There("are no appropriate %s symbol sets available.",
-                  rogueflag ? "rogue level" : "primary");
+            There("Aucun jeu de symboles %s approprié n'est disponible.",
+                  rogueflag ? "pour le niveau Rogue" : "principal");
             return TRUE;
         }
 
@@ -1046,7 +1046,7 @@ do_symset(boolean rogueflag)
         if (!symset_name)
             defindx = any.a_int;
         add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
-                 clr, "Default Symbols",
+                 clr, "Symboles par défaut",
                  (any.a_int == defindx) ? MENU_ITEMFLAGS_SELECTED
                                         : MENU_ITEMFLAGS_NONE);
 
@@ -1080,8 +1080,8 @@ do_symset(boolean rogueflag)
                                                 : MENU_ITEMFLAGS_NONE);
             }
         }
-        Sprintf(buf, "Select %ssymbol set:",
-                rogueflag ? "rogue level " : "");
+        Sprintf(buf, "Choisissez un jeu de symboles%s :",
+                rogueflag ? " pour le niveau Rogue" : "");
         end_menu(tmpwin, buf);
         n = select_menu(tmpwin, PICK_ONE, &symset_pick);
         if (n > 0) {
@@ -1119,11 +1119,11 @@ do_symset(boolean rogueflag)
             nothing_to_do = TRUE;
     } else if (!res) {
         /* The symbols file could not be accessed */
-        pline("Unable to access \"%s\" file.", SYMBOLS);
+        pline("Impossible d'accéder au fichier \"%s\".", SYMBOLS);
         return TRUE;
     } else if (!gs.symset_list) {
         /* The symbols file was empty */
-        There("were no symbol sets found in \"%s\".", SYMBOLS);
+        There("Aucun jeu de symboles n'a été trouvé dans \"%s\".", SYMBOLS);
         return TRUE;
     }
 

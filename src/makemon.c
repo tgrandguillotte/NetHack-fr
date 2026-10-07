@@ -1489,14 +1489,14 @@ makemon(
             }
             if (what) {
                 set_msg_xy(mtmp->mx, mtmp->my);
-                Norep("%s%s %s%s%c", what,
-                      exclaim ? " suddenly" : "",
+                Norep("%s %s%s%s%s", what,
                       /* 'what' might be "gold pieces" so need plural verb */
-                      vtense(what, "appear"),
-                      next2u(x, y) ? " next to you"
-                      : (distu(x, y) <= (BOLT_LIM * BOLT_LIM)) ? " close by"
+                      vtense(what, "apparaître"),
+                      exclaim ? " soudain" : "",
+                      next2u(x, y) ? " à côté de vous"
+                      : (distu(x, y) <= (BOLT_LIM * BOLT_LIM)) ? " tout près"
                         : "",
-                      exclaim ? '!' : '.');
+                      exclaim ? " !" : ".");
             }
         }
         /* if discernable and a threat, stop fiddling while Rome burns */
@@ -2124,9 +2124,9 @@ grow_up(struct monst *mtmp, struct monst *victim)
 
         if (svm.mvitals[newtype].mvflags & G_GENOD) { /* allow G_EXTINCT */
             if (canspotmon(mtmp))
-                pline("As %s grows up into %s, %s %s!", mon_nam(mtmp),
-                      an(pmname(ptr, Mgender(mtmp))), mhe(mtmp),
-                      nonliving(ptr) ? "expires" : "dies");
+                pline("Alors que %s devient %s, %s %s !", mon_nam(mtmp),
+                      an(pmname(ptr, Mgender(mtmp))), MON_IL(mtmp),
+                      nonliving(ptr) ? "s'éteint" : "meurt");
             set_mon_data(mtmp, ptr); /* keep svm.mvitals[] accurate */
             mondied(mtmp);
             return (struct permonst *) 0;
@@ -2137,17 +2137,17 @@ grow_up(struct monst *mtmp, struct monst *victim)
              * Temporary (?) hack to fix growing into opposite gender.
              */
             Sprintf(buf, "%s%s",
+                    pmname(ptr, fem),
                     /* deal with female gnome becoming a gnome lord */
-                    (mtmp->female && !fem) ? "male "
+                    (mtmp->female && !fem) ? " mâle"
                         /* or a male gnome becoming a gnome lady
                            (can't happen with 3.6.0 mons[], but perhaps
                            slightly less sexist if prepared for it...) */
-                      : (fem && !mtmp->female) ? "female " : "",
-                    pmname(ptr, fem));
+                      : (fem && !mtmp->female) ? " femelle" : "");
             pline_mon(mtmp, "%s %s %s.", YMonnam(mtmp),
-                      (fem != mtmp->female) ? "changes into"
-                                            : humanoid(ptr) ? "becomes"
-                                                            : "grows up into",
+                      (fem != mtmp->female) ? "se transforme en"
+                                            : humanoid(ptr) ? "devient"
+                                                            : "grandit et devient",
                       an(buf));
         }
         set_mon_data(mtmp, ptr);
@@ -2562,7 +2562,7 @@ bagotricks(
         impossible("bad bag o' tricks");
     } else if (bag->spe < 1) {
         /* if tipping known empty bag, give normal empty container message */
-        pline1((tipping && bag->cknown) ? "It's empty." : nothing_happens);
+        pline1((tipping && bag->cknown) ? "Il est vide." : nothing_happens);
         /* now known to be empty if sufficiently discovered */
         if (bag->dknown && objects[bag->otyp].oc_name_known) {
             bag->cknown = 1;

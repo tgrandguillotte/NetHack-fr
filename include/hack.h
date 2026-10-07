@@ -1581,6 +1581,7 @@ typedef uint32_t mmflags_nht;     /* makemon MM_ flags */
 
 #if !defined(RECOVER_C)
 
+#include "francais.h"
 #include "extern.h"
 #include "savefile.h"
 #include "decl.h"

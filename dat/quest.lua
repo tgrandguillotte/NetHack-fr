@@ -9,7 +9,13 @@
 --  - write tests to check questtext validity?
 --  - qt_pager hack(?): if (qt_msg->delivery == 'p' && strcmp(windowprocs.name, "X11"))
 
-
+-- Traduction française : les substitutions (%l, %n, %H, %i, %o...) produisent
+-- des groupes nominaux AVEC article (« le Grand Maître », « le Collège
+-- d'Archéologie ») ; on évite donc « de %l » / « à %l » (pas de contraction
+-- possible) lorsque le nom n'est pas un nom propre, et on préfère l'apposition
+-- (« votre maître, %l ») ou des prépositions sans contraction (dans, vers,
+-- pour, par...).  Les accords avec le sexe du héros étant impossibles ici, les
+-- textes emploient des tournures invariables.
 
 
 -- text = "something"
@@ -74,3032 +80,3082 @@ questtext = {
  t suffix:	return strip_the_prefix(root);]],
       },
       angel_cuss = {
-         "\"Repent, and thou shalt be saved!\"",
-         "\"Thou shalt pay for thine insolence!\"",
-         "\"Very soon, my child, thou shalt meet thy maker.\"",
-         "\"The great %D has sent me to make you pay for your sins!\"",
-         "\"The wrath of %D is now upon you!\"",
-         "\"Thy life belongs to %D now!\"",
-         "\"Dost thou wish to receive thy final blessing?\"",
-         "\"Thou art but a godless void.\"",
-         "\"Thou art not worthy to seek the Amulet.\"",
-         "\"No one expects the Spanish Inquisition!\"",
-         "\"Judgment hath been passed upon thee, %p.\"",
-         "\"Thy reckoning is at hand, %p.\"",
-         "\"Thou shalt be brought before %D for thy crimes!\"",
-         "\"With %D as my witness, I shall strike thee down.\"",
+         "\"Repens-toi, et tu obtiendras le salut !\"",
+         "\"Tu paieras pour ton insolence !\"",
+         "\"Très bientôt, mon enfant, tu rencontreras ton créateur.\"",
+         "\"Le grand %D m'a envoyé te faire payer tes péchés !\"",
+         "\"Le courroux de %D s'abat à présent sur toi !\"",
+         "\"Ta vie appartient désormais à %D !\"",
+         "\"Désires-tu recevoir ta dernière bénédiction ?\"",
+         "\"Tu n'es qu'un néant sans dieu.\"",
+         "\"Tu n'es pas digne de chercher l'Amulette.\"",
+         "\"Nul ne s'attend à l'Inquisition espagnole !\"",
+         "\"Le jugement a été prononcé contre toi, %p.\"",
+         "\"L'heure de rendre tes comptes est venue, %p.\"",
+         "\"Tu seras traîné devant %D pour tes crimes !\"",
+         "\"Avec %D pour témoin, je vais t'abattre.\"",
       },
       banished = {
-         synopsis = "[You are banished from %H for betraying your allegiance to %d.]",
+         synopsis = "[Vous êtes chassé de votre foyer, %H, pour avoir trahi votre allégeance à %d.]",
          output = "text",
-         text = [["You have betrayed all those who hold allegiance to %d, as you once did.
-My allegiance to %d holds fast and I cannot condone or accept what you
-have done.
+         text = [["Vous avez trahi tous ceux qui ont prêté allégeance à %d, comme
+vous-même le fîtes jadis.  Mon allégeance à %d demeure inébranlable, et je
+ne puis ni tolérer ni accepter ce que vous avez fait.
 
-Leave this place.  You shall never set foot at %H again.
-That which you seek is now lost forever, for without the Bell of Opening,
-you will never be able to enter the place where he who has the Amulet
-resides.
+Quittez ces lieux.  Jamais plus vous ne remettrez les pieds dans %H.
+Ce que vous cherchez est désormais perdu à jamais, car sans la Cloche
+d'Ouverture, vous ne pourrez jamais pénétrer dans le lieu où réside
+celui qui détient l'Amulette.
 
-Go now!  You are banished from this place.]],
+Partez maintenant !  Je vous bannis de ces lieux.]],
       },
       demon_cuss = {
-         "\"I first mistook thee for a statue, when I regarded thy head of stone.\"",
-         "\"Come here often?\"",
-         "\"Doth pain excite thee?  Wouldst thou prefer the whip?\"",
-         "\"Thinkest thou it shall tickle as I rip out thy lungs?\"",
-         "\"Eat slime and die!\"",
-         "\"Go ahead, fetch thy mama!  I shall wait.\"",
-         "\"Go play leapfrog with a herd of unicorns!\"",
-         "\"Hast thou been drinking, or art thou always so clumsy?\"",
-         "\"This time I shall let thee off with a spanking, but let it not happen again.\"",
-         "\"I've met smarter (and prettier) acid blobs.\"",
-         "\"Look!  Thy bootlace is undone!\"",
-         "\"Mercy!  Dost thou wish me to die of laughter?\"",
-         "\"Run away!  Live to flee another day!\"",
-         "\"Thou hadst best fight better than thou canst dress!\"",
-         "\"Twixt thy cousin and thee, Medusa is the prettier.\"",
-         "\"Methinks thou wert unnaturally stirred by yon corpse back there, eh, varlet?\"",
-         "\"Up thy nose with a rubber hose!\"",
-         "\"Verily, thy corpse could not smell worse!\"",
-         "\"Wait!  I shall polymorph into a grid bug to give thee a fighting chance!\"",
-         "\"Why search for the Amulet?  Thou wouldst but lose it, cretin.\"",
-         "\"Thou ought to be a comedian, thy skills are so laughable!\"",
-         "\"Thy gaze is so vacant, I thought thee a floating eye!\"",
-         "\"Thy head is unfit for a mind flayer to munch upon!\"",
-         "\"Only thy reflection could love thee!\"",
-         "\"Hast thou considered masking thine odour?\"",
-         "\"Hold! Thy face is a most exquisite torture!\"",
-         "\"I should fart in thy direction, but it might improve thy smell!\"",
+         "\"Ta tête de pierre m'a d'abord fait croire à une statue.\"",
+         "\"Tu viens souvent ici ?\"",
+         "\"La douleur t'excite-t-elle ?  Préférerais-tu le fouet ?\"",
+         "\"Crois-tu que cela te chatouillera quand je t'arracherai les poumons ?\"",
+         "\"Mange de la vase et crève !\"",
+         "\"Vas-y, va chercher ta maman !  J'attendrai.\"",
+         "\"Va donc jouer à saute-mouton avec un troupeau de licornes !\"",
+         "\"As-tu bu, ou es-tu toujours aussi gauche ?\"",
+         "\"Pour cette fois, je me contenterai d'une fessée, mais que cela ne se reproduise pas.\"",
+         "\"J'ai connu des blobs acides plus malins (et plus jolis).\"",
+         "\"Regarde !  Ton lacet est défait !\"",
+         "\"Pitié !  Veux-tu me faire mourir de rire ?\"",
+         "\"Sauve-toi !  Survis pour fuir un autre jour !\"",
+         "\"Tu ferais bien de te battre mieux que tu ne t'habilles !\"",
+         "\"Entre ta cousine et toi, c'est encore Méduse la plus jolie.\"",
+         "\"Il me semble que ce cadavre, là-bas, t'a mis dans un drôle d'état, hein, maraud ?\"",
+         "\"Va te faire cuire un œuf, espèce de bœuf !\"",
+         "\"En vérité, ton cadavre ne saurait sentir plus mauvais !\"",
+         "\"Attends !  Je vais me métamorphoser en insecte de grille pour te laisser une chance !\"",
+         "\"Pourquoi chercher l'Amulette ?  Tu ne ferais que la perdre, crétin.\"",
+         "\"Tu devrais faire le comique, tes talents sont si risibles !\"",
+         "\"Ton regard est si vide que j'ai cru voir un œil flottant !\"",
+         "\"Même un flagelleur mental ne voudrait pas grignoter ta cervelle !\"",
+         "\"Seul ton reflet pourrait t'aimer !\"",
+         "\"As-tu songé à masquer ton odeur ?\"",
+         "\"Halte !  Ton visage est une torture des plus exquises !\"",
+         "\"Je devrais péter dans ta direction, mais cela risquerait d'améliorer ton odeur !\"",
       },
       legacy = {
-         synopsis = "[%dC has chosen you to recover the Amulet of Yendor for %dI.]",
+         synopsis = "[%dC vous a confié la mission de récupérer l'Amulette de Yendor en son nom.]",
          output = "menu",
-         text = [[It is written in the Book of %d:
+         text = [[Il est écrit dans le Livre de %d :
 
-    After the Creation, the cruel god Moloch rebelled
-    against the authority of Marduk the Creator.
-    Moloch stole from Marduk the most powerful of all
-    the artifacts of the gods, the Amulet of Yendor,
-    and he hid it in the dark cavities of Gehennom, the
-    Under World, where he now lurks, and bides his time.
+    Après la Création, le cruel dieu Moloch se rebella
+    contre l'autorité de Marduk le Créateur.
+    Moloch déroba à Marduk le plus puissant de tous
+    les artefacts des dieux, l'Amulette de Yendor,
+    et la cacha dans les sombres cavités de la Géhenne,
+    le Monde d'En-Bas, où il se tapit désormais en
+    attendant son heure.
 
-Your %G %d seeks to possess the Amulet, and with it
-to gain deserved ascendance over the other gods.
+Votre %G %d cherche à posséder l'Amulette, et à acquérir
+grâce à elle une juste suprématie sur les autres dieux.
 
-You, a newly trained %r, have been heralded
-from birth as the instrument of %d.  You are destined
-to recover the Amulet for your deity, or die in the
-attempt.  Your hour of destiny has come.  For the sake
-of us all:  Go bravely with %d!]],
+Vous venez d'achever votre formation de %r, et depuis votre
+naissance, on vous annonce comme l'instrument de %d.  Votre destin
+est de récupérer l'Amulette pour votre divinité, ou de périr
+en essayant.  L'heure de votre destinée a sonné.  Pour le salut
+de nous tous : allez avec courage, et que %d vous accompagne !]],
       },
 -- starting with 'pauper' option set, last paragraph differs from normal legacy
       pauper_legacy = {
-         synopsis = "[%dC has chosen you to recover the Amulet of Yendor for %dI.]",
+         synopsis = "[%dC vous a confié la mission de récupérer l'Amulette de Yendor en son nom.]",
          output = "menu",
-         text = [[It is written in the Book of %d:
+         text = [[Il est écrit dans le Livre de %d :
 
-    After the Creation, the cruel god Moloch rebelled
-    against the authority of Marduk the Creator.
-    Moloch stole from Marduk the most powerful of all
-    the artifacts of the gods, the Amulet of Yendor,
-    and he hid it in the dark cavities of Gehennom, the
-    Under World, where he now lurks, and bides his time.
+    Après la Création, le cruel dieu Moloch se rebella
+    contre l'autorité de Marduk le Créateur.
+    Moloch déroba à Marduk le plus puissant de tous
+    les artefacts des dieux, l'Amulette de Yendor,
+    et la cacha dans les sombres cavités de la Géhenne,
+    le Monde d'En-Bas, où il se tapit désormais en
+    attendant son heure.
 
-Your %G %d seeks to possess the Amulet, and with it
-to gain deserved ascendance over the other gods.
+Votre %G %d cherche à posséder l'Amulette, et à acquérir
+grâce à elle une juste suprématie sur les autres dieux.
 
-You, an untrained %r, have been unable to adequately
-prepare to be the instrument of %d.  Nevertheless, you
-are destined to recover the Amulet for your deity, or die
-in the attempt.  Your hour of destiny has come.  For the
-sake of us all:  Go bravely with %d!]],
+Vous, %r sans formation, n'avez pu vous préparer
+convenablement à devenir l'instrument de %d.  Néanmoins,
+votre destin est de récupérer l'Amulette pour votre divinité,
+ou de périr en essayant.  L'heure de votre destinée a sonné.
+Pour le salut de nous tous : allez avec courage, et que %d
+vous accompagne !]],
       },
       quest_complete_no_bell = {
-         text = [["The silver bell which was hoarded by %n will be
-essential in locating the Amulet of Yendor."]],
+         text = [["La cloche d'argent que gardait jalousement %n sera
+indispensable pour localiser l'Amulette de Yendor."]],
       },
       quest_portal = {
          output = "pline",
-         text = [[You receive a faint telepathic message from %l:
-Your help is urgently needed at %H!
-Look for a ...ic transporter.
-You couldn't quite make out that last message.]],
+         text = [[Vous recevez un faible message télépathique de votre mentor, %l :
+On a besoin de votre aide de toute urgence dans %H !
+Cherchez un transporteur ...ique.
+Vous n'avez pas bien saisi la fin du message.]],
       },
       quest_portal_again = {
-         text = "You again sense %l pleading for help.",
+         text = "Vous sentez de nouveau %l implorer votre aide.",
       },
       quest_portal_demand = {
-         text = "You again sense %l demanding your attendance.",
+         text = "Vous sentez de nouveau %l exiger votre présence.",
       },
    },
    Arc = {
       assignquest = {
-         synopsis = "[%nC has stolen %o.  Locate %i, defeat %ni, and return %O.]",
+         synopsis = "[%nC a volé %o.  Trouvez %i, vainquez-%ni et rapportez %O.]",
          output = "text",
-         text = [["Grave times have befallen the college, for %na has
-stolen %o.  Without it, the board of directors of
-the university will soon have no choice but to revoke our research grants.
+         text = [["Des temps bien sombres sont tombés sur le collège, car %n a
+dérobé %o.  Sans cet objet, le conseil d'administration
+de l'université n'aura bientôt plus d'autre choix que de supprimer nos
+crédits de recherche.
 
-"You must locate the entrance to %i.  Within it,
-you will find %n.
+"Vous devez trouver l'entrée menant vers %i.  À l'intérieur,
+vous trouverez %n.
 
-"You must then defeat %n and return %o
-to me.
+"Vous devrez ensuite vaincre %n et me rapporter
+%o.
 
-"Only in this way will we be able to prevent the budget cuts that could
-close this college.
+"Ce n'est qu'ainsi que nous pourrons empêcher les coupes budgétaires qui
+risquent de faire fermer ce collège.
 
-"May the wisdom of %d be your guide."]],
+"Puisse la sagesse de %d vous guider."]],
       },
       badalign = {
-         synopsis = "[\"%pC, you have strayed from the %a path.  Purify yourself!\"]",
+         synopsis = "[\"%pC, vous avez quitté le chemin %a.  Purifiez-vous !\"]",
          output = "text",
-         text = [["%pC!  I've heard that you've been using sloppy techniques.  Your
-results lately can hardly be called suitable for %ra!
+         text = [["%pC !  J'ai entendu dire que vous employiez des méthodes bâclées.
+Vos résultats récents sont à peine dignes de votre rang de %r !
 
-"How could you have strayed from the %a path?  Go from here, and come
-back only when you have purified yourself."]],
+"Comment avez-vous pu quitter le chemin %a ?  Partez d'ici, et ne revenez
+que lorsque vous aurez purifié votre âme."]],
       },
       badlevel = {
-         synopsis = "[%pC, a mere %r is too inexperienced.]",
+         synopsis = "[%pC, avec votre rang de %r, vous manquez encore d'expérience.]",
          output = "text",
-         text = [["%p, you are yet too inexperienced to undertake such a demanding
-quest.  A mere %r could not possibly face the rigors demanded and
-survive.  Go forth, and come here again when your adventures have further
-taught you."]],
+         text = [["%p, vous manquez encore d'expérience pour entreprendre une quête
+aussi exigeante.  Avec votre modeste rang de %r, vous ne pourriez
+affronter les épreuves qui vous attendent et survivre.  Partez, et
+revenez ici lorsque vos aventures vous en auront appris davantage."]],
       },
       discourage = {
-         "\"Try your best, %p.  You cannot defeat me.\"",
-         "\"I shall rend the flesh from your body whilst you still breathe!\"",
-         "\"First you, %p, then I shall destroy your mentor, %l.\"",
-         "\"Tiring yet, %p?  I draw my power from my master and cannot falter!\"",
-         "\"I shall rend thy soul from thy body and consume it!\"",
-         "\"You are far too %a -- it weakens you.  You shall die in this place.\"",
-         "\"%d has forsaken you!  You are lost now!\"",
-         "\"A mere %r cannot hope to defeat me!\"",
-         "\"If you are the best %l can send, I have nothing to fear.\"",
-         "\"Die %c!  I shall exhibit your carcass as a trophy.\"",
+         "\"Faites de votre mieux, %p.  Vous ne pouvez me vaincre.\"",
+         "\"Je vous arracherai la chair des os tandis que vous respirez encore !\"",
+         "\"D'abord vous, %p, puis je détruirai votre mentor, %l.\"",
+         "\"Déjà las, %p ?  Je tire ma puissance de mon maître et ne puis faiblir !\"",
+         "\"J'arracherai ton âme de ton corps et je la dévorerai !\"",
+         "\"Votre penchant %a est bien trop fort -- il vous affaiblit.  Vous mourrez en ce lieu.\"",
+         "\"%d vous a tourné le dos !  Plus rien ne peut vous sauver !\"",
+         "\"Avec votre rang de %r, vous ne pouvez espérer me vaincre !\"",
+         "\"Si vous êtes ce que %l peut envoyer de mieux, je n'ai rien à craindre.\"",
+         "\"Meurs, %c !  J'exposerai ta carcasse comme un trophée.\"",
       },
       encourage = {
-         "\"Beware, for %n is powerful and cunning.\"",
-         "\"To locate the entrance to %i, you must pass many traps.\"",
-         "\"A %nt may be vulnerable to attacks by magical cold.\"",
-         "\"Call upon %d when you encounter %n.\"",
-         "\"You must destroy %n.  It will pursue you otherwise.\"",
-         "\"%oC is a mighty talisman.  With it you can destroy %n.\"",
-         "\"Go forth with the blessings of %d.\"",
-         "\"I will have my %gP watch for your return.\"",
-         "\"Remember not to stray from the true %a path.\"",
-         "\"You may be able to sense %o when you are near.\"",
+         "\"Prenez garde, car %n est puissant et rusé.\"",
+         "\"Pour trouver l'entrée menant vers %i, vous devrez franchir bien des pièges.\"",
+         "\"%nC est peut-être vulnérable aux attaques de froid magique.\"",
+         "\"Invoquez %d lorsque vous affronterez %n.\"",
+         "\"Vous devez détruire %n.  Sinon, il vous poursuivra.\"",
+         "\"%oC est un talisman puissant.  Grâce à lui, vous pourrez détruire %n.\"",
+         "\"Partez avec la bénédiction de %d.\"",
+         "\"Je demanderai à mes %gp de guetter votre retour.\"",
+         "\"Souvenez-vous de ne pas vous écarter du vrai chemin %a.\"",
+         "\"Vous pourrez peut-être sentir la présence de %o lorsque vous en serez proche.\"",
       },
       firsttime = {
-         synopsis = "[You arrive at %H, but all is not well.]",
+         synopsis = "[Vous arrivez dans %H, mais tout ne va pas bien.]",
          output = "text",
-         text = [[You are suddenly in familiar surroundings.  The buildings in the distance
-seem to be those of your old alma mater, but something is wrong.  It feels
-as if there has been a riot recently, or %H has
-been under siege.
+         text = [[Vous vous retrouvez soudain dans un décor familier.  Les bâtiments au loin
+semblent être ceux de votre chère alma mater, mais quelque chose ne va pas.
+On dirait qu'une émeute a récemment eu lieu, ou que %H a
+été assiégé.
 
-All of the windows are boarded up, and there are objects scattered around
-the entrance.
+Toutes les fenêtres sont condamnées par des planches, et des objets
+jonchent les abords de l'entrée.
 
-Strange forbidding shapes seem to be moving in the distance.]],
+D'étranges formes menaçantes semblent se mouvoir au loin.]],
       },
       goal_alt = {
-         text = "You have returned to %ns lair.",
+         text = "Vous voici de nouveau dans le repaire de votre ennemi, %n.",
       },
       goal_first = {
-         synopsis = "[This strange feeling must be the presence of %o.]",
+         synopsis = "[Cette étrange sensation doit être la présence de %o.]",
          output = "text",
-         text = [[A strange feeling washes over you, and you think back to things you
-learned during the many lectures of %l.
+         text = [[Une étrange sensation vous envahit, et vous repensez aux choses
+apprises lors des nombreux cours de votre mentor, %l.
 
-You realize the feeling must be the presence of %o.]],
+Vous comprenez que cette sensation doit être la présence de %o.]],
       },
       goal_next = {
-         text = "The familiar presence of %o is in the ether.",
+         text = "La présence familière de %o flotte dans l'éther.",
       },
       gotit = {
-         synopsis = "[The power of %o flows through your body!  You must return it to %l.]",
+         synopsis = "[Le pouvoir de %o parcourt votre corps !  Vous devez le rapporter à %l.]",
          output = "text",
-         text = [[The power of %o flows through your body!  You feel
-as if you could now take on the Wizard of Yendor himself and win, but
-you know you must return %o to %l.]],
+         text = [[Le pouvoir de %o parcourt votre corps !  Vous avez
+l'impression de pouvoir affronter le Sorcier de Yendor en personne et
+l'emporter, mais vous savez que vous devez rapporter %o à %l.]],
       },
       guardtalk_after = {
-         "\"Did you see Lash LaRue in 'Song of Old Wyoming' the other night?\"",
-         "\"Hey man, got any potions of hallucination for sale?\"",
-         "\"I guess you are guaranteed to make full professor now.\"",
-         "\"So, what was worse, %n or your entrance exams?\"",
-         "\"%oC is impressive, but nothing like the bones I dug up!\"",
+         "\"Tu as vu Lash LaRue dans 'Song of Old Wyoming' l'autre soir ?\"",
+         "\"Hé, mon vieux, t'aurais pas des potions d'hallucination à vendre ?\"",
+         "\"Je suppose que ta titularisation est assurée, maintenant.\"",
+         "\"Alors, qu'est-ce qui était le pire, %n ou tes examens d'entrée ?\"",
+         "\"%oC est impressionnant, mais ça ne vaut pas les ossements que j'ai déterrés !\"",
       },
       guardtalk_before = {
-         "\"Did you see Lash LaRue in 'Song of Old Wyoming' the other night?\"",
-         "\"Hey man, got any potions of hallucination for sale?\"",
-         "\"Did you see the artifact %l brought back from the last dig?\"",
-         "\"So what species do *you* think we evolved from?\"",
-         "\"So you're %ls prize pupil!  I don't know what he sees in you.\"",
+         "\"Tu as vu Lash LaRue dans 'Song of Old Wyoming' l'autre soir ?\"",
+         "\"Hé, mon vieux, t'aurais pas des potions d'hallucination à vendre ?\"",
+         "\"Tu as vu l'artefact que %l a rapporté de la dernière fouille ?\"",
+         "\"Alors, d'après *toi*, de quelle espèce descendons-nous ?\"",
+         "\"Alors c'est toi, la fierté de %l !  Je me demande bien ce qu'il te trouve.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane and sacrifice it at the altar of %d.]",
+         synopsis = "[Emportez l'Amulette sur le Plan Astral et sacrifiez-la sur l'autel de %d.]",
          output = "text",
-         text = [["Congratulations, %p.  I wondered if anyone could prevail against
-the Wizard and the minions of Moloch.  Now, you must embark on one
-final adventure.
+         text = [["Félicitations, %p.  Je me demandais si quiconque pourrait triompher
+du Sorcier et des serviteurs de Moloch.  À présent, vous devez vous lancer
+dans une ultime aventure.
 
-"Take the Amulet, and find your way onto the Astral Plane.
-There you must find the altar of %d and sacrifice the
-Amulet on that altar to fulfill your destiny.
+"Prenez l'Amulette, et trouvez le chemin du Plan Astral.
+Là, vous devrez trouver l'autel de %d et y sacrifier
+l'Amulette afin d'accomplir votre destinée.
 
-"Remember, your path now should always be upwards."]],
+"Souvenez-vous : votre chemin doit désormais toujours monter."]],
       },
       killed_nemesis = {
-         text = "The body of %n dissipates in a cloud of noxious fumes.",
+         text = "Le corps de %n se dissipe en un nuage de vapeurs nocives.",
       },
       leader_first = {
-         synopsis = "[\"You have returned, %p, to a difficult task.\"]",
+         synopsis = "[\"Vous voici de retour, %p, face à une tâche ardue.\"]",
          output = "text",
-         text = [["Finally you have returned, %p.  You were always
-my most promising student.  Allow me to see if you are ready for the
-most difficult task of your career."]],
+         text = [["Vous voici enfin de retour, %p.  De tous mes élèves,
+vous avez toujours été le plus grand espoir.  Permettez-moi de voir si vous
+êtes à la hauteur de la tâche la plus difficile de votre carrière."]],
       },
       leader_last = {
-         synopsis = "[\"%pC, you have failed us.  Begone!\"]",
+         synopsis = "[\"%pC, vous nous avez déçus.  Hors d'ici !\"]",
          output = "text",
-         text = [["%p, you have failed us.  All of my careful training has been in
-vain.  Begone!  Your tenure at this college has been revoked!
+         text = [["%p, vous nous avez déçus.  Toute ma patiente formation aura été
+vaine.  Hors d'ici !  Votre titularisation dans ce collège est révoquée !
 
-"You are a disgrace to the profession!"]],
+"Vous êtes la honte de la profession !"]],
       },
       leader_next = {
-         text = [["Again, %p, you stand before me.
-Let me see if you have gained experience in the interim."]],
+         text = [["De nouveau, %p, vous voici devant moi.
+Voyons si vous avez acquis de l'expérience entre-temps."]],
       },
       leader_other = {
-         text = [["Once more, %p, you have returned from the field.
-Are you finally ready for the task that must be accomplished?"]],
+         text = [["Une fois de plus, %p, vous revenez du terrain.
+Êtes-vous enfin à la hauteur de la tâche qui doit être accomplie ?"]],
       },
       locate_first = {
-         synopsis = "[This foreboding edifice must hide the entrance to %i.]",
+         synopsis = "[Cet édifice inquiétant doit cacher l'entrée menant vers %i.]",
          output = "text",
-         text = [[A plain opens before you.  Beyond the plain lies a foreboding edifice.
+         text = [[Une plaine s'ouvre devant vous.  Au-delà se dresse un édifice inquiétant.
 
-You have the feeling that you will soon find the entrance to
+Vous avez le sentiment que vous trouverez bientôt l'entrée menant vers
 %i.]],
       },
       locate_next = {
-         text = "Once again, you are near the entrance to %i.",
+         text = "Une fois de plus, vous êtes près de l'entrée menant vers %i.",
       },
       nemesis_first = {
-         synopsis = "[\"Come, %p, I shall destroy you!\"]",
+         synopsis = "[\"Viens, %p, je vais te détruire !\"]",
          output = "text",
-         text = [["So, %p, you think that you can succeed in recovering
-%o, when your teacher, %l, has already failed.
+         text = [["Ainsi, %p, tu crois pouvoir réussir à reprendre
+%o, alors que ton maître, %l, a déjà échoué.
 
-"Come, try your best!  I shall destroy you, and gnaw on your bones."]],
+"Viens, fais de ton mieux !  Je te détruirai, et je rongerai tes os."]],
       },
       nemesis_next = {
-         synopsis = "[\"Again you try to best me, %p?  You shall never recover %o.\"]",
+         synopsis = "[\"Tu essaies encore de me battre, %p ?  Jamais tu ne reprendras %o.\"]",
          output = "text",
-         text = [["Again you try to best me, eh %p?  Well, you shall fail again.
+         text = [["Tu essaies encore de me battre, hein, %p ?  Eh bien, tu échoueras
+encore.
 
-"You shall never recover %o.
+"Jamais tu ne reprendras %o.
 
-"I shall bear your soul to the Plane of Origins for my master's pleasure."]],
+"J'emporterai ton âme jusqu'au Plan des Origines, pour le plaisir de mon
+maître."]],
       },
       nemesis_other = {
-         text = "\"You persist yet %p!  Good.  Now, you shall die!\"",
+         text = "\"Tu persistes encore, %p !  Bien.  À présent, tu vas mourir !\"",
       },
       nemesis_wantsit = {
-         text = [["I shall have %o from you, %p, then feast
-upon your entrails!"]],
+         text = [["Je te reprendrai %o, %p, puis je me repaîtrai
+de tes entrailles !"]],
       },
       nexttime = {
-         text = "Once again, you are back at %H.",
+         text = "Une fois de plus, vous voici de retour dans %H.",
       },
       offeredit = {
-         synopsis = "[%lC instructs you to guard %o from now on.]",
+         synopsis = "[%lC vous charge désormais de veiller sur %o.]",
          output = "text",
-         text = [[%lC touches %o briefly, gazes into it,
-then smiles at you and says:
+         text = [[%lC touche brièvement %o, l'observe attentivement,
+puis vous sourit et déclare :
 
-"Well done, %p.  You have defeated %n and
-recovered %o.  But I fear that it shall never be safe
-here.
+"Bien joué, %p.  Vous avez vaincu %n et
+récupéré %o.  Mais je crains qu'il ne soit jamais en
+sécurité ici.
 
-Please take %o with you.  You, %p, can
-guard it now far better than I.
+Je vous en prie, emportez %o avec vous.  Vous, %p,
+saurez désormais le protéger bien mieux que moi.
 
-May the blessings of %d follow you and guard you."]],
+Que les bénédictions de %d vous suivent et vous protègent."]],
       },
       offeredit2 = {
-         synopsis = "[\"Resume your search for the Amulet beyond the magic portal to %Z.\"]",
+         synopsis = "[\"Reprenez votre quête de l'Amulette au-delà du portail magique menant vers %Z.\"]",
          output = "text",
-         text = [["Careful, %p!  %oC might break, and that would be
-a tragic loss.  You are its keeper now, and the time has come to
-resume your search for the Amulet.  %Z await your
-return through the magic portal that brought you here."]],
+         text = [["Attention, %p !  %oC pourrait se briser, et ce serait
+une perte tragique.  C'est à vous de veiller sur lui désormais, et l'heure est venue
+de reprendre votre quête de l'Amulette.  %Z attendent votre
+retour par le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[You are back at %H.
-You have an odd feeling this may be the last time you ever come here.]],
+         text = [[Vous voici de retour dans %H.
+Vous avez l'étrange sentiment que vous venez peut-être ici pour la dernière fois.]],
       },
       posthanks = {
-         synopsis = "[\"Have you progressed with your quest to regain the Amulet of Yendor for %d?\"]",
+         synopsis = "[\"Avez-vous progressé dans votre quête de l'Amulette de Yendor pour %d ?\"]",
          output = "text",
-         text = [["Welcome back, %p.  Have you progressed with your quest to
-regain the Amulet of Yendor for %d?"]],
+         text = [["Bon retour parmi nous, %p.  Avez-vous progressé dans votre quête
+pour reprendre l'Amulette de Yendor au nom de %d ?"]],
       },
    },
    Bar = {
       assignquest = {
-         synopsis = "[\"Find %n, defeat %ni, and return %o to us.\"]",
+         synopsis = "[\"Trouvez %n, vainquez-%ni et rapportez-nous %o.\"]",
          output = "text",
-         text = [["The world is in great need of your assistance, %p.
+         text = [["Le monde a grand besoin de votre aide, %p.
 
-"About six months ago, I learned that a mysterious sorcerer, known
-as %n, had begun to gather a large group of cutthroats and brigands
-about %ni.
+"Il y a environ six mois, j'ai appris qu'un mystérieux sorcier, connu
+sous le nom de %n, avait commencé à rassembler autour de lui une vaste
+bande de coupe-jarrets et de brigands.
 
-"At about the same time, these people you once rode with `liberated' a
-potent magical talisman, %o, from a Turanian caravan.
+"À peu près au même moment, ces gens avec qui vous chevauchiez jadis ont
+'libéré' un puissant talisman magique, %o, d'une caravane
+touranienne.
 
-"%nC and %nj Black Horde swept down upon %i and defeated
-the people there, driving them out into the desert.  He has taken
-%o, and seeks to bend it to %nj will.  I detected the
-subtle changes in the currents of fate, and joined these people.
-Then I sent forth a summons for you.
+"%nC et sa Horde Noire ont déferlé sur %i et vaincu
+ceux qui s'y trouvaient, les chassant dans le désert.  Il s'est emparé de
+%o, et cherche à le plier à sa volonté.  J'ai perçu
+les subtils changements dans les courants du destin, et j'ai rejoint ces gens.
+Puis je vous ai fait mander.
 
-"If %n can bend %o to %nj will, he will become
-almost indestructible.  He will then be able to enslave the minds of
-men across the world.  You are the only hope.  The gods smile upon you,
-and with %d behind you, you alone can defeat %n.
+"Si %n parvient à plier %o à sa volonté, il deviendra
+presque indestructible.  Il pourra alors asservir l'esprit des hommes
+dans le monde entier.  Vous êtes notre seul espoir.  Les dieux vous sourient,
+et avec %d à vos côtés, vous, et personne d'autre, pouvez vaincre %n.
 
-"You must go to %i.  From there, you can track down
-%n, defeat %ni, and return %o to us.  Only
-then will the world be safe."]],
+"Vous devez vous rendre dans %i.  De là, vous pourrez traquer
+%n, %ni vaincre, et nous rapporter %o.  Alors
+seulement, le monde sera sauf."]],
       },
       badalign = {
-         synopsis = "[\"You have wandered from the path of the %a.  Come back when you have atoned.\"]",
+         synopsis = "[\"Vous avez quitté le chemin %a.  Revenez lorsque vous aurez expié.\"]",
          output = "text",
-         text = [["%pC!  You have wandered from the path of the %a!
-If you attempt to overcome %n in this state, he will surely
-enslave your soul.  Your only hope, and ours, lies in your purification.
-Go forth, and return when you feel ready."]],
+         text = [["%pC !  Vous avez quitté le chemin %a !
+Si vous tentez de terrasser %n dans cet état, il asservira
+sûrement votre âme.  Votre seul espoir, et le nôtre, réside dans votre
+purification.  Partez, et revenez lorsque vous vous sentirez à la hauteur."]],
       },
       badlevel = {
-         synopsis = "[\"You are too inexperienced.  Come back when you are %Ra.\"]",
+         synopsis = "[\"Vous manquez d'expérience.  Revenez lorsque vous aurez atteint le rang de %R.\"]",
          output = "text",
-         text = [["%p, I fear that you are as yet too inexperienced to face
-%n.  Only %Ra with the help of %d could ever hope to
-defeat %ni."]],
+         text = [["%p, je crains que vous ne manquiez encore d'expérience pour affronter
+%n.  Seul quelqu'un du rang de %R, avec l'aide de %d, pourrait
+espérer %ni vaincre."]],
       },
       discourage = {
-         "\"My pets will dine on your carcass tonight!\"",
-         "\"You are a sorry excuse for %ra.\"",
-         "\"Run while you can, %c.  My next spell will be your last.\"",
-         "\"I shall use your very skin to bind my next grimoire.\"",
-         "\"%d cannot protect you now.  Here, you die.\"",
-         "\"Your %a nature makes you weak.  You cannot defeat me.\"",
-         "\"Come, %c.  I shall kill you, then unleash the horde on your tribe.\"",
-         "\"Once you are dead, my horde shall finish off %l, and your tribe.\"",
-         "\"Fight, %c, or are you afraid of the mighty %n?\"",
-         "\"You have failed, %c.  Now, my victory is complete.\"",
+         "\"Mes bêtes se régaleront de ta carcasse ce soir !\"",
+         "\"Tu fais honte au rang de %r.\"",
+         "\"Fuis tant que tu le peux, %c.  Mon prochain sort sera ton dernier.\"",
+         "\"Je me servirai de ta propre peau pour relier mon prochain grimoire.\"",
+         "\"%d ne peut plus te protéger.  C'est ici que tu meurs.\"",
+         "\"Ta nature %a te rend faible.  Tu ne peux me vaincre.\"",
+         "\"Viens, %c.  Je vais te tuer, puis lâcher la horde sur ta tribu.\"",
+         "\"Une fois ta mort venue, ma horde achèvera %l, et ta tribu avec.\"",
+         "\"Bats-toi, %c, à moins que tu ne craignes le puissant %n ?\"",
+         "\"Tu as échoué, %c.  À présent, ma victoire est totale.\"",
       },
       encourage = {
-         "\"%nC is strong in the dark arts, but not immune to cold steel.\"",
-         "\"Remember that %n is a great sorcerer.  He lived in the time of Atlantis.\"",
-         "\"If you fail, %p, I will not be able to protect these people long.\"",
-         "\"To enter %i, you must be very stealthy.  The horde will be on guard.\"",
-         "\"Call upon %d in your time of need.\"",
-         "\"May %d protect you, and guide your steps.\"",
-         "\"If you can lay hands upon %o, carry it for good fortune.\"",
-         "\"I cannot stand against %ns sorcery.  But %d will help you.\"",
-         "\"Do not fear %n.  I know you can defeat %ni.\"",
-         "\"You have a great road to travel, %p, but only after you defeat %n.\"",
+         "\"%nC est versé dans les arts obscurs, mais il ne résiste pas à l'acier froid.\"",
+         "\"N'oubliez pas que %n est un grand sorcier.  Il vivait au temps de l'Atlantide.\"",
+         "\"Si vous échouez, %p, je ne pourrai protéger ces gens bien longtemps.\"",
+         "\"Pour entrer dans %i, vous devrez faire preuve d'une grande discrétion.  La horde montera la garde.\"",
+         "\"Invoquez %d lorsque vous serez dans le besoin.\"",
+         "\"Puisse %d vous protéger, et guider vos pas.\"",
+         "\"Si vous mettez la main sur %o, gardez-le sur vous, il vous portera chance.\"",
+         "\"Je ne puis résister à la sorcellerie de %n.  Mais %d vous aidera.\"",
+         "\"Ne craignez pas %n.  Je sais que vous pouvez %ni vaincre.\"",
+         "\"Une longue route vous attend, %p, mais seulement après avoir vaincu %n.\"",
       },
       firsttime = {
-         synopsis = "[You reach the vicinity of %H, but sense evil magic nearby.]",
+         synopsis = "[Vous approchez de votre foyer, %H, mais vous sentez une magie maléfique toute proche.]",
          output = "text",
-         text = [[Warily you scan your surroundings, all of your senses alert for signs
-of possible danger.  Off in the distance, you can %x the familiar shapes
-of %H.
+         text = [[Avec méfiance, vous scrutez les alentours, tous vos sens aux aguets,
+à l'affût du moindre danger.  Au loin, vous pouvez %x les silhouettes
+familières de %H.
 
-But why, you think, should %l be there?
+Mais pourquoi, vous demandez-vous, %l serait-il là ?
 
-Suddenly, the hairs on your neck stand on end as you detect the aura of
-evil magic in the air.
+Soudain, les poils de votre nuque se hérissent : vous percevez dans l'air
+l'aura d'une magie maléfique.
 
-Without thought, you ready your weapon, and mutter under your breath:
+Sans réfléchir, vous apprêtez votre arme, et marmonnez entre vos dents :
 
-    "By %d, there will be blood spilt today."]],
+    "Par %d, le sang coulera aujourd'hui."]],
       },
       goal_first = {
-         synopsis = "[This is surely the lair of %n.]",
+         synopsis = "[C'est sûrement le repaire de %n.]",
          output = "text",
-         text = [[The hairs on the nape of your neck lift as you sense an energy in the
-very air around you.  You fight down a primordial panic that seeks to
-make you turn and run.  This is surely the lair of %n.]],
+         text = [[Les poils de votre nuque se dressent tandis que vous sentez une énergie
+dans l'air même qui vous entoure.  Vous réprimez une panique primitive qui
+vous pousse à tourner les talons et à fuir.  C'est sûrement le repaire de %n.]],
       },
       goal_next = {
-         text = "Yet again you feel the air around you heavy with malevolent magical energy.",
+         text = "Une fois de plus, vous sentez l'air autour de vous chargé d'une énergie magique malveillante.",
       },
       gotit = {
-         synopsis = "[You feel the power of %o flowing through your hands.]",
+         synopsis = "[Vous sentez le pouvoir de %o couler entre vos mains.]",
          output = "text",
-         text = [[As you pick up %o, you feel the power of it
-flowing through your hands.  It seems to be in two or more places
-at once, even though you are holding it.]],
+         text = [[Lorsque vous ramassez %o, vous sentez son pouvoir
+couler entre vos mains.  Il semble se trouver en deux endroits ou plus
+à la fois, bien que vous le teniez.]],
       },
       guardtalk_after = {
-         "\"The battles here have been good -- our enemies' blood soaks the soil!\"",
-         "\"Remember that glory is crushing your enemies beneath your feet!\"",
-         "\"Times will be good again, now that the horde is vanquished.\"",
-         "\"You have brought our clan much honor in defeating %n.\"",
-         "\"You will be a worthy successor to %l.\"",
+         "\"Les batailles ont été belles ici -- le sang de nos ennemis imbibe le sol !\"",
+         "\"Souviens-toi : la gloire, c'est d'écraser ses ennemis sous ses pieds !\"",
+         "\"Les temps seront de nouveau prospères, maintenant que la horde est vaincue.\"",
+         "\"En vainquant %n, tu as apporté un grand honneur à notre clan.\"",
+         "\"Tu seras digne de succéder à %l.\"",
       },
       guardtalk_before = {
-         "\"The battles here have been good -- our enemies' blood soaks the soil!\"",
-         "\"Remember that glory is crushing your enemies beneath your feet!\"",
-         "\"There has been little treasure to loot, since the horde arrived.\"",
-         "\"The horde is mighty in numbers, but they have little courage.\"",
-         "\"%lC is a strange one, but he has helped defend us.\"",
+         "\"Les batailles ont été belles ici -- le sang de nos ennemis imbibe le sol !\"",
+         "\"Souviens-toi : la gloire, c'est d'écraser ses ennemis sous ses pieds !\"",
+         "\"Il n'y a guère eu de trésor à piller depuis l'arrivée de la horde.\"",
+         "\"La horde est nombreuse, mais ils n'ont guère de courage.\"",
+         "\"%lC est un drôle de bonhomme, mais il nous a aidés à nous défendre.\"",
       },
       hasamulet = {
-         synopsis = "[\"Take the Amulet to the altar of %d on the Astral Plane and offer it.\"]",
+         synopsis = "[\"Portez l'Amulette jusqu'à l'autel de %d sur le Plan Astral et offrez-la.\"]",
          output = "text",
-         text = [["This is wondrous, %p.  I feared that you could not possibly
-succeed in your quest, but here you are in possession of the Amulet
-of Yendor!
+         text = [["C'est merveilleux, %p.  Je craignais que vous ne puissiez réussir
+votre quête, et pourtant vous voici en possession de l'Amulette
+de Yendor !
 
-"I have studied the texts of the magi constantly since you left.  In
-the Book of Skelos, I found this:
+"J'ai étudié sans relâche les textes des mages depuis votre départ.  Dans
+le Livre de Skelos, j'ai trouvé ceci :
 
-    %d will cause a child to be sent into the world.  This child is to
-    be made strong by trial of battle and magic, for %d has willed it so.
-    It is said that the child of %d will recover the Amulet of Yendor
-    that was stolen from the Creator at the beginning of time.
+    %d fera envoyer un enfant dans le monde.  Cet enfant
+    sera endurci par l'épreuve de la bataille et de la magie, car
+    telle est la volonté de %d.  Il est dit que l'enfant de %d
+    reprendra l'Amulette de Yendor, qui fut dérobée au Créateur à
+    l'aube des temps.
 
-"As you now possess the amulet, %p, I suspect that the Book
-speaks of you.
+"Puisque vous possédez désormais l'amulette, %p, je soupçonne que le Livre
+parle de vous.
 
-    The child of %d will take the Amulet, and travel to the Astral
-    Plane, where the Great Temple of %d is to be found.  The Amulet
-    will be sacrificed to %d, there on %dJ altar.  Then the child will
-    stand by %d as champion of all %cP for eternity.
+    L'enfant de %d prendra l'Amulette, et voyagera jusqu'au Plan
+    Astral, où se trouve le Grand Temple de %d.  L'Amulette
+    sera sacrifiée à %d, là, sur son autel.  Alors l'enfant
+    se tiendra aux côtés de %d, champion de tous les %cp
+    pour l'éternité.
 
-"This is all I know, %p.  I hope it will help you."]],
+"C'est là tout ce que je sais, %p.  J'espère que cela vous aidera."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses you, but you feel the overpowering aura of magic fading.]",
+         synopsis = "[%nC vous maudit, mais vous sentez l'écrasante aura de magie se dissiper.]",
          output = "text",
-         text = [[%nC falls to the ground, and utters a last curse at you.  Then %nj
-body fades slowly, seemingly dispersing into the air around you.  You
-slowly become aware that the overpowering aura of magic in the air has
-begun to fade.]],
+         text = [[%nC s'effondre et vous lance une dernière malédiction.  Puis son
+corps s'estompe lentement, semblant se disperser dans l'air autour de vous.
+Peu à peu, vous prenez conscience que l'écrasante aura de magie dans l'air
+commence à se dissiper.]],
       },
       leader_first = {
-         synopsis = "[\"At last you have returned.  There is a great quest you must undertake.\"]",
+         synopsis = "[\"Vous voici enfin de retour.  Une grande quête vous attend.\"]",
          output = "text",
-         text = [["Ah, %p.  You have returned at last.  The world is in dire
-need of your help.  There is a great quest you must undertake.
+         text = [["Ah, %p.  Vous voici enfin de retour.  Le monde a cruellement
+besoin de votre aide.  Une grande quête vous attend.
 
-"But first, I must see if you are ready to take on such a challenge."]],
+"Mais d'abord, je dois voir si vous êtes à la hauteur d'un tel défi."]],
       },
       leader_last = {
-         synopsis = "[\"You have betrayed %d; soon %n will destroy us.  Begone!\"]",
+         synopsis = "[\"Vous avez trahi %d ; bientôt %n nous détruira.  Hors d'ici !\"]",
          output = "text",
-         text = [["Pah!  You have betrayed the gods, %p.  You will never attain
-the glory which you aspire to.  Your failure to follow the true path has
-closed this future to you.
+         text = [["Peuh !  Vous avez trahi les dieux, %p.  Jamais vous n'atteindrez
+la gloire à laquelle vous aspirez.  Pour n'avoir pas suivi le vrai chemin,
+cet avenir vous est désormais fermé.
 
-"I will protect these people as best I can, but soon %n will overcome
-me and destroy all who once called you %s.  Now begone!"]],
+"Je protégerai ces gens du mieux que je pourrai, mais bientôt %n aura
+raison de moi et détruira tous ceux qui jadis vous appelaient %s.
+Maintenant, hors d'ici !"]],
       },
       leader_next = {
-         text = "\"%p, you are back.  Are you ready now for the challenge?\"",
+         text = "\"%p, vous voici de retour.  Êtes-vous maintenant à la hauteur du défi ?\"",
       },
       leader_other = {
-         text = "\"Again, you stand before me, %p.  Surely you have prepared yourself.\"",
+         text = "\"De nouveau, vous voici devant moi, %p.  Vous avez sûrement fait vos préparatifs.\"",
       },
       locate_first = {
-         synopsis = "[You have located %i.]",
+         synopsis = "[Vous avez trouvé %i.]",
          output = "text",
-         text = [[The scent of water comes to you in the desert breeze.  You know that
-you have located %i.]],
+         text = [[La brise du désert vous apporte une odeur d'eau.  Vous savez que
+vous avez trouvé %i.]],
       },
       locate_next = {
-         text = "Yet again you have a chance to infiltrate %i.",
+         text = "Une fois de plus, vous avez l'occasion de vous infiltrer dans %i.",
       },
       nemesis_first = {
-         synopsis = "[%nC boasts that %nh has slain many.  \"Prepare to die, %c.\"]",
+         synopsis = "[%nC se vante d'avoir tué bien des gens.  \"Prépare-toi à mourir, %c.\"]",
          output = "text",
-         text = [["So.  This is what that second rate sorcerer %l sends to do %lj bidding.
-I have slain many before you.  You shall give me little sport.
+         text = [["Tiens.  Voilà donc ce que ce sorcier de second ordre, %l, envoie
+exécuter ses volontés.  J'en ai tué bien d'autres avant toi.  Tu ne
+m'offriras guère de divertissement.
 
-"Prepare to die, %c."]],
+"Prépare-toi à mourir, %c."]],
       },
       nemesis_next = {
-         text = "\"I have wasted too much time on you already.  Now, you shall die.\"",
+         text = "\"J'ai déjà perdu trop de temps avec toi.  À présent, tu vas mourir.\"",
       },
       nemesis_other = {
-         text = "\"You return yet again, %c!  Are you prepared for death now?\"",
+         text = "\"Tu reviens encore, %c !  Viens-tu enfin chercher la mort ?\"",
       },
       nemesis_wantsit = {
-         text = [["I shall have %o back, you pitiful excuse for %ca.
-And your life as well."]],
+         text = [["Je reprendrai %o, toi qui fais honte aux %cp.
+Et ta vie avec."]],
       },
       nexttime = {
-         text = [[Once again, you near %H.  You know that %l
-will be waiting.]],
+         text = [[Une fois de plus, vous approchez de %H.  Vous savez que %l
+vous y attendra.]],
       },
       offeredit = {
-         synopsis = "[%lC tells you to guard %o, and to return when you have triumphed.]",
+         synopsis = "[%lC vous dit de veiller sur %o, et de revenir lorsque vous aurez triomphé.]",
          output = "text",
-         text = [[When %l sees %o, he smiles, and says:
+         text = [[Lorsque %l voit %o, il sourit et déclare :
 
-    Well done, %p.  You have saved the world from certain doom.
-    What, now, should be done with %o?
+    Bien joué, %p.  Vous avez sauvé le monde d'une perte certaine.
+    Que faire, à présent, de %o ?
 
-    These people, brave as they are, cannot hope to guard it from
-    other sorcerers who will detect it, as surely as %n did.
+    Ces gens, aussi braves soient-ils, ne peuvent espérer le protéger
+    des autres sorciers qui le détecteront, aussi sûrement que %n l'a fait.
 
-    Take %o with you, %p.  It will guard you in
-    your adventures, and you can best guard it.  You embark on a
-    quest far greater than you realize.
+    Prenez %o avec vous, %p.  Il vous protégera au
+    cours de vos aventures, et c'est vous qui saurez le mieux le protéger.
+    Vous vous lancez dans une quête bien plus grande que vous ne le croyez.
 
-    Remember me, %p, and return when you have triumphed.  I
-    will tell you then of what you must do.  You will understand when the
-    time comes.]],
+    Souvenez-vous de moi, %p, et revenez lorsque vous aurez triomphé.
+    Je vous dirai alors ce que vous devrez faire.  Vous comprendrez le
+    moment venu.]],
       },
       offeredit2 = {
-         synopsis = "[\"You keep %o.  Return to %Z to search for the Amulet.\"]",
+         synopsis = "[\"Gardez %o.  Retournez dans %Z pour chercher l'Amulette.\"]",
          output = "text",
-         text = [[%l gazes reverently at %o, then back at you.
+         text = [[%lC contemple %o avec révérence, puis vous regarde.
 
-"You are its keeper now, and the time has come to resume your search
-for the Amulet.  %Z await your return through the
-magic portal which brought you here."]],
+"C'est à vous de veiller sur lui désormais, et l'heure est venue de
+reprendre votre quête de l'Amulette.  %Z attendent votre retour par
+le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[Again, and you think possibly for the last time, you approach
-%H.]],
+         text = [[De nouveau, et peut-être pour la dernière fois, pensez-vous, vous
+approchez de %H.]],
       },
       posthanks = {
-         text = "\"Tell us, %p, have you fared well on your great quest?\"",
+         text = "\"Dites-nous, %p, votre grande quête se déroule-t-elle bien ?\"",
       },
    },
    Cav = {
       assignquest = {
-         synopsis = "[Find and defeat %n, recover %o, and return with it.]",
+         synopsis = "[Trouvez et vainquez %n, reprenez %o et revenez avec.]",
          output = "text",
-         text = [["You are indeed ready now, %p.  I shall tell you a tale of
-great suffering among your people:
+         text = [["Vous êtes en effet à la hauteur désormais, %p.  Je vais vous conter
+les grandes souffrances qu'a endurées votre peuple :
 
-"Shortly after you left on your vision quest, the caves were invaded by
-the creatures sent against us by %n.
+"Peu après votre départ pour votre quête de vision, les cavernes ont été
+envahies par les créatures que %n a lancées contre nous.
 
-"She, herself, could not attack us due to her great size, but her minions
-have harassed us ever since.  In the first attacks, many died, and the
-minions of %n managed to steal %o.
-They took it to %i and there, none of our
-%g warriors have been able to go.
+"Elle-même ne pouvait nous attaquer à cause de sa grande taille, mais ses
+sbires nous harcèlent depuis lors.  Lors des premières attaques, beaucoup
+sont morts, et les sbires de la bête sont parvenus à dérober %o.
+Ils l'ont emporté dans %i, et aucun de nos
+guerriers %gp ne s'est montré capable de s'y rendre.
 
-"You must find %i, and within it wrest
-%o from %n.  She guards it as
-jealously as she guards all treasures she attains.  But with it,
-we can make our caves safe once more.
+"Vous devez trouver %i, et là, arracher
+%o à la bête.  Elle le garde aussi
+jalousement que tous les trésors qu'elle amasse.  Mais grâce à lui,
+nous pourrons de nouveau vivre en sécurité dans nos cavernes.
 
-"Please, %p, recover %o for us, and return it here."]],
+"Je vous en prie, %p, reprenez %o pour nous, et rapportez-le ici."]],
       },
       badalign = {
-         synopsis = "[\"You no longer follow the path of the %a.  Go, and purify yourself.\"]",
+         synopsis = "[\"Vous ne suivez plus le chemin %a.  Partez, et purifiez-vous.\"]",
          output = "text",
-         text = [["%pC!  You have deviated from my teachings.  You no longer follow
-the path of the %a as you should.  I banish you from these caves, to
-go forth and purify yourself.  Then, you might be able to accomplish this
-quest."]],
+         text = [["%pC !  Vous avez trahi mes enseignements.  Vous ne
+suivez plus le chemin %a comme vous le devriez.  Je vous bannis de ces
+cavernes : partez et purifiez-vous.  Alors, peut-être, pourrez-vous
+accomplir cette quête."]],
       },
       badlevel = {
-         synopsis = "[\"%rA is too inexperienced.  Come back when you have progressed.\"]",
+         synopsis = "[\"Avec votre rang de %r, vous manquez d'expérience.  Revenez lorsque vous aurez progressé.\"]",
          output = "text",
-         text = [["Alas, %p, you are as yet too inexperienced to embark upon such
-a difficult quest as that I propose to give you.
+         text = [["Hélas, %p, vous manquez encore d'expérience pour vous lancer dans une
+quête aussi difficile que celle que je compte vous confier.
 
-"%rA could not possibly survive the rigors demanded to find
-%i, never mind to confront %n herself.
+"Avec votre rang de %r, vous ne pourriez survivre aux épreuves qu'exige
+la recherche de %i, sans même parler d'affronter %n en personne.
 
-"Adventure some more, and you will learn the skills you will require.
-%d decrees it."]],
+"Partez encore à l'aventure, et vous apprendrez les talents qui vous
+seront nécessaires.  Ainsi l'a décrété %d."]],
       },
       discourage = {
-         "\"You are weak, %c.  No challenge for the Mother of all Dragons.\"",
-         "\"I grow hungry, %r.  You look like a nice appetizer!\"",
-         "\"Join me for lunch?  You're the main course, %c.\"",
-         "\"With %o, I am invincible!  You cannot succeed.\"",
-         "\"Your mentor, %l has failed.  You are nothing to fear.\"",
-         "\"You shall die here, %c.  %rA cannot hope to defeat me.\"",
-         "\"You, a mere %r challenge the might of %n?  Hah!\"",
-         "\"I am the Mother of all Dragons!  You cannot hope to defeat me.\"",
-         "\"My claws are sharp now.  I shall rip you to shreds!\"",
-         "\"%d has deserted you, %c.  This is my domain.\"",
+         "\"Tu es faible, %c.  Aucun défi pour la Mère de tous les Dragons.\"",
+         "\"J'ai faim, %r.  Tu m'as l'air d'un délicieux amuse-gueule !\"",
+         "\"Tu dînes avec moi ?  Tu seras le plat de résistance, %c.\"",
+         "\"Avec %o, je suis invincible !  Tu ne peux réussir.\"",
+         "\"Ton mentor, %l, a échoué.  Tu n'as rien de redoutable.\"",
+         "\"Tu mourras ici, %c.  Avec ton rang de %r, tu ne peux espérer me vaincre.\"",
+         "\"Toi, simple %r, tu défies la puissance de %n ?  Ha !\"",
+         "\"Je suis la Mère de tous les Dragons !  Tu ne peux espérer me vaincre.\"",
+         "\"Mes griffes sont bien aiguisées.  Je vais te mettre en lambeaux !\"",
+         "\"%d t'a tourné le dos, %c.  Ici, c'est mon domaine.\"",
       },
       encourage = {
-         "\"%nC is immune to her own breath weapons. You should use magic upon her that she does not use herself.\"",
-         "\"When you encounter %n, call upon %d for assistance.\"",
-         "\"There will be nowhere to hide inside %ns inner sanctum.\"",
-         "\"Your best chance with %n will be to keep moving.\"",
-         "\"Do not be distracted by the great treasures in %ns lair. Concentrate on %o.\"",
-         "\"%oC is the only object that %n truly fears.\"",
-         "\"Do not be fooled by %ns size.  She is fast, and it is rumored that she uses magic.\"",
-         "\"I would send a party of %gP with you, but we will need all of our strength to defend ourselves.\"",
-         "\"Remember, be %a at all times.  This is your strength.\"",
-         "\"If only we had an amulet of reflection, this would not have happened.\"",
+         "\"%nC est immunisée contre ses propres souffles.  Usez contre elle d'une magie qu'elle n'emploie pas elle-même.\"",
+         "\"Lorsque vous affronterez %n, invoquez l'aide de %d.\"",
+         "\"Il n'y aura nulle part où se cacher dans le sanctuaire où se terre %n.\"",
+         "\"Face à %n, votre meilleure chance sera de rester en mouvement.\"",
+         "\"Ne vous laissez pas distraire par les grands trésors du repaire où se terre %n.  Concentrez-vous sur %o.\"",
+         "\"%oC est le seul objet que %n craigne vraiment.\"",
+         "\"Ne vous laissez pas tromper par sa taille : %n est rapide, et on dit qu'elle use de magie.\"",
+         "\"Je vous ferais bien accompagner par une troupe de %gp, mais nous aurons besoin de toutes nos forces pour nous défendre.\"",
+         "\"Souvenez-vous, suivez toujours le chemin %a.  C'est là votre force.\"",
+         "\"Si seulement nous avions eu une amulette de réflexion, rien de tout cela ne serait arrivé.\"",
       },
       firsttime = {
-         synopsis = "[You arrive back at %H, but something is wrong here.]",
+         synopsis = "[Vous voici de retour dans %H, mais quelque chose ne va pas.]",
          output = "text",
-         text = [[You descend through a barely familiar stairwell that you remember
-%l showing you when you embarked upon your vision quest.
+         text = [[Vous descendez un escalier à peine familier, que %l vous avait
+montré, vous vous en souvenez, au moment de partir pour votre quête de vision.
 
-You arrive back at %H, but something seems
-wrong here.  The usual smoke and glowing light of the fires of the
-outer caves are absent, and an uneasy quiet fills the damp air.]],
+Vous voici de retour dans %H, mais quelque chose
+semble clocher.  La fumée habituelle et la lueur des feux des cavernes
+extérieures ont disparu, et un silence inquiet emplit l'air humide.]],
       },
       goal_first = {
-         synopsis = "[You enter a large cavern.  %nC is present.]",
+         synopsis = "[Vous entrez dans une vaste caverne.  %nC est là.]",
          output = "text",
-         text = [[You find yourself in a large cavern, with neatly polished walls, that
-nevertheless show signs of being scorched by fire.
+         text = [[Vous vous trouvez dans une vaste caverne aux parois soigneusement polies,
+qui portent néanmoins des traces de brûlures.
 
-Bones litter the floor, and there are objects scattered everywhere.
-The air is close with the stench of sulphurous fumes.
+Des ossements jonchent le sol, et des objets sont éparpillés partout.
+L'air est lourd d'une puanteur de vapeurs sulfureuses.
 
-%nC is clearly visible, but %nh seems to be asleep.]],
+%nC est bien visible, mais elle semble endormie.]],
       },
       goal_next = {
-         text = "Once again, you find yourself in the lair of %n.",
+         text = "Une fois de plus, vous vous trouvez dans le repaire de %n.",
       },
       gotit = {
-         synopsis = "[%oC fills you with a feeling of power.]",
+         synopsis = "[%oC vous emplit d'un sentiment de puissance.]",
          output = "text",
-         text = [[As you pick up %o it seems heavy at first, but as you
-hold it strength flows into your arms.
+         text = [[Lorsque vous ramassez %o, il vous semble lourd au premier
+abord, mais tandis que vous le tenez, la force afflue dans vos bras.
 
-You suddenly feel full of power, as if nothing could possibly stand
-in your path.]],
+Une puissance soudaine vous envahit, comme si plus rien ne pouvait
+se dresser sur votre chemin.]],
       },
       guardtalk_after = {
-         "\"The rains have returned and the land grows lush again.\"",
-         "\"Peace has returned, give thanks to %d!\"",
-         "\"Welcome back!  Did you find %o?\"",
-         "\"So, %p, tell us the story of your fight with %n.\"",
-         "\"%lC grows old.  Perhaps you will guide us after he ascends.\"",
+         "\"Les pluies sont revenues et la terre reverdit.\"",
+         "\"La paix est revenue, rendons grâce à %d !\"",
+         "\"Bon retour !  As-tu trouvé %o ?\"",
+         "\"Alors, %p, raconte-nous ton combat contre %n.\"",
+         "\"%lC se fait vieux.  Peut-être nous guideras-tu après son ascension.\"",
       },
       guardtalk_before = {
-         "\"We have not been able to gather as much food since the Giants sealed off our access to the outer world.\"",
-         "\"Since %n sent her minions, we have been constantly fighting.\"",
-         "\"I have heard your vision quest was successful.  Is this so?\"",
-         "\"So, tell me, %p, how have you fared?\"",
-         "\"%lC grows old.  We know not who will guide us after he ascends.\"",
+         "\"Nous n'avons pas pu amasser autant de nourriture depuis que les Géants nous ont coupé l'accès au monde extérieur.\"",
+         "\"Depuis que %n a envoyé ses sbires, nous ne cessons de nous battre.\"",
+         "\"J'ai entendu dire que ta quête de vision avait été un succès.  Est-ce vrai ?\"",
+         "\"Alors, dis-moi, %p, comment cela s'est-il passé pour toi ?\"",
+         "\"%lC se fait vieux.  Nous ne savons pas qui nous guidera après son ascension.\"",
       },
       hasamulet = {
-         synopsis = "[\"Take the Amulet to the altar of %d on the Astral Plane and offer it.\"]",
+         synopsis = "[\"Portez l'Amulette jusqu'à l'autel de %d sur le Plan Astral et offrez-la.\"]",
          output = "text",
-         text = [["You have been successful, I see, %p.
+         text = [["Vous avez réussi, à ce que je vois, %p.
 
-"Now that the Amulet of Yendor is yours, here is what you must do:
+"Maintenant que l'Amulette de Yendor est à vous, voici ce que vous devez faire :
 
-"Journey upwards to the open air.  The Amulet you carry will then
-take you into the Astral Planes, where the Great Temple of %d
-casts its influence throughout our world.
+"Montez jusqu'à l'air libre.  L'Amulette que vous portez vous emmènera
+alors dans les Plans Astraux, d'où le Grand Temple de %d
+répand son influence sur notre monde.
 
-"Sacrifice the Amulet on the altar.  Thus shall %d become supreme!"]],
+"Sacrifiez l'Amulette sur l'autel.  Ainsi %d régnera en maître !"]],
       },
       killed_nemesis = {
-         text = [[%nC sinks to the ground, her heads flailing about.
-As she dies, a cloud of noxious fumes billows about her.]],
+         text = [[%nC s'effondre, ses têtes battant l'air en tous sens.
+Tandis qu'elle meurt, un nuage de vapeurs nocives s'élève autour d'elle.]],
       },
       leader_first = {
-         synopsis = "[\"You have returned.  We are in dire need of your help.\"]",
+         synopsis = "[\"Vous voici de retour.  Nous avons cruellement besoin de votre aide.\"]",
          output = "text",
-         text = [["You have returned from your vision quest, %p.  Thank %d.
+         text = [["Vous voici de retour de votre quête de vision, %p.  Grâces soient rendues à %d.
 
-"We are in dire need of your help, my %S.
+"Nous avons cruellement besoin de votre aide, %S de notre peuple.
 
-"But first, I must see if you are yet capable of the quest I would
-ask you to undertake."]],
+"Mais d'abord, je dois voir si vous êtes déjà capable d'accomplir la quête
+que je voudrais vous confier."]],
       },
       leader_last = {
-         synopsis = "[\"You have betrayed the %L.  Begone!\"]",
+         synopsis = "[\"Vous avez trahi le camp %L.  Hors d'ici !\"]",
          output = "text",
-         text = [["%pC!  You have sealed our fate.  You seem unable to reform yourself,
-so I must select another to take your place.
+         text = [["%pC !  Vous avez scellé notre destin.  Vous semblez incapable de vous
+amender, je dois donc choisir quelqu'un d'autre pour prendre votre place.
 
-"Begone from %H!  You have betrayed us by choosing
-the path of the %C over the true path of the %L.
+"Quittez %H !  Vous nous avez trahis en choisissant
+le chemin %C plutôt que le vrai chemin %L.
 
-"You no longer live in our eyes."]],
+"À nos yeux, vous n'existez plus."]],
       },
       leader_next = {
-         text = "\"Again, you return to us, %p.  Let me see if you are ready now.\"",
+         text = "\"Vous nous revenez encore, %p.  Voyons si vous êtes à la hauteur à présent.\"",
       },
       leader_other = {
-         text = "\"Ah, %p.  Are you finally ready?\"",
+         text = "\"Ah, %p.  Êtes-vous enfin à la hauteur ?\"",
       },
       locate_first = {
-         synopsis = "[You %x many large claw marks, smell carrion, and notice bones.]",
+         synopsis = "[Vous parvenez à %x de grandes traces de griffes ; une odeur de charogne flotte et des ossements jonchent le sol.]",
          output = "text",
-         text = [[You %x many large claw marks on the ground.  The tunnels ahead
-of you are larger than most of those in any cave complex you have
-ever been in before.
+         text = [[Vous parvenez à %x de nombreuses et grandes traces de griffes sur le sol.
+Les tunnels devant vous sont plus larges que la plupart de ceux des réseaux
+de cavernes que vous avez connus jusqu'ici.
 
-Your nose detects the smell of carrion from within, and bones litter
-the sides of the tunnels.]],
+Votre nez détecte une odeur de charogne venant de l'intérieur, et des
+ossements jonchent les bords des tunnels.]],
       },
       locate_next = {
-         text = "Once again, you approach %i.",
+         text = "Une fois de plus, vous approchez de %i.",
       },
       nemesis_first = {
-         synopsis = "[%nC threatens to eat you.]",
+         synopsis = "[%nC menace de vous dévorer.]",
          output = "text",
-         text = [["So, follower of %l, you seek to invade the lair of
-%n.  Only my meals are allowed down here.  Prepare
-to be eaten!"]],
+         text = [["Ainsi, disciple de %l, tu cherches à envahir le repaire de
+%n.  Seuls mes repas sont admis ici-bas.  Prépare-toi
+à finir dans mon estomac !"]],
       },
       nemesis_next = {
-         text = [["So, again you face me, %c.  No one has ever before escaped me.
-Now I shall kill you."]],
+         text = [["Ainsi, tu m'affrontes de nouveau, %c.  Nul ne m'a jamais échappé.
+À présent, je vais te tuer."]],
       },
       nemesis_other = {
-         text = "\"You are getting annoying, %c.  Prepare to die.\"",
+         text = "\"Tu commences à m'agacer, %c.  Prépare-toi à mourir.\"",
       },
       nemesis_wantsit = {
-         text = "\"I'll have %o from you, %c.  You shall die.\"",
+         text = "\"Je te reprendrai %o, %c.  Tu vas mourir.\"",
       },
       nexttime = {
-         text = "Once again, you arrive back at %H.",
+         text = "Une fois de plus, vous voici de retour dans %H.",
       },
       offeredit = {
-         synopsis = "[\"Take %o with you.  It will help in your quest for the Amulet of Yendor.\"]",
+         synopsis = "[\"Emportez %o.  Il vous aidera dans votre quête de l'Amulette de Yendor.\"]",
          output = "text",
-         text = [[%lC glimpses %o in your possession.
-He smiles and says:
+         text = [[%lC aperçoit %o en votre possession.
+Il sourit et déclare :
 
-    You have done it!  We are saved.  But I fear that %o
-    will always be a target for %C forces who will want it for their
-    own.
+    Vous avez réussi !  Nous sommes sauvés.  Mais je crains que %o
+    ne soit toujours la cible des forces %C qui voudront s'en
+    emparer.
 
-    To prevent further trouble, I would like you, %p,
-    to take %o away with you.  It will help you as you
-    quest for the Amulet of Yendor.]],
+    Pour éviter d'autres ennuis, j'aimerais que vous, %p,
+    emportiez %o avec vous.  Il vous aidera dans votre
+    quête de l'Amulette de Yendor.]],
       },
       offeredit2 = {
-         synopsis = "[\"You are the keeper of %o now.  Return to %Z to search for the Amulet.]",
+         synopsis = "[\"C'est à vous de veiller sur %o désormais.  Retournez dans %Z pour chercher l'Amulette.\"]",
          output = "text",
-         text = [[%l grasps %o proudly for a moment, then looks at you.
+         text = [[%lC serre fièrement %o un instant, puis vous regarde.
 
-"You are its keeper now, and the time has come to resume your search
-for the Amulet.  %Z await your return through the
-magic portal which brought you here."]],
+"C'est à vous de veiller sur lui désormais, et l'heure est venue de
+reprendre votre quête de l'Amulette.  %Z attendent votre retour par
+le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[For some reason, you think that this may be the last time you will
-enter %H.]],
+         text = [[Pour une raison ou une autre, vous pensez que c'est peut-être la dernière
+fois que vous entrez dans %H.]],
       },
       posthanks = {
-         text = [["%pC!  Welcome back.
-How goes your quest to recover the Amulet for %d?"]],
+         text = [["%pC !  Bon retour parmi nous.
+Comment se passe votre quête pour reprendre l'Amulette au nom de %d ?"]],
       },
    },
    Hea = {
       assignquest = {
-         synopsis = "[Travel to %i on your way to recover %o from %n.]",
+         synopsis = "[Rendez-vous dans %i pour aller reprendre %o à %n.]",
          output = "text",
-         text = [[For the first time, you sense a smile on %ls face.
+         text = [[Pour la première fois, vous devinez un sourire sur le visage de %l.
 
-    "You have indeed learned as much as we can teach you in preparation
-    for this task.  Let me tell you what I know of the symptoms and hope
-    that you can provide a cure.
+    "Vous avez en effet appris tout ce que nous pouvions vous enseigner
+    pour vous préparer à cette tâche.  Laissez-moi vous dire ce que je sais
+    des symptômes, en espérant que vous saurez trouver un remède.
 
-    "A short while ago, the dreaded %nt was fooled by the gods
-    into thinking that %nh could use %o to find a
-    cure for old age.  Think of it, eternal youth!  But %nj good
-    health is accomplished by drawing the health from those around %ni.
+    "Il y a peu, les dieux ont trompé %n, que tous redoutent, en
+    lui faisant croire qu'%nh pourrait se servir de %o pour trouver
+    un remède à la vieillesse.  Imaginez : la jeunesse éternelle !  Mais sa
+    bonne santé, il ne l'obtient qu'en puisant celle de tous ceux qui
+    l'entourent.
 
-    "He has exhausted %nj own supply of healthy people and now %nh seeks to
-    extend %nj influence into our world.  You must recover from %ni
-    %o and break the spell.
+    "Il a épuisé sa propre réserve de gens bien portants, et cherche
+    désormais à étendre son influence sur notre monde.  Vous devez lui
+    reprendre %o et briser le sortilège.
 
-    "You must travel into the swamps to %i, and from there
-    follow the trail to %ns island lair.  Be careful."]],
+    "Vous devez traverser les marais jusqu'à %i, et de là
+    suivre la piste menant à l'île où se terre %n.  Prenez garde."]],
       },
       badalign = {
-         synopsis = "[Return when you are more %a.]",
+         synopsis = "[Revenez lorsque votre conduite sera plus conforme au chemin %a.]",
          output = "text",
-         text = [["You have learned much of the remedies that benefit, but you must also
-know which physic for which ail.  That is why %ds teachings are a
-part of your training.
+         text = [["Vous avez beaucoup appris des remèdes qui soulagent, mais vous devez
+aussi savoir quelle médecine convient à quel mal.  C'est pourquoi les
+enseignements de %d font partie de votre formation.
 
-"Return to us when you have healed thyself."]],
+"Revenez parmi nous lorsque vous aurez guéri votre propre âme."]],
       },
       badlevel = {
-         synopsis = "[You are too inexperienced.  Return when you are %Ra.]",
+         synopsis = "[Vous manquez d'expérience.  Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["Alas, %p, you are yet too inexperienced to deal with the rigors
-of such a task.  You must be able to draw on the knowledge of botany,
-alchemy and veterinary practices before I can send you on this quest 
-with good conscience.
+         text = [["Hélas, %p, vous manquez encore d'expérience pour affronter les rigueurs
+d'une telle tâche.  Vous devez maîtriser la botanique, l'alchimie et l'art
+vétérinaire avant que je puisse en bonne conscience vous envoyer
+accomplir cette quête.
 
-"Return when you wear %Ra's caduceus."]],
+"Revenez lorsque vous porterez le caducée de %R."]],
       },
       discourage = {
-         "\"They might as well give scalpels to wizards as to let you try to use %o!\"",
-         "\"If I could strike %l, surrounded by %lj %gP, imagine what I can do to you here by yourself.\"",
-         "\"I will put my %Rp to work making a physic out of your ashes.\"",
-         "\"As we speak, Hades gathers your patients to join you.\"",
-         "\"After I'm done with you, I'll destroy %l as well.\"",
-         "\"You will have to kill me if you ever hope to leave this place.\"",
-         "\"I will impale your head on my caduceus for all to see.\"",
-         "\"There is no materia medica in your sack which will cure you of me!\"",
-         "\"Do not fight too hard, I want your soul strong, not weakened!\"",
-         "\"You should have stopped studying at veterinary.\"",
+         "\"Autant confier des scalpels à des magiciens que de te laisser te servir de %o !\"",
+         "\"Si j'ai pu frapper %l, entouré de ses %gp, imagine ce que je peux te faire ici, à toi qui es sans secours.\"",
+         "\"Je mettrai mes %Rp au travail pour tirer un remède de tes cendres.\"",
+         "\"À l'heure où nous parlons, Hadès rassemble tes patients pour qu'ils te rejoignent.\"",
+         "\"Quand j'en aurai fini avec toi, je détruirai %l aussi.\"",
+         "\"Il te faudra me tuer si tu espères jamais quitter ce lieu.\"",
+         "\"J'empalerai ta tête sur mon caducée pour que tous la voient.\"",
+         "\"Il n'est dans ton sac aucune materia medica qui puisse te guérir de moi !\"",
+         "\"Ne te débats pas trop, je veux ton âme forte, pas affaiblie !\"",
+         "\"Tu aurais dû t'arrêter à l'école vétérinaire.\"",
       },
       encourage = {
-         "\"Remember, %p, to always wash your hands before operating.\"",
-         "\"%nC has no real magic of %nj own.  To this %nh is vulnerable.\"",
-         "\"If you have been true to %d, you can draw on the power of %o.\"",
-         "\"Bring with you antidotes for poisons.\"",
-         "\"Remember this, %n can twist the powers of %o to hurt instead of heal.\"",
-         "\"I have sent for Chiron, but I am afraid he will come too late.\"",
-         "\"Maybe when you return the snakes will once again begin to shed.\"",
-         "\"The plague grows worse as we speak.  Hurry, %p!\"",
-         "\"Many times %n has caused trouble in these lands.  It is time that %nh was eradicated like the diseases %nh has caused.\"",
-         "\"With but one eye, %n should be easy to blind.  Remember this.\"",
+         "\"N'oubliez pas, %p, de toujours vous laver les mains avant d'opérer.\"",
+         "\"%nC ne possède aucune véritable magie qui lui soit propre.  C'est là sa faiblesse.\"",
+         "\"Si votre fidélité envers %d est demeurée intacte, vous pourrez puiser dans le pouvoir de %o.\"",
+         "\"Emportez avec vous des antidotes contre les poisons.\"",
+         "\"Souvenez-vous que %n peut détourner les pouvoirs de %o pour blesser au lieu de guérir.\"",
+         "\"J'ai fait mander Chiron, mais je crains qu'il n'arrive trop tard.\"",
+         "\"Peut-être qu'à votre retour, les serpents recommenceront à muer.\"",
+         "\"La peste empire à l'heure où nous parlons.  Hâtez-vous, %p !\"",
+         "\"Maintes fois %n a semé le trouble sur ces terres.  Il est temps de l'éradiquer comme les maladies qu'%nh a répandues.\"",
+         "\"N'ayant qu'un œil, %n devrait être facile à aveugler.  Souvenez-vous-en.\"",
       },
       firsttime = {
-         synopsis = "[You arrive back at %H and must find %l.]",
+         synopsis = "[Vous voici de retour dans %H et devez trouver %l.]",
          output = "text",
-         text = [[What sorcery has brought you back to %H?  The smell
-of fresh funeral pyres tells you that something is amiss with the healing
-powers that used to practice here.
+         text = [[Quelle sorcellerie vous a fait revenir dans %H ?  L'odeur
+de bûchers funéraires récents vous dit que quelque chose ne va pas chez
+les guérisseurs qui exerçaient ici autrefois.
 
-No rhizotomists are tending the materia medica gardens, and where are the
-common folk who used to come for the cures?
+Aucun rhizotomiste ne soigne les jardins de materia medica, et où sont
+donc les gens du peuple qui venaient autrefois se faire soigner ?
 
-You know that you must quickly make your way to the collegium, and
-%ls iatreion, and find out what has happened in your absence.]],
+Vous savez que vous devez vous rendre au plus vite au collegium, à
+l'iatreion de %l, pour découvrir ce qui s'est passé en votre absence.]],
       },
       goal_first = {
-         synopsis = "[You have reached the lair of %n.  Take %o away from %ni.]",
+         synopsis = "[Vous avez atteint le repaire de %n.  Reprenez-lui %o.]",
          output = "text",
-         text = [[You stand within sight of the infamous Isle of %n.  Even
-the words of %l had not prepared you for this.
+         text = [[Vous voici en vue de l'île tristement célèbre où règne %n.
+Rien dans les paroles de %l ne laissait présager cela.
 
-Steeling yourself against the wails of the ill that pierce your ears,
-you hurry on your task.  Maybe with %o you can
-heal them on your return, but not now.]],
+Vous blindant contre les gémissements des malades qui vous percent les
+oreilles, vous pressez le pas pour accomplir votre tâche.  Peut-être
+pourrez-vous les guérir à votre retour grâce à %o, mais pas maintenant.]],
       },
       goal_next = {
-         text = "Once again, you %x the Isle of %n in the distance.",
+         text = "Une fois de plus, vous parvenez à %x au loin l'île où règne %n.",
       },
       gotit = {
-         synopsis = "[You feel the healing power of %o and should return it to %l.]",
+         synopsis = "[Vous sentez le pouvoir guérisseur de %o ; vous devriez le rapporter à %l.]",
          output = "text",
-         text = [[As you pick up %o, you feel its healing begin to
-warm your soul.  You curse Zeus for taking it from its rightful owner,
-but at least you hope that %l can put it to good use once
-again.]],
+         text = [[Lorsque vous ramassez %o, vous sentez son pouvoir guérisseur
+commencer à réchauffer votre âme.  Vous maudissez Zeus de l'avoir pris à son
+légitime propriétaire, mais au moins espérez-vous que %l pourra de
+nouveau en faire bon usage.]],
       },
       guardtalk_after = {
-         "\"Did you read that new treatise on the therapeutic use of leeches?\"",
-         "\"Paint a red caduceus on your shield and monsters won't hit you.\"",
-         "\"How are you feeling?  Perhaps a good bleeding will improve your spirits.\"",
-         "\"Have you heard the absurd new theory that diseases are caused by microscopic organisms, and not ill humors?\"",
-         "\"I see that you bring %o, now you can cure this plague!\"",
+         "\"As-tu lu ce nouveau traité sur l'usage thérapeutique des sangsues ?\"",
+         "\"Peins un caducée rouge sur ton bouclier, et les monstres ne te frapperont pas.\"",
+         "\"Comment te sens-tu ?  Une bonne saignée te remonterait peut-être le moral.\"",
+         "\"As-tu entendu cette nouvelle théorie absurde selon laquelle les maladies seraient causées par des organismes microscopiques, et non par des humeurs viciées ?\"",
+         "\"Je vois que tu rapportes %o, tu vas enfin pouvoir guérir cette peste !\"",
       },
       guardtalk_before = {
-         "\"Did you read that new treatise on the therapeutic use of leeches?\"",
-         "\"Paint a red caduceus on your shield and monsters won't hit you.\"",
-         "\"I passed handwriting so they are demoting me a rank.\"",
-         "\"I've heard that even %l has not been able to cure Chiron.\"",
-         "\"We think %n has used %nj alchemists, and %o, to unleash a new disease we call 'the cold' on Gehennom.\"",
+         "\"As-tu lu ce nouveau traité sur l'usage thérapeutique des sangsues ?\"",
+         "\"Peins un caducée rouge sur ton bouclier, et les monstres ne te frapperont pas.\"",
+         "\"J'ai réussi l'épreuve d'écriture lisible, alors ils me rétrogradent d'un rang.\"",
+         "\"J'ai entendu dire que même %l n'a pas réussi à guérir Chiron.\"",
+         "\"Nous pensons que %n s'est servi de ses alchimistes, et de %o, pour répandre sur la Géhenne une nouvelle maladie que nous appelons 'le rhume'.\"",
       },
       hasamulet = {
-         synopsis = "[\"You have recovered the Amulet.  Travel to the Astral Plane and return it to %d.\"]",
+         synopsis = "[\"Vous avez repris l'Amulette.  Gagnez le Plan Astral et rendez-la à %d.\"]",
          output = "text",
-         text = [["Ah, you have recovered the Amulet, %p.  Well done!
+         text = [["Ah, vous avez repris l'Amulette, %p.  Bien joué !
 
-"Now, you should know that you must travel through the Elemental Planes
-to the Astral, and there return the Amulet to %d.  Go forth and
-may our prayers be as a wind upon your back."]],
+"À présent, sachez que vous devez traverser les Plans Élémentaires
+jusqu'au Plan Astral, et là, rendre l'Amulette à %d.  Partez, et
+puissent nos prières vous pousser comme un vent favorable."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses you as %nh dies.]",
+         synopsis = "[%nC vous maudit en mourant.]",
          output = "text",
-         text = [[The battered body of %n slumps to the ground and gasps
-out one last curse:
+         text = [[Le corps meurtri de %n s'affaisse sur le sol, et dans un dernier
+souffle, il lance une ultime malédiction :
 
-    "You have defeated me, %p, but I shall have my revenge.
-    How, I shall not say, but this curse shall be like a cancer
-    on you."
+    "Tu m'as vaincu, %p, mais j'aurai ma vengeance.
+    Comment, je ne le dirai pas, mais cette malédiction te rongera
+    comme un cancer."
 
-With that %n dies.]],
+Sur ces mots, %n meurt.]],
       },
       leader_first = {
-         synopsis = "[%l is weak from the struggle with %n.  %lH wants to examine you.]",
+         synopsis = "[%lC est affaibli par sa lutte contre %n.  %lH veut vous examiner.]",
          output = "text",
-         text = [[Feebly, %l raises %lj head to look at you.
+         text = [[Faiblement, %l relève la tête pour vous regarder.
 
-"It is good to see you again, %p.  I see the concern in your
-eyes, but do not worry for me.  I am not ready for Hades yet.  We have
-exhausted much of our healing powers holding off %n.
-I need your fresh strength to carry on our work.
+"Je suis heureux de vous revoir, %p.  Je lis l'inquiétude dans vos
+yeux, mais ne vous en faites pas pour moi.  Je ne suis pas encore mûr pour
+Hadès.  Nous avons épuisé une grande partie de nos pouvoirs de guérison
+à contenir %n.  J'ai besoin de vos forces neuves pour poursuivre notre
+œuvre.
 
-"Come closer and let me lay hands on you, and determine if you have
-the skills necessary to accomplish this mission."]],
+"Approchez, laissez-moi vous imposer les mains, et déterminer si vous
+possédez les talents nécessaires pour accomplir cette mission."]],
       },
       leader_last = {
-         synopsis = "[You are a failure as a healer.]",
+         synopsis = "[Vous êtes la honte des guérisseurs.]",
          output = "text",
-         text = [["You have failed us, %p.  You are a quack!  A charlatan!
+         text = [["Vous nous avez déçus, %p.  Vous n'êtes qu'un rebouteux !  Un charlatan !
 
-"Hades will be happy to hear that you are once again practicing your
-arts on the unsuspecting."]],
+"Hadès sera ravi d'apprendre que vous exercez de nouveau votre art sur
+des innocents."]],
       },
       leader_next = {
-         text = [["Again you return to me, %p.  I sense that each trip back
-the pleurisy and maladies of our land begin to infect you.  Let us
-hope and pray to %d that you become ready for your task before
-you fall victim to the bad humors."]],
+         text = [["Vous me revenez encore, %p.  Je sens qu'à chaque retour, la pleurésie
+et les maux de notre terre commencent à vous infecter.  Espérons, et
+prions %d, que vous soyez à la hauteur de votre tâche avant de succomber
+aux humeurs viciées."]],
       },
       leader_other = {
-         text = [["Chiron has fallen, Hermes has fallen, what else must I tell you to
-impress upon you the importance of your mission!  I hope that you
-have come prepared this time."]],
+         text = [["Chiron est tombé, Hermès est tombé, que dois-je vous dire de plus pour
+vous faire comprendre l'importance de votre mission !  J'espère que
+vous avez fait vos préparatifs, cette fois."]],
       },
       locate_first = {
-         synopsis = "[You have reached %i but all is not well.]",
+         synopsis = "[Vous avez atteint %i, mais tout ne va pas bien.]",
          output = "text",
-         text = [[You stand before the entrance to %i.  Strange
-scratching noises come from within the building.
+         text = [[Vous vous tenez devant l'entrée menant vers %i.  D'étranges
+grattements proviennent de l'intérieur du bâtiment.
 
-The swampy ground around you seems to stink with disease.]],
+Le sol marécageux autour de vous semble empester la maladie.]],
       },
       locate_next = {
-         text = "Once again you stand at the entrance to %i.",
+         text = "Une fois de plus, vous vous tenez à l'entrée menant vers %i.",
       },
       nemesis_first = {
-         synopsis = "[\"I will take your life, then defeat %l.\"]",
+         synopsis = "[\"Je vais prendre ta vie, puis vaincre %l.\"]",
          output = "text",
-         text = [["They have made a mistake in sending you, %p.
+         text = [["Ils ont commis une erreur en t'envoyant, %p.
 
-"When I add your youth to mine, it will just make it easier for me
-to defeat %l."]],
+"Quand j'aurai ajouté ta jeunesse à la mienne, il me sera d'autant plus
+facile de vaincre %l."]],
       },
       nemesis_next = {
-         text = "\"Unlike your patients, you seem to keep coming back, %p!\"",
+         text = "\"Contrairement à tes patients, toi, tu sembles toujours revenir, %p !\"",
       },
       nemesis_other = {
-         text = "\"Which would you like, %p?  Boils, pleurisy, convulsions?\"",
+         text = "\"Que préfères-tu, %p ?  Furoncles, pleurésie, convulsions ?\"",
       },
       nemesis_wantsit = {
-         text = [["I'll have %o back from you, %r.  You are
-not going to live to escape this place."]],
+         text = [["Je te reprendrai %o, %r.  Tu ne quitteras
+pas ce lieu en vie."]],
       },
       nexttime = {
-         text = [[After your last experience you expected to be here, but you certainly
-did not expect to see things so much worse.  This time you must succeed.]],
+         text = [[Après votre dernière visite, vous vous attendiez à revenir ici, mais certainement
+pas à trouver une situation aussi dégradée.  Cette fois, vous devez réussir.]],
       },
       offeredit = {
-         synopsis = "[%l touches %o and tells %lj %gP to do so too, then tells you to take it with you.]",
+         synopsis = "[%lC touche %o et demande à ses %gp d'en faire autant, puis vous dit de l'emporter.]",
          output = "text",
-         text = [[As soon as %l sees %o %lh summons %lj
-%gP.
+         text = [[Dès que %l aperçoit %o, %lh convoque ses
+%gp.
 
-Gently, %l reaches out and touches %o.
-He instructs each of the assembled to do the same.  When everyone
-has finished %lh speaks to you.
+Doucement, %l tend la main et touche %o.
+Il demande à chacun des présents d'en faire autant.  Lorsque tous ont
+terminé, %lh s'adresse à vous.
 
-    "Now that we have been replenished we can defeat this plague.  You must
-    take %o with you and replenish the worlds you have
-    been called upon to travel next.  I wish you could ride Chiron to the
-    end of your journey, but I need him to help me spread the cure.  Go
-    now and continue your journey."]],
+    "Maintenant que nos forces sont restaurées, nous pouvons vaincre cette
+    peste.  Vous devez emporter %o et restaurer les mondes que
+    vous devrez parcourir ensuite.  J'aimerais que Chiron puisse
+    vous porter jusqu'au terme de votre voyage, mais j'ai besoin de lui
+    pour m'aider à répandre le remède.  Partez à présent, et poursuivez
+    votre voyage."]],
       },
       offeredit2 = {
-         synopsis = "[%l tells you to keep %o and return to %Z to search for the Amulet.]",
+         synopsis = "[%lC vous dit de garder %o et de retourner dans %Z pour chercher l'Amulette.]",
          output = "text",
-         text = [[%l cautiously handles %o while watching you.
+         text = [[%lC manipule %o avec précaution tout en vous observant.
 
-"You are its keeper now, and the time has come to resume your search
-for the Amulet.  %Z await your return through the
-magic portal which brought you here."]],
+"C'est à vous de veiller sur lui désormais, et l'heure est venue de
+reprendre votre quête de l'Amulette.  %Z attendent votre retour par
+le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[Again, you %x %H in the distance.
+         text = [[De nouveau, vous parvenez à %x %H au loin.
 
-The smell of death and disease permeates the air.  You do not have
-to be %Ra to know that %n is on the verge of victory.]],
+Une odeur de mort et de maladie imprègne l'air.  Nul besoin d'avoir le
+rang de %R pour savoir que %n est sur le point de triompher.]],
       },
       posthanks = {
-         text = [["You have again returned to us, %p.  We have done well in your
-absence, yes?  How fare you upon your quest for the Amulet?"]],
+         text = [["Vous nous revenez encore, %p.  Nous nous sommes bien débrouillés en votre
+absence, n'est-ce pas ?  Comment se passe votre quête de l'Amulette ?"]],
       },
    },
    Kni = {
       assignquest = {
-         synopsis = "[Pass through %i to reach %n.  Destroy %ni and return with %o.]",
+         synopsis = "[Traversez %i pour atteindre %n.  Détruisez-%ni et revenez avec %o.]",
          output = "text",
-         text = [["Ah, %p.  Thou art truly ready, as no %c before thee hath
-been.  Hear now Our words:
+         text = [["Ah, %p.  Vous êtes véritablement à la hauteur, comme nul %c
+avant vous ne le fut.  Oyez à présent Nos paroles :
 
-"As thou noticed as thou approached %H, a great battle hath
-been fought recently in these fields.  Know thou that Merlin himself
-came to aid Us here as We battled the foul %n.  In the midst of that
-battle, %n struck Merlin a great blow, felling him.  Then, as Our
-forces were pressed back, %n stole %o.
+"Ainsi que vous l'avez remarqué en approchant de %H, une grande
+bataille s'est livrée naguère en ces champs.  Sachez que Merlin en personne
+vint Nous prêter main-forte tandis que Nous combattions l'immonde %n.
+Au plus fort de la bataille, %n porta à Merlin un coup terrible, qui
+le terrassa.  Puis, tandis que Nos troupes étaient repoussées, %n
+déroba %o.
 
-"We eventually turned the tide, but lost many %cP in doing so.
-Merlin was taken off by his apprentice, but hath not recovered.  We have
-been told that so long as %n possesseth %o,
-Merlin will not regain his health.
+"Nous finîmes par renverser le cours de la bataille, mais au prix de
+nombreux %cp.  Merlin fut emporté par son apprenti, mais ne s'est point
+rétabli.  L'on Nous a dit que tant que %n posséderait %o,
+Merlin ne recouvrerait point la santé.
 
-"We hereby charge thee with this most important of duties:
+"Par la présente, Nous vous confions ce devoir, le plus important de tous :
 
-"Go forth from this place, to the fens, and there thou wilt find
-%i.  From there, thou must track down %n.  Destroy the
-beast, and return to Us %o.  Only then can
-We restore Merlin to health."]],
+"Partez d'ici vers les marais, et là, vous trouverez
+%i.  De là, il vous faudra traquer %n.  Détruisez la
+bête, et rapportez-Nous %o.  Alors seulement,
+Nous pourrons rendre la santé à Merlin."]],
       },
       badalign = {
-         synopsis = "[Go and do penance.  Return when you are truly %a.]",
+         synopsis = "[Allez faire pénitence.  Revenez lorsque vous suivrez de nouveau le chemin %a.]",
          output = "text",
-         text = [["Thou dishonourest Us, %p!  Thou hast strayed from the path of
-chivalry! Go from Our presence and do penance.  Only when thou art again
-pure mayst thou return hence."]],
+         text = [["Vous Nous déshonorez, %p !  Vous avez quitté le chemin de la
+chevalerie !  Ôtez-vous de Notre présence et faites pénitence.  Ce n'est
+que lorsque votre cœur sera de nouveau pur que vous pourrez revenir céans."]],
       },
       badlevel = {
-         synopsis = "[You are not prepared to face %n.  Return when you are %Ra.]",
+         synopsis = "[Vous n'êtes pas de taille à affronter %n.  Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["Verily, %p, thou hast done well.  That thou hast survived thus
-far is a credit to thy valor, but thou art yet unprepared for
-the demands required as Our Champion.  %rA, no matter how
-pure, could never hope to defeat the foul %n.
+         text = [["En vérité, %p, vous vous êtes bien conduit.  Avoir survécu jusqu'ici
+fait honneur à votre vaillance, mais vous n'êtes point encore apte à
+répondre aux exigences qu'impose le rôle de Notre Champion.  Avec le rang
+de %r, nul, si pur fût-il, ne saurait espérer vaincre l'immonde %n.
 
-"Journey forth from this place, and hone thy skills.  Return to
-Our presence when thou hast attained the noble title of %R."]],
+"Partez d'ici, et affûtez vos talents.  Revenez en Notre
+présence lorsque vous aurez atteint le noble titre de %R."]],
       },
       discourage = {
-         "\"A mere %r can never withstand me!\"",
-         "\"I shall kill thee now, and feast!\"",
-         "\"Puny %c.  What manner of death dost thou wish?\"",
-         "\"First thee, %p, then I shall feast upon %l.\"",
-         "\"Hah!  Thou hast failed, %r.  Now thou shalt die.\"",
-         "\"Die, %c.  Thou art as nothing against my might.\"",
-         "\"I shall suck the marrow from thy bones, %c.\"",
-         "\"Let's see...  Baked?  No.  Fried?  Nay.  Broiled?  Yea verily, that is the way I like my %c for dinner.\"",
-         "\"Thy strength waneth, %p.  The time of thy death draweth near.\"",
-         "\"Call upon thy precious %d, %p.  It shall not avail thee.\"",
+         "\"Toi, simple %r, tu ne saurais me résister !\"",
+         "\"Je vais te tuer sur-le-champ, et festoyer !\"",
+         "\"Chétif %c.  Quelle sorte de mort souhaites-tu ?\"",
+         "\"Toi d'abord, %p, puis je me repaîtrai de %l.\"",
+         "\"Ha !  Tu as échoué, %r.  À présent, tu vas mourir.\"",
+         "\"Meurs, %c.  Tu n'es rien face à ma puissance.\"",
+         "\"Je sucerai la moelle de tes os, %c.\"",
+         "\"Voyons...  Au four ?  Non.  Frit ?  Point.  Grillé ?  Oui, en vérité, c'est ainsi que j'aime le %c pour mon dîner.\"",
+         "\"Ta force décline, %p.  L'heure de ta mort approche.\"",
+         "\"Invoque donc ton précieux %d, %p.  Cela ne te servira de rien.\"",
       },
       encourage = {
-         "\"Remember, %p, follow always the path of %d.\"",
-         "\"Though %n is verily a mighty foe, We have confidence in thy victory.\"",
-         "\"Beware, for %n hath surrounded %niself with hordes of foul creatures.\"",
-         "\"Great treasure, 'tis said, is hoarded in the lair of %n.\"",
-         "\"If thou possessest %o, %p, %ns magic shall therewith be thwarted.\"",
-         "\"The gates of %i are guarded by forces unseen, %p. Go carefully.\"",
-         "\"Return %o to Us quickly, %p.\"",
-         "\"Destroy %n, %p, else %H shall surely fall.\"",
-         "\"Call upon %d when thou art in need.\"",
-         "\"To find %i, thou must keep thy heart pure.\"",
+         "\"Souvenez-vous, %p, suivez toujours le chemin de %d.\"",
+         "\"Bien que %n soit en vérité un puissant ennemi, Nous croyons en votre victoire.\"",
+         "\"Prenez garde, car %n s'est entouré de hordes de créatures immondes.\"",
+         "\"Un grand trésor, dit-on, est amassé dans le repaire de %n.\"",
+         "\"Si vous possédez %o, %p, la magie de %n en sera déjouée.\"",
+         "\"Les portes de %i sont gardées par des forces invisibles, %p.  Avancez prudemment.\"",
+         "\"Rapportez-Nous promptement %o, %p.\"",
+         "\"Détruisez %n, %p, ou %H tombera assurément.\"",
+         "\"Invoquez %d lorsque vous serez dans le besoin.\"",
+         "\"Pour trouver %i, il vous faudra garder le cœur pur.\"",
       },
       firsttime = {
-         synopsis = "[Signs of battle include long gouges in the walls of %H.]",
+         synopsis = "[Parmi les traces de bataille, de longues entailles marquent les murs de %H.]",
          output = "text",
-         text = [[You materialize in the shadows of %H.  Immediately, you notice
-that something is wrong.  The fields around the castle are trampled and
-withered, as if some great battle has been recently fought.
+         text = [[Vous vous matérialisez dans l'ombre de %H.  Aussitôt, vous remarquez
+que quelque chose ne va pas.  Les champs autour du château sont piétinés et
+flétris, comme si une grande bataille s'y était livrée récemment.
 
-Exploring further, you %x long gouges in the walls of %H.
-You know of only one creature that makes those kinds of marks...]],
+En explorant plus avant, vous parvenez à %x de longues entailles dans les
+murs de %H.  Vous ne connaissez qu'une seule créature capable de laisser
+de telles marques...]],
       },
       goal_first = {
-         synopsis = "[You %x the entrance to a cavern inside a hill.]",
+         synopsis = "[Vous parvenez à %x l'entrée d'une caverne au flanc d'une colline.]",
          output = "text",
-         text = [[As you exit the swamps, you %x before you a huge, gaping hole in the
-side of a hill.  From within, you smell the foul stench of carrion.
+         text = [[En sortant des marais, vous parvenez à %x devant vous un énorme trou béant
+au flanc d'une colline.  De l'intérieur monte l'immonde puanteur de la charogne.
 
-The pools on either side of the entrance are fouled with blood, and
-pieces of rusted metal and broken weapons show above the surface.]],
+Les mares de part et d'autre de l'entrée sont souillées de sang, et des
+morceaux de métal rouillé et d'armes brisées affleurent à leur surface.]],
       },
       goal_next = {
-         text = "Again, you stand at the entrance to %ns lair.",
+         text = "De nouveau, vous vous tenez à l'entrée du repaire de %n.",
       },
       gotit = {
-         synopsis = "[You feel the magic of %o.]",
+         synopsis = "[Vous sentez la magie de %o.]",
          output = "text",
-         text = [[As you pick up %o, you feel its protective fields
-form around your body.  You also feel a faint stirring in your mind, as
-if you are in two places at once, and in the second, you are waking from
-a long sleep.]],
+         text = [[Lorsque vous ramassez %o, vous sentez ses champs protecteurs
+se former autour de votre corps.  Vous sentez aussi un léger frémissement
+dans votre esprit, comme si vous vous trouviez en deux endroits à la fois,
+et que dans le second, vous vous éveilliez d'un long sommeil.]],
       },
       guardtalk_after = {
-         "\"Hail, %p!  Verily, thou lookest well.\"",
-         "\"So, %p, didst thou find %n in the fens near %i?\"",
-         "\"Worthy %p, hast thou proven thy right purpose on the body of %n?\"",
-         "\"Verily, %l could have no better champion, %p.\"",
-         "\"Hast thou indeed recovered %o?\"",
+         "\"Salut à vous, %p !  En vérité, vous avez fort bonne mine.\"",
+         "\"Alors, %p, avez-vous trouvé %n dans les marais près de %i ?\"",
+         "\"Noble %p, avez-vous prouvé la droiture de votre cause sur la dépouille de %n ?\"",
+         "\"En vérité, %l ne saurait avoir meilleur champion, %p.\"",
+         "\"Avez-vous vraiment repris %o ?\"",
       },
       guardtalk_before = {
-         "\"Hail, %p!  Verily, thou lookest well.\"",
-         "\"There is word, %p, that %n hath been sighted in the fens near %i.\"",
-         "\"Thou art our only hope now, %p.\"",
-         "\"Verily, %l could have no better champion, %p.\"",
-         "\"Many brave %cP died when %n attacked.\"",
+         "\"Salut à vous, %p !  En vérité, vous avez fort bonne mine.\"",
+         "\"Le bruit court, %p, que %n aurait été aperçu dans les marais près de %i.\"",
+         "\"Vous êtes désormais notre seul espoir, %p.\"",
+         "\"En vérité, %l ne saurait avoir meilleur champion, %p.\"",
+         "\"Bien des braves %cp ont péri lors de l'attaque de %n.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane and deliver it to %d.]",
+         synopsis = "[Portez l'Amulette sur le Plan Astral et remettez-la à %d.]",
          output = "text",
-         text = [["Thou hast succeeded, We see, %p!  Now thou art commanded to take
-the Amulet to be sacrificed to %d in the Plane of the Astral.
+         text = [["Vous avez réussi, à ce que Nous voyons, %p !  À présent, Nous vous
+ordonnons de porter l'Amulette jusqu'au Plan Astral pour qu'elle y soit
+sacrifiée à %d.
 
-"Merlin hath counseled Us that thou must travel always upwards through
-the Planes of the Elements, to achieve this goal.
+"Merlin Nous a fait savoir que, pour atteindre ce but, vous devrez toujours
+monter à travers les Plans des Éléments.
 
-"Go with %d, %p."]],
+"Allez avec %d, %p."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses you as %nh dies.]",
+         synopsis = "[%nC vous maudit en mourant.]",
          output = "text",
-         text = [[As %n sinks to the ground, blood gushing from %nj open mouth, %nh
-defiantly curses you and %l:
+         text = [[Tandis que %n s'effondre, le sang jaillissant de sa gueule béante, %nh
+vous maudit avec défi, vous et %l :
 
-    "Thou hast not won yet, %r.  By the gods, I shall return
-    and dog thy steps to the grave!"
+    "Tu n'as pas encore gagné, %r.  Par les dieux, je reviendrai
+    et je te traquerai jusqu'à la tombe !"
 
-%nJ tail flailing madly, %n tries to crawl towards you, but slumps
-to the ground and dies in a pool of %nj own blood.]],
+La queue battant furieusement, %n tente de ramper vers vous, mais s'affaisse
+sur le sol et meurt dans une mare de son propre sang.]],
       },
       leader_first = {
-         synopsis = "[%lC checks whether you are ready for a great undertaking.]",
+         synopsis = "[%lC vérifie si vous êtes à la hauteur d'une grande entreprise.]",
          output = "text",
-         text = [["Ah, %p.  We see thou hast received Our summons.
-We are in dire need of thy prowess.  But first, We must needs
-decide if thou art ready for this great undertaking."]],
+         text = [["Ah, %p.  Nous voyons que Notre convocation vous est parvenue.
+Nous avons grand besoin de votre vaillance.  Mais d'abord, il Nous faut
+décider si vous êtes à la hauteur de cette grande entreprise."]],
       },
       leader_last = {
-         synopsis = "[You are a disgrace as %ca.]",
+         synopsis = "[Vous êtes la honte des %cp.]",
          output = "text",
-         text = [["Thou disgracest this noble court with thine impure presence.  We have been
-lenient with thee, but no more.  Thy name shall be spoken no more.  We
-hereby strip thee of thy title, thy lands, and thy standing as %ca.
-Begone from Our sight!"]],
+         text = [["Votre présence impure déshonore cette noble cour.  Nous avons été
+indulgent envers vous, mais c'en est fini.  Votre nom ne sera plus jamais
+prononcé.  Par la présente, Nous vous déchoyons de votre titre, de vos terres
+et de votre rang parmi les %cp.
+Hors de Notre vue !"]],
       },
       leader_next = {
-         text = "\"Welcome again, %p.  We hope thou art ready now.\"",
+         text = "\"Nous vous accueillons de nouveau, %p.  Nous espérons que vous êtes désormais à la hauteur.\"",
       },
       leader_other = {
-         text = "\"Once again, thou standest before Us, %p.  Art thou ready now?\"",
+         text = "\"Une fois de plus, vous vous tenez devant Nous, %p.  Êtes-vous désormais à la hauteur ?\"",
       },
       locate_first = {
-         synopsis = "[You have reached %i and can %x a shrine.]",
+         synopsis = "[Vous avez atteint %i et pouvez %x un sanctuaire.]",
          output = "text",
-         text = [[You stand at the foot of %i.  Atop, you can %x a shrine.
-Strange energies seem to be focused here, and the hair on the back of
-your neck stands on end.]],
+         text = [[Vous vous tenez au pied de %i.  À son sommet, vous pouvez %x un sanctuaire.
+D'étranges énergies semblent converger ici, et les poils de votre nuque
+se hérissent.]],
       },
       locate_next = {
-         text = "Again, you stand at the foot of %i.",
+         text = "De nouveau, vous vous tenez au pied de %i.",
       },
       nemesis_first = {
-         synopsis = "[%nC taunts you and issues a threat against %H.]",
+         synopsis = "[%nC vous nargue et profère une menace contre %H.]",
          output = "text",
-         text = [["Hah!  Another puny %c seeks death.  I shall dine well tonight,
-then tomorrow, %H shall fall!"]],
+         text = [["Ha !  Encore un chétif %c en quête de la mort.  Je dînerai bien ce soir,
+et demain, %H tombera !"]],
       },
       nemesis_next = {
-         text = "\"Again, thou challengest me, %r?  So be it.  Thou wilt die here.\"",
+         text = "\"Tu me défies encore, %r ?  Soit.  Tu mourras ici.\"",
       },
       nemesis_other = {
-         text = "\"Thou art truly foolish, %r.  I shall dispatch thee anon.\"",
+         text = "\"Tu es vraiment insensé, %r.  Je vais t'expédier sur l'heure.\"",
       },
       nemesis_wantsit = {
-         text = [["So, thou darest touch MY property!  I shall have that bauble back,
-puny %r.  Thou wilt die in agony!"]],
+         text = [["Ainsi, tu oses toucher à MON bien !  Je vais reprendre cette babiole,
+chétif %r.  Tu mourras dans d'atroces souffrances !"]],
       },
       nexttime = {
-         text = "Once again you stand in the shadows of %H.",
+         text = "Une fois de plus, vous vous tenez dans l'ombre de %H.",
       },
       offeredit = {
-         synopsis = "[%oC is yours now.  It will aid in your search for the Amulet.]",
+         synopsis = "[%oC est désormais à vous.  Il vous aidera dans votre quête de l'Amulette.]",
          output = "text",
-         text = [[As you approach %l, %lh beams at you and says:
+         text = [[Lorsque vous approchez de %l, %lh vous adresse un sourire radieux et déclare :
 
-    "Well done!  Thou art truly the Champion of %H.  We
-    have received word that Merlin is recovering, and shall soon
-    rejoin Us.
+    "Bien joué !  Vous êtes véritablement le Champion de %H.  Nous
+    avons appris que Merlin se rétablit, et qu'il Nous rejoindra
+    bientôt.
 
-    "He hath instructed Us that thou art now to be the guardian of
-    %o.  He feeleth that thou mayst have need of
-    its powers in thine adventures.  It is Our wish that thou keepest
-    %o with thee as thou searchest for the fabled
-    Amulet of Yendor."]],
+    "Il Nous a fait savoir que c'est à vous désormais qu'il revient de
+    veiller sur %o.  Il pense que vous pourriez avoir besoin
+    de ses pouvoirs au cours de vos aventures.  Nous souhaitons que vous
+    gardiez %o avec vous tandis que vous chercherez la
+    légendaire Amulette de Yendor."]],
       },
       offeredit2 = {
-         synopsis = "[You are the keeper of %o.  Return to %Z and find the Amulet.]",
+         synopsis = "[C'est à vous de veiller sur %o.  Retournez dans %Z et trouvez l'Amulette.]",
          output = "text",
-         text = [["Careful, %p!  %oC might break, and that would
-be a tragic loss.  Thou art its keeper now, and the time hath come
-to resume thy search for the Amulet.  %Z await thy
-return through the magic portal that brought thee here."]],
+         text = [["Prenez garde, %p !  %oC pourrait se briser, et ce serait
+une perte tragique.  C'est à vous de veiller sur lui désormais, et l'heure
+est venue de reprendre votre quête de l'Amulette.  %Z attendent votre
+retour par le portail magique que vous avez emprunté pour venir céans."]],
       },
       othertime = {
-         text = [[Again, you stand before %H.  You vaguely sense that this
-may be the last time you stand before %l.]],
+         text = [[De nouveau, vous vous tenez devant %H.  Vous sentez confusément que c'est
+peut-être la dernière fois que vous vous tenez devant %l.]],
       },
       posthanks = {
-         text = "\"Well met, %p.  How goeth thy search for the Amulet of Yendor?\"",
+         text = "\"Heureuse rencontre, %p.  Comment se déroule votre quête de l'Amulette de Yendor ?\"",
       },
    },
    Mon = {
       assignquest = {
-         synopsis = "[Find %i, then continue to %ns lair.  Defeat %ni and return with %o.]",
+         synopsis = "[Trouvez %i, puis gagnez le repaire de %n.  Vainquez-%ni et revenez avec %o.]",
          output = "text",
-         text = [["Yes, %p.  You are truly ready now.  Attend to me and I shall
-tell you of what has transpired:
+         text = [["Oui, %p.  Vous êtes véritablement à la hauteur désormais.  Écoutez-moi,
+et je vais vous conter ce qui s'est passé :
 
-"During one of the Great Meditations a short time ago, %n and
-a legion of elementals invaded %H.  Many %gP
-were killed, including the one bearing %o.
+"Lors de l'une des Grandes Méditations, il y a peu, %n et
+une légion d'élémentaires ont envahi %H.  De nombreux %gp
+ont été tués, dont celui qui portait %o.
 
-Now, there are barely enough %gP left to keep the elementals
-at bay.
+À présent, il reste à peine assez de %gp pour tenir les
+élémentaires en respect.
 
-"We need you to find %i, then, from there,
-travel to %ns lair.  If you can manage to defeat %n and
-return %o here, we can then drive off the legions
-of elementals that slay our students.
+"Nous avons besoin que vous trouviez %i, puis que, de là,
+vous gagniez le repaire de %n.  Si vous parvenez à vaincre %n et à
+rapporter ici %o, nous pourrons alors repousser les légions
+d'élémentaires qui massacrent nos élèves.
 
-"Go with %d as your guide, %p."]],
+"Allez, et que %d soit votre guide, %p."]],
       },
       badalign = {
-         synopsis = "[You must atone.  Come back when you are worthy of %d.]",
+         synopsis = "[Vous devez expier.  Revenez lorsque vous serez digne de %d.]",
          output = "text",
-         text = [["This is terrible, %p.  You have deviated from the true path!
-You know that %d requires the most strident devotion of this
-order.  The %shood must stand for utmost piety.
+         text = [["C'est terrible, %p.  Vous avez quitté le vrai chemin !
+Vous savez que %d exige de cet ordre la plus ardente dévotion.
+Chaque %s de notre ordre doit incarner la plus haute piété.
 
-"Go from here, atone for your sins against %d.  Return only when
-you have purified yourself."]],
+"Partez d'ici, expiez vos péchés envers %d.  Ne revenez que
+lorsque vous aurez purifié votre âme."]],
       },
       badlevel = {
-         synopsis = "[You are not ready to face %n.  Come back when you are %Ra.]",
+         synopsis = "[Vous n'êtes pas de taille à affronter %n.  Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["Alas, %p, it is not yet to be.  A mere %r could never
-withstand the might of %n.  Go forth, again into the world, and
-return when you have attained the post of %R."]],
+         text = [["Hélas, %p, ce n'est pas encore le moment.  Avec votre simple rang
+de %r, vous ne sauriez résister à la puissance de %n.  Repartez de par
+le monde, et revenez lorsque vous aurez atteint le rang de %R."]],
       },
       discourage = {
-         "\"Submit to my will, %c, and I shall spare you.\"",
-         "\"Your puny powers are no match for me, %c.\"",
-         "\"I shall have you turned into a zombie for my pleasure!\"",
-         "\"Despair now, %r.  %d cannot help you.\"",
-         "\"I shall feast upon your soul for many days, %c.\"",
-         "\"Your death will be slow and painful.  That I promise!\"",
-         "\"You cannot defeat %n, you fool.  I shall kill you now.\"",
-         "\"Your precious %lt will be my next victim.\"",
-         "\"I feel your powers failing you, %r.  You shall die now.\"",
-         "\"With %o, nothing can stand in my way.\"",
+         "\"Soumets-toi à ma volonté, %c, et je t'épargnerai.\"",
+         "\"Tes pouvoirs dérisoires ne font pas le poids face à moi, %c.\"",
+         "\"Je te ferai changer en zombie pour mon plaisir !\"",
+         "\"Désespère, %r.  %d ne peut rien pour toi.\"",
+         "\"Je me repaîtrai de ton âme pendant bien des jours, %c.\"",
+         "\"Ta mort sera lente et douloureuse.  Ça, je te le promets !\"",
+         "\"Tu ne peux vaincre %n, pauvre fou.  Je vais te tuer sur-le-champ.\"",
+         "\"Ton précieux maître, %l, sera ma prochaine victime.\"",
+         "\"Je sens tes pouvoirs t'abandonner, %r.  Tu vas mourir à présent.\"",
+         "\"Avec %o, rien ne peut se dresser sur mon chemin.\"",
       },
       encourage = {
-         "\"You can prevail, if you rely on %d.\"",
-         "\"Remember that %n has great magic at his command.\"",
-         "\"Be pure, my %S.\"",
-         "\"Beware, %i is surrounded by hordes of earth elementals.\"",
-         "\"Remember your studies, and you will prevail!\"",
-         "\"Acquire and wear %o if you can.  They will aid you against %n.\"",
-         "\"Call upon %d when your need is greatest.  You will be answered.\"",
-         "\"Remember to use the elementals' strength against them!\"",
-         "\"Do not lose faith, %p.  If you do so, %n will grow stronger.\"",
-         "\"Wear %o.  They will assist you in your efforts.\"",
+         "\"Vous pouvez l'emporter, si vous vous en remettez à %d.\"",
+         "\"Souvenez-vous que %n dispose d'une grande magie.\"",
+         "\"Gardez votre cœur pur, %S de notre ordre.\"",
+         "\"Prenez garde, %i est entouré de hordes d'élémentaires de terre.\"",
+         "\"Souvenez-vous de vos études, et vous l'emporterez !\"",
+         "\"Procurez-vous %o et portez-les si vous le pouvez.  Ils vous aideront contre %n.\"",
+         "\"Invoquez %d lorsque votre besoin sera le plus grand.  Il vous sera répondu.\"",
+         "\"N'oubliez pas de retourner la force des élémentaires contre eux !\"",
+         "\"Ne perdez pas la foi, %p.  Sinon, %n deviendra plus fort.\"",
+         "\"Portez %o.  Ils vous assisteront dans vos efforts.\"",
       },
       firsttime = {
-         synopsis = "[You have reached %H but something is wrong.  %lC needs your aid.]",
+         synopsis = "[Vous avez atteint %H, mais quelque chose ne va pas.  %lC a besoin de votre aide.]",
          output = "text",
-         text = [[You find yourself standing in sight of %H.
-Something is obviously wrong here.  Strange shapes lumber around
-outside %H!
+         text = [[Vous vous trouvez en vue de %H.
+De toute évidence, quelque chose ne va pas.  D'étranges formes rôdent
+lourdement aux abords de %H !
 
-You realize that %l needs your assistance!]],
+Vous comprenez que %l a besoin de votre aide !]],
       },
       goal_first = {
-         synopsis = "[You are surrounded by brimstone, lava, and elementals.]",
+         synopsis = "[Vous êtes cerné par le soufre, la lave et les élémentaires.]",
          output = "text",
-         text = [[The stench of brimstone is all about you, and the elementals close in
-from all sides!
+         text = [[La puanteur du soufre vous enveloppe, et les élémentaires se rapprochent
+de tous côtés !
 
-Ahead, there is a small clearing amidst the bubbling pits of lava...]],
+Devant vous, une petite clairière s'ouvre parmi les fosses de lave bouillonnante...]],
       },
       goal_next = {
-         text = "Again, you have invaded %ns domain.",
+         text = "De nouveau, vous avez envahi le domaine de %n.",
       },
       gotit = {
-         synopsis = "[You feel the essence of %d and realize that you should take %o to %l.]",
+         synopsis = "[Vous sentez l'essence de %d et comprenez que vous devez rapporter %o à votre maître, %l.]",
          output = "text",
-         text = [[As you pick up %o, you feel the essence of
-%d fill your soul.  You know now why %n stole %oi from
-%H, for with %oi, %ca of %d could
-easily defeat his plans.
+         text = [[Lorsque vous ramassez %o, vous sentez l'essence de
+%d emplir votre âme.  Vous savez maintenant pourquoi %n les a dérobés
+dans %H : grâce à eux, un %c au service de %d pourrait
+aisément déjouer ses plans.
 
-You sense a message from %d.  Though not verbal, you
-get the impression that you must return to %l as soon
-as possible.]],
+Vous percevez un message de %d.  Bien qu'il ne soit pas formulé en
+paroles, vous avez l'impression de devoir retourner au plus vite auprès
+de votre maître, %l.]],
       },
       guardtalk_after = {
-         "\"Greetings, honorable %r.  It is good to see you again.\"",
-         "\"Ah, %p!  Our deepest gratitude for all of your help.\"",
-         "\"Greetings, %s.  Perhaps you will take some time to meditate with us?\"",
-         "\"With this test behind you, may %d bring you enlightenment.\"",
-         "\"May %d be with you, %s.\"",
+         "\"Salutations, honorable %r.  Je suis heureux de vous revoir.\"",
+         "\"Ah, %p !  Toute notre gratitude pour votre aide.\"",
+         "\"Salutations, %s.  Peut-être prendrez-vous le temps de méditer avec nous ?\"",
+         "\"Maintenant que cette épreuve est derrière vous, puisse %d vous apporter l'illumination.\"",
+         "\"Que %d soit avec vous, %s.\"",
       },
       guardtalk_before = {
-         "\"Greetings, honorable %r.  It is good to see you.\"",
-         "\"Ah, %p!  Surely you can help us in our hour of need.\"",
-         "\"Greetings, %s.  %lC has great need of your help.\"",
-         "\"Alas, it seems as if even %d has deserted us.\"",
-         "\"May %d be with you, %s.\"",
+         "\"Salutations, honorable %r.  Je suis heureux de vous voir.\"",
+         "\"Ah, %p !  Vous pourrez sûrement nous aider en cette heure difficile.\"",
+         "\"Salutations, %s.  %lC a grand besoin de votre aide.\"",
+         "\"Hélas, on dirait que même %d nous a abandonnés.\"",
+         "\"Que %d soit avec vous, %s.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane and deliver it to %d.]",
+         synopsis = "[Portez l'Amulette sur le Plan Astral et remettez-la à %d.]",
          output = "text",
-         text = [["You have prevailed, %p!  %d is surely with you.  Now,
-you must take the Amulet, and sacrifice it on %ds altar on
-the Astral Plane.  I suspect that I shall never see you again in this
-life, but I hope to at %ds feet."]],
+         text = [["Vous avez triomphé, %p !  %d est sûrement avec vous.  À présent,
+vous devez prendre l'Amulette, et la sacrifier sur l'autel de %d sur
+le Plan Astral.  Je pense que je ne vous reverrai jamais en cette
+vie, mais j'espère vous revoir aux pieds de %d."]],
       },
       killed_nemesis = {
-         synopsis = "[As %n dies, %nh threatens to return.]",
+         synopsis = "[En mourant, %n menace de revenir.]",
          output = "text",
-         text = [[%nC gasps:
+         text = [[%nC halète :
 
-    "You have only defeated this mortal body.  Know this: my spirit
-    is strong.  I shall return and reclaim what is mine!"
+    "Tu n'as vaincu que ce corps mortel.  Sache-le : mon esprit
+    est fort.  Je reviendrai réclamer ce qui m'appartient !"
 
-With that, %n expires.]],
+Sur ces mots, %n expire.]],
       },
       leader_first = {
-         synopsis = "[%lC checks whether you are ready for the great challenge.]",
+         synopsis = "[%lC vérifie si vous êtes à la hauteur de ce grand défi.]",
          output = "text",
-         text = [["Ah, %p, my %S.  You have returned to us at last.
-A great blow has befallen our order; perhaps you can help us.
-First, however, I must determine if you are prepared for this
-great challenge."]],
+         text = [["Ah, %p, %S de notre ordre.  Vous voici enfin de retour parmi nous.
+Un grand malheur a frappé notre ordre ; peut-être pourrez-vous nous aider.
+Mais d'abord, je dois déterminer si vous êtes à la hauteur de ce
+grand défi."]],
       },
       leader_last = {
-         synopsis = "[You are a heretic and have failed utterly.]",
+         synopsis = "[Hérésie !  Vous avez totalement échoué.]",
          output = "text",
-         text = [["You are a heretic, %p!  How can you, %ra, deviate so from the
-teachings of %d?  Begone from this temple.  You are no longer
-%sa to this order.  We will pray to %d for other assistance,
-as you have failed us utterly."]],
+         text = [["Hérésie, %p !  Comment pouvez-vous, vous qui êtes %r, vous écarter
+ainsi des enseignements de %d ?  Quittez ce temple.  Vous n'êtes plus
+%s de cet ordre.  Nous prierons %d de nous envoyer une autre aide,
+car vous nous avez totalement déçus."]],
       },
       leader_next = {
-         text = "\"Again, my %S, you stand before me.  Are you ready now to help us?\"",
+         text = "\"De nouveau, %S de notre ordre, vous voici devant moi.  Êtes-vous désormais à même de nous aider ?\"",
       },
       leader_other = {
-         text = "\"Once more, %p, you stand within the sanctum.  Are you ready now?\"",
+         text = "\"Une fois de plus, %p, vous voici dans le sanctuaire.  Êtes-vous désormais à la hauteur ?\"",
       },
       locate_first = {
-         synopsis = "[You have reached %i.  %nC lurks further ahead.]",
+         synopsis = "[Vous avez atteint %i.  %nC se tapit plus loin.]",
          output = "text",
-         text = [[You remember the descriptions of %i, given
-to you by %l.  It is ahead that you will find
-%n's trail.]],
+         text = [[Vous vous souvenez des descriptions de %i que %l
+vous a données.  C'est plus loin que vous trouverez
+la piste de %n.]],
       },
       locate_next = {
-         text = "Again, you stand before %i.",
+         text = "De nouveau, vous vous tenez devant %i.",
       },
       nemesis_first = {
-         synopsis = "[You are no %g.  You shall never regain %o.]",
+         synopsis = "[Tu n'es pas %g.  Jamais tu ne reprendras %o.]",
          output = "text",
-         text = [["Ah, so %l has sent another %g to retrieve
+         text = [["Ah, ainsi %l a envoyé un autre %g récupérer
 %o.
 
-"No, I see you are no %g.  Perhaps I shall have some fun today
-after all.  Prepare to die, %r!  You shall never regain
-%o."]],
+"Non, je vois que tu n'es pas %g.  Peut-être vais-je m'amuser un peu
+aujourd'hui, finalement.  Prépare-toi à mourir, %r !  Jamais tu ne
+reprendras %o."]],
       },
       nemesis_next = {
-         text = "\"So, %r.  Again you challenge me.\"",
+         text = "\"Ainsi, %r.  Tu me défies de nouveau.\"",
       },
       nemesis_other = {
-         text = "\"Die now, %r.  %d has no power here to aid you.\"",
+         text = "\"Meurs à présent, %r.  %d n'a ici aucun pouvoir pour t'aider.\"",
       },
       nemesis_wantsit = {
-         text = "\"You shall die, %r, and I will have %o back.\"",
+         text = "\"Tu vas mourir, %r, et je reprendrai %o.\"",
       },
       nexttime = {
-         text = "Once again, you stand before %H.",
+         text = "Une fois de plus, vous vous tenez devant %H.",
       },
       offeredit = {
-         synopsis = "[Keep %o.  %oH will help you recover the Amulet of Yendor.]",
+         synopsis = "[Gardez %o.  Ils vous aideront à reprendre l'Amulette de Yendor.]",
          output = "text",
-         text = [["You have returned, %p.  And with %o, I see.
-Congratulations.
+         text = [["Vous voici de retour, %p.  Et avec %o, à ce que je vois.
+Félicitations.
 
-"I have been in meditation, and have received direction from
-a minion of %d.  %d commands that you retain
-%o.  With %oi, you must recover the Amulet
-of Yendor.
+"Je me suis plongé dans la méditation, et j'ai reçu des instructions
+d'un serviteur de %d.  %d ordonne que vous conserviez
+%o.  Grâce à eux, vous devrez reprendre l'Amulette
+de Yendor.
 
-"Go forth, and let %d guide your steps."]],
+"Partez, et que %d guide vos pas."]],
       },
       offeredit2 = {
-         synopsis = "[Keep %o and return to %Z to search for the Amulet.]",
+         synopsis = "[Gardez %o et retournez dans %Z pour chercher l'Amulette.]",
          output = "text",
-         text = [[%lC studies %o for a moment,
-then returns his gaze to you.
+         text = [[%lC examine %o un instant,
+puis pose de nouveau son regard sur vous.
 
-"%oC must remain with you.  Use %oi
-as you resume your search for the Amulet.
-%Z await your return through the magic portal
-that brought you here."]],
+"%oC doivent rester avec vous.  Servez-vous-en
+lorsque vous reprendrez votre quête de l'Amulette.
+%Z attendent votre retour par le portail magique
+que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[Again you face %H.  Your intuition hints that this
-may be the final time you come here.]],
+         text = [[De nouveau, vous faites face à %H.  Votre intuition vous souffle que
+c'est peut-être la dernière fois que vous venez ici.]],
       },
       posthanks = {
-         text = "\"Welcome back, %p.  How is your quest for the Amulet going?\"",
+         text = "\"Bon retour parmi nous, %p.  Comment se passe votre quête de l'Amulette ?\"",
       },
    },
    Pri = {
       assignquest = {
-         synopsis = "[%nC invaded %H and captured %o.  Defeat %ni and retrieve %oh.]",
+         synopsis = "[%nC a envahi %H et s'est emparé de %o.  Vainquez-%ni et reprenez-la.]",
          output = "text",
-         text = [["Yes, %p.  You are truly ready now.  Attend to me and I shall
-tell you of what has transpired:
+         text = [["Oui, %p.  Vous êtes véritablement à la hauteur désormais.  Écoutez-moi,
+et je vais vous conter ce qui s'est passé :
 
-"At one of the Great Festivals a short time ago, %n and a legion
-of undead invaded %H.  Many %gP were killed, including
-the one carrying %o.
+"Lors de l'une des Grandes Fêtes, il y a peu, %n et une légion
+de morts-vivants ont envahi %H.  De nombreux %gp ont été tués, dont
+celui qui portait %o.
 
-"As a final act of vengefulness, %n desecrated the altar here.
-Without it, we could not mount a counter-attack.  Now, there are
-barely enough %gP left to keep the undead at bay.
+"Dans un ultime acte de vengeance, %n a profané l'autel de ce temple.
+Sans lui, nous n'avons pu monter de contre-attaque.  À présent, il reste
+à peine assez de %gp pour tenir les morts-vivants en respect.
 
-"We need you to find %i, then, from there, travel
-to %ns lair.  If you can manage to defeat %n and return
-%o here, we can then drive off the legions of
-undead that befoul the land.
+"Nous avons besoin que vous trouviez %i, puis que, de là, vous
+gagniez le repaire de %n.  Si vous parvenez à vaincre %n et à rapporter
+ici %o, nous pourrons alors repousser les légions de
+morts-vivants qui souillent ces terres.
 
-"Go with %d as your guide, %p."]],
+"Allez, et que %d soit votre guide, %p."]],
       },
       badalign = {
-         synopsis = "[You have deviated from the path.  Return when you have purified yourself.]",
+         synopsis = "[Vous avez quitté le chemin.  Revenez lorsque vous aurez purifié votre âme.]",
          output = "text",
-         text = [["This is terrible, %p.  You have deviated from the true path!
-You know that %d requires the most strident devotion of this
-order.  The %shood must stand for utmost piety.
+         text = [["C'est terrible, %p.  Vous avez quitté le vrai chemin !
+Vous savez que %d exige de cet ordre la plus ardente dévotion.
+Chaque %s de notre ordre doit incarner la plus haute piété.
 
-"Go from here, atone for your sins against %d.  Return only when
-you have purified yourself."]],
+"Partez d'ici, expiez vos péchés envers %d.  Ne revenez que
+lorsque vous aurez purifié votre âme."]],
       },
       badlevel = {
-         synopsis = "[%rA cannot withstand %n.  Come back when you are %Ra.]",
+         synopsis = "[Avec votre rang de %r, vous ne sauriez résister à %n.  Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["Alas, %p, it is not yet to be.  A mere %r could never
-withstand the might of %n.  Go forth, again into the world, and return
-when you have attained the post of %R."]],
+         text = [["Hélas, %p, ce n'est pas encore le moment.  Avec votre simple rang
+de %r, vous ne sauriez résister à la puissance de %n.  Repartez de par
+le monde, et revenez lorsque vous aurez atteint le rang de %R."]],
       },
       discourage = {
-         "\"Submit to my will, %c, and I shall spare you.\"",
-         "\"Your puny powers are no match for me, %c.\"",
-         "\"I shall have you turned into a zombie for my pleasure!\"",
-         "\"Despair now, %r.  %d cannot help you.\"",
-         "\"I shall feast upon your soul for many days, %c.\"",
-         "\"Your death will be slow and painful.  That I promise!\"",
-         "\"You cannot defeat %n, you fool.  I shall kill you now.\"",
-         "\"Your precious %lt will be my next victim.\"",
-         "\"I feel your powers failing you, %r.  You shall die now.\"",
-         "\"With %o, nothing can stand in my way.\"",
+         "\"Soumets-toi à ma volonté, %c, et je t'épargnerai.\"",
+         "\"Tes pouvoirs dérisoires ne font pas le poids face à moi, %c.\"",
+         "\"Je te ferai changer en zombie pour mon plaisir !\"",
+         "\"Désespère, %r.  %d ne peut rien pour toi.\"",
+         "\"Je me repaîtrai de ton âme pendant bien des jours, %c.\"",
+         "\"Ta mort sera lente et douloureuse.  Ça, je te le promets !\"",
+         "\"Tu ne peux vaincre %n, pauvre fou.  Je vais te tuer sur-le-champ.\"",
+         "\"Ton précieux maître, %l, sera ma prochaine victime.\"",
+         "\"Je sens tes pouvoirs t'abandonner, %r.  Tu vas mourir à présent.\"",
+         "\"Avec %o, rien ne peut se dresser sur mon chemin.\"",
       },
       encourage = {
-         "\"You can prevail, if you rely on %d.\"",
-         "\"Remember that %n has great magic at his command.\"",
-         "\"Be pure, my %S.\"",
-         "\"Beware, %i is surrounded by a great graveyard.\"",
-         "\"You may be able to affect %n with magical cold.\"",
-         "\"Acquire and wear %o if you can.  It will aid you against %n.\"",
-         "\"Call upon %d when your need is greatest.  You will be answered.\"",
-         "\"The undead legions are weakest during the daylight hours.\"",
-         "\"Do not lose faith, %p.  If you do so, %n will grow stronger.\"",
-         "\"Wear %o.  It will assist you against the undead.\"",
+         "\"Vous pouvez l'emporter, si vous vous en remettez à %d.\"",
+         "\"Souvenez-vous que %n dispose d'une grande magie.\"",
+         "\"Gardez votre cœur pur, %S de notre ordre.\"",
+         "\"Prenez garde, %i est entouré d'un vaste cimetière.\"",
+         "\"Le froid magique pourrait peut-être affecter %n.\"",
+         "\"Procurez-vous %o et portez-la si vous le pouvez.  Elle vous aidera contre %n.\"",
+         "\"Invoquez %d lorsque votre besoin sera le plus grand.  Il vous sera répondu.\"",
+         "\"Les légions de morts-vivants sont plus faibles pendant les heures du jour.\"",
+         "\"Ne perdez pas la foi, %p.  Sinon, %n deviendra plus fort.\"",
+         "\"Portez %o.  Elle vous assistera contre les morts-vivants.\"",
       },
       firsttime = {
-         synopsis = "[You are at %H; the doors are closed.  %lC needs your help!]",
+         synopsis = "[Vous êtes devant %H ; les portes sont closes.  %lC a besoin de votre aide !]",
          output = "text",
-         text = [[You find yourself standing in sight of %H.  Something
-is obviously wrong here.  The doors to %H, which usually
-stand open, are closed.  Strange human shapes shamble around
-outside.
+         text = [[Vous vous trouvez en vue de %H.  De toute
+évidence, quelque chose ne va pas.  Les portes de %H, qui
+d'ordinaire restent ouvertes, sont closes.  D'étranges formes humaines
+errent d'un pas traînant aux alentours.
 
-You realize that %l needs your assistance!]],
+Vous comprenez que %l a besoin de votre aide !]],
       },
       goal_first = {
-         synopsis = "[The stench of brimstone surrounds you, the shrieks and moans are endless.]",
+         synopsis = "[La puanteur du soufre vous enveloppe, les hurlements et les gémissements sont sans fin.]",
          output = "text",
-         text = [[The stench of brimstone is all about you, and the shrieks and moans
-of tortured souls assault your psyche.
+         text = [[La puanteur du soufre vous enveloppe, et les hurlements et les gémissements
+des âmes torturées assaillent votre esprit.
 
-Ahead, there is a small clearing amidst the bubbling pits of lava...]],
+Devant vous, une petite clairière s'ouvre parmi les fosses de lave bouillonnante...]],
       },
       goal_next = {
-         text = "Again, you have invaded %ns domain.",
+         text = "De nouveau, vous avez envahi le domaine de %n.",
       },
       gotit = {
-         synopsis = "[You feel %d as you pick up %o; return %oh to %l.]",
+         synopsis = "[Vous sentez %d en ramassant %o ; rapportez-la à votre maître, %l.]",
          output = "text",
-         text = [[As you pick up %o, you feel the essence of
-%d fill your soul.  You know now why %n stole it from
-%H, for with it, %ca of %d could
-easily defeat his plans.
+         text = [[Lorsque vous ramassez %o, vous sentez l'essence de
+%d emplir votre âme.  Vous savez maintenant pourquoi %n l'a dérobée
+dans %H : grâce à elle, un %c au service de %d pourrait
+aisément déjouer ses plans.
 
-You sense a message from %d.  Though not verbal, you
-get the impression that you must return to %l as soon
-as possible.]],
+Vous percevez un message de %d.  Bien qu'il ne soit pas formulé en
+paroles, vous avez l'impression de devoir retourner au plus vite auprès
+de votre maître, %l.]],
       },
       guardtalk_after = {
-         "\"Greetings, %r.  It is good to see you again.\"",
-         "\"Ah, %p!  Our deepest gratitude for all of your help.\"",
-         "\"Welcome back, %s!  With %o, no undead can stand against us.\"",
-         "\"Praise be to %d, for delivering us from %n.\"",
-         "\"May %d be with you, %s.\"",
+         "\"Salutations, %r.  Je suis heureux de vous revoir.\"",
+         "\"Ah, %p !  Toute notre gratitude pour votre aide.\"",
+         "\"Bon retour, %s !  Avec %o, aucun mort-vivant ne peut nous résister.\"",
+         "\"Loué soit %d, qui nous a délivrés de %n.\"",
+         "\"Que %d soit avec vous, %s.\"",
       },
       guardtalk_before = {
-         "\"Greetings, honored %r.  It is good to see you.\"",
-         "\"Ah, %p!  Surely you can help us in our hour of need.\"",
-         "\"Greetings, %s.  %lC has great need of your help.\"",
-         "\"Alas, it seems as if even %d has deserted us.\"",
-         "\"May %d be with you, %s.\"",
+         "\"Salutations, honorable %r.  Je suis heureux de vous voir.\"",
+         "\"Ah, %p !  Vous pourrez sûrement nous aider en cette heure difficile.\"",
+         "\"Salutations, %s.  %lC a grand besoin de votre aide.\"",
+         "\"Hélas, on dirait que même %d nous a abandonnés.\"",
+         "\"Que %d soit avec vous, %s.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane and offer it on %ds altar.]",
+         synopsis = "[Portez l'Amulette sur le Plan Astral et offrez-la sur l'autel de %d.]",
          output = "text",
-         text = [["You have prevailed, %p!  %d is surely with you.  Now,
-you must take the amulet, and sacrifice it on %ds altar on
-the Astral Plane.  I suspect that I shall never see you again in this
-life, but I hope to at %ds feet."]],
+         text = [["Vous avez triomphé, %p !  %d est sûrement avec vous.  À présent,
+vous devez prendre l'amulette, et la sacrifier sur l'autel de %d sur
+le Plan Astral.  Je pense que je ne vous reverrai jamais en cette
+vie, mais j'espère vous revoir aux pieds de %d."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC dies.  Moloch is aware of you and angry at %n.]",
+         synopsis = "[%nC meurt.  Moloch sait que vous existez et en veut à %n.]",
          output = "text",
-         text = [[You feel a wrenching shift in the ether as %ns body dissolves
-into a cloud of noxious gas.
+         text = [[Vous sentez un déchirement brutal dans l'éther tandis que le corps de %n
+se dissout en un nuage de gaz nocif.
 
-Suddenly, a voice booms out:
+Soudain, une voix tonne :
 
-    "Thou hast defeated the least of my minions, %r.
-    Know now that Moloch is aware of thy presence.
-    As for thee, %n, I shall deal with thy failure
-    at my leisure."
+    "Tu as vaincu le moindre de mes serviteurs, %r.
+    Sache maintenant que Moloch a conscience de ta présence.
+    Quant à toi, %n, je m'occuperai de ton échec
+    à loisir."
 
-You then hear the voice of %n, screaming in terror...]],
+Vous entendez alors la voix de %n, hurlant de terreur...]],
       },
       leader_first = {
-         synopsis = "[You have returned and we need your help.  Are you ready?]",
+         synopsis = "[Vous voici de retour et nous avons besoin de votre aide.  Êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["Ah, %p, my %S.  You have returned to us at last.
-A great blow has befallen our order; perhaps you can help us.
-First, however, I must determine if you are prepared for this
-great challenge."]],
+         text = [["Ah, %p, %S de notre ordre.  Vous voici enfin de retour parmi nous.
+Un grand malheur a frappé notre ordre ; peut-être pourrez-vous nous aider.
+Mais d'abord, je dois déterminer si vous êtes à la hauteur de ce
+grand défi."]],
       },
       leader_last = {
-         synopsis = "[You are a heretic who has deviated from the teachings of %d.]",
+         synopsis = "[Hérésie !  Vous avez trahi les enseignements de %d.]",
          output = "text",
-         text = [["You are a heretic, %p!  How can you, %ra, deviate so from the
-teachings of %d?  Begone from this temple.  You are no longer
-%sa to this order.  We will pray to %d for other assistance,
-as you have failed us utterly."]],
+         text = [["Hérésie, %p !  Comment pouvez-vous, vous qui êtes %r, vous écarter
+ainsi des enseignements de %d ?  Quittez ce temple.  Vous n'êtes plus
+%s de cet ordre.  Nous prierons %d de nous envoyer une autre aide,
+car vous nous avez totalement déçus."]],
       },
       leader_next = {
-         text = "\"Again, my %S, you stand before me.  Are you ready now to help us?\"",
+         text = "\"De nouveau, %S de notre ordre, vous voici devant moi.  Êtes-vous désormais à même de nous aider ?\"",
       },
       leader_other = {
-         text = "\"Once more, %p, you stand within the sanctum.  Are you ready now?\"",
+         text = "\"Une fois de plus, %p, vous voici dans le sanctuaire.  Êtes-vous désormais à la hauteur ?\"",
       },
       locate_first = {
-         synopsis = "[You have found %i.  The trail to %n lies ahead.]",
+         synopsis = "[Vous avez trouvé %i.  La piste de %n s'étend devant vous.]",
          output = "text",
-         text = [[You stand facing a large graveyard.  The sky above is filled with clouds
-that seem to get thicker closer to the center.  You sense the presence of
-undead in larger numbers than you have ever encountered before.
+         text = [[Vous faites face à un vaste cimetière.  Le ciel au-dessus est empli de nuages
+qui semblent s'épaissir vers le centre.  Vous sentez la présence de
+morts-vivants plus nombreux que tous ceux que vous avez jamais rencontrés.
 
-You remember the descriptions of %i, given to you by
-%l.  It is ahead that you will find %ns trail.]],
+Vous vous souvenez des descriptions de %i que %l
+vous a données.  C'est plus loin que vous trouverez la piste de %n.]],
       },
       locate_next = {
-         text = "Again, you stand before %i.",
+         text = "De nouveau, vous vous tenez devant %i.",
       },
       nemesis_first = {
-         synopsis = "[%lC has sent you, but you are no %gC.  I shall destroy you.]",
+         synopsis = "[%lC t'a envoyé, mais tu n'es pas %g.  Je vais te détruire.]",
          output = "text",
-         text = [["Ah, so %l has sent another %gC to retrieve
+         text = [["Ah, ainsi %l a envoyé un autre %g récupérer
 %o.
 
-"No, I see you are no %gC.  Perhaps I shall have some fun today
-after all.  Prepare to die, %r!  You shall never regain
-%o."]],
+"Non, je vois que tu n'es pas %g.  Peut-être vais-je m'amuser un peu
+aujourd'hui, finalement.  Prépare-toi à mourir, %r !  Jamais tu ne
+reprendras %o."]],
       },
       nemesis_next = {
-         text = "\"So, %r.  Again you challenge me.\"",
+         text = "\"Ainsi, %r.  Tu me défies de nouveau.\"",
       },
       nemesis_other = {
-         text = "\"Die now, %r.  %d has no power here to aid you.\"",
+         text = "\"Meurs à présent, %r.  %d n'a ici aucun pouvoir pour t'aider.\"",
       },
       nemesis_wantsit = {
-         text = "\"You shall die, %r, and I will have %o back.\"",
+         text = "\"Tu vas mourir, %r, et je reprendrai %o.\"",
       },
       nexttime = {
-         text = "Once again, you stand before %H.",
+         text = "Une fois de plus, vous vous tenez devant %H.",
       },
       offeredit = {
-         synopsis = "[Congratulations, %p.  Keep %o; go and recover the Amulet.]",
+         synopsis = "[Félicitations, %p.  Gardez %o ; allez reprendre l'Amulette.]",
          output = "text",
-         text = [["You have returned, %p.  And with %o, I see.
-Congratulations.
+         text = [["Vous voici de retour, %p.  Et avec %o, à ce que je vois.
+Félicitations.
 
-"I have been in meditation, and have received direction from
-a minion of %d.  %d commands that you retain
-%o.  With it, you must recover the Amulet
-of Yendor.
+"Je me suis plongé dans la méditation, et j'ai reçu des instructions
+d'un serviteur de %d.  %d ordonne que vous conserviez
+%o.  Grâce à elle, vous devrez reprendre l'Amulette
+de Yendor.
 
-"Go forth, and let %d guide your steps."]],
+"Partez, et que %d guide vos pas."]],
       },
       offeredit2 = {
-         synopsis = "[%oC is yours now.  Return to %Z and find the Amulet.]",
+         synopsis = "[%oC est désormais à vous.  Retournez dans %Z et trouvez l'Amulette.]",
          output = "text",
-         text = [[%lC reiterates that %o is yours now.
+         text = [[%lC vous répète que %o est désormais à vous.
 
-"The time has come to resume your search for the Amulet.
-%Z await your return through the magic portal
-that brought you here."]],
+"L'heure est venue de reprendre votre quête de l'Amulette.
+%Z attendent votre retour par le portail magique
+que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[Again you face %H.  Your intuition hints that this may be
-the final time you come here.]],
+         text = [[De nouveau, vous faites face à %H.  Votre intuition vous souffle que
+c'est peut-être la dernière fois que vous venez ici.]],
       },
       posthanks = {
-         text = "\"Welcome back, %p.  How is your quest for the Amulet going?\"",
+         text = "\"Bon retour parmi nous, %p.  Comment se passe votre quête de l'Amulette ?\"",
       },
    },
    Ran = {
       assignquest = {
-         synopsis = "[%nC has stolen %o.  Infiltrate %i and retrieve %oh for us.]",
+         synopsis = "[%nC a volé %o.  Infiltrez %i et reprenez-le pour nous.]",
          output = "text",
-         text = [["You are indeed ready, %p.  I shall tell you what has transpired,
-and why we so desperately need your help:
+         text = [["Vous êtes en effet à la hauteur, %p.  Je vais vous dire ce qui s'est passé,
+et pourquoi nous avons si désespérément besoin de votre aide :
 
-"A short time ago, the mountain centaurs to the east invaded
-and enslaved the plains centaurs in this area.  The local
-leader is now only a figurehead, and serves %n.
+"Il y a peu, les centaures des montagnes, à l'est, ont envahi
+et asservi les centaures des plaines de cette région.  Leur chef
+n'est plus qu'un homme de paille, au service de %n.
 
-"During our last gathering of worship here, we were beset by hordes of
-hostile centaurs, as you witnessed.  In the first onslaught a group,
-headed by %n %niself, managed to breach the grove and steal
-%o.
+"Lors de notre dernière assemblée de culte ici, nous avons été assaillis
+par des hordes de centaures hostiles, comme vous l'avez constaté.  Lors du
+premier assaut, un groupe mené par %n en personne a réussi à forcer
+l'entrée du bosquet et à dérober %o.
 
-"Since then, we have been besieged.  We do not know how much longer
-we will be able to maintain our magical barriers.
+"Depuis, nous sommes assiégés.  Nous ne savons pas combien de temps encore
+nous pourrons maintenir nos barrières magiques.
 
-"If we are to survive, you, %p, must infiltrate
-%i.  There, you will find a pathway down, to the
-underground cavern of %n.  He has always coveted
-%o, and will surely keep it.
+"Si nous voulons survivre, vous, %p, devez infiltrer
+%i.  Là, vous trouverez un passage descendant vers
+la caverne souterraine de %n.  Il a toujours convoité
+%o, et le gardera sûrement.
 
-"Recover %o for us, %p!  Only then will %d be safe."]],
+"Reprenez %o pour nous, %p !  Alors seulement, %d sera en sécurité."]],
       },
       badalign = {
-         synopsis = "[You are not sufficiently %a.  Come back when you have purified yourself.]",
+         synopsis = "[Vous ne suivez pas assez fidèlement le chemin %a.  Revenez lorsque vous aurez purifié votre âme.]",
          output = "text",
-         text = [["You have strayed, %p!  You know that %d requires that
-we maintain a pure devotion to things %a!
+         text = [["Vous avez perdu votre chemin, %p !  Vous savez que %d exige que
+nous restions purement dévoués au chemin %a !
 
-"You must go from us.  Return when you have purified yourself."]],
+"Vous devez nous quitter.  Revenez lorsque vous aurez purifié votre âme."]],
       },
       badlevel = {
-         synopsis = "[You are too inexperienced.  Come back when you are %Ra.]",
+         synopsis = "[Vous manquez d'expérience.  Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["%p, you are yet too inexperienced to withstand the demands of that
-which we need you to do.  %RA might just be able to do this thing.
+         text = [["%p, vous manquez encore d'expérience pour faire face aux exigences de
+ce que nous attendons de vous.  Quelqu'un du rang de %R pourrait peut-être
+y parvenir.
 
-"Return to us when you have learned more, my %S."]],
+"Revenez parmi nous lorsque vous en saurez davantage, %S de notre peuple."]],
       },
       discourage = {
-         "\"Your %d is nothing, %c.  You are mine now!\"",
-         "\"Run away little %c!  You can never hope to defeat %n!\"",
-         "\"My servants will rip you to shreds!\"",
-         "\"I shall display your head as a trophy.  What do you think about that wall?\"",
-         "\"I shall break your %ls grove, and destroy all the %gP!\"",
-         "\"%d has abandoned you, %c.  You are doomed.\"",
-         "\"%rA?  %lC sends a mere %r against me?  Hah!\"",
-         "\"%lC has failed, %c.  %oC will never leave here.\"",
-         "\"You really think you can defeat me, eh %c?  You are wrong!\"",
-         "\"You weaken, %c.  I shall kill you now.\"",
+         "\"Ton %d n'est rien, %c.  Tu es à moi maintenant !\"",
+         "\"Sauve-toi, petit %c !  Tu ne peux espérer vaincre %n !\"",
+         "\"Mes serviteurs vont te mettre en lambeaux !\"",
+         "\"J'exposerai ta tête comme un trophée.  Que penses-tu de ce mur-là ?\"",
+         "\"Je saccagerai le bosquet de %l, et je détruirai tous les %gp !\"",
+         "\"%d t'a tourné le dos, %c.  Ton sort est scellé.\"",
+         "\"Un %r ?  %lC envoie contre moi un simple %r ?  Ha !\"",
+         "\"%lC a échoué, %c.  %oC ne quittera jamais ce lieu.\"",
+         "\"Tu crois vraiment pouvoir me vaincre, hein, %c ?  Tu te trompes !\"",
+         "\"Tu faiblis, %c.  Je vais te tuer à présent.\"",
       },
       encourage = {
-         "\"It is rumored that the Forest and Mountain Centaurs have resolved their ancient feud and now band together against us.\"",
-         "\"%nC is strong, and very smart.\"",
-         "\"Use %o, when you find it.  It will help you survive to reach us.\"",
-         "\"Remember, let %d be your guide.\"",
-         "\"Call upon %d when you face %n. The very act of doing so will infuriate him, and give you advantage.\"",
-         "\"%n and his kind have always hated us.\"",
-         "\"We cannot hold the grove much longer, %p.  Hurry!\"",
-         "\"To infiltrate %i, you must be very stealthy.\"",
-         "\"Remember that %n is a braggart.  Trust not what he says.\"",
-         "\"You can triumph, %p, if you trust in %d.\"",
+         "\"On dit que les Centaures des Forêts et des Montagnes ont mis fin à leur antique querelle et s'allient désormais contre nous.\"",
+         "\"%nC est fort, et très malin.\"",
+         "\"Servez-vous de %o lorsque vous le trouverez.  Il vous aidera à survivre jusqu'à votre retour parmi nous.\"",
+         "\"Souvenez-vous, que %d soit votre guide.\"",
+         "\"Invoquez %d lorsque vous affronterez %n.  Ce seul geste le rendra furieux, et vous donnera l'avantage.\"",
+         "\"%nC et les siens nous ont toujours haïs.\"",
+         "\"Nous ne pourrons plus tenir le bosquet bien longtemps, %p.  Hâtez-vous !\"",
+         "\"Pour infiltrer %i, vous devrez faire preuve d'une grande discrétion.\"",
+         "\"Souvenez-vous que %n est un vantard.  Ne vous fiez pas à ce qu'il dit.\"",
+         "\"Vous pouvez triompher, %p, si vous vous fiez à %d.\"",
       },
       firsttime = {
-         synopsis = "[The ancient forest grove is surrounded by centaurs.]",
+         synopsis = "[L'antique bosquet sylvestre est encerclé par des centaures.]",
          output = "text",
-         text = [[You arrive in familiar surroundings.  In the distance, you %x the
-ancient forest grove, the place of worship to %d.
+         text = [[Vous arrivez dans un décor familier.  Au loin, vous parvenez à %x
+l'antique bosquet sylvestre, lieu de culte de %d.
 
-Something is wrong, though.  Surrounding the grove are centaurs!
-And they've noticed you!]],
+Pourtant, quelque chose ne va pas.  Des centaures encerclent le bosquet !
+Et ils ont remarqué votre présence !]],
       },
       goal_first = {
-         synopsis = "[You descend into a subterranean complex.  Hooves clatter in the distance.]",
+         synopsis = "[Vous descendez dans un complexe souterrain.  Des sabots claquent au loin.]",
          output = "text",
-         text = [[You descend into a weird place, in which roughly cut cave-like walls
-join with smooth, finished ones, as if someone was in the midst of
-finishing off the construction of a subterranean complex.
+         text = [[Vous descendez dans un lieu étrange, où des parois grossièrement taillées
+comme celles d'une caverne rejoignent des murs lisses et achevés, comme si
+quelqu'un était en train de terminer la construction d'un complexe souterrain.
 
-Off in the distance, you hear a sound like the clattering of many
-hooves on rock.]],
+Au loin, vous entendez comme le claquement d'innombrables sabots
+sur la roche.]],
       },
       goal_next = {
-         text = "Once again, you enter the distorted castle of %n.",
+         text = "Une fois de plus, vous pénétrez dans le château difforme de %n.",
       },
       gotit = {
-         synopsis = "[You pick up %o and feel power.  It's time to return %oh to %l.]",
+         synopsis = "[Vous ramassez %o et sentez sa puissance.  Il est temps de le rapporter à %l.]",
          output = "text",
-         text = [[As you pick up %o, it seems to glow, and a warmth
-fills you completely.  You realize that its power is what has protected
-your %sp against their enemies for so long.
+         text = [[Lorsque vous ramassez %o, il semble luire, et une chaleur
+vous envahit tout le corps.  Vous comprenez que c'est son pouvoir qui a
+protégé si longtemps vos %sp contre leurs ennemis.
 
-You must now return it to %l without delay -- their lives depend
-on your speed.]],
+Vous devez maintenant le rapporter sans tarder à %l -- leur vie dépend
+de votre rapidité.]],
       },
       guardtalk_after = {
-         "\"%pC!  I have not seen you in many moons.  How do you fare?\"",
-         "\"Birdsong has returned to the grove, surely this means you have defeated %n.\"",
-         "\"%lC seems to have regained some of his strength.\"",
-         "\"So, tell us how you entered %i, in case some new evil arises there.\"",
-         "\"Is that truly %o that I see you carrying?\"",
+         "\"%pC !  Cela fait bien des lunes !  Comment vas-tu ?\"",
+         "\"Le chant des oiseaux est revenu dans le bosquet ; cela veut sûrement dire que tu as vaincu %n.\"",
+         "\"%lC semble avoir recouvré une partie de ses forces.\"",
+         "\"Alors, raconte-nous comment tu as pénétré dans %i, au cas où un nouveau mal y surgirait.\"",
+         "\"Est-ce vraiment %o que je te vois porter ?\"",
       },
       guardtalk_before = {
-         "\"%pC!  I have not seen you in many moons.  How do you fare?\"",
-         "\"%nC continues to threaten the grove.  But we hold fast.\"",
-         "\"%lC is growing weak.  The magic required to defend the grove drains us.\"",
-         "\"Remember %i is hard to enter.  Beware the distraction of leatherwings.\"",
-         "\"We must regain %o.  Without it we will be overrun.\"",
+         "\"%pC !  Cela fait bien des lunes !  Comment vas-tu ?\"",
+         "\"%nC continue de menacer le bosquet.  Mais nous tenons bon.\"",
+         "\"%lC s'affaiblit.  La magie nécessaire pour défendre le bosquet nous épuise.\"",
+         "\"Souviens-toi qu'il est difficile d'entrer dans %i.  Méfie-toi des chauves-souris qui détournent l'attention.\"",
+         "\"Nous devons reprendre %o.  Sans lui, nous serons submergés.\"",
       },
       hasamulet = {
-         synopsis = "[You have the Amulet!  Take it to the Astral Plane and offer it to %d.]",
+         synopsis = "[Vous avez l'Amulette !  Portez-la sur le Plan Astral et offrez-la à %d.]",
          output = "text",
-         text = [["You have it!  You have recovered the Amulet of Yendor!
-Now attend to me, %p, and I will tell you what must be done:
+         text = [["Vous l'avez !  Vous avez repris l'Amulette de Yendor !
+Écoutez-moi à présent, %p, et je vais vous dire ce qu'il faut faire :
 
-"The Amulet has within it magic, the capability to transport you to
-the Astral Plane, where the primary circle of %d resides.
+"L'Amulette renferme une magie capable de vous transporter jusqu'au
+Plan Astral, où réside le premier cercle de %d.
 
-"To activate this magic, you must travel upwards as far as you can.
-When you reach the temple, sacrifice the Amulet to %d.
+"Pour activer cette magie, vous devez monter aussi haut que possible.
+Lorsque vous atteindrez le temple, sacrifiez l'Amulette à %d.
 
-"Thus will you fulfill your destiny."]],
+"Ainsi accomplirez-vous votre destinée."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses you as %nh dies.]",
+         synopsis = "[%nC vous maudit en mourant.]",
          output = "text",
-         text = [[%nC collapses to the ground, cursing you and %l, then says:
+         text = [[%nC s'effondre, vous maudissant, vous et %l, puis déclare :
 
-    "You have defeated me, %r!  But I curse you one final time, with
-    my dying breath!  You shall die before you leave my castle!"]],
+    "Tu m'as vaincu, %r !  Mais je te maudis une dernière fois, de
+    mon dernier souffle !  Tu mourras avant d'avoir quitté mon château !"]],
       },
       leader_first = {
-         synopsis = "[You have returned, %p.  We need your help.  Are you ready?]",
+         synopsis = "[Vous voici de retour, %p.  Nous avons besoin de votre aide.  Êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["%pC!  You have returned!  Thank %d.
+         text = [["%pC !  Vous voici de retour !  Grâces soient rendues à %d.
 
-"We have great need of you.  But first, I must see if you have the
-required abilities to take on this responsibility."]],
+"Nous avons grand besoin de vous.  Mais d'abord, je dois voir si vous
+avez les capacités requises pour assumer cette responsabilité."]],
       },
       leader_last = {
-         synopsis = "[You are not sufficiently %a.  We renounce your %shood.]",
+         synopsis = "[Vous ne suivez pas assez fidèlement le chemin %a.  Nous renions le lien qui faisait de vous notre %s.]",
          output = "text",
-         text = [["%pC!  You have doomed us all.  You fairly radiate %L influences
-and weaken the power we have raised in this grove as a result!
+         text = [["%pC !  Vous nous avez tous condamnés.  Vous rayonnez littéralement
+d'influences %L, et vous affaiblissez ainsi le pouvoir que nous avons
+élevé dans ce bosquet !
 
-"Begone!  We renounce your %shood with us!  You are an outcast now!"]],
+"Hors d'ici !  Nous renions le lien qui faisait de vous notre %s !
+Vous êtes désormais un paria !"]],
       },
       leader_next = {
-         text = "\"Once again, %p, you stand in our midst.  Are you ready now?\"",
+         text = "\"Une fois de plus, %p, vous voici parmi nous.  Êtes-vous désormais à la hauteur ?\"",
       },
       leader_other = {
-         text = "\"Ah, you are here again, %p.  Allow me to determine your readiness...\"",
+         text = "\"Ah, vous voici de nouveau, %p.  Permettez-moi de déterminer si vous êtes à la hauteur...\"",
       },
       locate_first = {
-         synopsis = "[This is %i.  There are bats nearby.  Beware the wumpus!]",
+         synopsis = "[Voici %i.  Des chauves-souris sont proches.  Méfiez-vous du wumpus !]",
          output = "text",
-         text = [[This must be %i.
+         text = [[Ce doit être %i.
 
-You are in a cave built of many different rooms, all interconnected
-by tunnels.  Your quest is to find and shoot the evil wumpus that
-resides elsewhere in the cave without running into any bottomless
-pits or using up your limited supply of arrows.  Good luck.
+Vous êtes dans une grotte composée de nombreuses salles, toutes reliées
+par des tunnels.  Votre mission est de trouver et d'abattre le terrible
+wumpus qui se terre quelque part dans la grotte, sans tomber dans un puits
+sans fond ni épuiser votre réserve limitée de flèches.  Bonne chance.
 
-You are in room 9 of the cave.  There are tunnels to rooms
-5, 8, and 10.
-*rustle* *rustle* (must be bats nearby.)
-*sniff* (I can smell the evil wumpus nearby!)]],
+Vous êtes dans la salle 9 de la grotte.  Des tunnels mènent aux salles
+5, 8 et 10.
+*froufrou* *froufrou* (des chauves-souris doivent être proches.)
+*reniflement* (Je sens l'odeur du terrible wumpus tout près !)]],
       },
       locate_next = {
-         synopsis = "[You are in %i.  There are pits.  There are bats nearby.]",
+         synopsis = "[Vous êtes dans %i.  Il y a des puits.  Des chauves-souris sont proches.]",
          output = "text",
-         text = [[Once again, you descend into %i.
+         text = [[Une fois de plus, vous descendez dans %i.
 
-*whoosh* (I feel a draft from some pits.)
-*rustle* *rustle* (must be bats nearby.)]],
+*fffuiit* (Je sens un courant d'air venant de puits.)
+*froufrou* *froufrou* (des chauves-souris doivent être proches.)]],
       },
       nemesis_first = {
-         synopsis = "[You have come to recover %o, but I shall keep %oh and you shall die.]",
+         synopsis = "[Tu viens reprendre %o, mais je vais le garder et tu vas mourir.]",
          output = "text",
-         text = [["So, %c.  %lC has sent you to recover %o.
+         text = [["Ainsi, %c.  %lC te charge de reprendre %o.
 
-"Well, I shall keep that bauble.  It pleases me.  You, %c, shall die."]],
+"Eh bien, je vais garder cette babiole.  Elle me plaît.  Toi, %c, tu vas mourir."]],
       },
       nemesis_next = {
-         text = "\"Back again, eh?  Well, a mere %r is no threat to me!  Die, %c!\"",
+         text = "\"Encore toi, hein ?  Eh bien, un simple %r ne me fait pas peur !  Meurs, %c !\"",
       },
       nemesis_other = {
-         text = "\"You haven't learned your lesson, %c.  You can't kill me!  You shall die now.\"",
+         text = "\"Tu n'as pas retenu la leçon, %c.  Tu ne peux pas me tuer !  Tu vas mourir à présent.\"",
       },
       nemesis_wantsit = {
-         text = [["I shall have %o from you, %r.  Then I shall
-kill you."]],
+         text = [["Je te reprendrai %o, %r.  Puis je te
+tuerai."]],
       },
       nexttime = {
-         text = "Once again, you stand before %H.",
+         text = "Une fois de plus, vous vous tenez devant %H.",
       },
       offeredit = {
-         synopsis = "[You have succeeded.  Take %o with you as you go to find the Amulet.]",
+         synopsis = "[Vous avez réussi.  Emportez %o dans votre quête de l'Amulette.]",
          output = "text",
-         text = [["%pC!  You have succeeded!  I feared it was not possible!
+         text = [["%pC !  Vous avez réussi !  Je craignais que ce ne soit impossible !
 
-"You have returned with %o!
+"Vous nous rapportez %o !
 
-"I fear, now, that the Centaurs will regroup and plot yet another raid.
-This will take some time, but if you can recover the Amulet of Yendor
-for %d before that happens, we will be eternally safe.
+"Je crains à présent que les Centaures ne se regroupent pour préparer un
+nouveau raid.  Cela prendra du temps, mais si vous pouvez reprendre
+l'Amulette de Yendor pour %d d'ici là, nous serons à jamais en sécurité.
 
-"Take %o with you.  It will aid in your quest for
-the Amulet."]],
+"Emportez %o avec vous.  Il vous aidera dans votre quête
+de l'Amulette."]],
       },
       offeredit2 = {
-         synopsis = "[You are the keeper of %o now.  Go and find the Amulet.]",
+         synopsis = "[C'est à vous de veiller sur %o désormais.  Allez trouver l'Amulette.]",
          output = "text",
-         text = [[%l flexes %o reverently.
+         text = [[%lC bande %o avec révérence.
 
-"With this wondrous bow, one need never run out of arrows.
-You are its keeper now, and the time has come to resume your
-search for the Amulet.  %Z await your return
-through the magic portal that brought you here."]],
+"Avec cet arc merveilleux, on ne manque jamais de flèches.
+C'est à vous de veiller sur lui désormais, et l'heure est venue de reprendre
+votre quête de l'Amulette.  %Z attendent votre retour
+par le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[You have the oddest feeling that this may be the last time you
-are to enter %H.]],
+         text = [[Vous avez l'étrange sentiment que c'est peut-être la dernière fois que
+vous entrez dans %H.]],
       },
       posthanks = {
-         text = [["Welcome, %p.  How have you fared on your quest for the Amulet
-of Yendor?"]],
+         text = [["Bienvenue, %p.  Comment se passe votre quête de l'Amulette
+de Yendor ?"]],
       },
    },
    Rog = {
       assignquest = {
-         synopsis = "[Get %o from %n and bring it to %l.]",
+         synopsis = "[Reprenez %o à %n et rapportez-le à votre patron, %l.]",
          output = "text",
-         text = [["Will everyone not going to retrieve %o from that
-jerk, %n, take one step backwards.  Good choice,
-%p, because I was going to send you anyway.  My other %gp
-are too valuable to me.
+         text = [["Que tous ceux qui ne veulent pas aller récupérer %o chez
+cet abruti, %n, fassent un pas en arrière.  Bon choix,
+%p, parce que de toute façon, c'est vous que j'allais envoyer.  Mes autres
+%gp me sont trop précieux.
 
-"Here's the deal.  I want %o, %n
-has %o.  You are going to get %o
-and bring it back to me.  So simple an assignment even you can understand
-it."]],
+"Voilà le topo.  Je veux %o, %n
+a %o.  Vous allez récupérer %o
+et me le rapporter.  Une mission si simple que même vous pouvez la
+comprendre."]],
       },
       badalign = {
-         synopsis = "[Come back when you are really %a.]",
+         synopsis = "[Revenez lorsque vous suivrez vraiment le chemin %a.]",
          output = "text",
-         text = [["Maybe I should chain you to my perch here for a while.  Perhaps watching
-real %a men at work will bring some sense back to you.  I don't
-think I could stand the sight of you for that long though.  Come back
-when you can be trusted to act properly."]],
+         text = [["Je devrais peut-être vous enchaîner un moment à mon perchoir.  Voir à
+l'œuvre de vrais professionnels, fidèles au chemin %a, vous remettrait
+peut-être du plomb dans la cervelle.  Mais je ne crois pas que je pourrais
+supporter votre vue aussi longtemps.  Revenez quand on pourra vous faire
+confiance pour vous conduire correctement."]],
       },
       badlevel = {
-         synopsis = "[%rA is not adequately trained to handle this job.]",
+         synopsis = "[Avec votre rang de %r, vous n'êtes pas assez formé pour ce boulot.]",
          output = "text",
-         text = [["In the time that you've been gone you've only been able to master the
-arts of %ra?  I've trained ten times again as many %Rp
-in that time.  Maybe I should send one of them, no?  Where would that
-leave you, %p?  Oh yeah, I remember, I was going to kill you!"]],
+         text = [["Pendant toute votre absence, vous n'avez réussi qu'à
+maîtriser les arts du rang de %r ?  Dans le même temps, j'ai formé dix fois
+plus de %Rp.  Je devrais peut-être envoyer l'un d'eux, non ?  Et vous,
+%p, qu'est-ce que je ferais de vous ?  Ah oui, je me souviens, j'allais vous tuer !"]],
       },
       discourage = {
-         "\"May I suggest a compromise.  Are you interested in gold or gems?\"",
-         "\"Please don't force me to kill you.\"",
-         "\"Grim times are upon us all.  Will you not see reason?\"",
-         "\"I knew %l, and you're no %lt, thankfully.\"",
-         "\"It is a shame that we are not meeting under more pleasant circumstances.\"",
-         "\"I was once like you are now, %p.  Believe in me -- our way is better.\"",
-         "\"Stay with me, and I will make you %os guardian.\"",
-         "\"When you return, with or without %o, %l will have you killed.\"",
-         "\"Do not be fooled; I am prepared to kill to defend %o.\"",
-         "\"I can reunite you with the Twain.  Oh, the stories you can swap.\"",
+         "\"Puis-je suggérer un compromis ?  L'or ou les gemmes vous intéressent-ils ?\"",
+         "\"Je vous en prie, ne m'obligez pas à vous tuer.\"",
+         "\"Des temps bien sombres sont sur nous tous.  N'entendrez-vous pas raison ?\"",
+         "\"J'ai connu %l, et heureusement, vous ne lui ressemblez en rien.\"",
+         "\"Quel dommage que nous ne nous rencontrions pas en des circonstances plus agréables.\"",
+         "\"J'étais jadis comme vous, %p.  Croyez-moi -- notre voie est la meilleure.\"",
+         "\"Restez avec moi, et je ferai de vous celui qui veille sur %o.\"",
+         "\"Quand vous reviendrez, avec ou sans %o, %l vous fera tuer.\"",
+         "\"Ne vous y trompez pas ; je suis prêt à tuer pour défendre %o.\"",
+         "\"Je peux vous réunir avec les Deux.  Ah, toutes les histoires que vous pourriez échanger.\"",
       },
       encourage = {
-         "\"You don't seem to understand, %o isn't here so neither should you be!\"",
-         "\"May %d curse you with lead fingers.  Get going!\"",
-         "\"We don't have all year.  GET GOING!\"",
-         "\"How would you like a scar necklace?  I'm just the jeweler to do it!\"",
-         "\"Lazy S.O.B.  Maybe I should call up someone else...\"",
-         "\"Maybe I should open your skull and see if my instructions are inside?\"",
-         "\"This is not a task you can complete in the afterlife, you know.\"",
-         "\"Inside every living person is a dead person trying to get out, and I have your key!\"",
-         "\"We're almost out of hell-hound chow, so why don't you just get moving!\"",
-         "\"You know, %o isn't going to come when you whistle.  You must get it yourself.\"",
+         "\"Vous n'avez pas l'air de comprendre : %o n'est pas ici, alors vous non plus, vous ne devriez pas y être !\"",
+         "\"Puisse %d vous maudire et vous donner des doigts de plomb.  Filez !\"",
+         "\"On n'a pas toute l'année.  FILEZ !\"",
+         "\"Ça vous dirait, un collier de cicatrices ?  Je suis le joaillier qu'il vous faut !\"",
+         "\"Sale fainéant.  Je devrais peut-être faire appel à quelqu'un d'autre...\"",
+         "\"Je devrais peut-être vous ouvrir le crâne pour voir si mes instructions sont dedans ?\"",
+         "\"Ce n'est pas une tâche qu'on peut accomplir dans l'au-delà, vous savez.\"",
+         "\"En chaque vivant, il y a un mort qui essaie de sortir, et j'ai votre clé !\"",
+         "\"On n'a presque plus de pâtée pour les molosses infernaux, alors bougez-vous donc !\"",
+         "\"Vous savez, %o ne viendra pas en sifflant.  Il faut aller le chercher vous-même.\"",
       },
       firsttime = {
-         synopsis = "[You are in Ransmannsby, where you trained.  Find %l.]",
+         synopsis = "[Vous êtes à Ransmannsby, où vous avez appris le métier.  Trouvez %l.]",
          output = "text",
-         text = [[Unexpectedly, you find yourself back in Ransmannsby, where you trained to
-be a thief.  Quickly you make the guild sign, hoping that you AND word
-of your arrival reach %ls den.]],
+         text = [[Contre toute attente, vous vous retrouvez à Ransmannsby, où vous avez
+appris le métier de voleur.  Vous faites vite le signe de la guilde, en
+espérant que vous ET la nouvelle de votre arrivée parviendrez jusqu'au
+repaire de votre patron, %l.]],
       },
       goal_first = {
-         synopsis = "[You sense %o.]",
+         synopsis = "[Vous sentez la présence de %o.]",
          output = "text",
-         text = [[You feel a great swelling up of courage, sensing the presence of
-%o.  Or is it fear?]],
+         text = [[Vous sentez monter en vous un grand élan de courage en percevant la
+présence de %o.  À moins que ce ne soit de la peur ?]],
       },
       goal_next = {
-         text = "The hairs on the back of your neck whisper -- it's fear.",
+         text = "Les poils de votre nuque vous le murmurent -- c'est de la peur.",
       },
       gotit = {
-         synopsis = "[You pick up %o and know that %l should not have it.]",
+         synopsis = "[Vous ramassez %o et savez que %l ne doit pas l'avoir.]",
          output = "text",
-         text = [[As you pick up %o, the hairs on the back of your
-neck fall out.  At once you realize why %n was
-willing to die to keep it out of %ls hands.  Somehow
-you know that you must do likewise.]],
+         text = [[Lorsque vous ramassez %o, les poils de votre nuque
+tombent.  Vous comprenez aussitôt pourquoi %n était
+prêt à mourir pour le soustraire à la convoitise de %l.  D'une
+manière ou d'une autre, vous savez que vous devez faire de même.]],
       },
       guardtalk_after = {
-         "\"I was sure wrong about Lady Tyvefelle's house; I barely got away with my life and lost my lock pick in the process.\"",
-         "\"You're back?  Even the Twain don't come back anymore.\"",
-         "\"Can you spare an old cutpurse a zorkmid for some grog?\"",
-         "\"Fritz tried to join the other side, and now he's hell-hound chow.\"",
-         "\"Be careful what you steal, I hear the boss has perfected turning rocks into worthless pieces of glass.\"",
+         "\"Je me suis bien trompé sur la maison de Dame Tyvefelle ; je m'en suis tiré de justesse, et j'y ai perdu mon crochet.\"",
+         "\"Te revoilà ?  Même les Deux ne reviennent plus.\"",
+         "\"T'aurais pas un zorkmid pour un vieux coupe-bourse qui veut s'offrir un grog ?\"",
+         "\"Fritz a essayé de passer dans l'autre camp, et maintenant, c'est de la pâtée pour molosse infernal.\"",
+         "\"Fais gaffe à ce que tu voles, il paraît que le patron a mis au point un truc pour changer les cailloux en bouts de verre sans valeur.\"",
       },
       guardtalk_before = {
-         "\"I hear that Lady Tyvefelle's household is lightly guarded.\"",
-         "\"You're back?  Even the Twain don't come back anymore.\"",
-         "\"Can you spare an old cutpurse a zorkmid for some grog?\"",
-         "\"Fritz tried to join the other side, and now he's hell-hound chow.\"",
-         "\"Be careful what you steal, I hear the boss has perfected turning rocks into worthless pieces of glass.\"",
+         "\"Il paraît que la maison de Dame Tyvefelle est mal gardée.\"",
+         "\"Te revoilà ?  Même les Deux ne reviennent plus.\"",
+         "\"T'aurais pas un zorkmid pour un vieux coupe-bourse qui veut s'offrir un grog ?\"",
+         "\"Fritz a essayé de passer dans l'autre camp, et maintenant, c'est de la pâtée pour molosse infernal.\"",
+         "\"Fais gaffe à ce que tu voles, il paraît que le patron a mis au point un truc pour changer les cailloux en bouts de verre sans valeur.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane and find %ds temple.]",
+         synopsis = "[Portez l'Amulette sur le Plan Astral et trouvez le temple de %d.]",
          output = "text",
-         text = [["I see that with your abilities, and my brains, we could rule this world.
+         text = [["Je vois qu'avec vos talents et ma cervelle, nous pourrions régner sur ce monde.
 
-"All that we would need to be all-powerful is for you to take that little
-trinket you've got there up to the Astral Plane.  From there, %d will
-show you what to do with it.  Once that's done, we will be invincible!"]],
+"Tout ce qu'il nous faudrait pour être tout-puissants, c'est que vous
+emportiez cette petite babiole jusqu'au Plan Astral.  Là-bas, %d vous
+montrera ce qu'il faut en faire.  Une fois que ce sera fait, nous serons
+invincibles !"]],
       },
       killed_nemesis = {
-         synopsis = "[Before dying, %n tells you to use the %o wisely.]",
+         synopsis = "[Avant de mourir, %n vous demande de faire bon usage de %o.]",
          output = "text",
-         text = [["I know what you are thinking, %p.  It is not too late for you
-to use %o wisely.  For the sake of your guild
-%sp, do what is right."
+         text = [["Je sais ce que vous pensez, %p.  Il n'est pas trop tard pour faire
+bon usage de %o.  Pour l'amour de vos %sp
+de la guilde, faites ce qui est juste."
 
-You sit and wait for death to come for %n, and then you
-brace yourself for your next meeting with %l!]],
+Vous vous asseyez et attendez que la mort vienne chercher %n, puis
+vous vous préparez à votre prochaine rencontre avec %l !]],
       },
       leader_first = {
-         synopsis = "[You owe back dues to your guild.  You can pay them off if you're up to the job.]",
+         synopsis = "[Vous devez des cotisations à votre guilde.  Vous pouvez les rembourser si vous êtes à la hauteur du boulot.]",
          output = "text",
-         text = [["Well, look who it is boys -- %p has come home.  You seem to have
-fallen behind in your dues.  I should kill you as an example to these
-other worthless cutpurses, but I have a better plan.  If you are ready
-maybe you could work off your back dues by performing a little job for
-me.  Let us just see if you are ready..."]],
+         text = [["Eh bien, regardez qui voilà, les gars -- %p revient au bercail.  On
+dirait que vous avez pris du retard dans vos cotisations.  Je devrais vous
+tuer pour l'exemple, devant ces autres coupe-bourses bons à rien, mais j'ai
+une meilleure idée.  Si vous êtes à la hauteur, vous pourriez peut-être
+éponger votre ardoise en me rendant un petit service.  Voyons voir si vous
+êtes à la hauteur..."]],
       },
       leader_last = {
-         synopsis = "[You must go.]",
+         synopsis = "[Vous devez partir.]",
          output = "text",
-         text = [["Well %gp, it looks like our friend has forgotten who is the boss
-around here.  Our friend seems to think that %rp have been put in
-charge.  Wrong.  DEAD WRONG!"
+         text = [["Eh bien, les %gp, on dirait que notre ami a oublié qui est le patron
+ici.  Notre ami semble croire que ce sont les %rp qui commandent.
+Erreur.  ERREUR FATALE !"
 
-Your sudden shift in surroundings prevents you from hearing the end
-of %ls curse.]],
+Le brusque changement de décor vous empêche d'entendre la fin des
+imprécations que profère %l.]],
       },
       leader_next = {
-         synopsis = "[Are you stupid or are you ready?]",
+         synopsis = "[Êtes-vous stupide, ou êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["Well, I didn't expect to see you back.  It shows that you are either stupid,
-or you are finally ready to accept my offer.  Let us hope for your sake it
-isn't stupidity that brings you back."]],
+         text = [["Tiens, je ne m'attendais pas à vous revoir.  Ça prouve que soit vous êtes
+stupide, soit vous voulez enfin accepter mon offre.  Espérons pour
+vous que ce n'est pas la stupidité qui vous ramène."]],
       },
       leader_other = {
-         text = [["Did you perhaps mistake me for some other %lt?  You must
-think me as stupid as your behavior.  I warn you not to try my patience."]],
+         text = [["Me prendriez-vous par hasard pour quelqu'un d'autre que %l ?  Vous devez me
+croire aussi stupide que votre conduite.  Je vous préviens : ne mettez pas
+ma patience à l'épreuve."]],
       },
       locate_first = {
-         text = "Those damn little hairs tell you that you are nearer to %o.",
+         text = "Ces satanés petits poils vous disent que vous vous rapprochez de %o.",
       },
       locate_next = {
-         text = "Not wanting to face %l without having stolen %o, you continue.",
+         text = "Ne voulant pas affronter %l sans avoir volé %o, vous poursuivez votre chemin.",
       },
       nemesis_first = {
-         text = "\"Ah!  You must be %ls ... er, `hero'.  A pleasure to meet you.\"",
+         text = "\"Ah !  Vous devez être le... euh, 'héros' qu'envoie %l.  Enchanté de faire votre connaissance.\"",
       },
       nemesis_next = {
-         text = "\"We meet again.  Please reconsider your actions.\"",
+         text = "\"Nous nous revoyons.  Je vous en prie, reconsidérez vos actes.\"",
       },
       nemesis_other = {
-         synopsis = "[You cannot trust %l.]",
+         synopsis = "[Vous ne pouvez pas faire confiance à %l.]",
          output = "text",
-         text = [["Surely, %p, you have learned that you cannot trust any bargains
-that %l has made.  I can show you how to continue on
-your quest without having to run into him again."]],
+         text = [["Vous avez sûrement appris, %p, qu'on ne peut se fier à aucun des marchés
+que %l a conclus.  Je peux vous montrer comment poursuivre
+votre quête sans avoir à le croiser de nouveau."]],
       },
       nemesis_wantsit = {
-         synopsis = "[%lC should not have %o.]",
+         synopsis = "[%lC ne doit pas avoir %o.]",
          output = "text",
-         text = [["Please, think for a moment about what you are doing.  Do you truly
-believe that %d would want %l to have
-%o?"]],
+         text = [["Je vous en prie, réfléchissez un instant à ce que vous faites.  Croyez-vous
+vraiment que %d voudrait que %l possède
+%o ?"]],
       },
       nexttime = {
-         text = [[Once again, you find yourself back in Ransmannsby.  Fond memories are
-replaced by fear, knowing that %l is waiting for you.]],
+         text = [[Une fois de plus, vous vous retrouvez à Ransmannsby.  Les doux souvenirs
+laissent place à la peur, car vous savez que %l vous attend.]],
       },
       offeredit = {
-         synopsis = "[Take %o with you and go.]",
+         synopsis = "[Emportez %o et partez.]",
          output = "text",
-         text = [["Well, I'll be damned.  You got it.  I am proud of you, a fine %r
-you've turned out to be.
+         text = [["Ça alors, que le diable m'emporte.  Vous l'avez eu.  Je suis fier de vous,
+vous faites honneur au rang de %r !
 
-"While you were gone I got to thinking, you and %o
-together could bring me more treasure than either of you apart, so why don't
-you take it with you.  All I ask is a cut of whatever loot you come by.
-That is a better deal than I offered %n.
+"Pendant votre absence, je me suis mis à réfléchir : vous et %o,
+ensemble, vous pourriez me rapporter plus de trésors que chacun de votre
+côté, alors pourquoi ne pas l'emporter avec vous ?  Tout ce que je demande,
+c'est une part de tout le butin que vous trouverez.  C'est une meilleure
+offre que celle que j'avais faite à %n.
 
-"But, you see what happened to %n when he refused.
-Don't make me find another to send after you this time."]],
+"Mais vous avez vu ce qui est arrivé à %n quand il a refusé.
+Ne m'obligez pas, cette fois, à trouver quelqu'un d'autre à envoyer à vos trousses."]],
       },
       offeredit2 = {
-         synopsis = "[Take %o and acquire the Amulet.]",
+         synopsis = "[Prenez %o et procurez-vous l'Amulette.]",
          output = "text",
-         text = [[%lC seems tempted to swap %o for
-the mundane one you detect in his pocket, but noticing your alertness,
-evidently chickens out.
+         text = [[%lC semble tenté d'échanger %o contre
+le passe-partout ordinaire que vous devinez dans sa poche, mais, remarquant
+votre vigilance, se dégonfle de toute évidence.
 
-"Go filch the Amulet before someone else beats you to it.
-%Z are back the way you came, through the magic portal."]],
+"Allez chaparder l'Amulette avant que quelqu'un d'autre ne vous coiffe au
+poteau.  %Z sont par le chemin de l'aller, de l'autre côté du portail magique."]],
       },
       othertime = {
-         text = [[You rub your hands through your hair, hoping that the little ones on
-the back of your neck stay down, and prepare yourself for your meeting
-with %l.]],
+         text = [[Vous vous passez la main dans les cheveux, en espérant que les petits
+poils de votre nuque restent bien à plat, et vous vous préparez à votre
+rencontre avec %l.]],
       },
       posthanks = {
-         synopsis = "[How about trading %o for something?]",
+         synopsis = "[Et si vous échangiez %o contre autre chose ?]",
          output = "text",
-         text = [["Quite the little thief, aren't we, %p.  Can I interest you in a
-swap for %o?  Look around, anything in the keep
-is yours for the asking."]],
+         text = [["Quel talent pour le vol, n'est-ce pas, %p ?  Puis-je vous proposer un
+échange contre %o ?  Regardez autour de vous, tout ce qui se trouve
+dans le donjon est à vous, il suffit de demander."]],
       },
    },
    Sam = {
       assignquest = {
-         synopsis = "[You must enter %i, then regain %o from %n.]",
+         synopsis = "[Vous devez pénétrer dans %i, puis reprendre %o à %n.]",
          output = "text",
-         text = [["Domo %p-san, indeed you are ready.  I can now tell you what
-it is that I require of you.
+         text = [["Domo, %p-san, vous êtes en effet à la hauteur.  Je peux maintenant vous
+dire ce que j'attends de vous.
 
-"The daimyo, %n, has betrayed us.  He has stolen from us
-%o and taken it to his donjon deep within
+"Le daimyo %n nous a trahis.  Il nous a dérobé
+%o et l'a emporté dans son donjon, au plus profond de
 %i.
 
-"If I cannot show the emperor %o when he comes
-for the festival he will know that I have failed in my duty, and
-request that I commit seppuku.
+"Si je ne puis montrer %o à l'empereur lorsqu'il viendra
+pour la fête, il saura que j'ai failli à mon devoir, et
+exigera que je commette seppuku.
 
-"You must gain entrance to %i and retrieve the
-emperor's property.  Be quick!  The emperor will be here for the
-cha-no-you in 5 sticks.
+"Vous devez pénétrer dans %i et récupérer le
+bien de l'empereur.  Faites vite !  L'empereur sera ici pour le
+cha-no-yu dans 5 bâtons d'encens.
 
-"Wakarimasu ka?"]],
+"Wakarimasu ka ?"]],
       },
       badalign = {
-         synopsis = "[When you can think %a and act %a then return.]",
+         synopsis = "[Revenez lorsque vous saurez penser selon le chemin %a et agir selon le chemin %a.]",
          output = "text",
-         text = [["%p-san, you would do better to join the kyokaku.
+         text = [["%p-san, vous feriez mieux de rejoindre les kyokaku.
 
-"You have skills, but until you can call upon the bushido to know when and
-how to use them you are not samurai.  When you can think %a and
-act %a then return."]],
+"Vous avez des talents, mais tant que vous ne saurez pas vous en remettre
+au bushido pour savoir quand et comment les employer, vous ne serez pas
+samouraï.  Lorsque vous saurez penser selon le chemin %a et agir selon
+le chemin %a, revenez."]],
       },
       badlevel = {
-         synopsis = "[\"I require %Ra to defeat %n.  Return when you are ready.\"]",
+         synopsis = "[\"J'ai besoin de quelqu'un du rang de %R pour vaincre %n.  Revenez lorsque vous serez à la hauteur.\"]",
          output = "text",
-         text = [["%p-san, you have learned well and honored your family.
-I require the skills of %Ra in order to defeat %n.
-Go and seek out teachers.  Learn what they have learned.  When you
-are ready, return to me."]],
+         text = [["%p-san, vous avez bien appris et fait honneur à votre famille.
+Mais il me faut les talents de quelqu'un du rang de %R pour vaincre %n.
+Allez chercher des maîtres.  Apprenez ce qu'ils ont appris.  Lorsque vous
+serez à la hauteur, revenez me voir."]],
       },
       discourage = {
-         "\"Ahh, I finally meet the daimyo of the kyokaku!\"",
-         "\"There is no honor for me in your death.\"",
-         "\"You know that I cannot resash my swords until they have killed.\"",
-         "\"Your presence only compounds the dishonor of %l in not coming %liself.\"",
-         "\"I will make tea with your hair and serve it to %l.\"",
-         "\"Your fear shows in your eyes, coward!\"",
-         "\"I have not heard of you, %p-san; has your life been that unworthy?\"",
-         "\"If you will not obey me, you will die.\"",
-         "\"Kneel now and make the two cuts of honor.  I will tell your %sp of your honorable death.\"",
-         "\"Your master was a poor teacher.  You will pay for his mistakes in your teaching.\"",
+         "\"Ahh, je rencontre enfin le daimyo des kyokaku !\"",
+         "\"Ta mort ne m'apportera aucun honneur.\"",
+         "\"Tu sais que je ne puis rengainer mes sabres avant qu'ils aient tué.\"",
+         "\"Ta présence ne fait qu'aggraver le déshonneur de %l, qui n'est pas venu en personne.\"",
+         "\"Je ferai du thé avec tes cheveux et je le servirai à %l.\"",
+         "\"La peur se lit dans tes yeux, lâche !\"",
+         "\"Je n'ai jamais entendu parler de toi, %p-san ; ta vie a-t-elle été si indigne ?\"",
+         "\"Si tu ne m'obéis pas, tu mourras.\"",
+         "\"Agenouille-toi et fais les deux entailles de l'honneur.  Je raconterai à tes %sp ta mort honorable.\"",
+         "\"Ton maître était un piètre professeur.  Tu paieras pour les erreurs de ton enseignement.\"",
       },
       encourage = {
-         "\"To defeat %n you must overcome the seven emotions: hate, adoration, joy, anxiety, anger, grief, and fear.\"",
-         "\"Remember your honor is my honor, you perform in my name.\"",
-         "\"I will go to the temple and burn incense for your safe return.\"",
+         "\"Pour vaincre %n, vous devez surmonter les sept émotions : la haine, l'adoration, la joie, l'anxiété, la colère, le chagrin et la peur.\"",
+         "\"Souvenez-vous que votre honneur est mon honneur ; vous agissez en mon nom.\"",
+         "\"J'irai au temple brûler de l'encens pour votre retour sans encombre.\"",
          "\"Sayonara.\"",
-         "\"There can be honor in defeat, but no gain.\"",
-         "\"Your kami must be strong in order to succeed.\"",
-         "\"You are indeed a worthy %R, but now you must be a worthy samurai.\"",
-         "\"If you fail, %n will be like a tai-fun on the land.\"",
-         "\"If you are truly %a, %d will listen.\"",
-         "\"Sharpen your swords and your wits for the task before you.\"",
+         "\"La défaite peut être honorable, mais elle ne rapporte rien.\"",
+         "\"Votre kami doit être fort pour que vous réussissiez.\"",
+         "\"Vous méritez assurément votre rang de %R, mais vous devez à présent mériter celui de samouraï.\"",
+         "\"Si vous échouez, %n s'abattra sur le pays comme un tai-fun.\"",
+         "\"Si vous suivez vraiment le chemin %a, %d vous écoutera.\"",
+         "\"Aiguisez vos sabres et votre esprit pour la tâche qui vous attend.\"",
       },
       firsttime = {
-         synopsis = "[The banner of %n flies above town.  What has happened to %l?]",
+         synopsis = "[La bannière de %n flotte sur la ville.  Qu'est-il arrivé à %l ?]",
          output = "text",
-         text = [[Even before your senses adjust, you recognize the kami of
-%H.
+         text = [[Avant même que vos sens ne s'accoutument, vous reconnaissez le kami
+des lieux : %H.
 
-You %x the standard of your teki, %n, flying above
-the town.  How could such a thing have happened?  Why are ninja
-wandering freely; where are the samurai of your daimyo, %l?
+Vous parvenez à %x l'étendard de votre teki, %n, qui flotte
+au-dessus de la ville.  Comment une telle chose a-t-elle pu se produire ?
+Pourquoi des ninjas errent-ils librement ; où sont les samouraïs de votre
+daimyo, %l ?
 
-You quickly say a prayer to Izanagi and Izanami and walk towards
-town.]],
+Vous adressez une rapide prière à Izanagi et Izanami, et marchez vers
+la ville.]],
       },
       goal_alt = {
-         text = "As you arrive once again at the home of %n.",
+         text = "Vous voici de nouveau dans la demeure de %n.",
       },
       goal_first = {
-         synopsis = "[You feel the taunts %n, but after offering a prayer to %d, you proceed.]",
+         synopsis = "[Vous entendez les railleries de %n, mais après une prière à %d, vous poursuivez votre chemin.]",
          output = "text",
-         text = [[In your mind, you hear the taunts of %n.
+         text = [[Dans votre esprit, vous entendez les railleries de %n.
 
-You become like the rice plant and bend to the ground, offering a
-prayer to %d.  But when the wind has passed, you stand
-proudly again.  Putting your kami in the hands of fate, you advance.]],
+Vous devenez semblable au plant de riz et vous ployez jusqu'au sol, en
+adressant une prière à %d.  Mais lorsque le vent est passé, vous vous
+redressez fièrement.  Remettant votre kami entre les mains du destin,
+vous avancez.]],
       },
       goal_next = {
-         text = [[As you arrive once again at the home of %n, your thoughts
-turn only to %o.]],
+         text = [[Tandis que vous arrivez de nouveau dans la demeure de %n, vos pensées
+se tournent uniquement vers %o.]],
       },
       gotit = {
-         synopsis = "[You feel the power of %o and are humbled.]",
+         synopsis = "[Vous sentez le pouvoir de %o et êtes empli d'humilité.]",
          output = "text",
-         text = [[As you pick up %o, you feel the strength of its karma.
-You realize at once why so many good samurai had to die to defend it.
-You are humbled knowing that you hold one of the artifacts of the
-sun goddess.]],
+         text = [[Lorsque vous ramassez %o, vous sentez la force de son karma.
+Vous comprenez aussitôt pourquoi tant de bons samouraïs ont dû mourir pour le
+défendre.  L'humilité vous envahit à l'idée de tenir l'un des artefacts de
+la déesse du soleil.]],
       },
       guardtalk_after = {
-         "\"Come, join us in celebrating with some sake.\"",
-         "\"Ikaga desu ka?\"",
-         "\"You have brought our clan and %l much honor.\"",
-         "\"Please %r, sit for a while and tell us how you overcame the Ninja.\"",
-         "\"%lC still lives!  You have saved us from becoming ronin.\"",
+         "\"Venez, joignez-vous à nous pour fêter cela avec un peu de saké.\"",
+         "\"Ikaga desu ka ?\"",
+         "\"Vous avez apporté un grand honneur à notre clan et à %l.\"",
+         "\"Je vous en prie, %r, asseyez-vous un moment et racontez-nous comment vous avez vaincu les Ninjas.\"",
+         "\"%lC est toujours en vie !  Vous nous avez évité de devenir des ronins.\"",
       },
       guardtalk_before = {
-         "\"To succeed, you must walk like a butterfly on the wind.\"",
-         "\"Ikaga desu ka?\"",
-         "\"I fear for The Land of The Gods.\"",
-         "\"%nC has hired the Ninja -- be careful.\"",
-         "\"If %o is not returned, we will all be ronin.\"",
+         "\"Pour réussir, vous devez avancer comme un papillon porté par le vent.\"",
+         "\"Ikaga desu ka ?\"",
+         "\"Je crains pour le Pays des Dieux.\"",
+         "\"%nC a engagé les Ninjas -- soyez sur vos gardes.\"",
+         "\"Si %o n'est pas rendu, nous serons tous des ronins.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to the Astral Plane to finish your task.]",
+         synopsis = "[Portez l'Amulette sur le Plan Astral pour achever votre tâche.]",
          output = "text",
-         text = [["Ah, %p-sama.  You have wasted your efforts returning home.
-Now that you are in possession of the Amulet, you are honor-bound to
-finish the quest you have undertaken.  There will be plenty of time
-for saki and stories when you have finished.
+         text = [["Ah, %p-sama.  Vous avez perdu votre peine en revenant ici.
+Maintenant que vous êtes en possession de l'Amulette, l'honneur vous oblige
+à achever la quête que vous avez entreprise.  Nous aurons tout le temps
+pour le saké et les récits lorsque vous aurez terminé.
 
-"Go now, and may our prayers be a wind at your back."]],
+"Partez maintenant, et puissent nos prières vous pousser comme un vent favorable."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC dies without honor.]",
+         synopsis = "[%nC meurt sans honneur.]",
          output = "text",
-         text = [[Your healing skills tell you that %ns wounds are mortal.
+         text = [[Vos talents de guérisseur vous disent que les blessures de %n sont mortelles.
 
-You know that the bushido tells you to finish him and let his kami
-die with honor, but the thought of so many samurai dead due to this
-man's dishonor prevents you from giving the final blow.
+Vous savez que le bushido vous commande de l'achever et de laisser son kami
+mourir dans l'honneur, mais la pensée de tant de samouraïs morts à cause du
+déshonneur de cet homme vous empêche de porter le coup de grâce.
 
-You order that his unwashed head be given to the crows and his body
-thrown into the sea.]],
+Vous ordonnez que sa tête non lavée soit livrée aux corbeaux et son corps
+jeté à la mer.]],
       },
       leader_first = {
-         synopsis = "[%lC needs someone to lead %lj samurai against %n.  Are you ready?]",
+         synopsis = "[%lC a besoin de quelqu'un pour mener ses samouraïs contre %n.  Êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["Ah, %p-san, it is good to see you again.  I need someone who can
-lead my samurai against %n.  If you are ready, you will be
-that person."]],
+         text = [["Ah, %p-san, je suis heureux de vous revoir.  J'ai besoin de quelqu'un qui
+puisse mener mes samouraïs contre %n.  Si vous en êtes capable, c'est
+vous qui serez cette personne."]],
       },
       leader_last = {
-         synopsis = "[Leave and do not come back.]",
+         synopsis = "[Partez et ne revenez pas.]",
          output = "text",
-         text = [["You are no longer my samurai, %p.
+         text = [["Vous n'êtes plus mon samouraï, %p.
 
-"Hara-kiri is denied.  You are ordered to shave your head and then to
-become a monk.  Your fief and family are forfeit.  Wakarimasu ka?"]],
+"Le hara-kiri vous est refusé.  Il vous est ordonné de vous raser la tête
+et de vous faire moine.  Votre fief et votre famille sont confisqués.
+Wakarimasu ka ?"]],
       },
       leader_next = {
-         text = [["Once again, %p-san, you kneel before me.  Are you yet capable of
-being my vassal?"]],
+         text = [["Une fois de plus, %p-san, vous vous agenouillez devant moi.  Êtes-vous enfin
+capable d'être mon vassal ?"]],
       },
       leader_other = {
-         synopsis = "[Are you truly a samurai?]",
+         synopsis = "[Êtes-vous vraiment samouraï ?]",
          output = "text",
-         text = [["You begin to test my matsu, %p-san.
-If you cannot determine what I want in a samurai, how can I rely on you
-to figure out what I need from a samurai?"]],
+         text = [["Vous commencez à mettre mon matsu à l'épreuve, %p-san.
+Si vous ne pouvez déterminer ce que j'attends d'un samouraï, comment
+pourrais-je compter sur vous pour comprendre ce dont j'ai besoin de la part
+d'un samouraï ?"]],
       },
       locate_first = {
-         text = [[You instinctively reach for your swords.  You do not recognize the
-lay of this land, but you know that your teki are everywhere.]],
+         text = [[Instinctivement, vous portez la main à vos sabres.  Vous ne reconnaissez
+pas la configuration de ces terres, mais vous savez que vos teki sont partout.]],
       },
       locate_next = {
-         text = [[Thankful that your %sp at %H cannot see
-your fear, you prepare again to advance.]],
+         text = [[Soulagement : vos %sp, dans %H, ne peuvent voir votre
+peur.  Vous vous apprêtez de nouveau à avancer.]],
       },
       nemesis_first = {
-         text = [["Ah, so it is to be you, %p-san.  I offer you seppuku.
-I will be your second if you wish."]],
+         text = [["Ah, ce sera donc toi, %p-san.  Je t'offre le seppuku.
+Je serai ton second si tu le souhaites."]],
       },
       nemesis_next = {
-         text = [["I have offered you the honorable exit.  Now I will have your
-head to send unwashed to %l."]],
+         text = [["Je t'ai offert une sortie honorable.  À présent, j'aurai ta
+tête, que j'enverrai non lavée à %l."]],
       },
       nemesis_other = {
-         text = "\"After I have dispatched you, I will curse your kami.\"",
+         text = "\"Après t'avoir expédié, je maudirai ton kami.\"",
       },
       nemesis_wantsit = {
-         text = [["You have fought my samurai; surely you must know that you
-will not be able to take %o back to
+         text = [["Tu as combattu mes samouraïs ; tu dois sûrement savoir que tu
+ne pourras pas rapporter %o dans
 %H."]],
       },
       nexttime = {
-         text = "Once again, you are back at %H.",
+         text = "Une fois de plus, vous voici de retour dans %H.",
       },
       offeredit = {
-         synopsis = "[The emperor wants you to take %o and recover the Amulet.]",
+         synopsis = "[L'empereur souhaite que vous emportiez %o pour reprendre l'Amulette.]",
          output = "text",
-         text = [[As you bow before %l, he welcomes you:
+         text = [[Tandis que vous vous inclinez devant %l, il vous accueille :
 
-    "You have brought your family great honor, %p-sama.
+    "Vous avez apporté un grand honneur à votre famille, %p-sama.
 
-    "While you have been gone the emperor's advisors have discovered in
-    the ancient texts that the karma of the samurai who seeks to recover
-    the Amulet and the karma of %o are joined
-    as the seasons join to make a year.
+    "Pendant votre absence, les conseillers de l'empereur ont découvert
+    dans les textes anciens que le karma du samouraï qui cherche à reprendre
+    l'Amulette et le karma de %o sont unis
+    comme les saisons s'unissent pour former une année.
 
-    "Because you have shown such fidelity, the emperor requests
-    that you take leave of other obligations and continue on the
-    road that fate has set your feet upon.  I would consider it
-    an honor if you would allow me to watch your household until
-    you return with the Amulet."
+    "Puisque vous avez fait preuve d'une telle fidélité, l'empereur vous
+    demande de vous libérer de vos autres obligations et de poursuivre la
+    route sur laquelle le destin a placé vos pas.  Je considérerais comme
+    un honneur que vous me permettiez de veiller sur votre maisonnée
+    jusqu'à votre retour avec l'Amulette."
 
-With that, %l bows, and places his sword atop
+Sur ces mots, %l s'incline, et pose son sabre sur
 %o.]],
       },
       offeredit2 = {
-         synopsis = "[Take %o, return to %Z, and recover the Amulet.]",
+         synopsis = "[Prenez %o, retournez dans %Z et reprenez l'Amulette.]",
          output = "text",
-         text = [[%l holds %o tightly for a moment, then returns
-his gaze to you.
+         text = [[%lC serre %o un instant, puis pose de nouveau
+son regard sur vous.
 
-"The time is ripe to recover the Amulet.  Return to %Z
-through the magic portal that transported you here so that you may
-achieve the destiny which awaits you."]],
+"Le temps est venu de reprendre l'Amulette.  Retournez dans %Z
+par le portail magique que vous avez emprunté pour venir ici, afin d'accomplir
+la destinée qui vous attend."]],
       },
       othertime = {
-         synopsis = "[%HC is threatened by %n.]",
+         synopsis = "[%HC est menacé par %n.]",
          output = "text",
-         text = [[You are back at %H.
+         text = [[Vous voici de retour dans %H.
 
-Instantly you sense a subtle change in your karma.  You seem to know that
-if you do not succeed in your quest, %n will have destroyed
-the kami of %H before you return again.]],
+Aussitôt, vous sentez un subtil changement dans votre karma.  Vous semblez
+savoir que si vous ne réussissez pas dans votre quête, %n aura détruit
+le kami des lieux avant votre prochain retour.]],
       },
       posthanks = {
-         text = "%lC bows.  \"%p-sama, tell us of your search for the Amulet.\"",
+         text = "%lC s'incline.  \"%p-sama, parlez-nous de votre quête de l'Amulette.\"",
       },
    },
    Tou = {
       assignquest = {
-         synopsis = "[Enter %i and recover %o from %n.]",
+         synopsis = "[Entrez dans %i et reprenez %o à %n.]",
          output = "text",
-         text = [["Yes, you've become a great %c since I last saw you.
-		 
-"Sadly, things haven't been going so well here in %H.  A new
-%nt was appointed, and he hosted a dinner to meet other civic
-leaders.  At the door, one of his henchmen offered to look after my wallet.
+         text = [["Oui, vous avez fait de grands progrès en tant que %c depuis notre dernière rencontre.
 
-"I know what you're thinking:  'How kind!'  But it turns out that even in the
-Thieves' Guild, there are people you can't trust.  My wallet contained -- you
-know the Royal Mint has been trialing credit cards, so we won't have to carry
-bags of gold around?  Most of the prototypes haven't worked, and are only
-good for picking locks.  This one, %o, is
-one of a kind.  As the highest spending and most often mugged resident of
-%H, it was entrusted to me.  But when I got my wallet back, the Card was
-missing.  I appealed to the Patrician, and he said the matter fell under the
-doctrine of _detectores custodes_.
+"Hélas, les choses ne vont pas très bien ici, à %H.  La Guilde
+des Voleurs s'est donné un nouveau chef, %n, qui a offert un dîner pour
+rencontrer les autres notables de la ville.  À la porte, l'un de ses
+hommes de main a proposé de surveiller mon portefeuille.
 
-"We believe %n has the Card, and that he's holed himself
-up in %i.  With the power of %o, the
-Thieves are bolder than ever.  Citizens are frightened, and tourism is
-down. We need somebody to find their way into %i and
-recover the Card before there are no %cp left!
+"Je sais ce que vous pensez : 'Comme c'est gentil !'  Mais il se trouve que
+même à la Guilde des Voleurs, il y a des gens à qui on ne peut pas faire
+confiance.  Mon portefeuille contenait -- vous savez que la Monnaie Royale
+fait des essais de cartes de crédit, pour qu'on n'ait plus à trimballer des
+sacs d'or ?  La plupart des prototypes n'ont pas fonctionné, et ne servent
+qu'à crocheter les serrures.  Celle-ci, %o, est
+unique en son genre.  En tant que résident d'%H qui dépense le plus et se
+fait le plus souvent détrousser, c'est à moi qu'on l'a confiée.  Mais quand
+j'ai récupéré mon portefeuille, la Carte avait disparu.  J'ai fait appel au
+Patricien, qui m'a répondu que l'affaire relevait de la doctrine du
+_detectores custodes_.
 
-"So, %p, are you ready for a little Detour?"]],
+"Nous pensons que %n détient la Carte, et qu'il s'est
+retranché dans %i.  Grâce au pouvoir de %o, les
+Voleurs sont plus audacieux que jamais.  Les citoyens ont peur, et le
+tourisme est en baisse.  Il nous faut quelqu'un qui trouve le moyen
+d'entrer dans %i et de reprendre la Carte avant qu'il ne reste plus un
+seul %c !
+
+"Alors, %p, ça vous dit, un petit Détour ?"]],
       },
       badalign = {
-         synopsis = "[You are not sufficiently %a.  Return when you are.]",
+         synopsis = "[Vous ne suivez pas assez fidèlement le chemin %a.  Revenez quand ce sera le cas.]",
          output = "text",
-         text = [["Oh, %p, you haven't stayed true to the %a path.  You know
-%d doesn't like it when you stray.  You can't possibly go after
-%n like this!
+         text = [["Oh, %p, vous avez quitté le chemin %a.  Vous savez que
+%d n'aime pas qu'on s'égare.  Vous ne pouvez pas affronter %n
+dans cet état !
 
-"Get back to the Dungeon.  Work on yourself.  Come back when you're truly
-%a, and we'll talk."]],
+"Retournez dans le Donjon.  Travaillez sur vous-même.  Revenez quand vous
+suivrez vraiment le chemin %a, et on en reparlera."]],
       },
       badlevel = {
-         synopsis = "[Return when you are %Ra.]",
+         synopsis = "[Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["%pC, you're still only %ra.  I don't think you're
-prepared to take on %n yet.
+         text = [["%pC, vous n'avez encore que le rang de %r.  Je ne crois pas que vous
+soyez de taille à affronter %n pour l'instant.
 
-"Carry on with your Tour.  Explore.  Take photos.  Learn things.  Come back
-when you're a %R, and you might stand a chance.
-%nC will still be here when you're ready for him."]],
+"Poursuivez votre Tour.  Explorez.  Prenez des photos.  Apprenez des choses.
+Revenez quand vous aurez le rang de %R, et vous aurez peut-être une chance.
+%nC sera toujours là quand vous serez de taille à l'affronter."]],
       },
       discourage = {
-         "\"I beat %l real bad and I'll beat you even worse, %p.\"",
-         "\"Not even %d can help you here.\"",
-         "\"Beg for mercy, and maybe I'll consider thinking about going easy on you.\"",
-         "\"You coulda made a good Thief if you weren't so damn %a.\"",
-         "\"Write your postcards, %p.  Your Tour ends here.\"",
-         "\"Couldn't %l send me a better %c to beat up?\"",
-         "\"With %o, I'm gonna run up a bill that'll bankrupt %H.\"",
-         "\"Nobody defeats %n.  NOBODY!\"",
-         "\"Poor, naive %l.  Did he send you to ask me nicely to give %o back?\"",
-         "\"How do you spell %p?  I want to make sure your grave is spelled right.\"",
+         "\"J'ai salement battu %l, et je vais te battre encore plus salement, %p.\"",
+         "\"Même %d ne peut rien pour toi ici.\"",
+         "\"Implore ma pitié, et peut-être que j'envisagerai de songer à y aller doucement avec toi.\"",
+         "\"T'aurais pu faire un bon Voleur si tu suivais pas tant le chemin %a.\"",
+         "\"Écris tes cartes postales, %p.  Ton Tour s'arrête ici.\"",
+         "\"%lC pouvait pas m'envoyer un meilleur %c à tabasser ?\"",
+         "\"Avec %o, je vais faire une note qui ruinera %H.\"",
+         "\"Personne ne vient à bout de %n.  PERSONNE !\"",
+         "\"Pauvre %l, si naïf.  Il t'a envoyé me demander gentiment de rendre %o ?\"",
+         "\"Comment ça s'écrit, %p ?  Je veux être sûr que ta tombe soit sans faute.\"",
       },
       encourage = {
-         "\"Who'd have thought %n would be such a criminal!\"",
-         "\"Look out for the traps on the way to %i.  Some date back to the Mage Wars!\"",
-         "\"Get %o back, and hopefully I can cancel %ns transactions.\"",
-         "\"If you're stuck, try praying to %d. %dH's whimsical, but %dh sometimes helps %cp out.\"",
-         "\"You have to defeat %n, or %nh'll follow you back here!\"",
-         "\"If you can grab %o from %n, it might help you beat %ni.\"",
-         "\"Hurry, %p!  We're all depending on you.\"",
-         "\"I know you won't let me down, %p!\"",
-         "\"Stay %a.  Remember, %cp don't take sides, we take photos.\"",
-         "\"If anybody gives you trouble, remember: a smile can go a long way.\"",
+         "\"Qui aurait cru que %n serait un tel criminel !\"",
+         "\"Attention aux pièges sur le chemin de %i.  Certains datent des Guerres des Mages !\"",
+         "\"Reprenez %o, et j'espère pouvoir annuler les transactions qu'a faites %n.\"",
+         "\"Si vous êtes dans l'impasse, essayez de prier %d.  Les dieux sont capricieux, mais %dh aide parfois les %cp.\"",
+         "\"Vous devez vaincre %n, sinon %nh vous suivra jusqu'ici !\"",
+         "\"Si vous arrivez à reprendre %o à %n, ça pourrait vous aider à %ni battre.\"",
+         "\"Faites vite, %p !  Nous comptons tous sur vous.\"",
+         "\"Je sais que vous ne me laisserez pas tomber, %p !\"",
+         "\"Ne quittez pas le chemin %a.  Souvenez-vous, les %cp ne prennent pas parti, ils prennent des photos.\"",
+         "\"Si quelqu'un vous cause des ennuis, souvenez-vous : un sourire peut mener loin.\"",
       },
       firsttime = {
-         synopsis = "[You're back at %H, but it's still ominously quiet.]",
+         synopsis = "[Vous voici de retour à %H, mais tout est d'un calme inquiétant.]",
          output = "text",
-         text = [[You come round to find yourself looking at the familiar sights of
-%H.  You breathe a sigh of relief, taking in the polluted air.
+         text = [[En reprenant vos esprits, vous retrouvez les paysages familiers
+d'%H.  Vous poussez un soupir de soulagement, en respirant l'air pollué.
 
-But this isn't %H as you remember it.  The streets are... quiet?
-Doors close, curtains twitch, and a few residents scurry about nervously, but
-you can't hear the hawkers selling their ropy meat pies, or the cargo barges
-bulldozing their way along the river.  A whiff of rotten cabbages suggests
-that the fields outside the city aren't being tended properly.
+Mais ce n'est pas l'%H dont vous vous souvenez.  Les rues sont... calmes ?
+Des portes se ferment, des rideaux frémissent, et quelques habitants
+filent nerveusement, mais vous n'entendez pas les colporteurs vanter leurs
+tourtes à la viande filandreuse, ni les péniches se frayer un chemin à
+coups de proue le long du fleuve.  Une bouffée de chou pourri laisse penser
+que les champs hors de la ville ne sont pas correctement entretenus.
 
-Something isn't right.  Hopefully, it's all some sort of misunderstanding.
-%lC will sort it out, when you find him.]],
+Quelque chose ne tourne pas rond.  Avec un peu de chance, ce n'est qu'une
+sorte de malentendu.  %lC arrangera tout ça, quand vous l'aurez trouvé.]],
       },
       goal_alt = {
-         text = "You're back at %ns lair.",
+         text = "Vous voici de retour dans le repaire où se terre %n.",
       },
       goal_first = {
-         text = "You feel the presence of %o nearby.",
+         text = "Vous sentez la présence de %o tout près.",
       },
       goal_next = {
-         text = [[You'll find %o this time, for sure!]],
+         text = [[Cette fois, vous trouverez %o, c'est sûr !]],
       },
       gotit = {
-         synopsis = "[You feel contented as you pick up %o.  Now to return it to %l.]",
+         synopsis = "[Vous ressentez un grand contentement en ramassant %o.  Reste à la rapporter à %l.]",
          output = "text",
-         text = [[You feel a rich contentment as you pick up %o.
-That'll do nicely!  You'd better return it to %l as soon as possible.]],
+         text = [[Vous ressentez un profond contentement en ramassant %o.
+Voilà qui fera très bien l'affaire !  Vous feriez mieux de la rapporter à %l
+au plus vite.]],
       },
       guardtalk_after = {
-         "\"Gehennom on 5 zorkmids a day -- more like 500 a day if you ask me.\"",
-         "\"Do you know where I could find some nice postcards of The Gnomish Mines?\"",
-         "\"Have you tried the weird toilets?\"",
-         "\"If you stick around, I'll show you the pictures from my latest trip.\"",
-         "\"Did you bring me back any souvenirs?\"",
+         "\"La Géhenne pour 5 zorkmids par jour -- plutôt 500 par jour, si tu veux mon avis.\"",
+         "\"Tu sais où je pourrais trouver de jolies cartes postales des Mines des Gnomes ?\"",
+         "\"Tu as essayé les toilettes bizarres ?\"",
+         "\"Si tu restes un peu, je te montrerai les photos de mon dernier voyage.\"",
+         "\"Tu m'as rapporté des souvenirs ?\"",
       },
       guardtalk_before = {
-         "\"Gehennom on 5 zorkmids a day -- more like 500 a day if you ask me.\"",
-         "\"Do you know where I could find some nice postcards of The Gnomish Mines?\"",
-         "\"Have you tried the weird toilets?\"",
-         "\"Don't stay at the Inn, I hear the food is terrible and it has rats.\"",
-         "\"They told me that this was the off season!\"",
+         "\"La Géhenne pour 5 zorkmids par jour -- plutôt 500 par jour, si tu veux mon avis.\"",
+         "\"Tu sais où je pourrais trouver de jolies cartes postales des Mines des Gnomes ?\"",
+         "\"Tu as essayé les toilettes bizarres ?\"",
+         "\"Ne loge pas à l'Auberge, il paraît que la cuisine est infecte et qu'il y a des rats.\"",
+         "\"On m'avait dit que c'était la basse saison !\"",
       },
       hasamulet = {
-         synopsis = "[You have the Amulet.  Take it to the Astral Plane to finish your task.]",
+         synopsis = "[Vous avez l'Amulette.  Portez-la sur le Plan Astral pour achever votre tâche.]",
          output = "text",
-         text = [["%pC!  And you found the Amulet of Yendor?  Amazing!
+         text = [["%pC !  Et vous avez trouvé l'Amulette de Yendor ?  Incroyable !
 
-"But you can't keep it here in %H.  It won't be safe!
+"Mais vous ne pouvez pas la garder ici, à %H.  Elle ne serait pas en sécurité !
 
-"Besides, the Amulet isn't for us %cp, it's for %d.  I've heard
-%dh has a temple on the Astral Plane, which incidentally is a gorgeous place
-to visit this time of year.  Find your way there, then offer it to %d
-on %dj high altar.  %dH'll be delighted to have it to %dIself at last!
+"D'ailleurs, l'Amulette n'est pas pour nous autres %cp, elle est pour %d.
+J'ai entendu dire que %d a un temple sur le Plan Astral, qui est d'ailleurs
+un endroit magnifique à visiter à cette époque de l'année.  Trouvez le
+chemin, puis offrez-la à %d sur son grand autel.  Quelle joie ce sera pour
+%d de l'avoir enfin à soi !
 
-Safe journey, %p."]],
+Bon voyage, %p."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses at you as %nh dies.]",
+         synopsis = "[%nC vous maudit en mourant.]",
          output = "text",
-         text = [[%nC' body buckles.  As he gasps for breath, %nh manages to
-curse:
+         text = [[%nC s'effondre, le corps plié en deux.  Cherchant son souffle, %nh
+parvient à proférer une malédiction :
 
-"You won't get away, %p!  My guys will come after you wherever
-you go, and take %o back for the Thieves."
-And he's gone.
+"Tu t'en tireras pas comme ça, %p !  Mes gars te poursuivront où que
+tu ailles, et reprendront %o pour les Voleurs."
+Et il n'est plus.
 
-For a moment, a black cloaked figure flickers in the corner of your eye, and
-you thought you could hear hoofbeats.]],
+Un instant, une silhouette en manteau noir vacille au coin de votre œil, et
+vous avez cru entendre des bruits de sabots.]],
       },
       leader_first = {
-         synopsis = "[Someone must defeat %n.  Are you ready?]",
+         synopsis = "[Quelqu'un doit vaincre %n.  Êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["Aloha %p, it's so good to see you!  How goes your Tour?
+         text = [["Aloha, %p, je suis si content de vous voir !  Comment se passe votre Tour ?
 
-Listen, I'm so sorry to cut your vacation short, but we've got a little bit
-of a situation here.  Somebody has to do something about
-%n!  Could that somebody be you?  Let me take a look at you..."]],
+Écoutez, je suis vraiment désolé d'écourter vos vacances, mais nous avons
+un petit problème ici.  Quelqu'un doit faire quelque chose au sujet de
+%n !  Et si ce quelqu'un, c'était vous ?  Laissez-moi vous regarder..."]],
       },
       leader_last = {
-         synopsis = "[Leave %H and never return.]",
+         synopsis = "[Quittez %H et n'y revenez jamais.]",
          output = "text",
-         text = [["Oh, no, %p.  You're no %c.  Leave %H, and don't show your
-face here again.  Your membership of the %H Guild of Trespassers
-is revoked.  Aloha."]],
+         text = [["Oh non, %p.  Vous n'avez rien d'un %c.  Quittez %H, et ne
+remontrez jamais votre visage ici.  Votre adhésion à la Guilde des Intrus
+de la ville est révoquée.  Aloha."]],
       },
       leader_next = {
-         text = "\"Aloha again, %p.  Feeling ready this time?\"",
+         text = "\"Re-aloha, %p.  Vous vous sentez à la hauteur, cette fois ?\"",
       },
       leader_other = {
-         text = "\"I hope you've prepared yourself this time.\"",
+         text = "\"J'espère que vous avez fait vos préparatifs, cette fois.\"",
       },
       locate_first = {
-         synopsis = "[You %x the handiwork of %ns flunkies.]",
+         synopsis = "[Vous parvenez à %x l'œuvre des larbins qu'emploie %n.]",
          output = "text",
-         text = [[This isn't the friendliest part of town.  There are Thieves' marks
-everywhere, and %ns flunkies creep along the alleyways.]],
+         text = [[Ce n'est pas le quartier le plus accueillant de la ville.  Il y a des
+marques de Voleurs partout, et les larbins qu'emploie %n rasent les murs
+des ruelles.]],
       },
       locate_next = {
-         text = "You know that this time you'll have to destroy %n.",
+         text = "Vous savez que cette fois, vous devrez détruire %n.",
       },
       nemesis_first = {
-         synopsis = "[%rA will not defeat me.]",
+         synopsis = "[Quelqu'un du rang de %r ne me vaincra pas.]",
          output = "text",
-         text = [["So, %p, %l thinks you're gonna take
-%o from me.  How cute is that?
+         text = [["Alors, %p, %l croit que tu vas me prendre
+%o.  C'est pas mignon, ça ?
 
-"He sends %ra to defeat me.  Me!  When this is over, I'll put you
-in cement shoes and throw you onto the river!"]],
+"Il m'envoie quelqu'un du rang de %r pour me vaincre.  Moi !  Quand ce sera
+fini, je te coulerai les pieds dans le béton et je te jetterai dans le fleuve !"]],
       },
       nemesis_next = {
-         text = [["I let you get away the last time, %p.  This
-time, I'll destroy you."]],
+         text = [["Je t'ai laissé filer la dernière fois, %p.  Cette
+fois, je vais te détruire."]],
       },
       nemesis_other = {
-         synopsis = "[Run away or you will suffer severely.]",
+         synopsis = "[Fuis, ou tu souffriras atrocement.]",
          output = "text",
-         text = [["These meetings are starting to bore me.  You're eating into my precious
-scheming time.
+         text = [["Ces rencontres commencent à m'ennuyer.  Tu empiètes sur mon précieux
+temps de magouilles.
 
-"If you don't run away now, I'm gonna make you suffer so bad that %l
-will feel guilty for sending you here."]],
+"Si tu fiches pas le camp tout de suite, je vais te faire souffrir si fort
+que %l se sentira coupable de t'avoir envoyé ici."]],
       },
       nemesis_wantsit = {
-         synopsis = "[\"Return %o to me and we will rule %H.\"]",
+         synopsis = "[\"Rends-moi %o et nous régnerons sur %H.\"]",
          output = "text",
-         text = [["You putz.  You don't even know how to use
-%o.  Give it back to me and I'll teach you,
-and together, we can rule %H.  And we really can!  I'm not just
-saying that so you'll give me %o back, I
-swear.  Thief's honor!
+         text = [["Pauvre andouille.  Tu sais même pas te servir de
+%o.  Rends-la-moi et je t'apprendrai,
+et ensemble, nous pourrons régner sur %H.  Et on le pourra vraiment !
+Je dis pas ça juste pour que tu me rendes %o,
+je le jure.  Parole de Voleur !
 
-"But do it now, 'cause I'm running out of patience."]],	
+"Mais fais-le maintenant, parce que ma patience a des limites."]],
       },
       nexttime = {
-         text = "Once again, you are back at %H.",
+         text = "Une fois de plus, vous voici de retour à %H.",
       },
       offeredit = {
-         synopsis = "[Take %o and with %ds guidance, recover the Amulet.]",
+         synopsis = "[Prenez %o et, avec l'aide de %d, reprenez l'Amulette.]",
          output = "text",
-         text = [[%lC takes %o and
-flexes it in his hand, then looks up and smiles.
+         text = [[%lC prend %o et
+la fait plier dans sa main, puis lève les yeux et sourit.
 
-"%pC, while you were away, %d appeared to me, and suggested I
-transfer %o to you.  Carry it with you on
-your quest for the Amulet of Yendor, and you'll travel in good company.
+"%pC, pendant votre absence, %d m'est apparu et m'a suggéré de
+vous transférer %o.  Emportez-la avec vous dans
+votre quête de l'Amulette de Yendor, et vous voyagerez en bonne compagnie.
 
-"Remember -- there are some things gold can buy.  For everything else,
-there's %o."]],
+"Souvenez-vous -- il y a des choses que l'or peut acheter.  Pour tout le
+reste, il y a %o."]],
       },
       offeredit2 = {
-         synopsis = "[Keep %o and return to %Z through the portal.]",
+         synopsis = "[Gardez %o et retournez dans %Z par le portail.]",
          output = "text",
-         text = [["%oC is yours.  Don't leave home without it!
-%Z are right on the other side of the magic portal you used
-to get here."]],
+         text = [["%oC est à vous.  Ne partez jamais sans elle !
+%Z sont juste de l'autre côté du portail magique que vous avez
+emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[You are back at %H.  Things are looking so dead,
-you feel there may soon be no %cs here at all.]],
+         text = [[Vous voici de retour à %H.  Tout semble si mort que vous
+avez l'impression qu'il ne restera bientôt plus un seul %c ici.]],
       },
       posthanks = {
-         text = [["Just look at you, %p!  Tell me all about your Tour.  Did you
-find the Amulet of Yendor yet?"]],
+         text = [["Mais regardez-vous, %p !  Racontez-moi tout de votre Tour.  Avez-vous
+déjà trouvé l'Amulette de Yendor ?"]],
       },
    },
    Val = {
       assignquest = {
-         synopsis = "[Find %i; defeat %n; return with %o.]",
+         synopsis = "[Trouvez %i ; vainquez %n ; revenez avec %o.]",
          output = "text",
-         text = [["It is not clear, %p, for my sight is limited without our relic.
-But it is now likely that you can defeat %n, and recover
+         text = [["Ce n'est pas clair, %p, car ma vision est limitée sans notre relique.
+Mais il est désormais probable que vous puissiez vaincre %n et reprendre
 %o.
 
-"A short time ago, %n and his minions attacked this place.  They
-opened the huge volcanic vents you %x about the hill, and attacked.  I knew
-that this was to come to pass, and had asked %d for a group of %gP
-to help defend this place.  The few you %x here are the mightiest of
-Valhalla's own, and are all that are left of one hundred %d sent.
+"Il y a peu, %n et ses sbires ont attaqué ce lieu.  Ils ont
+ouvert les immenses cheminées volcaniques que vous pouvez %x autour de la
+colline, puis ont attaqué.  Je savais que cela devait advenir, et j'avais
+demandé à %d une troupe de %gp pour aider à défendre ce lieu.  Les quelques
+guerriers que vous pouvez %x ici sont les plus puissants du Valhalla, et
+sont tout ce qui reste des cent que %d a envoyés.
 
-"Despite the great and glorious battle we fought, %n managed at
-last to steal %o.  This has upset the balance of the universe,
-and unless %oh is returned into my care, %n may start Ragnarok.
+"Malgré la grande et glorieuse bataille que nous avons livrée, %n est
+finalement parvenu à dérober %o.  Cela a rompu l'équilibre de l'univers,
+et si on ne me le rend pas, %n pourrait déclencher le Ragnarök.
 
-"You must find the entrance to %i.  Travel downward
-from there and you will find %ns lair.  Defeat him and
-return %o to me."]],
+"Vous devez trouver l'entrée menant vers %i.  Descendez
+à partir de là et vous trouverez le repaire de %n.  Vainquez-le et
+rapportez-moi %o."]],
       },
       badalign = {
-         synopsis = "[You have strayed from the %a path.  Return after you purify yourself.]",
+         synopsis = "[Vous avez quitté le chemin %a.  Revenez après vous être purifiée.]",
          output = "text",
-         text = [["NO!  This is terrible.  I see you becoming an ally of %n, and
-leading his armies in the final great battles.  This must not come to
-pass!  You have strayed from the %a path.  You must purge yourself,
-and return here only when you have regained a state of purity."]],
+         text = [["NON !  C'est terrible.  Je vous vois devenir l'alliée de %n, et
+mener ses armées lors des dernières grandes batailles.  Cela ne doit pas
+advenir !  Vous avez quitté le chemin %a.  Vous devez vous purifier,
+et ne revenir ici que lorsque vous aurez retrouvé un état de pureté."]],
       },
       badlevel = {
-         synopsis = "[Come back when you are %Ra.]",
+         synopsis = "[Revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["I see you and %n fighting, %p.  But you are not prepared and
-shall die at %ns hand if you proceed.  No.  This will not do.
-Go back out into the world, and grow more experienced at the ways of war.
-Only when you have returned %Ra will you be able to defeat %n."]],
+         text = [["Je vous vois combattre %n, %p.  Mais vous n'êtes pas prête, et
+vous périrez de la main de %n si vous poursuivez.  Non.  Cela ne va pas.
+Retournez de par le monde, et acquérez davantage d'expérience dans l'art
+de la guerre.  Ce n'est qu'une fois revenue avec le rang de %R que vous
+pourrez vaincre %n."]],
       },
       discourage = {
-         "\"I am your death, %c.\"",
-         "\"You cannot prevail, %r.  I have foreseen your every move.\"",
-         "\"With you out of the way, Valhalla will be mine for the taking.\"",
-         "\"I killed scores of %ds best when I took %o. Do you really think that one %c can stand against me?\"",
-         "\"Who bears the souls of %cP to Valhalla, %r?\"",
-         "\"No, %d cannot help you here.\"",
-         "\"Some instrument of %d you are, %p.  You are a weakling!\"",
-         "\"Never have I seen %ca so clumsy in battle.\"",
-         "\"You die now, little %s.\"",
-         "\"Your body I destroy now, your soul when my hordes overrun Valhalla!\"",
+         "\"Je suis ta mort, %c.\"",
+         "\"Tu ne peux l'emporter, %r.  J'ai prévu chacun de tes gestes.\"",
+         "\"Une fois débarrassé de toi, je n'aurai plus qu'à prendre le Valhalla.\"",
+         "\"J'ai tué des dizaines des meilleurs guerriers de %d en m'emparant de %o.  Crois-tu vraiment qu'une seule %c puisse me tenir tête ?\"",
+         "\"Qui portera les âmes des %cp jusqu'au Valhalla, %r ?\"",
+         "\"Non, %d ne peut rien pour toi ici.\"",
+         "\"Bel instrument de %d que tu fais, %p.  Tu n'es qu'une mauviette !\"",
+         "\"Jamais je n'ai vu de %c aussi maladroite au combat.\"",
+         "\"Tu vas mourir, petite %s.\"",
+         "\"Ton corps, je le détruis maintenant ; ton âme, quand mes hordes submergeront le Valhalla !\"",
       },
       encourage = {
-         "\"Go with the blessings of %d.\"",
-         "\"Call upon %d when you are in need.\"",
-         "\"Use %o if you can.  It will protect you.\"",
-         "\"Magical cold is very effective against %n.\"",
-         "\"To face %n, you will need to be immune to fire.\"",
-         "\"May %d strengthen your sword-arm.\"",
-         "\"Trust in %d.  He will not desert you.\"",
-         "\"It becomes more likely that Ragnarok will come with every passing moment. You must hurry, %p.\"",
-         "\"If %n can master %o, he will be powerful enough to face %d far earlier than is fated.  This must not be!\"",
-         "\"Remember your training, %p.  You can succeed.\"",
+         "\"Allez avec la bénédiction de %d.\"",
+         "\"Invoquez %d lorsque vous serez dans le besoin.\"",
+         "\"Servez-vous de %o si vous le pouvez.  Il vous protégera.\"",
+         "\"Le froid magique est très efficace contre %n.\"",
+         "\"Pour affronter %n, vous devrez être immunisée contre le feu.\"",
+         "\"Puisse %d fortifier votre bras armé.\"",
+         "\"Fiez-vous à %d.  Il ne vous abandonnera pas.\"",
+         "\"La venue du Ragnarök devient plus probable à chaque instant.  Vous devez vous hâter, %p.\"",
+         "\"Si %n parvient à maîtriser %o, il sera assez puissant pour affronter %d bien plus tôt que le destin ne l'a prévu.  Cela ne doit pas être !\"",
+         "\"Souvenez-vous de votre entraînement, %p.  Vous pouvez réussir.\"",
       },
       firsttime = {
-         synopsis = "[You arrive below %H.  Something is wrong; there is lava present.]",
+         synopsis = "[Vous arrivez en contrebas de %H.  Quelque chose ne va pas ; il y a de la lave.]",
          output = "text",
-         text = [[You materialize at the base of a snowy hill.  Atop the hill sits
-a place you know well, %H.  You immediately realize
-that something here is very wrong!
+         text = [[Vous vous matérialisez au pied d'une colline enneigée.  Au sommet de la
+colline se dresse un lieu que vous connaissez bien, %H.  Vous comprenez
+aussitôt que quelque chose ne va pas du tout !
 
-In places, the snow and ice have been melted into steaming pools of
-water.  Fumaroles and pools of bubbling lava surround the hill.
-The stench of sulphur is carried through the air, and you %x creatures
-that should not be able to live in this environment moving towards you.]],
+Par endroits, la neige et la glace ont fondu en mares d'eau fumante.
+Des fumerolles et des mares de lave bouillonnante entourent la colline.
+L'air charrie une puanteur de soufre, et vous pouvez %x des créatures
+qui ne devraient pas pouvoir vivre dans un tel milieu avancer vers vous.]],
       },
       goal_first = {
-         synopsis = "[This is the lair of %n.]",
+         synopsis = "[C'est le repaire de %n.]",
          output = "text",
-         text = [[Through clouds of sulphurous gasses, you %x a rock palisade
-surrounded with a moat of bubbling lava.  You remember the description
-from something that %l said.  This is the lair of %n.]],
+         text = [[À travers des nuages de gaz sulfureux, vous parvenez à %x une palissade
+de roche entourée d'une douve de lave bouillonnante.  Vous vous souvenez de
+la description que %l vous en a faite.  C'est le repaire de %n.]],
       },
       goal_next = {
-         text = "Once again, you stand in sight of %ns lair.",
+         text = "Une fois de plus, vous voici en vue du repaire de %n.",
       },
       gotit = {
-         synopsis = "[You must return %o to %l.]",
+         synopsis = "[Vous devez rapporter %o à %l.]",
          output = "text",
-         text = [[As you pick up %o, your mind is suddenly filled with images,
-and you perceive all of the possibilities of each potential choice you
-could make.  As you begin to control and channel your thoughts, you
-realize that you must return %o to %l immediately.]],
+         text = [[Lorsque vous ramassez %o, votre esprit s'emplit soudain d'images,
+et vous percevez toutes les possibilités de chaque choix que vous pourriez
+faire.  Tandis que vous commencez à maîtriser et canaliser vos pensées,
+vous comprenez que vous devez rapporter immédiatement %o à %l.]],
       },
       guardtalk_after = {
-         "\"Hail, and well met, brave %c.\"",
-         "\"May %d guide your steps, %p.\"",
-         "\"%lC told us you had succeeded!\"",
-         "\"You recovered %o just in time, %p.\"",
-         "\"Hail %d, for delivering %o back to us.\"",
+         "\"Salut à toi, brave %c, heureuse rencontre.\"",
+         "\"Que %d guide tes pas, %p.\"",
+         "\"%lC nous a dit que tu avais réussi !\"",
+         "\"Tu as repris %o juste à temps, %p.\"",
+         "\"Gloire à %d, qui nous a rendu %o.\"",
       },
       guardtalk_before = {
-         "\"Hail, and well met, brave %c.\"",
-         "\"May %d guide your steps, %p.\"",
-         "\"%lC weakens.  Without %o, her foresight is dim.\"",
-         "\"You must hurry, %p, else Ragnarok may well come.\"",
-         "\"I would deal with this foul %n myself, but %d forbids it.\"",
+         "\"Salut à toi, brave %c, heureuse rencontre.\"",
+         "\"Que %d guide tes pas, %p.\"",
+         "\"%lC s'affaiblit.  Sans %o, sa prescience s'obscurcit.\"",
+         "\"Tu dois te hâter, %p, sinon le Ragnarök pourrait bien survenir.\"",
+         "\"Je réglerais bien son compte à cet immonde %n moi-même, mais %d me l'interdit.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to %ds temple on the Astral Plane and offer it.]",
+         synopsis = "[Portez l'Amulette jusqu'au temple de %d sur le Plan Astral et offrez-la.]",
          output = "text",
-         text = [["Excellent, %p.  I see you have recovered the Amulet!
+         text = [["Excellent, %p.  Je vois que vous avez repris l'Amulette !
 
-"You must take the Amulet to the Great Temple of %d, on the Astral
-Plane.  There you must offer the Amulet to %d.
+"Vous devez porter l'Amulette jusqu'au Grand Temple de %d, sur le Plan
+Astral.  Là, vous devrez offrir l'Amulette à %d.
 
-"Go now, my %S.  I cannot tell you your fate, as the power of the
-Amulet interferes with mine.  I hope for your success."]],
+"Partez maintenant, %S de notre peuple.  Je ne puis vous prédire votre
+destin, car le pouvoir de l'Amulette interfère avec le mien.  J'espère que
+vous réussirez."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC dies.]",
+         synopsis = "[%nC meurt.]",
          output = "text",
-         text = [[A look of surprise and horror appears on %ns face.
+         text = [[Une expression de surprise et d'horreur apparaît sur le visage de %n.
 
-    "No!!!  %o has lied to me!  I have been misled!"
+    "Non !!!  %oC m'a menti !  J'ai été trompé !"
 
-Suddenly, %n grasps his head and screams in agony, then dies.]],
+Soudain, %n se prend la tête à deux mains et hurle de douleur, puis meurt.]],
       },
       leader_first = {
-         synopsis = "[We need your aid.  Are you ready?]",
+         synopsis = "[Nous avons besoin de votre aide.  Êtes-vous à la hauteur ?]",
          output = "text",
-         text = [["Ah, %p, my %S.  You have returned to %H
-at last.  We are in dire need of your aid, but I must determine if you
-are yet ready for such an undertaking.
+         text = [["Ah, %p, %S de notre peuple.  Vous voici enfin de retour dans %H.
+Nous avons cruellement besoin de votre aide, mais je dois déterminer si
+vous êtes déjà prête pour une telle entreprise.
 
-"Let me read your fate..."]],
+"Laissez-moi lire votre destin..."]],
       },
       leader_last = {
-         synopsis = "[\"Begone from my presence and never return.\"]",
+         synopsis = "[\"Quittez ma présence et ne revenez jamais.\"]",
          output = "text",
-         text = [["No, %p.  Your fate is sealed.  I must cast about for another
-champion.  Begone from my presence, and never return.  Know this, that
-you shall never succeed in this life, and Valhalla is denied to you."]],
+         text = [["Non, %p.  Votre destin est scellé.  Je dois chercher une autre
+championne.  Quittez ma présence, et ne revenez jamais.  Sachez-le : jamais
+vous ne réussirez en cette vie, et le Valhalla vous est refusé."]],
       },
       leader_next = {
-         text = [["Let me read the future for you now, %p, perhaps you have managed to
-change it enough..."]],
+         text = [["Laissez-moi lire votre avenir à présent, %p ; peut-être êtes-vous parvenue
+à le changer suffisamment..."]],
       },
       leader_other = {
-         text = [["Again, I shall read your fate, my %S.  Let us both hope that you have
-made changes to become ready for this task..."]],
+         text = [["De nouveau, je vais lire votre destin, %S de notre peuple.  Espérons
+toutes deux que vous avez suffisamment changé pour être prête à
+accomplir cette tâche..."]],
       },
       locate_first = {
-         synopsis = "[This is the entrance to %i.]",
+         synopsis = "[Voici l'entrée menant vers %i.]",
          output = "text",
-         text = [[The ice and snow gives way to a valley floor.  You %x ahead of you
-a huge round hill surrounded by pools of lava.  This then is the entrance
-to %i.  It looks like you're not going to get in without
-a fight though.]],
+         text = [[La glace et la neige laissent place au fond d'une vallée.  Devant vous,
+vous pouvez %x une immense colline ronde entourée de mares de lave.  Voici
+donc l'entrée menant vers %i.  On dirait toutefois que vous
+n'y entrerez pas sans combattre.]],
       },
       locate_next = {
-         text = "Once again, you stand before the entrance to %i.",
+         text = "Une fois de plus, vous vous tenez devant l'entrée menant vers %i.",
       },
       nemesis_first = {
-         synopsis = "[\"%oC has shown me that I must kill you.\"]",
+         synopsis = "[\"%oC m'a montré que je dois te tuer.\"]",
          output = "text",
-         text = [["So!  %lC has finally sent %ca to challenge me!
+         text = [["Ainsi !  %lC m'envoie enfin une %c pour me défier !
 
-"I thought that mastering %o would enable me to challenge
-%d, but it has shown me that first I must kill you!  So come, little
-%s.  Once I defeat you, I can at last begin the final battle with %d."]],
+"Je pensais que maîtriser %o me permettrait de défier
+%d, mais il m'a montré que je dois d'abord te tuer !  Alors viens, petite
+%s.  Une fois que je t'aurai vaincue, je pourrai enfin engager la bataille
+finale contre %d."]],
       },
       nemesis_next = {
-         text = "\"Again you challenge me, %r.  Good.  I will kill you now.\"",
+         text = "\"Tu me défies encore, %r.  Bien.  Je vais te tuer à présent.\"",
       },
       nemesis_other = {
-         text = "\"Have you not learned yet?  You cannot defeat %n!\"",
+         text = "\"N'as-tu donc pas encore compris ?  Tu ne peux vaincre %n !\"",
       },
       nemesis_wantsit = {
-         text = "\"I will kill you, %c, and wrest %o from your mangled hands.\"",
+         text = "\"Je vais te tuer, %c, et arracher %o de tes mains broyées.\"",
       },
       nexttime = {
-         text = "Once again, you are near the abode of %l.",
+         text = "Une fois de plus, vous voici près de la demeure de %l.",
       },
       offeredit = {
-         synopsis = "[Take %o.  Search for the Amulet.]",
+         synopsis = "[Prenez %o.  Cherchez l'Amulette.]",
          output = "text",
-         text = [[As you approach, %l rises and touches %o.
+         text = [[Tandis que vous approchez, %l se lève et touche %o.
 
-"You may take %o with you, %p.  I have removed from
-it the power to foretell the future, for that power no mortal should
-have.  Its other abilities, however, you have at your disposal.
+"Vous pouvez emporter %o avec vous, %p.  Je lui ai retiré
+le pouvoir de prédire l'avenir, car nul mortel ne devrait posséder
+un tel pouvoir.  Ses autres capacités, en revanche, sont à votre disposition.
 
-"You must now begin in %ds name to search for the Amulet of Yendor.
-May your steps be guided by %d, my %S."]],
+"Vous devez à présent partir, au nom de %d, à la recherche de l'Amulette
+de Yendor.  Que vos pas soient guidés par %d, %S de notre peuple."]],
       },
       offeredit2 = {
-         synopsis = "[You are %os keeper now.  Return through the portal and find the Amulet.]",
+         synopsis = "[C'est à vous de veiller sur %o désormais.  Repassez le portail et trouvez l'Amulette.]",
          output = "text",
-         text = [["Careful, %p!  %oC might break, and that would be
-a tragic loss.  You are its keeper now, and the time has come to
-resume your search for the Amulet.  %Z await your
-return through the magic portal that brought you here."]],
+         text = [["Attention, %p !  %oC pourrait se briser, et ce serait
+une perte tragique.  C'est à vous de veiller sur lui désormais, et l'heure
+est venue de reprendre votre quête de l'Amulette.  %Z attendent votre
+retour par le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[Again you materialize near %ls abode.  You have a nagging feeling
-that this may be the last time you come here.]],
+         text = [[De nouveau, vous vous matérialisez près de la demeure de %l.  Un
+sentiment tenace vous dit que c'est peut-être la dernière fois que vous
+venez ici.]],
       },
       posthanks = {
-         text = [["Greetings, %p.  I have not been able to pay as much attention to
-your search for the Amulet as I have wished.  How do you fare?"]],
+         text = [["Salutations, %p.  Je n'ai pu prêter à votre quête de l'Amulette
+autant d'attention que je l'aurais souhaité.  Comment vous en sortez-vous ?"]],
       },
    },
    Wiz = {
       assignquest = {
-         synopsis = "[Travel to %i; overcome %n; return with %o.]",
+         synopsis = "[Rendez-vous dans %i ; terrassez %n ; revenez avec %o.]",
          output = "text",
-         text = [["Yes, %p, you truly are ready for this dire task.  Listen,
-carefully, for what I tell you now will be of vital importance.
+         text = [["Oui, %p, vous êtes véritablement à la hauteur de cette terrible tâche.
+Écoutez attentivement, car ce que je vais vous dire est d'une importance
+capitale.
 
-"Since you left us to hone your skills in the world, we unexpectedly came
-under attack by the forces of %n.  As you know, we thought
-%n had perished at the end of the last age, but, alas, this was
-not the case.
+"Depuis que vous nous avez quittés pour parfaire vos talents de par le
+monde, nous avons été attaqués à l'improviste par les forces de %n.
+Comme vous le savez, nous pensions que %n avait péri à la fin de l'âge
+dernier, mais hélas, il n'en était rien.
 
-"%nC sent an army of abominations against us.  Among them was a
-minion, mindless and ensorcelled, and thus, in the confusion, it was
-able to penetrate our defenses.  Alas, this creature has stolen
-%o and I fear has delivered %oh to %n.
+"%nC a lancé contre nous une armée d'abominations.  Parmi elles se trouvait
+un serviteur, dépourvu d'esprit et ensorcelé, si bien que, dans la confusion,
+il a pu franchir nos défenses.  Hélas, cette créature a dérobé
+%o, et je crains qu'elle ne l'ait remis à %n.
 
-"Over the years, I had woven most of my power into this amulet, and thus,
-without it, I have but a shadow of my former power, and I fear that I
-shall soon perish.
+"Au fil des ans, j'avais tissé l'essentiel de mon pouvoir dans cette amulette,
+si bien que, sans elle, je ne suis plus que l'ombre de moi-même, et je
+crains de périr bientôt.
 
-"You must travel to %i, and within its dungeons,
-find and overcome %n, and return %o to me.
+"Vous devez vous rendre dans %i, et dans ses souterrains,
+trouver et terrasser %n, puis me rapporter %o.
 
-"Go now, with %d, and complete this quest before it is too late."]],
+"Partez maintenant, avec %d, et accomplissez cette quête avant qu'il ne
+soit trop tard."]],
       },
       badalign = {
-         synopsis = "[Go; come back when you are worthy of %d.]",
+         synopsis = "[Partez ; revenez lorsque vous serez digne de %d.]",
          output = "text",
-         text = [["You amaze me, %p!  How many times did I tell you that the way of a mage
-is an exacting one.  One must use the world with care, lest one leave it
-in ruins and simplify the task of %n.
+         text = [["Vous me stupéfiez, %p !  Combien de fois vous ai-je dit que la voie
+du mage est exigeante ?  Il faut user du monde avec soin, de peur de le
+laisser en ruine et de faciliter la tâche de %n.
 
-"You must go back and show your worthiness.  Do not return until you are
-truly ready for this quest.  May %d guide you in this task."]],
+"Vous devez repartir et prouver votre valeur.  Ne revenez pas avant d'être
+véritablement à la hauteur de cette quête.  Puisse %d vous guider dans
+cette tâche."]],
       },
       badlevel = {
-         synopsis = "[Go; return when you are %Ra.]",
+         synopsis = "[Partez ; revenez lorsque vous aurez atteint le rang de %R.]",
          output = "text",
-         text = [["Alas, %p, you have not yet shown your proficiency as a worthy
-spellcaster.  As %ra, you would surely be overcome in the challenge
-ahead.  Go, now, expand your horizons, and return when you have attained
-renown as %Ra."]],
+         text = [["Hélas, %p, vous n'avez pas encore fait la preuve de vos talents
+en matière de sorts.  Avec votre rang de %r, l'épreuve qui
+vous attend aurait sûrement raison de vous.  Partez maintenant,
+élargissez vos horizons, et revenez lorsque vous aurez acquis la renommée
+que confère le rang de %R."]],
       },
       discourage = {
-         "\"Your puny powers are no match for me, fool!\"",
-         "\"When you are defeated, your torment will last for a thousand years.\"",
-         "\"After your downfall, %p, I shall devour %l for dessert!\"",
-         "\"Are you ready yet to beg for mercy?  I could be lenient...\"",
-         "\"Your soul shall join the enslaved multitude I command!\"",
-         "\"Your lack of will is evident, and you shall die as a result.\"",
-         "\"Your faith in %d is for naught!  Come, submit to me now!\"",
-         "\"A mere %r is nothing compared to my skill!\"",
-         "\"So, you are the best hope of %l?  How droll.\"",
-         "\"Feel my power, %c!  My victory is imminent!\"",
+         "\"Tes pouvoirs dérisoires ne font pas le poids face à moi, imbécile !\"",
+         "\"Après ta défaite, ton tourment durera mille ans.\"",
+         "\"Après ta chute, %p, je dévorerai %l en guise de dessert !\"",
+         "\"Vas-tu enfin implorer ma pitié ?  Je pourrais me montrer clément...\"",
+         "\"Ton âme rejoindra la multitude asservie que je commande !\"",
+         "\"Ton manque de volonté est flagrant, et tu en mourras.\"",
+         "\"Ta foi en %d ne te sert à rien !  Viens, soumets-toi à moi !\"",
+         "\"Le rang de %r n'est rien comparé à mon talent !\"",
+         "\"Ainsi, c'est toi le meilleur espoir de %l ?  Comme c'est cocasse.\"",
+         "\"Sens ma puissance, %c !  Ma victoire est imminente !\"",
       },
       encourage = {
-         "\"Beware, for %n is immune to most magical attacks.\"",
-         "\"To enter %i you must pass many traps.\"",
-         "\"%nC may be vulnerable to physical attacks.\"",
-         "\"%d will come to your aid when you call.\"",
-         "\"You must utterly destroy %n.  He will pursue you otherwise.\"",
-         "\"%oC is a mighty artifact.  With it you can destroy %n.\"",
-         "\"Go forth with the blessings of %d.\"",
-         "\"I will have my %gP watch for your return.\"",
-         "\"Feel free to take any items in that chest that might aid you.\"",
-         "\"You will know when %o is near.  Proceed with care!\"",
+         "\"Prenez garde, car %n est immunisé contre la plupart des attaques magiques.\"",
+         "\"Pour entrer dans %i, vous devrez franchir bien des pièges.\"",
+         "\"%nC est peut-être vulnérable aux attaques physiques.\"",
+         "\"%d vous viendra en aide lorsque vous l'appellerez.\"",
+         "\"Vous devez détruire %n entièrement.  Sinon, il vous poursuivra.\"",
+         "\"%oC est un puissant artefact.  Grâce à lui, vous pourrez détruire %n.\"",
+         "\"Partez avec la bénédiction de %d.\"",
+         "\"Je demanderai à mes %gp de guetter votre retour.\"",
+         "\"N'hésitez pas à prendre dans ce coffre tout objet qui pourrait vous aider.\"",
+         "\"Vous saurez quand %o sera proche.  Avancez avec prudence !\"",
       },
       firsttime = {
-         synopsis = "[You have arrived at %ls tower but something is very wrong.]",
+         synopsis = "[Vous voici à la tour de %l, mais quelque chose ne va pas du tout.]",
          output = "text",
-         text = [[You are suddenly in familiar surroundings.  You notice what appears to
-be a large, squat stone structure nearby.  Wait!  That looks like the
-tower of your former teacher, %l.
+         text = [[Vous vous retrouvez soudain dans un décor familier.  Vous remarquez
+non loin ce qui ressemble à une grande bâtisse de pierre trapue.  Attendez !
+On dirait la tour de votre ancien professeur, %l.
 
-However, things are not the same as when you were last here.  Mists and
-areas of unexplained darkness surround the tower.  There is movement in
-the shadows.
+Pourtant, les choses ne sont plus comme lors de votre dernière visite.  Des
+brumes et des zones d'obscurité inexpliquée entourent la tour.  Quelque chose
+bouge dans les ombres.
 
-Your teacher would never allow such unaesthetic forms to surround the
-tower...  unless something were dreadfully wrong!]],
+Votre professeur ne permettrait jamais à des formes aussi inesthétiques
+d'entourer la tour...  à moins que quelque chose n'aille terriblement mal !]],
       },
       goal_alt = {
-         text = "You have returned to %ns lair.",
+         text = "Vous voici de retour dans le repaire où se terre %n.",
       },
       goal_first = {
-         text = "You feel your mentor's presence; perhaps %o is nearby.",
+         text = "Vous sentez la présence de votre mentor ; peut-être %o est-il tout proche.",
       },
       goal_next = {
-         text = "The aura of %o tingles at the edge of your perception.",
+         text = "L'aura de %o picote aux confins de votre perception.",
       },
       gotit = {
-         synopsis = "[You feel %os power and know you should return %oh to %l.]",
+         synopsis = "[Vous sentez le pouvoir de %o et savez que vous devez le rapporter à %l.]",
          output = "text",
-         text = [[As you touch %o, its comforting power infuses you
-with new energy.  You feel as if you can detect others' thoughts flowing
-through it.  Although you yearn to wear %o and
-attack the Wizard of Yendor, you know you must return it to its rightful
-owner, %l.]],
+         text = [[Lorsque vous touchez %o, son pouvoir réconfortant vous
+emplit d'une énergie nouvelle.  Vous avez l'impression de percevoir les
+pensées d'autrui qui circulent à travers lui.  Bien que vous brûliez de
+porter %o et d'attaquer le Sorcier de Yendor, vous savez que vous devez
+le rendre à sa légitime propriétaire, %l.]],
       },
       guardtalk_after = {
-         "\"I have some eye of newt to trade, do you have a spare blind-worm's sting?\"",
-         "\"The magic portal now seems like it will remain stable for quite some time.\"",
-         "\"Have you noticed how much stronger %l is since %o was recovered?\"",
-         "\"Thank %d!  We weren't positive you would defeat %n.\"",
-         "\"I, too, will venture into the world, because %n was but one of many evils to be vanquished.\"",
+         "\"J'ai un peu d'œil de triton à échanger, tu n'aurais pas un dard d'orvet en trop ?\"",
+         "\"Le portail magique semble désormais devoir rester stable pour un bon moment.\"",
+         "\"As-tu remarqué combien %l est plus forte depuis qu'on a repris %o ?\"",
+         "\"Grâces soient rendues à %d !  Nous n'étions pas certains que tu vaincrais %n.\"",
+         "\"Moi aussi, je vais partir de par le monde, car %n n'était qu'un mal parmi tant d'autres à vaincre.\"",
       },
       guardtalk_before = {
-         "\"Would you happen to have some eye of newt in that overstuffed pack, %s?\"",
-         "\"Ah, the spell to create the magic portal worked.  Outstanding!\"",
-         "\"Hurry!  %lC may not survive that casting of the portal spell!\"",
-         "\"The spells of %n were just too powerful for us to withstand.\"",
-         "\"I, too, will venture into the world, because %n is but one of many evils to be vanquished.\"",
+         "\"Tu n'aurais pas un peu d'œil de triton dans ce sac bien trop rempli, %s ?\"",
+         "\"Ah, le sort de création du portail magique a fonctionné.  Formidable !\"",
+         "\"Vite !  %lC risque de ne pas survivre à l'incantation du sort de portail !\"",
+         "\"Les sorts de %n étaient tout simplement trop puissants pour que nous puissions y résister.\"",
+         "\"Moi aussi, je vais partir de par le monde, car %n n'est qu'un mal parmi tant d'autres à vaincre.\"",
       },
       hasamulet = {
-         synopsis = "[Take the Amulet to %ds altar on the Astral Plane.]",
+         synopsis = "[Portez l'Amulette jusqu'à l'autel de %d sur le Plan Astral.]",
          output = "text",
-         text = [["Congratulations, %p.  I always knew that if anyone could succeed
-in defeating the Wizard of Yendor and his minions, it would be you.
+         text = [["Félicitations, %p.  J'ai toujours su que si quelqu'un pouvait réussir
+à vaincre le Sorcier de Yendor et ses sbires, ce serait vous.
 
-"Go now, and take the Amulet to the Astral Plane.  Once there, present
-the Amulet on the altar of %d.  Along the way you shall pass through
-the four Elemental Planes.  These planes are like nothing you have ever
-experienced before, so be prepared!
+"Partez maintenant, et portez l'Amulette jusqu'au Plan Astral.  Une fois
+là-bas, présentez l'Amulette sur l'autel de %d.  En chemin, vous
+traverserez les quatre Plans Élémentaires.  Ces plans ne ressemblent à rien
+de ce que vous avez connu jusqu'ici, alors préparez-vous !
 
-"For this you were born, %s!  I am very proud of you."]],
+"C'est pour cela que vous avez vu le jour, %s !  Je suis très fière de vous."]],
       },
       killed_nemesis = {
-         synopsis = "[%nC curses you as %nh dies.]",
+         synopsis = "[%nC vous maudit en mourant.]",
          output = "text",
-         text = [[%nC, whose body begins to shrivel up, croaks out:
+         text = [[%nC, dont le corps commence à se ratatiner, croasse :
 
-    "I shall haunt your progress until the end of time.  A thousand
-    curses on you and %l."
+    "Je hanterai ta progression jusqu'à la fin des temps.  Mille
+    malédictions sur toi et sur %l."
 
-Then, the body bursts into a cloud of choking dust, and blows away.]],
+Puis le corps éclate en un nuage de poussière suffocante, et s'envole.]],
       },
       leader_first = {
-         synopsis = "[You have come a long way, but are you ready for the task I require?]",
+         synopsis = "[Vous avez fait bien du chemin, mais êtes-vous à la hauteur de la tâche que je vous réserve ?]",
          output = "text",
-         text = [["Come closer, %p, for my voice falters in my old age.
-Yes, I see that you have come a long way since you went out into the
-world, leaving the safe confines of this tower.  However, I must first
-determine if you have all of the skills required to take on the task
-I require of you."]],
+         text = [["Approchez, %p, car ma voix faiblit avec l'âge.
+Oui, je vois que vous avez fait bien du chemin depuis votre départ
+de par le monde, quittant l'abri sûr de cette tour.  Cependant, je dois
+d'abord déterminer si vous possédez tous les talents nécessaires pour
+accomplir la tâche que je vous réserve."]],
       },
       leader_last = {
-         synopsis = "[\"Get out of here!\"]",
+         synopsis = "[\"Hors d'ici !\"]",
          output = "text",
-         text = [["You fool, %p!  Why did I waste all of those years teaching you
-the esoteric arts?  Get out of here!  I shall find another."]],
+         text = [["Quelle folie, %p !  Pourquoi ai-je gâché toutes ces années à vous enseigner
+les arts ésotériques ?  Hors d'ici !  Je trouverai quelqu'un d'autre."]],
       },
       leader_next = {
-         text = "\"Well, %p, you have returned.  Perhaps you are now ready...\"",
+         text = "\"Eh bien, %p, vous voici de retour.  Peut-être êtes-vous désormais à la hauteur...\"",
       },
       leader_other = {
-         text = [["This is getting tedious, %p, but perseverance is a sign of a true mage.
-I certainly hope that you are truly ready this time!"]],
+         text = [["Cela devient fastidieux, %p, mais la persévérance est la marque d'un vrai mage.
+J'espère bien que vous êtes vraiment à la hauteur cette fois !"]],
       },
       locate_first = {
-         text = "Wisps of fog swirl nearby.  You feel that %ns lair is close.",
+         text = "Des volutes de brume tourbillonnent alentour.  Vous sentez que le repaire où se terre %n est proche.",
       },
       locate_next = {
-         text = "You believe that you may once again invade %i.",
+         text = "Vous pensez pouvoir de nouveau envahir %i.",
       },
       nemesis_first = {
-         synopsis = "[\"Your destruction should make for good sport.\"]",
+         synopsis = "[\"Ta destruction devrait être divertissante.\"]",
          output = "text",
-         text = [["Ah, I recognize you, %p.  So, %l has sent you to steal
-%o from me, hmmm?  Well, %lh is a fool to send such
-a mental weakling against me.
+         text = [["Ah, je te reconnais, %p.  Ainsi, %l te charge de me voler
+%o, hmmm ?  Eh bien, il faut être fou pour envoyer contre moi
+un esprit aussi chétif.
 
-"Your destruction, however, should make for good sport.  In the end, you
-shall beg me to kill you!"]],
+"Ta destruction, toutefois, devrait être divertissante.  À la fin, tu
+me supplieras de te tuer !"]],
       },
       nemesis_next = {
-         synopsis = "[\"Your soul shall soon be mine to command.\"]",
+         synopsis = "[\"Ton âme sera bientôt à mes ordres.\"]",
          output = "text",
-         text = [["How nice of you to return, %p!  I enjoyed our last meeting.  Are you
-still hungry for more pain?
+         text = [["Comme c'est gentil à toi de revenir, %p !  Notre dernière rencontre m'a
+beaucoup plu.  As-tu encore faim de souffrance ?
 
-"Come!  Your soul, like %o, shall soon be mine to command."]],
+"Viens !  Ton âme, comme %o, sera bientôt à mes ordres."]],
       },
       nemesis_other = {
-         text = [["I'm sure that your perseverance shall be the subject of innumerable
-ballads, but you shall not be around to hear them, I fear!"]],
+         text = [["Je ne doute pas que ta persévérance fera l'objet d'innombrables
+ballades, mais tu ne seras plus là pour les entendre, je le crains !"]],
       },
       nemesis_wantsit = {
-         text = [["Thief!  %oC belongs to me, now.  I shall feed
-your living flesh to my minions."]],
+         text = [["Voleur !  %oC m'appartient, désormais.  Je donnerai
+ta chair vivante en pâture à mes sbires."]],
       },
       nexttime = {
-         text = "Once again, you are back at %H.",
+         text = "Une fois de plus, vous voici de retour dans %H.",
       },
       offeredit = {
-         synopsis = "[Take %o with you in your quest for the Amulet.]",
+         synopsis = "[Emportez %o dans votre quête de l'Amulette.]",
          output = "text",
-         text = [[%lC notices %o in your possession,
-beams at you and says:
+         text = [[%lC remarque %o en votre possession,
+vous adresse un sourire radieux et déclare :
 
-    "I knew you could defeat %n and retrieve
-    %o.  We shall never forget this
-    brave service.
+    "Je savais que vous pourriez vaincre %n et reprendre
+    %o.  Nous n'oublierons jamais ce
+    vaillant service.
 
-    "Take %oh with you in your quest for the Amulet of Yendor.
-    I can sense that it has attuned %oiself to you already.
+    "Emportez-le avec vous dans votre quête de l'Amulette de Yendor.
+    Je sens qu'il s'est déjà accordé à vous.
 
-    "May %d guide you in your quest, and keep you from harm."]],
+    "Puisse %d vous guider dans votre quête, et vous garder de tout mal."]],
       },
       offeredit2 = {
-         synopsis = "[Keep %o, return through the portal to %Z; find the other Amulet.]",
+         synopsis = "[Gardez %o, retournez dans %Z par le portail ; trouvez l'autre Amulette.]",
          output = "text",
-         text = [["You are the keeper of %o now.  It is time to
-recover the /other/ Amulet.  %Z await your return through
-the magic portal which brought you here."]],
+         text = [["C'est à vous de veiller sur %o désormais.  Il est temps de
+reprendre l'/autre/ Amulette.  %Z attendent votre retour par
+le portail magique que vous avez emprunté pour venir ici."]],
       },
       othertime = {
-         text = [[You are back at %H.
-You have an odd feeling this may be the last time you ever come here.]],
+         text = [[Vous voici de retour dans %H.
+Vous avez l'étrange sentiment que vous venez peut-être ici pour la dernière fois.]],
       },
       posthanks = {
-         text = [["Come near, my %S, and share your adventures with me.
-So, have you succeeded in your quest for the Amulet of Yendor?"]],
+         text = [["Approchez, %S de notre ordre, et racontez-moi vos aventures.
+Alors, avez-vous réussi votre quête de l'Amulette de Yendor ?"]],
       },
    },
 }

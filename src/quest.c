@@ -157,14 +157,14 @@ is_pure(boolean talk)
 
     if (wizard && talk) {
         if (u.ualign.type != original_alignment) {
-            You("are currently %s instead of %s.", align_str(u.ualign.type),
+            You("êtes actuellement %s au lieu de %s.", align_str(u.ualign.type),
                 align_str(original_alignment));
         } else if (u.ualignbase[A_CURRENT] != original_alignment) {
-            You("have converted.");
+            You("vous êtes converti%s.", UE);
         } else if (u.ualign.record < MIN_QUEST_ALIGN) {
-            You("are currently %d and require %d.", u.ualign.record,
+            You("êtes actuellement à %d et il faut %d.", u.ualign.record,
                 MIN_QUEST_ALIGN);
-            if (yn_function("adjust?", (char *) 0, 'y', TRUE) == 'y')
+            if (yn_function("ajuster ?", (char *) 0, 'y', TRUE) == 'y')
                 u.ualign.record = MIN_QUEST_ALIGN;
         }
     }
@@ -241,9 +241,9 @@ finish_quest(struct obj *obj) /* quest artifact or thrown unique item or faux
             qt_pager("hasamulet");
         } else if (obj->otyp == FAKE_AMULET_OF_YENDOR) {
             verbalize(
-      "Sorry to say, this is a mere imitation of the true Amulet of Yendor.");
+      "Je suis navré de vous le dire, mais ce n'est qu'une imitation de la véritable Amulette de Yendor.");
         } else {
-            verbalize("Ah, I see you've found %s.", the(xname(obj)));
+            verbalize("Ah, je vois que vous avez trouvé %s.", the(xname(obj)));
         }
         return;
     }
@@ -343,8 +343,8 @@ chat_with_leader(struct monst *mtmp)
                 /* being expelled is hardly an achievement but none of the
                    other livelog classifications fit */
                 livelog_printf(LL_ACHIEVE,
-                               "%s has expelled you from the quest",
-                               noit_mon_nam(mtmp));
+                               "%s vous a expulsé%s de la quête",
+                               noit_mon_nam(mtmp), UE);
             }
         } else if (purity == 0) {
             qt_pager("badalign");
@@ -361,7 +361,7 @@ chat_with_leader(struct monst *mtmp)
                matters most for Home 1 that has stairs down which aren't
                easily found */
             livelog_printf(LL_ACHIEVE,
-                     "%s has granted access to proceed deeper into the quest",
+                     "%s vous a permis de vous enfoncer plus avant dans la quête",
                            noit_mon_nam(mtmp));
         }
     }
@@ -454,9 +454,9 @@ prisoner_speaks(struct monst *mtmp)
         && (mtmp->mstrategy & STRAT_WAITMASK)) {
         /* Awaken the prisoner */
         if (canseemon(mtmp))
-            pline("%s speaks:", Monnam(mtmp));
+            pline("%s parle :", Monnam(mtmp));
         SetVoice(mtmp, 0, 80, 0);
-        verbalize("I'm finally free!");
+        verbalize("Enfin libre !");
         mtmp->mstrategy &= ~STRAT_WAITMASK;
         mtmp->mpeaceful = 1;
 

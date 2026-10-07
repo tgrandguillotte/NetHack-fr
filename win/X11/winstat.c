@@ -2191,9 +2191,9 @@ width_string(int sv_index)
         return "088"; /* all but str never get bigger */
 
     case F_HUNGER:
-        return "Satiated";
+        return "Défaillant";
     case F_ENCUMBER:
-        return "Overloaded";
+        return "Surchargé";
 
     case F_LEV:
     case F_FLY:

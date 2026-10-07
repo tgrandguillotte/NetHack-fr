@@ -730,7 +730,7 @@ static NEARDATA const char *trap_engravings[TRAPNUM] = {
     (char *) 0,      (char *) 0,    (char *) 0,    (char *) 0, (char *) 0,
     (char *) 0,      (char *) 0,    (char *) 0,    (char *) 0,
     /* 14..16: trap door, teleport, level-teleport */
-    "Vlad was here", "ad aerarium", "ad aerarium", (char *) 0, (char *) 0,
+    "Vlad est passé par ici", "ad aerarium", "ad aerarium", (char *) 0, (char *) 0,
     (char *) 0,      (char *) 0,    (char *) 0,    (char *) 0, (char *) 0,
     /* 24..25 */
     (char *) 0, (char *) 0,
@@ -2368,7 +2368,7 @@ mkgrave(struct mkroom *croom)
         return;
 
     /* Put a grave at <m.x,m.y> */
-    make_grave(m.x, m.y, dobell ? "Saved by the bell!" : (char *) 0);
+    make_grave(m.x, m.y, dobell ? "Sauvé par le gong !" : (char *) 0);
 
     /* Possibly fill it with objects */
     if (!rn2(3)) {
@@ -2418,7 +2418,7 @@ mkinvokearea(void)
     coordxy i;
 
     /* slightly odd if levitating, but not wrong */
-    pline_The("floor shakes violently under you!");
+    pline_The("Le sol tremble violemment sous vous !");
     /* decide whether to issue the crumbling walls message */
     {
         xmin = xmax = svi.inv_pos.x;
@@ -2455,7 +2455,7 @@ mkinvokearea(void)
            or if all the walls within range have been dug away; when it does
            appear, it will describe iron bars as "walls" (which is ok) */
         if (wallct)
-            pline_The("walls around you begin to bend and crumble!");
+            pline_The("Les murs autour de vous commencent à se tordre et à s'effondrer !");
     }
     display_nhwindow(WIN_MESSAGE, TRUE);
 
@@ -2494,7 +2494,7 @@ mkinvokearea(void)
         nh_delay_output();
     }
 
-    You("are standing at the top of a stairwell leading down!");
+    You("vous tenez en haut d'un escalier qui descend !");
     mkstairs(u.ux, u.uy, 0, (struct mkroom *) 0, FALSE); /* down */
     newsym(u.ux, u.uy);
     gv.vision_full_recalc = 1; /* everything changed */

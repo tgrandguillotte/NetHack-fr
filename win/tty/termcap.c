@@ -111,7 +111,7 @@ term_startup(int *wid, int *hgt)
     if (!term)
 #endif /* TERMLIB */
 #ifndef ANSI_DEFAULT
-        error("Can't get TERM.");
+        error("Impossible d'obtenir TERM.");
 #else
 #ifdef TOS
     {
@@ -195,21 +195,21 @@ term_startup(int *wid, int *hgt)
     if (tgetent(tptr, term) < 1) {
         char buf[BUFSZ];
         (void) strncpy(buf, term,
-                       (BUFSZ - 1) - (sizeof("Unknown terminal type: .  ")));
+                       (BUFSZ - 1) - (sizeof("Type de terminal inconnu : .  ")));
         buf[BUFSZ - 1] = '\0';
-        error("Unknown terminal type: %s.", term);
+        error("Type de terminal inconnu : %s.", term);
     }
     if ((pc = Tgetstr(nhStr("pc"))) != 0)
         PC = *pc;
 
     if (!(BC = Tgetstr(nhStr("le")))) { /* both termcap and terminfo use le */
 #ifdef TERMINFO
-        error("Terminal must backspace.");
+        error("Le terminal doit savoir reculer d'un caractère.");
 #else
         if (!(BC = Tgetstr(nhStr("bc")))) { /* termcap also uses bc/bs */
 #ifndef MINIMAL_TERM
             if (!tgetflag(nhStr("bs")))
-                error("Terminal must backspace.");
+                error("Le terminal doit savoir reculer d'un caractère.");
 #endif
             BC = tbufptr;
             tbufptr += 2;
@@ -252,7 +252,7 @@ term_startup(int *wid, int *hgt)
 #endif
     nh_ND = Tgetstr(nhStr("nd")); /* move cursor right 1 column */
     if (tgetflag(nhStr("os"))) /* term can overstrike */
-        error("NetHack can't have OS.");
+        error("NetHack ne peut pas fonctionner avec OS.");
     if (tgetflag(nhStr("ul"))) /* underline by overstrike w/ underscore */
         ul_hack = TRUE;
     CE = Tgetstr(nhStr("ce")); /* clear line from cursor to eol */
@@ -265,8 +265,9 @@ term_startup(int *wid, int *hgt)
     /* not:             XD = Tgetstr("do"); */
     if (!(nh_CM = Tgetstr(nhStr("cm")))) { /* cm: move cursor */
         if (!UP && !HO)
-            error("NetHack needs CM or UP or HO.");
-        tty_raw_print("Playing NetHack on terminals without CM is suspect.");
+            error("NetHack a besoin de CM, UP ou HO.");
+        tty_raw_print(
+            "Jouer à NetHack sur un terminal sans CM est hasardeux.");
         tty_wait_synch();
     }
     SO = Tgetstr(nhStr("so")); /* standout start */
@@ -332,9 +333,9 @@ term_startup(int *wid, int *hgt)
     *hgt = LI;
     /* cl: clear screen, set cursor to upper left */
     if (!(CL = Tgetstr(nhStr("cl")))) /* last thing set */
-        error("NetHack needs CL.");
+        error("NetHack a besoin de CL.");
     if ((int) (tbufptr - tbuf) > (int) (sizeof tbuf))
-        error("TERMCAP entry too big...\n");
+        error("Entrée TERMCAP trop grande...\n");
     free((genericptr_t) tptr);
 #endif /* TERMLIB */
     /* keep static copies of these so that raw_print_bold() will work

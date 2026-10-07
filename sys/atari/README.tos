@@ -1,68 +1,73 @@
-                        NetHack 5.0 for Atari ST/TT/Falcon
-                        ===================================
+                    NetHack 5.0 pour Atari ST/TT/Falcon
+                    ===================================
 
-Requirements
-------------
-    - Atari ST-class machine (ST, STE, Mega ST/STE, TT, or Falcon)
-      with at least 6 MB of RAM.
-    - GEM AES (TOS, MagiC, EmuTOS, or FreeMiNT/XaAES).
-    - At least VGA-class video: 640x480 with 16 colours.
+(Traduction française du document d'origine en anglais.)
 
-    Known to work:
-      - Hatari (https://hatari.tuxfamily.org/) with TOS 2.06 (ST),
-        TOS 3.06 (TT), TOS 4.04 (Falcon), and stock EmuTOS 1.4.
-      - MagiC 6.2 under MagiCMac on macOS.
-      - MagiC under magic-on-linux
-        (https://gitlab.com/AndreasK/magiclinux) in 8/16/24/32-bit
-        colour modes.
-      - Vampire V4SA + FreeMiNT + XaAES + NVDI + Olivier
-        Landemarre's EmuTOS variant.
+Configuration requise
+---------------------
+    - Machine de la famille Atari ST (ST, STE, Mega ST/STE, TT ou
+      Falcon) avec au moins 6 Mo de RAM.
+    - GEM AES (TOS, MagiC, EmuTOS ou FreeMiNT/XaAES).
+    - Une vidéo au moins de classe VGA : 640x480 en 16 couleurs.
 
-Supported display modes:
-    - 4, 8, 16, 24 and 32-bit colour
-    - 1-bit monochrome (experimental)
-    - ASCII text in any of the above via the F2 toggle.
+    Configurations éprouvées :
+      - Hatari (https://hatari.tuxfamily.org/) avec TOS 2.06 (ST),
+        TOS 3.06 (TT), TOS 4.04 (Falcon) et EmuTOS 1.4 standard.
+      - MagiC 6.2 sous MagiCMac sur macOS.
+      - MagiC sous magic-on-linux
+        (https://gitlab.com/AndreasK/magiclinux) dans les modes
+        couleur 8/16/24/32 bits.
+      - Vampire V4SA + FreeMiNT + XaAES + NVDI + la variante d'EmuTOS
+        d'Olivier Landemarre.
+
+Modes d'affichage pris en charge :
+    - couleur 4, 8, 16, 24 et 32 bits
+    - monochrome 1 bit (expérimental)
+    - texte ASCII dans chacun des modes ci-dessus, via la touche F2.
 
 
 Installation
 ------------
-Unzip NH501ST.ZIP on the Atari side -- not on the Linux/Windows
-host -- because some unzippers translate line endings inside the
-archive and corrupt nhdat.
+Décompressez NH501ST.ZIP du côté Atari -- et non sur l'hôte
+Linux/Windows -- car certains décompresseurs convertissent les fins de
+ligne à l'intérieur de l'archive, ce qui corrompt nhdat.
 
-The archive expands into a self-contained game directory:
+L'archive se décompresse en un répertoire de jeu autonome :
 
-    nethack.prg         GEM application
-    nhdat               packed game data (Lua scripts + tile mapping)
-    nethack.cnf         default configuration
-    gem_rsc.rsc         GEM dialog resources
-    NH2.IMG             monochrome tile sheet (Atkinson dithered)
-    NH16.IMG            16-colour tile sheet
-    NH32.IMG            32-colour tile sheet
-    TITLE.IMG           splash image (colour)
-    TITLE2.IMG          splash image (monochrome)
-    RIP.IMG             tombstone image
-    README.txt          this file
+    nethack.prg         application GEM
+    nhdat               données du jeu empaquetées (scripts Lua +
+                        correspondance des tuiles)
+    nethack.cnf         configuration par défaut
+    gem_rsc.rsc         ressources des boîtes de dialogue GEM
+    NH2.IMG             planche de tuiles monochrome (tramage Atkinson)
+    NH16.IMG            planche de tuiles 16 couleurs
+    NH32.IMG            planche de tuiles 32 couleurs
+    TITLE.IMG           image d'accueil (couleur)
+    TITLE2.IMG          image d'accueil (monochrome)
+    RIP.IMG             image de la pierre tombale
+    README.txt          ce fichier
     license, symbols, nethack.txt
-    run-hatari.sh       Linux/macOS launcher (Hatari + auto EmuTOS 1.4)
-    levels/, save/      empty, written to during play
+    run-hatari.sh       lanceur Linux/macOS (Hatari + EmuTOS 1.4 auto)
+    levels/, save/      vides, remplis pendant la partie
 
-Double-click nethack.prg to start (on Atari hardware or under an
-emulator with a TOS image already configured).  On Linux/macOS with
-Hatari installed, ./run-hatari.sh launches the game directly --
-EmuTOS 1.4 will be downloaded into ~/.cache/emutos on first run.
+Double-cliquez sur nethack.prg pour lancer le jeu (sur matériel Atari
+ou dans un émulateur déjà configuré avec une image TOS). Sous
+Linux/macOS avec Hatari installé, ./run-hatari.sh lance directement le
+jeu -- EmuTOS 1.4 sera téléchargé dans ~/.cache/emutos au premier
+lancement.
 
 
-Display Modes
--------------
-By default the game starts in tile mode.  Press F2 at any point
-during play to toggle between tiles and ASCII.
+Modes d'affichage
+-----------------
+Par défaut, le jeu démarre en mode tuiles. Appuyez sur F2 à tout moment
+de la partie pour basculer entre tuiles et ASCII.
 
-In ST High (monochrome) NetHack runs in ASCII mode; the
-Atkinson-dithered NH2.IMG ships in the package but the small
-screen makes ASCII the practical choice there.
+En ST Haute résolution (monochrome), NetHack fonctionne en mode ASCII ;
+la planche NH2.IMG tramée façon Atkinson est fournie dans le paquet,
+mais la petite taille de l'écran fait de l'ASCII le choix le plus
+pratique.
 
-To force ASCII text mode by default, edit nethack.cnf:
+Pour forcer le mode texte ASCII par défaut, modifiez nethack.cnf :
 
     #OPTIONS=!ascii_map
     OPTIONS=ascii_map
@@ -70,38 +75,38 @@ To force ASCII text mode by default, edit nethack.cnf:
 
 Configuration
 -------------
-See the comments in nethack.cnf.  Key options:
+Consultez les commentaires de nethack.cnf. Options principales :
 
-    HACKDIR     game directory (default: nethack.prg's location)
-    LEVELDIR    where to write level files (default: levels)
-    SAVEDIR     where to write save files  (default: save)
+    HACKDIR     répertoire du jeu (par défaut : emplacement de nethack.prg)
+    LEVELDIR    où écrire les fichiers de niveau (par défaut : levels)
+    SAVEDIR     où écrire les sauvegardes (par défaut : save)
 
-Useful gameplay options:
+Options de jeu utiles :
 
     OPTIONS=color,hilite_pet,number_pad
     OPTIONS=autopickup,pickup_thrown
     OPTIONS=pickup_types:$?!/="+
-    OPTIONS=menucolors          - colored inventory items
+    OPTIONS=menucolors          - objets d'inventaire en couleur
 
-Menu colour examples (after OPTIONS=menucolors):
+Exemples de couleurs de menu (après OPTIONS=menucolors) :
 
     MENUCOLOR=" cursed "=red&bold
     MENUCOLOR=" blessed "=cyan
     MENUCOLOR=" uncursed "=black
 
 
-Notes
------
-Save files and bones files from earlier NetHack versions will
-not work with 5.0.
+Remarques
+---------
+Les fichiers de sauvegarde et les fichiers d'os (bones) des versions
+antérieures de NetHack ne fonctionneront pas avec la 5.0.
 
-If you want to build NetHack for Atari from source, see
+Pour compiler NetHack pour Atari à partir des sources, consultez
 sys/atari/README.Crosscompiling.
 
 
 Contact
 -------
-Bug reports, feedback, and patches:
+Rapports de bogues, retours et correctifs :
 
     Ingo Paschke <ipaschke@lpclabs.de>
     https://github.com/ingpaschke/NetHack

@@ -112,7 +112,7 @@ static boolean opt_set_in_config[OPTCOUNT];
 static char *roleoptvals[MAX_ROLEOPT][num_opt_phases];
 
 static NEARDATA const char *OptS_type[OptS_Advanced+1] = {
-    "General", "Behavior", "Map", "Status", "Advanced"
+    "Général", "Comportement", "Carte", "État", "Avancé"
 };
 
 static const char def_inv_order[MAXOCLASSES] = {
@@ -122,7 +122,7 @@ static const char def_inv_order[MAXOCLASSES] = {
 };
 
 static const char none[] = "(none)", randomrole[] = "random",
-                  to_be_done[] = "(to be done)",
+                  to_be_done[] = "(à faire)",
                   defopt[] = "default", defbrief[] = "def";
 
 /* paranoia[] - used by parseoptions() and handler_paranoid_confirmation() */
@@ -147,68 +147,68 @@ static const struct paranoia_opts {
        if any entry or alias beginning with 'n' gets added, aside from "none",
        the parsing to accept "nofoo" to mean "!foo" will need fixing */
     { PARANOID_CONFIRM, "Confirm", 1, "Paranoia", 2,
-      "for \"yes\" confirmations, require \"no\" to reject" },
+      "pour les confirmations par \"yes\", exiger \"no\" pour refuser" },
     { PARANOID_QUIT, "quit", 1, "explore", 2,
-      "yes vs y to quit or to enter explore mode" },
+      "yes au lieu de y pour quitter ou passer en mode exploration" },
     { PARANOID_DIE, "die", 1, "death", 2,
-      "yes vs y to die (explore mode or debug mode)" },
+      "yes au lieu de y pour mourir (mode exploration ou débogage)" },
     { PARANOID_BONES, "bones", 1, 0, 0,
-      "yes vs y to save bones data when dying in debug mode" },
+      "yes au lieu de y pour laisser des ossements en mode débogage" },
     { PARANOID_HIT, "attack", 1, "hit", 1,
-      "yes vs y to attack a peaceful monster" },
+      "yes au lieu de y pour attaquer un monstre pacifique" },
     { PARANOID_BREAKWAND, "wand-break", 2, "break-wand", 2,
-      "yes vs y to break a wand via (a)pply" },
+      "yes au lieu de y pour briser une baguette via (a)pply" },
     { PARANOID_EATING, "eat", 1, "continue", 4,
-      "yes vs y to continue eating after first bite when satiated" },
+      "yes au lieu de y pour continuer à manger une fois rassasié" },
     { PARANOID_WERECHANGE, "Were-change", 2, (const char *) 0, 0,
-      "yes vs y to change form when lycanthropy is controllable" },
+      "yes au lieu de y pour changer de forme (lycanthropie contrôlée)" },
     /* extra y/n questions rather than changing y/n to yes/n[o];
        they switch to yes/no if paranoid:confirm is also set */
     { PARANOID_PRAY, "pray", 1, 0, 0,
-      "y required to pray (supersedes old \"prayconfirm\" option)" },
+      "y exigé pour prier (remplace l'ancienne option \"prayconfirm\")" },
     { PARANOID_TRAP, "trap", 1, "move-trap", 1,
-      "y required to enter known trap unless considered harmless" },
+      "y exigé pour entrer dans un piège connu, sauf s'il est inoffensif" },
     { PARANOID_AUTOALL, "Autoall", 2, "autoselect-all", 2,
-      "y required to pick filter choice 'A' for menustyle:Full" },
+      "y exigé pour choisir le filtre 'A' avec menustyle:Full" },
     /* not a yes/n[o] vs y/n change nor a y/n addition */
     { PARANOID_SWIM, "swim", 1, 0, 0,
-      "'m' prefix necessary to deliberately walk into lava or water" },
+      "préfixe 'm' nécessaire pour marcher exprès dans la lave ou l'eau" },
     { PARANOID_REMOVE, "Remove", 1, "Takeoff", 1,
       /* normally when there is only 1 candidate it's chosen automatically */
-      "always pick from inventory for Remove and Takeoff" },
+      "toujours choisir dans l'inventaire pour Remove et Takeoff" },
     /* for config file parsing; interactive menu skips these */
     { 0, "none", 4, 0, 0, 0 }, /* require full word match */
     { ~0, "all", 3, 0, 0, 0 }, /* ditto */
 };
 
 static NEARDATA const char *menutype[][3] = { /* 'menustyle' settings */
-    { "traditional",  "[prompt for object class(es), then",
-                      " ask y/n for each item in those classes]" },
-    { "combination",  "[prompt for object class(es), then",
-                      " use menu for items in those classes]" },
-    { "full",         "[use menu to choose class(es), then",
-                      " use another menu for items in those]" },
-    { "partial",      "[skip class filtering; always",
-                      " use menu of all available items]" }
+    { "traditional",  "[demander la ou les classes d'objets, puis",
+                      " y/n pour chaque objet de ces classes]" },
+    { "combination",  "[demander la ou les classes d'objets, puis",
+                      " menu des objets de ces classes]" },
+    { "full",         "[menu pour choisir la ou les classes, puis",
+                      " autre menu pour les objets de celles-ci]" },
+    { "partial",      "[pas de filtrage par classe ; toujours",
+                      " un menu de tous les objets disponibles]" }
 };
 #if PREV_MSGS /* tty supports all four settings, curses just final two */
 static NEARDATA const char *msgwind[][3] = { /* 'msg_window' settings */
-    { "single",       "[show one old message at a time,",
-                      " most recent first]" },
-    { "combination",  "[for consecutive ^P requests, use",
-                      " 'single' for first two, then 'full']" },
-    { "full",         "[show all available messages,",
-                      " oldest first and most recent last]" },
-    { "reversed",     "[show all available messages,",
-                      " most recent first]" }
+    { "single",       "[un ancien message à la fois,",
+                      " le plus récent d'abord]" },
+    { "combination",  "[pour des ^P consécutifs, 'single'",
+                      " pour les deux premiers, puis 'full']" },
+    { "full",         "[tous les messages disponibles,",
+                      " du plus ancien au plus récent]" },
+    { "reversed",     "[tous les messages disponibles,",
+                      " le plus récent d'abord]" }
 };
 #endif
 /* autounlock settings */
 static NEARDATA const char *unlocktypes[][2] = {
-    { "untrap",    "(might fail)" },
+    { "untrap",    "(peut échouer)" },
     { "apply-key", "" },
-    { "kick",      "(doors only)" },
-    { "force",     "(chests/boxes only)" },
+    { "kick",      "(portes seulement)" },
+    { "force",     "(coffres/boîtes seulement)" },
 };
 static NEARDATA const char *burdentype[] = {
     "unencumbered", "burdened",     "stressed",
@@ -223,20 +223,20 @@ static NEARDATA const char *sortltype[] = {
 /* second column is an alias for the first; third is brief explanation;
    entries 5 and 6 are 1|4 and 2|4 (tty only) */
 static NEARDATA const char *perminv_modes[][3] = {
-  /*0*/ { "none",      "off",        "no permanent inventory window" },
-  /*1*/ { "all" ,      "on",         "all inventory except for gold" },
-  /*2*/ { "full",      "gold",       "full inventory including gold" },
+  /*0*/ { "none",      "off",        "pas de fenêtre d'inventaire permanente" },
+  /*1*/ { "all" ,      "on",         "tout l'inventaire sauf l'or" },
+  /*2*/ { "full",      "gold",       "inventaire complet, or compris" },
   /*3*/ { NULL,        NULL,         NULL },
   /*4*/ { NULL,        NULL,         NULL },
 #ifdef TTY_PERM_INVENT
-  /*5*/ { "on+grid",   "all+grid",   "all except gold, plus unused letters" },
-  /*6*/ { "gold+grid", "full+grid",  "full inventory, plus unused letters" },
+  /*5*/ { "on+grid",   "all+grid",   "tout sauf l'or, plus lettres libres" },
+  /*6*/ { "gold+grid", "full+grid",  "inventaire complet, plus lettres libres" },
 #else
   /*5*/ { NULL,        NULL,         NULL },
   /*6*/ { NULL,        NULL,         NULL },
 #endif
   /*7*/ { NULL,        NULL,         NULL },
-  /*8*/ { "in-use",    "inuse-only", "subset: items currently in use" },
+  /*8*/ { "in-use",    "inuse-only", "sous-ensemble : objets utilisés en ce moment" },
 };
 
 struct objsymopt {
@@ -271,12 +271,12 @@ struct objsymopt {
  *        b [ Hawaiian shirt         b [ Hawaiian shirt
  */
 static const struct objsymopt objsymvals[] = {
-    { 0, "none",         "don't show object symbols in menus" },
-    { 1, "headers",      "show object symbols in menu header lines" },
-    { 2, "entries",      "show object symbols in individual menu entries" },
-    { 3, "both",         "show object symbols in headers and menu entries" },
-    { 4, "conditional",  "show objsyms in entries if no headers are shown" },
-    { 5, "one-or-other", "show objsyms in header, in entries if no header" },
+    { 0, "none",         "pas de symboles d'objets dans les menus" },
+    { 1, "headers",      "symboles d'objets dans les en-têtes de menu" },
+    { 2, "entries",      "symboles d'objets dans chaque élément de menu" },
+    { 3, "both",         "symboles d'objets dans les en-têtes et les éléments" },
+    { 4, "conditional",  "symboles dans les éléments s'il n'y a pas d'en-têtes" },
+    { 5, "one-or-other", "symboles dans l'en-tête, sinon dans les éléments" },
 };
 
 /*
@@ -312,32 +312,32 @@ typedef struct {
 } menu_cmd_t;
 
 static const menu_cmd_t default_menu_cmd_info[] = {
-    { "menu_next_page",     MENU_NEXT_PAGE,     "Go to next page" },
-    { "menu_previous_page", MENU_PREVIOUS_PAGE, "Go to previous page" },
-    { "menu_first_page",    MENU_FIRST_PAGE,    "Go to first page" },
-    { "menu_last_page",     MENU_LAST_PAGE,     "Go to last page" },
+    { "menu_next_page",     MENU_NEXT_PAGE,     "Page suivante" },
+    { "menu_previous_page", MENU_PREVIOUS_PAGE, "Page précédente" },
+    { "menu_first_page",    MENU_FIRST_PAGE,    "Première page" },
+    { "menu_last_page",     MENU_LAST_PAGE,     "Dernière page" },
     { "menu_select_all",    MENU_SELECT_ALL,
-                            "Select all items in entire menu" },
+                            "Sélectionner tout le menu" },
     { "menu_invert_all",    MENU_INVERT_ALL,
-                            "Invert selection for all items" },
+                            "Inverser la sélection de tout le menu" },
     { "menu_deselect_all",  MENU_UNSELECT_ALL,
-                            "Unselect all items in entire menu" },
+                            "Désélectionner tout le menu" },
     { "menu_select_page",   MENU_SELECT_PAGE,
-                            "Select all items on current page" },
+                            "Sélectionner toute la page" },
     { "menu_invert_page",   MENU_INVERT_PAGE,
-                            "Invert current page's selections" },
+                            "Inverser la sélection de la page" },
     { "menu_deselect_page", MENU_UNSELECT_PAGE,
-                            "Unselect all items on current page" },
+                            "Désélectionner toute la page" },
     { "menu_search",        MENU_SEARCH,
-                            "Search and invert matching items" },
+                            "Rechercher et inverser les éléments trouvés" },
     { "menu_shift_right",   MENU_SHIFT_RIGHT,
-                            "Pan current page to right (perm_invent only)" },
+                            "Décaler la page à droite (perm_invent seul.)" },
     { "menu_shift_left",    MENU_SHIFT_LEFT,
-                            "Pan current page to left (perm_invent only)" },
+                            "Décaler la page à gauche (perm_invent seul.)" },
     { (char *) 0, '\0', (char *) 0 }
 };
 
-static const char n_currently_set[] = "(%d currently set)";
+static const char n_currently_set[] = "(%d actuellement)";
 
 staticfn void nmcpy(char *, const char *, int);
 staticfn void escapes(const char *, char *);
@@ -374,7 +374,7 @@ staticfn unsigned int longest_option_name(int, int);
 staticfn int doset_simple_menu(void);
 staticfn void reset_needed_visuals(void);
 staticfn void doset_add_menu(winid, const char *, const char *, int, int);
-staticfn int handle_add_list_remove(const char *, int);
+staticfn int handle_add_list_remove(const char *, const char *, int);
 staticfn void all_options_conds(strbuf_t *);
 staticfn void all_options_menucolors(strbuf_t *);
 staticfn void all_options_msgtypes(strbuf_t *);
@@ -443,8 +443,8 @@ ask_do_tutorial(void)
         rc = nh_basename(get_configfile(), TRUE);
         norc = !strcmp(get_configfile(), "/dev/null");
         Snprintf(buf, sizeof buf,
-                 "Put \"OPTIONS=!tutorial\" in %s to skip this query.",
-                 (rc && *rc && !norc) ? rc : "your configuration file");
+                 "Mettez \"OPTIONS=!tutorial\" dans %s pour éviter cette question.",
+                 (rc && *rc && !norc) ? rc : "votre fichier de configuration");
         do {
             win = create_nhwindow(NHW_MENU);
             start_menu(win, MENU_BEHAVE_STANDARD);
@@ -452,18 +452,18 @@ ask_do_tutorial(void)
             any.a_char = 'y';
             add_menu(win, &nul_glyphinfo, &any, any.a_char, 0,
                      ATR_NONE, NO_COLOR,
-                     "Yes, do a tutorial", MENU_ITEMFLAGS_NONE);
+                     "Oui, faire le tutoriel", MENU_ITEMFLAGS_NONE);
             any.a_char = 'n';
             add_menu(win, &nul_glyphinfo, &any, any.a_char, 0,
                      ATR_NONE, NO_COLOR,
-                     "No, just start play", MENU_ITEMFLAGS_NONE);
+                     "Non, commencer à jouer", MENU_ITEMFLAGS_NONE);
 
             add_menu_str(win, "");
             add_menu_str(win, buf);
             if (pass++) /* we'll get here after <space> or <return> */
-                add_menu_str(win, "(Please choose 'y' or 'n'.)");
+                add_menu_str(win, "(Veuillez choisir 'y' ou 'n'.)");
 
-            end_menu(win, "Do you want a tutorial?");
+            end_menu(win, "Voulez-vous suivre le tutoriel ?");
 
             n = select_menu(win, PICK_ONE, &sel);
             destroy_nhwindow(win);
@@ -520,7 +520,7 @@ parseoptions(
             retval = FALSE;
     }
     if (strlen(opts) > BUFSZ / 2) {
-        config_error_add("Option too long, max length is %i characters",
+        config_error_add("Option trop longue, longueur maximale %i caractères",
                          (BUFSZ / 2));
         return FALSE;
     }
@@ -533,7 +533,7 @@ parseoptions(
         *op = '\0';
 
     if (!*opts) {
-        config_error_add("Empty statement");
+        config_error_add("Instruction vide");
         return FALSE;
     }
     negated = FALSE;
@@ -584,7 +584,7 @@ parseoptions(
         if (got_match) {
             if (!allopt[i].pfx && optlen < allopt[i].minmatch) {
                 config_error_add(
-             "Ambiguous option %s, %d characters are needed to differentiate",
+             "Option ambiguë %s, %d caractères sont nécessaires pour la distinguer",
                                  opts, allopt[i].minmatch);
                 break;
             }
@@ -678,7 +678,7 @@ parseoptions(
         Snprintf(pfxbuf, sizeof pfxbuf, "%s", opts);
         if ((pfxp = strchr(pfxbuf, ':')) != 0)
             *pfxp = '\0';
-        config_error_add("bad option suffix variation '%s'", pfxbuf);
+        config_error_add("variante de suffixe d'option incorrecte '%s'", pfxbuf);
         return FALSE;
     }
     if (got_match && optresult == optn_err)
@@ -687,7 +687,7 @@ parseoptions(
         return retval;
 
     /* out of valid options */
-    config_error_add("Unknown option '%s'", opts);
+    config_error_add("Option inconnue '%s'", opts);
     return FALSE;
 }
 
@@ -900,7 +900,7 @@ optfn_alignment(
 
         if (*op != '!') {
             if ((flags.initalign = str2align(op)) == ROLE_NONE) {
-                config_error_add("Unknown %s '%s'", allopt[optidx].name, op);
+                config_error_add("%s inconnu : '%s'", allopt[optidx].name, op);
                 return optn_err;
             }
             saveoptstr(optidx, rolestring(flags.initalign, aligns, adj));
@@ -942,7 +942,7 @@ optfn_align_message(
             else if (!strncmpi(op, "bottom", sizeof "bottom" - 1))
                 iflags.wc_align_message = ALIGN_BOTTOM;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -991,7 +991,7 @@ optfn_align_status(
             else if (!strncmpi(op, "bottom", sizeof "bottom" - 1))
                 iflags.wc_align_status = ALIGN_BOTTOM;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -1128,7 +1128,7 @@ optfn_autounlock(
                 }
             }
             if (!matched) {
-                config_error_add("Invalid value for \"%s\": \"%s\"",
+                config_error_add("Valeur invalide pour \"%s\" : \"%s\"",
                                  allopt[optidx].name, op);
                 return optn_silenterr;
             }
@@ -1136,7 +1136,7 @@ optfn_autounlock(
         }
         if (negated && newflags != 0) {
             config_error_add(
-                     "Invalid value combination for \"%s\": 'none' with some",
+                     "Combinaison invalide pour \"%s\" : 'none' avec d'autres",
                              allopt[optidx].name);
             return optn_silenterr;
         }
@@ -1198,15 +1198,15 @@ optfn_boulder(
         else if (opts[0] >= '1' && opts[0] < WARNCOUNT + '0')
             clash = 2;
         if (opts[0] < ' ') {
-            config_error_add("boulder symbol cannot be a control character");
+            config_error_add("le symbole du rocher ne peut pas être un caractère de contrôle");
             return optn_ok;
         } else if (clash) {
             /* symbol chosen matches a used monster or warning
                symbol which is not good - reject it */
-            config_error_add("Badoption - boulder symbol '%s' would conflict "
-                             "with a %s symbol",
+            config_error_add("Option incorrecte - le symbole du rocher '%s' "
+                             "entrerait en conflit avec un symbole %s",
                              visctrl(opts[0]),
-                             (clash == 1) ? "monster" : "warning");
+                             (clash == 1) ? "de monstre" : "d'avertissement");
         } else {
             /*
              * Override the default boulder symbol.
@@ -1228,7 +1228,7 @@ optfn_boulder(
         }
         return optn_ok;
 #else
-        config_error_add("'%s' no longer supported; use S_boulder:c instead",
+        config_error_add("'%s' n'est plus pris en charge ; utilisez plutôt S_boulder:c",
                          allopt[optidx].name);
         return optn_err;
 #endif
@@ -1321,8 +1321,8 @@ optfn_crash_urlmax(
             int temp = atoi(op);
 
             if (temp < 75){
-                config_error_add("Invalid value %d for crash_urlmax. "
-                                 " Minimum value is 75.", temp);
+                config_error_add("Valeur invalide %d pour crash_urlmax."
+                                 " La valeur minimale est 75.", temp);
                 return optn_err;
             }
             gc.crash_urlmax = temp;
@@ -1371,14 +1371,14 @@ optfn_cursesgraphics(
                     switch_symbols(TRUE);
             }
             if (badflag) {
-                config_error_add("Failure to load symbol set %s.",
+                config_error_add("Échec du chargement du jeu de symboles %s.",
                                  allopt[optidx].name);
                 return optn_err;
             }
         }
         return optn_ok;
 #else
-        config_error_add("'%s' no longer supported; use 'symset:%s' instead",
+        config_error_add("'%s' n'est plus pris en charge ; utilisez plutôt 'symset:%s'",
                          allopt[optidx].name, allopt[optidx].name);
         return optn_err;
 #endif
@@ -1420,14 +1420,14 @@ optfn_DECgraphics(
                     switch_symbols(TRUE);
             }
             if (badflag) {
-                config_error_add("Failure to load symbol set %s.",
+                config_error_add("Échec du chargement du jeu de symboles %s.",
                                  allopt[optidx].name);
                 return optn_err;
             }
         }
         return optn_ok;
 #else
-        config_error_add("'%s' no longer supported; use 'symset:%s' instead",
+        config_error_add("'%s' n'est plus pris en charge ; utilisez plutôt 'symset:%s'",
                          allopt[optidx].name, allopt[optidx].name);
         return optn_err;
 #endif
@@ -1536,7 +1536,7 @@ optfn_disclose(
             } else if (c == ' ') {
                 ; /* do nothing */
             } else {
-                config_error_add("Unknown %s parameter '%c'",
+                config_error_add("Paramètre %s inconnu : '%c'",
                                  allopt[optidx].name, *op);
                 return optn_err;
             }
@@ -1740,7 +1740,7 @@ optfn_fruit(
 
                 if (!forig && fnum >= 100) {
                     config_error_add(
-                        "Doing that so many times isn't very fruitful.");
+                        "Faire ça autant de fois n'est pas très fructueux.");
                     return optn_ok;
                 }
             }
@@ -1751,14 +1751,14 @@ optfn_fruit(
         /* OBJ_NAME(objects[SLIME_MOLD]) won't work for this after
            initialization; it gets changed to generic "fruit" */
         if (!*svp.pl_fruit)
-            nmcpy(svp.pl_fruit, "slime mold", PL_FSIZ);
+            nmcpy(svp.pl_fruit, "moisissure gluante", PL_FSIZ);
         if (!go.opt_initial) {
             /* if 'forig' is nonNull, we replace it rather than add
                a new fruit; it can only be nonNull if no fruits have
                been created since the previous name was put in place */
             (void) fruitadd(svp.pl_fruit, forig);
             if (give_opt_msg)
-                pline("Fruit is now \"%s\".", svp.pl_fruit);
+                pline("Le fruit est maintenant \"%s\".", svp.pl_fruit);
         }
         /* If initial, then initoptions is allowed to do it instead
          * of here (initoptions always has to do it even if there's
@@ -1792,7 +1792,7 @@ optfn_gender(
 
         if (*op != '!') {
             if ((flags.initgend = str2gend(op)) == ROLE_NONE) {
-                config_error_add("Unknown %s '%s'", allopt[optidx].name, op);
+                config_error_add("%s inconnu : '%s'", allopt[optidx].name, op);
                 return optn_err;
             }
             flags.female = flags.initgend;
@@ -1868,7 +1868,7 @@ optfn_hilite_status(
             clear_status_hilites();
             return optn_ok;
         } else if (op == empty_optstr) {
-            config_error_add("Value is mandatory for hilite_status");
+            config_error_add("Une valeur est obligatoire pour hilite_status");
             return optn_err;
         }
         if (!parse_status_hl1(op, go.opt_from_file))
@@ -1877,7 +1877,7 @@ optfn_hilite_status(
 #else
         nhUse(negated);
         nhUse(op);
-        config_error_add("'%s' is not supported", allopt[optidx].name);
+        config_error_add("'%s' n'est pas pris en charge", allopt[optidx].name);
         return optn_err;
 #endif
     }
@@ -1886,7 +1886,7 @@ optfn_hilite_status(
 #ifdef STATUS_HILITES
         if (req == get_val)
             Strcpy(opts, count_status_hilites()
-                     ? "(see \"status highlight rules\" below)"
+                     ? "(voir \"status highlight rules\" plus bas)"
                      : "(none)");
 #endif
         return optn_ok;
@@ -1938,7 +1938,7 @@ optfn_IBMgraphics(
                 }
             }
             if (badflag) {
-                config_error_add("Failure to load symbol set %s.", sym_name);
+                config_error_add("Échec du chargement du jeu de symboles %s.", sym_name);
                 return optn_err;
             } else {
                 switch_symbols(TRUE);
@@ -1948,7 +1948,7 @@ optfn_IBMgraphics(
         }
         return optn_ok;
 #else
-        config_error_add("'%s' no longer supported; use 'symset:%s' instead",
+        config_error_add("'%s' n'est plus pris en charge ; utilisez plutôt 'symset:%s'",
                          allopt[optidx].name, allopt[optidx].name);
         return optn_err;
 #endif
@@ -2011,7 +2011,7 @@ optfn_map_mode(
                                sizeof "tiles_fit_to_screen" - 1))
                 iflags.wc_map_mode = MAP_MODE_TILES_FIT_TO_SCREEN;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -2251,7 +2251,7 @@ optfn_menu_objsyms(
         } else if (digit(*op)) {
             i = atoi(op);
             if (i >= SIZE(objsymvals)) {
-                config_error_add("Illegal %s parameter '%s'",
+                config_error_add("Paramètre %s illégal : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -2302,7 +2302,7 @@ optfn_menuinvertmode(
             int mode = atoi(op);
 
             if (mode < 0 || mode > 2) {
-                config_error_add("Illegal %s parameter '%s'",
+                config_error_add("Paramètre %s illégal : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -2359,7 +2359,7 @@ optfn_menustyle(
             flags.menu_style = MENU_PARTIAL;
             break;
         default:
-            config_error_add("Unknown %s parameter '%s'", allopt[optidx].name,
+            config_error_add("Paramètre %s inconnu : '%s'", allopt[optidx].name,
                              op);
             return optn_err;
         }
@@ -2416,7 +2416,7 @@ optfn_mouse_support(
             int mode = atoi(op);
 
             if (mode < 0 || mode > 2 || (mode == 0 && *op != '0')) {
-                config_error_add("Illegal %s parameter '%s'",
+                config_error_add("Paramètre %s illégal : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             } else { /* mode >= 0 */
@@ -2427,16 +2427,16 @@ optfn_mouse_support(
     }
     if (req == get_val) {
 #ifdef WIN32
-#define MOUSEFIX1 ", QuickEdit off"
-#define MOUSEFIX2 ", QuickEdit unchanged"
+#define MOUSEFIX1 ", QuickEdit désactivé"
+#define MOUSEFIX2 ", QuickEdit inchangé"
 #else
-#define MOUSEFIX1 ", O/S adjusted"
-#define MOUSEFIX2 ", O/S unchanged"
+#define MOUSEFIX1 ", ajusté par le système"
+#define MOUSEFIX2 ", système inchangé"
 #endif
         static const char *const mousemodes[][2] = {
-            { "0=off", "" },
-            { "1=on",  MOUSEFIX1 },
-            { "2=on",  MOUSEFIX2 },
+            { "0=désactivé", "" },
+            { "1=activé",  MOUSEFIX1 },
+            { "2=activé",  MOUSEFIX2 },
         };
 #undef MOUSEFIX1
 #undef MOUSEFIX2
@@ -2492,7 +2492,7 @@ optfn_msg_window(
             iflags.prevmsg_window = (char) tmp;
             break;
         default:
-            config_error_add("Unknown %s parameter '%s'", allopt[optidx].name,
+            config_error_add("Paramètre %s inconnu : '%s'", allopt[optidx].name,
                              op);
             retval = optn_err;
         }
@@ -2606,7 +2606,7 @@ optfn_number_pad(
             int mode = atoi(op);
 
             if (mode < -1 || mode > 4 || (mode == 0 && *op != '0')) {
-                config_error_add("Illegal %s parameter '%s'",
+                config_error_add("Paramètre %s illégal : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             } else if (mode <= 0) {
@@ -2630,10 +2630,10 @@ optfn_number_pad(
     }
     if (req == get_val || req == get_cnf_val) {
         static const char *const numpadmodes[] = {
-            "0=off", "1=on", "2=on, MSDOS compatible",
-            "3=on, phone-style layout",
-            "4=on, phone layout, MSDOS compatible",
-            "-1=off, y & z swapped", /*[5]*/
+            "0=désactivé", "1=activé", "2=activé, compatible MSDOS",
+            "3=activé, disposition téléphone",
+            "4=activé, disposition téléphone, compatible MSDOS",
+            "-1=désactivé, y et z échangés", /*[5]*/
         };
         int indx = gc.Cmd.num_pad
                        ? (gc.Cmd.phone_layout ? (gc.Cmd.pcHack_compat ? 4 : 3)
@@ -2721,7 +2721,7 @@ optfn_palette(
              *  palette (adjust an RGB color in palette (color/R-G-B)
              */
             if (!alternative_palette(op)) {
-                config_error_add("Error in palette parameter '%s'", op);
+                config_error_add("Erreur dans le paramètre de palette '%s'", op);
                 return optn_err;
             }
             if (!go.opt_initial)
@@ -2874,7 +2874,7 @@ optfn_paranoid_confirmation(
                    bad; back when prayconfirm was in active use, tacking on
                    an explicit value to a boolean option wasn't supported */
                 config_error_add(
-           "deprecated %sprayconfirm option takes no parameters (found '%s')",
+           "l'option obsolète %sprayconfirm ne prend pas de paramètre (trouvé '%s')",
                                  opt_negated ? "!" : "", op);
                 return optn_silenterr;
             }
@@ -2884,7 +2884,7 @@ optfn_paranoid_confirmation(
                that isn't supported [not important since this is considered
                temporary until 'prayconfirm' gets removed altogether] */
             config_error_add(
-                 "%sprayconfirm option is deprecated; switching to %s:%cpray",
+                 "l'option %sprayconfirm est obsolète ; remplacée par %s:%cpray",
                              opt_negated ? "!" : "",
                              allopt[optidx].name,
                              opt_negated ? '-' : '+');
@@ -2908,13 +2908,13 @@ optfn_paranoid_confirmation(
                 flags.paranoia_bits = 0;
                 return optn_ok;
             } else {
-                config_error_add("!%s does not accept a value",
+                config_error_add("!%s n'accepte pas de valeur",
                                  allopt[optidx].name);
                 return optn_silenterr;
             }
         } else if (!*op) {
             /* "paranoid_confirm" without any arguments is disallowed */
-            config_error_add("%s requires a value; use 'none' to cancel all",
+            config_error_add("%s exige une valeur ; utilisez 'none' pour tout annuler",
                              allopt[optidx].name);
             return optn_silenterr;
         }
@@ -3015,7 +3015,7 @@ optfn_paranoid_confirmation(
             if (i == SIZE(paranoia)) {
                 /* didn't match anything, so arg is bad;
                    any flags already modified will stay modified */
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_silenterr;
             }
@@ -3091,7 +3091,7 @@ optfn_perminv_mode(
                     if (strstri(pi0, "+grid") && !WINDOWPORT(tty)) {
                         i &= ~InvSparse;
                         config_error_add(
-                          "%s: unavailable perm_invent mode '%s', using '%s'",
+                          "%s : mode perm_invent '%s' indisponible, '%s' utilisé",
                                          allopt[optidx].name, pi0,
                                          perminv_modes[i][0]);
                     }
@@ -3102,7 +3102,7 @@ optfn_perminv_mode(
                 }
             }
             if (i == SIZE(perminv_modes)) {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 iflags.perminv_mode = InvOptNone;
                 iflags.perm_invent = FALSE;
@@ -3131,11 +3131,12 @@ optfn_perminv_mode(
             /* perminv_mode is set but isn't useful because perm_invent is
                Off; say so after squeezing out enough for it to barely fit */
             if (iflags.perminv_mode == InvOptInUse)
-                (void) strsubst(opts, " currently", "");
+                (void) strsubst(opts, " en ce moment", "");
             else
-                (void) strsubst(opts, " inventory", " invent");
-            Strcat(opts, (((iflags.perminv_mode & InvSparse) != 0) ? " (Off)"
-                          : " ('perm_invent' is Off)"));
+                (void) strsubst(opts, "inventaire", "inv.");
+            Strcat(opts, (((iflags.perminv_mode & InvSparse) != 0)
+                          ? " (désactivé)"
+                          : " ('perm_invent' désactivé)"));
         }
     } else if (req == get_cnf_val) {
         Sprintf(opts, "%s", perminv_modes[iflags.perminv_mode][0]);
@@ -3165,7 +3166,7 @@ optfn_petattr(
             int itmp = match_str2attr(op, FALSE);
 
             if (itmp == -1) {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, opts);
                 retval = optn_err;
             } else
@@ -3213,6 +3214,19 @@ optfn_pettype(
     if (req == do_set) {
         if ((op = string_for_env_opt(allopt[optidx].name, opts, negated))
             != empty_optstr) {
+            /* noms francais : "chien", "chat"/"chaton", "cheval"/"poney",
+               "aucun", "aléatoire" (les noms anglais restent acceptés) */
+            if (!strncmpi(op, "chien", 4))
+                gp.preferred_pet = 'd';
+            else if (!strncmpi(op, "chat", 4))
+                gp.preferred_pet = 'c';
+            else if (!strncmpi(op, "chev", 4) || !strncmpi(op, "pon", 3))
+                gp.preferred_pet = 'h';
+            else if (!strncmpi(op, "aucun", 5) || !strncmpi(op, "rien", 4))
+                gp.preferred_pet = 'n';
+            else if (!strncmpi(op, "aléatoire", 3) || !strncmpi(op, "hasard", 3))
+                gp.preferred_pet = '\0';
+            else
             switch (lowc(*op)) {
             case 'd': /* dog */
                 gp.preferred_pet = 'd';
@@ -3235,7 +3249,7 @@ optfn_pettype(
                 gp.preferred_pet = '\0';
                 break;
             default:
-                config_error_add("Unrecognized pet type '%s'.", op);
+                config_error_add("Type de familier non reconnu '%s'.", op);
                 return optn_err;
                 break;
             }
@@ -3295,7 +3309,7 @@ optfn_pickup_burden(
                 flags.pickup_burden = OVERLOADED;
                 break;
             default:
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -3348,8 +3362,8 @@ optfn_pickup_types(
                 boolean wasspace;
 
                 use_menu = FALSE;
-                Sprintf(qbuf, "New %s: [%s am] (%s)", allopt[optidx].name,
-                        ocl, *tbuf ? tbuf : "all");
+                Sprintf(qbuf, "Nouvelle valeur de %s : [%s am] (%s)",
+                        allopt[optidx].name, ocl, *tbuf ? tbuf : "tous");
                 abuf[0] = '\0';
                 getlin(qbuf, abuf);
                 wasspace = (abuf[0] == ' '); /* before mungspaces */
@@ -3366,7 +3380,7 @@ optfn_pickup_types(
             if (use_menu) {
                 if (wizard && !strchr(ocl, VENOM_SYM))
                     strkitten(ocl, VENOM_SYM);
-                (void) choose_classes_menu("Autopickup what?",
+                (void) choose_classes_menu("Ramasser automatiquement quoi ?",
                                            1, TRUE, ocl, tbuf);
                 op = tbuf;
             }
@@ -3391,7 +3405,7 @@ optfn_pickup_types(
                 op++;
             }
             if (badopt) {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -3461,7 +3475,7 @@ optfn_player_selection(
             } else if (!strncmpi(op, "prompt", sizeof "prompt" - 1)) {
                 iflags.wc_player_selection = VIA_PROMPTS;
             } else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -3499,7 +3513,7 @@ optfn_playmode(
         } else if (!strncmpi(op, "debug", 5) || !strncmpi(op, "wizard", 6)) {
             wizard = TRUE, discover = FALSE;
         } else {
-            config_error_add("Invalid value for \"%s\":%s",
+            config_error_add("Valeur invalide pour \"%s\" : %s",
                              allopt[optidx].name, op);
             return optn_err;
         }
@@ -3530,7 +3544,7 @@ optfn_race(
 
         if (*op != '!') {
             if ((flags.initrace = str2race(op)) == ROLE_NONE) {
-                config_error_add("Unknown %s '%s'", allopt[optidx].name, op);
+                config_error_add("%s inconnu : '%s'", allopt[optidx].name, op);
                 return optn_err;
             }
             gp.pl_race = *op; /* Backwards compatibility */
@@ -3567,7 +3581,7 @@ optfn_roguesymset(
             if (!read_sym_file(ROGUESET)) {
                 clear_symsetentry(ROGUESET, TRUE);
                 config_error_add(
-                    "Unable to load symbol set \"%s\" from \"%s\"", op,
+                    "Impossible de charger le jeu de symboles \"%s\" depuis \"%s\"", op,
                     SYMBOLS);
                 return optn_err;
             } else {
@@ -3585,7 +3599,7 @@ optfn_roguesymset(
                 gs.symset[ROGUESET].name ? gs.symset[ROGUESET].name
                                          : "default");
         if (gc.currentgraphics == ROGUESET && gs.symset[ROGUESET].name)
-            Strcat(opts, ", active");
+            Strcat(opts, ", actif");
         return optn_ok;
     }
     if (req == do_handler) {
@@ -3612,7 +3626,7 @@ optfn_role(
 
         if (*op != '!') {
             if ((flags.initrole = str2role(op)) == ROLE_NONE) {
-                config_error_add("Unknown %s '%s'", allopt[optidx].name, op);
+                config_error_add("%s inconnu : '%s'", allopt[optidx].name, op);
                 return optn_err;
             }
             nmcpy(svp.pl_character, op, PL_NSIZ); /* Backwards compat */
@@ -3653,12 +3667,12 @@ optfn_runmode(
             else if (str_start_is("crawl", op, TRUE))
                 flags.runmode = RUN_CRAWL;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
         } else {
-            config_error_add("Value is mandatory for %s",
+            config_error_add("Une valeur est obligatoire pour %s",
                              allopt[optidx].name);
             return optn_err;
         }
@@ -3728,7 +3742,7 @@ optfn_scores(
             case '-':
                 if (digit(*(op + 1))) {
                     config_error_add(
-                       "Values for %s:top and %s:around must not be negative",
+                       "Les valeurs de %s:top et %s:around ne doivent pas être négatives",
                                      allopt[optidx].name,
                                      allopt[optidx].name);
                     return optn_silenterr;
@@ -3736,7 +3750,7 @@ optfn_scores(
                 FALLTHROUGH;
                 /*FALLTHRU*/
             default:
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_silenterr;
             }
@@ -3900,7 +3914,7 @@ optfn_sortdiscoveries(
                 flags.discosort = 'a';
                 break;
             default:
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_silenterr;
             }
@@ -3941,7 +3955,7 @@ optfn_sortloot(
                 flags.sortloot = c;
                 break;
             default:
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -3989,7 +4003,7 @@ optfn_sortvanquished(
             } else if (strchr("01234567", *op)) {
                 vndx = *op - '0';
             } else {
-                config_error_add("Unknown %s parameter '%s'", optname, op);
+                config_error_add("Paramètre %s inconnu : '%s'", optname, op);
                 return optn_silenterr;
             }
             flags.vanq_sortmode = (uchar) vndx;
@@ -4008,10 +4022,10 @@ optfn_sortvanquished(
 
         /* return handler_sortvanquished(); */
         (void) set_vanq_order(TRUE); /* insight.c */
-        pline("'%s' %s \"%s: %s\".", optname,
+        pline("'%s' %s \"%s : %s\".", optname,
               (flags.vanq_sortmode == prev_sortmode)
-                 ? "not changed, still"
-                 : "changed to",
+                 ? "reste"
+                 : "passe à",
               vanqorders[flags.vanq_sortmode][0],
               vanqorders[flags.vanq_sortmode][1]);
     }
@@ -4046,19 +4060,19 @@ optfn_statushilites(
 #else
         nhUse(negated);
         nhUse(op);
-        config_error_add("'%s' is not supported", allopt[optidx].name);
+        config_error_add("'%s' n'est pas pris en charge", allopt[optidx].name);
         return optn_err;
 #endif
     }
     if (req == get_val) {
 #ifdef STATUS_HILITES
         if (!iflags.hilite_delta)
-            Strcpy(opts, "0 (off: don't highlight status fields)");
+            Strcpy(opts, "0 (désactivé : pas de mise en valeur de l'état)");
         else
-            Sprintf(opts, "%ld (on: highlight status for %ld turns)",
+            Sprintf(opts, "%ld (activé : mise en valeur pendant %ld tours)",
                     iflags.hilite_delta, iflags.hilite_delta);
 #else
-        Strcpy(opts, "unsupported");
+        Strcpy(opts, "non pris en charge");
 #endif
         return optn_ok;
     }
@@ -4095,7 +4109,7 @@ optfn_statuslines(
             itmp = atoi(op);
         }
         if (itmp < 2 || itmp > 3) {
-            config_error_add("'%s:%s' is invalid; must be 2 or 3",
+            config_error_add("'%s:%s' est invalide ; doit valoir 2 ou 3",
                              allopt[optidx].name, op);
             retval = optn_silenterr;
         } else {
@@ -4189,7 +4203,7 @@ optfn_symset(
             if (!read_sym_file(PRIMARYSET)) {
                 clear_symsetentry(PRIMARYSET, TRUE);
                 config_error_add(
-                    "Unable to load symbol set \"%s\" from \"%s\"", op,
+                    "Impossible de charger le jeu de symboles \"%s\" depuis \"%s\"", op,
                     SYMBOLS);
                 return optn_err;
             } else {
@@ -4197,7 +4211,7 @@ optfn_symset(
 #ifndef ENHANCED_SYMBOLS
                     if (gs.symset[PRIMARYSET].handling == H_UTF8) {
                         config_error_add(
-                                   "Unavailable symset handler \"%s\" for %s",
+                                   "Gestionnaire de symboles \"%s\" indisponible pour %s",
                                          known_handling[H_UTF8], op);
                         load_symset("default", PRIMARYSET);
                     }
@@ -4216,9 +4230,9 @@ optfn_symset(
                 gs.symset[PRIMARYSET].name ? gs.symset[PRIMARYSET].name
                                           : "default");
         if (gc.currentgraphics == PRIMARYSET && gs.symset[PRIMARYSET].name)
-            Strcat(opts, ", active");
+            Strcat(opts, ", actif");
         if (gs.symset[PRIMARYSET].handling) {
-            Sprintf(eos(opts), ", handler=%s",
+            Sprintf(eos(opts), ", gestionnaire=%s",
                     known_handling[gs.symset[PRIMARYSET].handling]);
         }
         return optn_ok;
@@ -4264,7 +4278,7 @@ optfn_term_cols(
             /* just checks atol() sanity, not logical window size sanity
              */
             if (ltmp <= 0L || ltmp >= (long) LARGEST_INT) {
-                config_error_add("Invalid %s: %ld", allopt[optidx].name,
+                config_error_add("%s invalide : %ld", allopt[optidx].name,
                                  ltmp);
                 retval = optn_err;
             } else {
@@ -4305,7 +4319,7 @@ optfn_term_rows(
             /* just checks atol() sanity, not logical window size sanity
              */
             if (ltmp <= 0L || ltmp >= (long) LARGEST_INT) {
-                config_error_add("Invalid %s: %ld", allopt[optidx].name,
+                config_error_add("%s invalide : %ld", allopt[optidx].name,
                                  ltmp);
                 retval = optn_err;
             } else {
@@ -4505,14 +4519,14 @@ optfn_versinfo(
         }
         op = string_for_opt(opts, FALSE);
         if (op == empty_optstr) {
-            config_error_add("'%s' requires a value; defaulting to %d",
+            config_error_add("'%s' exige une valeur ; %d par défaut",
                              optname, dflt);
             return optn_silenterr;
         }
         val = atoi(op);
         if (!val || (val & ~7) != 0) {
-            config_error_add("'%s' must be one of 1, 2, 4, or"
-                             " the sum of two or all three of those",
+            config_error_add("'%s' doit valoir 1, 2, 4, ou"
+                             " la somme de deux ou trois de ces valeurs",
                              optname);
             return optn_silenterr;
         }
@@ -4521,7 +4535,7 @@ optfn_versinfo(
         /* return handler_versinfo(); */
         (void) handler_versinfo();
         pline("'%s' %s %u.", optname,
-              (flags.versinfo == vi) ? "not changed, still" : "changed to",
+              (flags.versinfo == vi) ? "reste" : "passe à",
               flags.versinfo);
     } else if (req == get_val) {
         char vbuf[QBUFSZ];
@@ -4529,9 +4543,9 @@ optfn_versinfo(
                 b = (vi & VI_BRANCH) != 0,
                 n = (vi & VI_NUMBER) != 0;
 
-        Sprintf(opts, "%u: %s%s%s%s%s (%.99s)", flags.versinfo,
-                g ? "name" : "", (b && g) ? "+" : "", b ? "branch" : "",
-                (n && (b || g)) ? "+" : "", n ? "number" : "",
+        Sprintf(opts, "%u : %s%s%s%s%s (%.99s)", flags.versinfo,
+                g ? "nom" : "", (b && g) ? "+" : "", b ? "branche" : "",
+                (n && (b || g)) ? "+" : "", n ? "numéro" : "",
                 status_version(vbuf, sizeof vbuf, FALSE));
     } else if (req == get_cnf_val) {
         Sprintf(opts, "%u", flags.versinfo);
@@ -4559,7 +4573,7 @@ optfn_videocolors(
             return optn_err;
         }
         if (!assign_videocolors(opts)) {
-            config_error_add("Unknown error handling '%s'",
+            config_error_add("Erreur inconnue lors du traitement de '%s'",
                              allopt[optidx].name);
             return optn_err;
         }
@@ -4594,7 +4608,7 @@ optfn_videoshades(
             return optn_err;
         }
         if (!assign_videoshades(opts)) {
-            config_error_add("Unknown error handling '%s'",
+            config_error_add("Erreur inconnue lors du traitement de '%s'",
                              allopt[optidx].name);
             return optn_err;
         }
@@ -4667,7 +4681,7 @@ optfn_video(
             return optn_err;
         }
         if (!assign_video(opts)) {
-            config_error_add("Unknown error handling '%s'",
+            config_error_add("Erreur inconnue lors du traitement de '%s'",
                              allopt[optidx].name);
             return optn_err;
         }
@@ -4730,7 +4744,7 @@ optfn_whatis_coord(
             if (c && strchr(gpcoords, c))
                 iflags.getpos_coords = c;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -4780,7 +4794,7 @@ optfn_whatis_filter(
                 iflags.getloc_filter = GFILTER_AREA;
                 break;
             default: {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                                  allopt[optidx].name, op);
                 return optn_err;
             }
@@ -4830,7 +4844,7 @@ optfn_windowborders(
                 itmp = atoi(op);
 
             if (itmp < 0 || itmp > 4) {
-                config_error_add("Invalid %s (should be within 0 to 4): %s",
+                config_error_add("%s invalide (doit être entre 0 et 4) : %s",
                                  allopt[optidx].name, opts);
                 retval = optn_silenterr;
             } else {
@@ -4841,13 +4855,13 @@ optfn_windowborders(
     }
     if (req == get_val) {
         Sprintf(opts, "%s",
-                (iflags.wc2_windowborders == 0) ? "0=off"
-                : (iflags.wc2_windowborders == 1) ? "1=on"
+                (iflags.wc2_windowborders == 0) ? "0=désactivé"
+                : (iflags.wc2_windowborders == 1) ? "1=activé"
                   : (iflags.wc2_windowborders == 2) ? "2=auto"
                     : (iflags.wc2_windowborders == 3)
-                      ? "3=on, except off for perm_invent"
+                      ? "3=activé, sauf pour perm_invent"
                       : (iflags.wc2_windowborders == 4)
-                        ? "4=auto, except off for perm_invent"
+                        ? "4=auto, sauf pour perm_invent"
                         : defopt);
         return optn_ok;
     }
@@ -4920,8 +4934,8 @@ optfn_windowcolors(
          */
         if ((op = string_for_opt(opts, FALSE)) != empty_optstr) {
             if (!wc_set_window_colors(op)) {
-                config_error_add("Could not set %s '%s'", allopt[optidx].name,
-                                 op);
+                config_error_add("Impossible de régler %s '%s'",
+                                 allopt[optidx].name, op);
                 return optn_err;
             }
         }
@@ -5019,12 +5033,12 @@ pfxfn_cond_(
             opt_set_in_config[pfx_cond_] = TRUE;
             break;
         case 3:
-            config_error_add("Ambiguous condition option %s", opts);
+            config_error_add("Option de condition ambiguë %s", opts);
             break;
         case 1:
         case 2:
         default:
-            config_error_add("Unknown condition option %s (%d)", opts, reslt);
+            config_error_add("Option de condition inconnue %s (%d)", opts, reslt);
             break;
         }
         if (reslt != 0)
@@ -5081,7 +5095,7 @@ pfxfn_font(int optidx, int req, boolean negated, char *opts, char *op)
             else if (optidx == opt_font_size_status)
                 opttype = STATUS_OPTION;
             else {
-                config_error_add("Unknown %s parameter '%s'",
+                config_error_add("Paramètre %s inconnu : '%s'",
                              allopt[optidx].name, opts);
                 return optn_err;
             }
@@ -5109,7 +5123,7 @@ pfxfn_font(int optidx, int req, boolean negated, char *opts, char *op)
             }
             return optn_ok;
         } else {
-            config_error_add("Unknown %s parameter '%s'",
+            config_error_add("Paramètre %s inconnu : '%s'",
                              "font", opts);
             return FALSE;
         }
@@ -5224,7 +5238,7 @@ optfn_boolean(
         if (op != empty_optstr) {
             if (negated) {
                 config_error_add(
-                           "Negated boolean '%s' should not have a parameter",
+                           "Le booléen nié '%s' ne doit pas avoir de paramètre",
                                  allopt[optidx].name);
                 return optn_silenterr;
             }
@@ -5241,7 +5255,7 @@ optfn_boolean(
                        || (digit(*op) && atoi(op) == 0)) {
                 negated = TRUE;
             } else if (!allopt[optidx].valok) {
-                config_error_add("'%s' is not valid for a boolean", opts);
+                config_error_add("'%s' n'est pas valide pour un booléen", opts);
                 return optn_silenterr;
             }
         }
@@ -5288,7 +5302,7 @@ optfn_boolean(
         if (nosexchange) {
             /* can't arbitrarily change sex after game has started;
                magic (amulet or polymorph) is required for that */
-            config_error_add("'%s' is not anatomically possible.", opts);
+            config_error_add("'%s' n'est pas anatomiquement possible.", opts);
             return optn_silenterr;
         }
 
@@ -5321,8 +5335,8 @@ optfn_boolean(
             break;
 #ifndef IDLECHECKPOINT
         case opt_idlecheckpoint:
-            pline("There is no underlying support for 'idlecheckpoint'"
-                  " compiled in.");
+            pline("La prise en charge de 'idlecheckpoint'"
+                  " n'a pas été compilée.");
             iflags.idlecheckpoint = FALSE;
             give_opt_msg = FALSE;
             break;
@@ -5345,7 +5359,7 @@ optfn_boolean(
         case opt_armorstatus:
             if (!wc2_supported(allopt[optidx].name)) {
                 /* not actually an error */
-                config_error_add("'%s' is not supported.",
+                config_error_add("'%s' n'est pas pris en charge.",
                                  allopt[optidx].name);
                 return optn_ok;
             }
@@ -5445,8 +5459,8 @@ optfn_boolean(
            still be pending at this point (mainly for opt_need_redraw);
            give the toggled message now regardless */
         if (give_opt_msg)
-            pline("'%s' option toggled %s.", allopt[optidx].name,
-                  !negated ? "on" : "off");
+            pline("Option '%s' %s.", allopt[optidx].name,
+                  !negated ? "activée" : "désactivée");
 
         return optn_ok;
     }
@@ -5564,16 +5578,16 @@ handler_menustyle(void)
     start_menu(tmpwin, MENU_BEHAVE_STANDARD);
     any = cg.zeroany;
     for (i = 0; i < SIZE(menutype); i++) {
-        Sprintf(buf, "%-12.12s%c%.60s", menutype[i][0], sep, menutype[i][1]);
+        Sprintf(buf, "%-12.12s%c%.80s", menutype[i][0], sep, menutype[i][1]);
         any.a_int = i + 1;
         add_menu(tmpwin, &nul_glyphinfo, &any, *buf, 0, ATR_NONE, clr, buf,
                  (i == flags.menu_style) ? MENU_ITEMFLAGS_SELECTED
                                          : MENU_ITEMFLAGS_NONE);
         /* second line is prefixed by spaces that "c - " would use */
-        Sprintf(buf, "%4s%-12.12s%c%.60s", "", "", sep, menutype[i][2]);
+        Sprintf(buf, "%4s%-12.12s%c%.80s", "", "", sep, menutype[i][2]);
         add_menu_str(tmpwin, buf);
     }
-    end_menu(tmpwin, "Select menustyle:");
+    end_menu(tmpwin, "Choisissez le style de menu (menustyle) :");
     n = select_menu(tmpwin, PICK_ONE, &style_pick);
     if (n > 0) {
         i = style_pick[0].item.a_int - 1;
@@ -5586,7 +5600,7 @@ handler_menustyle(void)
     destroy_nhwindow(tmpwin);
     chngd = (flags.menu_style != old_menu_style);
     if (chngd || flags.verbose)
-        pline("'menustyle' %s \"%s\".", chngd ? "changed to" : "is still",
+        pline("'menustyle' %s \"%s\".", chngd ? "passe à" : "reste",
               menutype[(int) flags.menu_style][0]);
     return optn_ok;
 }
@@ -5604,19 +5618,19 @@ handler_align_misc(int optidx)
     start_menu(tmpwin, MENU_BEHAVE_STANDARD);
     any = cg.zeroany;
     any.a_int = ALIGN_TOP;
-    add_menu(tmpwin, &nul_glyphinfo, &any, 't', 0, ATR_NONE, clr, "top",
-             MENU_ITEMFLAGS_NONE);
+    add_menu(tmpwin, &nul_glyphinfo, &any, 't', 0, ATR_NONE, clr,
+             "en haut (top)", MENU_ITEMFLAGS_NONE);
     any.a_int = ALIGN_BOTTOM;
-    add_menu(tmpwin, &nul_glyphinfo, &any, 'b', 0, ATR_NONE, clr, "bottom",
-             MENU_ITEMFLAGS_NONE);
+    add_menu(tmpwin, &nul_glyphinfo, &any, 'b', 0, ATR_NONE, clr,
+             "en bas (bottom)", MENU_ITEMFLAGS_NONE);
     any.a_int = ALIGN_LEFT;
-    add_menu(tmpwin, &nul_glyphinfo, &any, 'l', 0, ATR_NONE, clr, "left",
-             MENU_ITEMFLAGS_NONE);
+    add_menu(tmpwin, &nul_glyphinfo, &any, 'l', 0, ATR_NONE, clr,
+             "à gauche (left)", MENU_ITEMFLAGS_NONE);
     any.a_int = ALIGN_RIGHT;
-    add_menu(tmpwin, &nul_glyphinfo, &any, 'r', 0, ATR_NONE, clr, "right",
-             MENU_ITEMFLAGS_NONE);
-    Sprintf(abuf, "Select %s window placement relative to the map:",
-            (optidx == opt_align_message) ? "message" : "status");
+    add_menu(tmpwin, &nul_glyphinfo, &any, 'r', 0, ATR_NONE, clr,
+             "à droite (right)", MENU_ITEMFLAGS_NONE);
+    Sprintf(abuf, "Position de la fenêtre %s par rapport à la carte :",
+            (optidx == opt_align_message) ? "de messages" : "d'état");
     end_menu(tmpwin, abuf);
     if (select_menu(tmpwin, PICK_ONE, &window_pick) > 0) {
         if (optidx == opt_align_message)
@@ -5654,7 +5668,7 @@ handler_autounlock(int optidx)
                  ATR_NONE, clr, buf,
                  (presel ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE));
     }
-    Sprintf(buf, "Select '%.20s' actions:", optname);
+    Sprintf(buf, "Choisissez les actions de '%.20s' :", optname);
     end_menu(tmpwin, buf);
     n = select_menu(tmpwin, PICK_ANY, &window_pick);
     if (n > 0) {
@@ -5675,7 +5689,7 @@ handler_autounlock(int optidx)
     if ((chngd || flags.verbose) && give_opt_msg) {
         optfn_autounlock(optidx, get_val, FALSE, buf, (char *) NULL);
         pline("'%s' %s '%s'.", optname,
-              chngd ? "changed to" : "is still", buf);
+              chngd ? "passe à" : "reste", buf);
     }
     return res;
 }
@@ -5690,8 +5704,8 @@ handler_disclose(void)
     /* order of disclose_names[] must correspond to
        disclosure_options in decl.c */
     static const char *const disclosure_names[] = {
-        "inventory", "attributes", "vanquished",
-        "genocides", "conduct",    "overview",
+        "inventaire", "attributs", "vaincus",
+        "génocides", "conduite",   "aperçu",
     };
     int disc_cat[NUM_DISCLOSURE_OPTIONS];
     int pick_cnt, pick_idx, opt_idx;
@@ -5715,7 +5729,7 @@ handler_disclose(void)
                  0, ATR_NONE, clr, buf, MENU_ITEMFLAGS_NONE);
         disc_cat[i] = 0;
     }
-    end_menu(tmpwin, "Change which disclosure options categories:");
+    end_menu(tmpwin, "Modifier quelles catégories de révélation ?");
     pick_cnt = select_menu(tmpwin, PICK_ANY, &disclosure_pick);
     if (pick_cnt > 0) {
         for (pick_idx = 0; pick_idx < pick_cnt; ++pick_idx) {
@@ -5730,7 +5744,7 @@ handler_disclose(void)
     for (i = 0; i < NUM_DISCLOSURE_OPTIONS; i++) {
         if (disc_cat[i]) {
             c = flags.end_disclose[i];
-            Sprintf(buf, "Disclosure options for %s:",
+            Sprintf(buf, "Options de révélation pour %s :",
                     disclosure_names[i]);
             tmpwin = create_nhwindow(NHW_MENU);
             start_menu(tmpwin, MENU_BEHAVE_STANDARD);
@@ -5739,40 +5753,40 @@ handler_disclose(void)
             any.a_char = DISCLOSE_NO_WITHOUT_PROMPT;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                      any.a_char, ATR_NONE, clr,
-                     "Never disclose, without prompting",
+                     "Ne jamais révéler, sans demander",
                      (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                        : MENU_ITEMFLAGS_NONE);
             any.a_char = DISCLOSE_YES_WITHOUT_PROMPT;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                      any.a_char, ATR_NONE, clr,
-                     "Always disclose, without prompting",
+                     "Toujours révéler, sans demander",
                      (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                        : MENU_ITEMFLAGS_NONE);
             if (*disclosure_names[i] == 'v' || *disclosure_names[i] == 'g') {
                 any.a_char = DISCLOSE_SPECIAL_WITHOUT_PROMPT; /* '#' */
                 add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                          any.a_char, ATR_NONE, clr,
-                         "Always disclose, pick sort order from menu",
+                         "Toujours révéler, ordre de tri choisi par menu",
                          (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                            : MENU_ITEMFLAGS_NONE);
             }
             any.a_char = DISCLOSE_PROMPT_DEFAULT_NO;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                      any.a_char, ATR_NONE, clr,
-                     "Prompt, with default answer of \"No\"",
+                     "Demander, avec \"Non\" par défaut",
                      (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                        : MENU_ITEMFLAGS_NONE);
             any.a_char = DISCLOSE_PROMPT_DEFAULT_YES;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                      any.a_char, ATR_NONE, clr,
-                     "Prompt, with default answer of \"Yes\"",
+                     "Demander, avec \"Oui\" par défaut",
                      (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                        : MENU_ITEMFLAGS_NONE);
             if (*disclosure_names[i] == 'v' || *disclosure_names[i] == 'g') {
                 any.a_char = DISCLOSE_PROMPT_DEFAULT_SPECIAL; /* '?' */
                 add_menu(tmpwin, &nul_glyphinfo, &any, 0,
                          any.a_char, ATR_NONE, clr,
-                "Prompt, with default answer of \"Ask\" to request sort menu",
+                "Demander, avec \"Demander\" (menu de tri) par défaut",
                          (c == any.a_char) ? MENU_ITEMFLAGS_SELECTED
                                            : MENU_ITEMFLAGS_NONE);
             }
@@ -5794,7 +5808,7 @@ staticfn int
 handler_menu_headings(void)
 {
     boolean gotca = query_color_attr(&iflags.menu_headings,
-                                     "How to highlight menu headings:");
+                                     "Mise en valeur des en-têtes de menu :");
 
     if (gotca) {
         /* header highlighting affects persistent inventory display */
@@ -5828,7 +5842,7 @@ handler_menu_objsyms(void)
                  (j == iflags.menuobjsyms) ? MENU_ITEMFLAGS_SELECTED
                                            : MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Set object symbols in menus to what?");
+    end_menu(tmpwin, "Symboles d'objets dans les menus ?");
     n = select_menu(tmpwin, PICK_ONE, &picklist);
     if (n > 0) {
         i = picklist[0].item.a_int - 1;
@@ -5878,7 +5892,7 @@ handler_msg_window(void)
             Sprintf(buf, "%4s%-12.12s%c%.60s", "", "", sep, msgwind[i][2]);
             add_menu_str(tmpwin, buf);
         }
-        end_menu(tmpwin, "Select message history display type:");
+        end_menu(tmpwin, "Type d'affichage de l'historique des messages :");
         n = select_menu(tmpwin, PICK_ONE, &window_pick);
         if (n > 0) {
             c = window_pick[0].item.a_char;
@@ -5894,11 +5908,11 @@ handler_msg_window(void)
             (void) optfn_msg_window(opt_msg_window, get_val,
                                     FALSE, buf, empty_optstr);
             pline("'msg_window' %.20s \"%.20s\".",
-                  chngd ? "changed to" : "is still", buf);
+                  chngd ? "passe à" : "reste", buf);
         }
     } else
 #endif /* PREV_MSGS (for tty or curses) */
-        pline("'%s' option is not supported for '%s'.",
+        pline("L'option '%s' n'est pas prise en charge par '%s'.",
               allopt[opt_msg_window].name, windowprocs.name);
     return optn_ok;
 }
@@ -5910,10 +5924,10 @@ handler_number_pad(void)
     anything any;
     int i;
     static const char *const npchoices[] = {
-        " 0 (off)", " 1 (on)", " 2 (on, MSDOS compatible)",
-        " 3 (on, phone-style digit layout)",
-        " 4 (on, phone-style layout, MSDOS compatible)",
-        "-1 (off, 'z' to move upper-left, 'y' to zap wands)"
+        " 0 (désactivé)", " 1 (activé)", " 2 (activé, compatible MSDOS)",
+        " 3 (activé, chiffres disposés comme un téléphone)",
+        " 4 (activé, disposition téléphone, compatible MSDOS)",
+        "-1 (désactivé, 'z' haut-gauche, 'y' pour zapper les baguettes)"
     };
     menu_item *mode_pick = (menu_item *) 0;
     int clr = NO_COLOR;
@@ -5926,7 +5940,7 @@ handler_number_pad(void)
         add_menu(tmpwin, &nul_glyphinfo, &any, 'a' + i, '0' + i,
                  ATR_NONE, clr, npchoices[i], MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Select number_pad mode:");
+    end_menu(tmpwin, "Choisissez le mode number_pad :");
     if (select_menu(tmpwin, PICK_ONE, &mode_pick) > 0) {
         switch (mode_pick->item.a_int - 1) {
         case 0:
@@ -6003,7 +6017,7 @@ handler_paranoid_confirmation(void)
                      ? MENU_ITEMFLAGS_SELECTED
                      : MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Actions requiring extra confirmation:");
+    end_menu(tmpwin, "Actions exigeant une confirmation supplémentaire :");
     i = select_menu(tmpwin, PICK_ANY, &paranoia_picks);
     if (i >= 0) {
         /* player didn't cancel; we reset all the paranoia options
@@ -6059,7 +6073,7 @@ handler_perminv_mode(void)
                  buf, (i == old_pi) ? MENU_ITEMFLAGS_SELECTED
                                     : MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Choose permanent inventory mode:");
+    end_menu(tmpwin, "Choisissez le mode d'inventaire permanent :");
     n = select_menu(tmpwin, PICK_ONE, &pi_pick);
     destroy_nhwindow(tmpwin);
     if (n > 0) {
@@ -6073,7 +6087,7 @@ handler_perminv_mode(void)
         buf[0] = '\0';
         (void) optfn_perminv_mode(opt_perm_invent, get_val, FALSE, buf, NULL);
         pline("'perminv_mode' %s '%s' (%s).",
-              (new_pi != old_pi) ? "changed to" : "is still",
+              (new_pi != old_pi) ? "passe à" : "reste",
               perminv_modes[new_pi][0], buf);
         if (new_pi != InvOptNone && !old_perm_invent)
             iflags.perm_invent = can_set_perm_invent();
@@ -6115,7 +6129,7 @@ handler_pickup_burden(void)
         add_menu(tmpwin, &nul_glyphinfo, &any, burden_letters[i],
                  0, ATR_NONE, clr, burden_name, MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Select encumbrance level:");
+    end_menu(tmpwin, "Choisissez le niveau d'encombrement :");
     if (select_menu(tmpwin, PICK_ONE, &burden_pick) > 0) {
         flags.pickup_burden = burden_pick->item.a_int - 1;
         free((genericptr_t) burden_pick);
@@ -6153,7 +6167,7 @@ handler_runmode(void)
         add_menu(tmpwin, &nul_glyphinfo, &any, *mode_name,
                  0, ATR_NONE, clr, mode_name, MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Select run/travel display mode:");
+    end_menu(tmpwin, "Mode d'affichage pendant la course ou le voyage :");
     if (select_menu(tmpwin, PICK_ONE, &mode_pick) > 0) {
         flags.runmode = mode_pick->item.a_int - 1;
         free((genericptr_t) mode_pick);
@@ -6166,7 +6180,8 @@ staticfn int
 handler_petattr(void)
 {
     int tmp
-        = query_attr("Select pet highlight attribute", iflags.wc2_petattr);
+        = query_attr("Attribut de mise en valeur des familiers",
+                     iflags.wc2_petattr);
 
     if (tmp != -1) {
         iflags.wc2_petattr = tmp;
@@ -6199,7 +6214,7 @@ handler_sortloot(void)
                                 ? MENU_ITEMFLAGS_SELECTED
                                 : MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Select loot sorting type:");
+    end_menu(tmpwin, "Type de tri des objets :");
     n = select_menu(tmpwin, PICK_ONE, &sortl_pick);
     if (n > 0) {
         char c = sortl_pick[0].item.a_char;
@@ -6233,50 +6248,51 @@ handler_whatis_coord(void)
     any.a_char = GPCOORDS_COMPASS;
     add_menu(tmpwin, &nul_glyphinfo, &any, GPCOORDS_COMPASS,
              0, ATR_NONE, clr,
-             "compass ('east' or '3s' or '2n,4w')",
+             "boussole ('est' ou '3s' ou '2n,4o')",
              (gpc == GPCOORDS_COMPASS)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = GPCOORDS_COMFULL;
     add_menu(tmpwin, &nul_glyphinfo, &any, GPCOORDS_COMFULL,
              0, ATR_NONE, clr,
-             "full compass ('east' or '3south' or '2north,4west')",
+             "boussole complète ('est' ou '3sud' ou '2nord,4ouest')",
              (gpc == GPCOORDS_COMFULL)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = GPCOORDS_MAP;
     add_menu(tmpwin, &nul_glyphinfo, &any, GPCOORDS_MAP,
-             0, ATR_NONE, clr, "map <x,y>",
+             0, ATR_NONE, clr, "carte <x,y>",
              (gpc == GPCOORDS_MAP)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = GPCOORDS_SCREEN;
     add_menu(tmpwin, &nul_glyphinfo, &any, GPCOORDS_SCREEN,
-             0, ATR_NONE, clr, "screen [row,column]",
+             0, ATR_NONE, clr, "écran [ligne,colonne]",
              (gpc == GPCOORDS_SCREEN)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = GPCOORDS_NONE;
     add_menu(tmpwin, &nul_glyphinfo, &any, GPCOORDS_NONE,
-             0, ATR_NONE, clr, "none (no coordinates displayed)",
+             0, ATR_NONE, clr, "aucune (pas de coordonnées affichées)",
              (gpc == GPCOORDS_NONE)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     add_menu_str(tmpwin, "");
-    Sprintf(buf, "map: upper-left: <%d,%d>, lower-right: <%d,%d>%s",
+    Sprintf(buf, "carte : haut-gauche : <%d,%d>, bas-droite : <%d,%d>%s",
             1, 0, COLNO - 1, ROWNO - 1,
-            flags.verbose ? "; column 0 unused, off left edge" : "");
+            flags.verbose ? " ; colonne 0 inutilisée, hors du bord gauche"
+                          : "");
     add_menu_str(tmpwin, buf);
     if (strcmp(windowprocs.name, "tty")) /* only show for non-tty */
         add_menu_str(tmpwin,
-      "screen: row is offset to accommodate tty interface's use of top line");
+      "écran : ligne décalée car l'interface tty utilise la ligne du haut");
 #if COLNO == 80
-#define COL80ARG flags.verbose ? "; column 80 is not used" : ""
+#define COL80ARG flags.verbose ? " ; la colonne 80 est inutilisée" : ""
 #else
 #define COL80ARG ""
 #endif
-    Sprintf(buf, "screen: upper-left: [%02d,%02d], lower-right: [%d,%d]%s",
+    Sprintf(buf, "écran : haut-gauche : [%02d,%02d], bas-droite : [%d,%d]%s",
             0 + 2, 1, ROWNO - 1 + 2, COLNO - 1, COL80ARG);
 #undef COL80ARG
     add_menu_str(tmpwin, buf);
     add_menu_str(tmpwin, "");
     end_menu(tmpwin,
-        "Select coordinate display when auto-describing a map position:");
+        "Affichage des coordonnées lors de la description d'une position :");
     if ((pick_cnt = select_menu(tmpwin, PICK_ONE, &window_pick)) > 0) {
         iflags.getpos_coords = window_pick[0].item.a_char;
         /* PICK_ONE doesn't unselect preselected entry when
@@ -6304,21 +6320,21 @@ handler_whatis_filter(void)
     any = cg.zeroany;
     any.a_char = (GFILTER_NONE + 1);
     add_menu(tmpwin, &nul_glyphinfo, &any, 'n',
-             0, ATR_NONE, clr, "no filtering",
+             0, ATR_NONE, clr, "pas de filtrage",
              (gfilt == GFILTER_NONE)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = (GFILTER_VIEW + 1);
     add_menu(tmpwin, &nul_glyphinfo, &any, 'v',
-             0, ATR_NONE, clr, "in view only",
+             0, ATR_NONE, clr, "en vue uniquement",
              (gfilt == GFILTER_VIEW)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_char = (GFILTER_AREA + 1);
     add_menu(tmpwin, &nul_glyphinfo, &any, 'a',
-             0, ATR_NONE, clr, "in same area",
+             0, ATR_NONE, clr, "dans la même zone",
              (gfilt == GFILTER_AREA)
                 ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     end_menu(tmpwin,
-      "Select location filtering when going for next/previous map position:");
+      "Filtrage des positions pour aller à la position suivante/précédente :");
     if ((pick_cnt = select_menu(tmpwin, PICK_ONE, &window_pick)) > 0) {
         iflags.getloc_filter = (window_pick[0].item.a_char - 1);
         /* PICK_ONE doesn't unselect preselected entry when
@@ -6354,14 +6370,18 @@ handler_autopickup_exception(void)
 
  ape_again:
     numapes = count_apes();
-    opt_idx = handle_add_list_remove("autopickup exception", numapes);
+    opt_idx = handle_add_list_remove(
+                                "une exception de ramassage automatique",
+                                "les exceptions de ramassage automatique",
+                                numapes);
     if (opt_idx == 3) { /* done */
         return TRUE;
     } else if (opt_idx == 0) { /* add new */
         /* EDIT_GETLIN:  assume user doesn't user want previous
            exception used as default input string for this one... */
         apebuf[0] = apebuf[1] = '\0';
-        getlin("What new autopickup exception pattern?", &apebuf[1]);
+        getlin("Motif de la nouvelle exception de ramassage automatique ?",
+               &apebuf[1]);
         mungspaces(&apebuf[1]); /* regularize whitespace */
         if (apebuf[1] == '\033')
             return TRUE;
@@ -6385,7 +6405,7 @@ handler_autopickup_exception(void)
             ape = ga.apelist;
             any = cg.zeroany;
             add_menu_heading(tmpwin,
-                             "Always pickup '<'; never pickup '>'");
+                             "Toujours ramasser '<' ; ne jamais ramasser '>'");
             for (i = 0; i < numapes && ape; i++) {
                 any.a_void = (opt_idx == 1) ? 0 : ape;
                 /* length of pattern plus quotes (plus '<'/'>') is
@@ -6397,8 +6417,10 @@ handler_autopickup_exception(void)
                 ape = ape->next;
             }
         }
-        Sprintf(apebuf, "%s autopickup exceptions",
-                (opt_idx == 1) ? "List of" : "Remove which");
+        Sprintf(apebuf, "%s",
+                (opt_idx == 1)
+                  ? "Liste des exceptions de ramassage automatique"
+                  : "Supprimer quelles exceptions de ramassage automatique ?");
         end_menu(tmpwin, apebuf);
         pick_cnt = select_menu(tmpwin,
                                (opt_idx == 1) ? PICK_NONE : PICK_ANY,
@@ -6429,7 +6451,8 @@ handler_menu_colors(void)
 
  menucolors_again:
     nmc = count_menucolors();
-    opt_idx = handle_add_list_remove("menucolor", nmc);
+    opt_idx = handle_add_list_remove("une couleur de menu",
+                                     "les couleurs de menu", nmc);
     if (opt_idx == 3) { /* done */
  menucolors_done:
         /* in case we've made a change which impacts current persistent
@@ -6445,15 +6468,15 @@ handler_menu_colors(void)
 
     } else if (opt_idx == 0) { /* add new */
         mcbuf[0] = '\0';
-        getlin("What new menucolor pattern?", mcbuf);
+        getlin("Motif de la nouvelle couleur de menu ?", mcbuf);
         if (*mcbuf == '\033')
             goto menucolors_done;
         if (*mcbuf
-            && test_regex_pattern(mcbuf, "MENUCOLORS regex")
+            && test_regex_pattern(mcbuf, "Expression rationnelle MENUCOLORS")
             && (mcclr = query_color((char *) 0, NO_COLOR)) != -1
                 && (mcattr = query_attr((char *) 0, ATR_NONE)) != -1
             && !add_menu_coloring_parsed(mcbuf, mcclr, mcattr)) {
-            pline("Error adding the menu color.");
+            pline("Erreur lors de l'ajout de la couleur de menu.");
             wait_synch();
         }
         goto menucolors_again;
@@ -6493,8 +6516,9 @@ handler_menu_colors(void)
                      ATR_NONE, clr, mcbuf, MENU_ITEMFLAGS_NONE);
             tmp = tmp->next;
         }
-        Sprintf(mcbuf, "%s menu colors",
-                (opt_idx == 1) ? "List of" : "Remove which");
+        Sprintf(mcbuf, "%s",
+                (opt_idx == 1) ? "Liste des couleurs de menu"
+                               : "Supprimer quelles couleurs de menu ?");
         end_menu(tmpwin, mcbuf);
         pick_cnt = select_menu(tmpwin,
                                (opt_idx == 1) ? PICK_NONE : PICK_ANY,
@@ -6522,19 +6546,20 @@ handler_msgtype(void)
 
  msgtypes_again:
     nmt = msgtype_count();
-    opt_idx = handle_add_list_remove("message type", nmt);
+    opt_idx = handle_add_list_remove("un type de message",
+                                     "les types de message", nmt);
     if (opt_idx == 3) { /* done */
         return TRUE;
     } else if (opt_idx == 0) { /* add new */
         mtbuf[0] = '\0';
-        getlin("What new message pattern?", mtbuf);
+        getlin("Motif du nouveau message ?", mtbuf);
         if (*mtbuf == '\033')
             return TRUE;
         if (*mtbuf
-            && test_regex_pattern(mtbuf, "MSGTYPE regex")
+            && test_regex_pattern(mtbuf, "Expression rationnelle MSGTYPE")
             && (mttyp = query_msgtype()) != -1
             && !msgtype_add(mttyp, mtbuf)) {
-            pline("Error adding the message type.");
+            pline("Erreur lors de l'ajout du type de message.");
             wait_synch();
         }
         goto msgtypes_again;
@@ -6564,8 +6589,9 @@ handler_msgtype(void)
                      ATR_NONE, clr, mtbuf, MENU_ITEMFLAGS_NONE);
             tmp = tmp->next;
         }
-        Sprintf(mtbuf, "%s message types",
-                (opt_idx == 1) ? "List of" : "Remove which");
+        Sprintf(mtbuf, "%s",
+                (opt_idx == 1) ? "Liste des types de message"
+                               : "Supprimer quels types de message ?");
         end_menu(tmpwin, mtbuf);
         pick_cnt = select_menu(tmpwin,
                                (opt_idx == 1) ? PICK_NONE : PICK_ANY,
@@ -6598,23 +6624,23 @@ handler_versinfo(void)
 
     any.a_int = n = VI_NUMBER; /* 1 */
     add_menu(tmpwin, &nul_glyphinfo, &any, 'n', n + '0', ATR_NONE, NO_COLOR,
-             "version number",
+             "numéro de version",
              (vi & n) ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_int = n = VI_NAME; /* 2 */
     add_menu(tmpwin, &nul_glyphinfo, &any, 'g', n + '0', ATR_NONE, NO_COLOR,
-             "game name",
+             "nom du jeu",
              (vi & n) ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     any.a_int = n = VI_BRANCH; /* 4 */
     add_menu(tmpwin, &nul_glyphinfo, &any, 'b', n + '0', ATR_NONE, NO_COLOR,
-             (have_branch ? "development branch"
+             (have_branch ? "branche de développement"
 #if (NH_DEVEL_STATUS == NH_STATUS_RELEASED)
-                          : "(not applicable)"
+                          : "(sans objet)"
 #else
-                          : "(not available)"
+                          : "(indisponible)"
 #endif
               ), (vi & n) ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
 
-    end_menu(tmpwin, "Select version information flags:");
+    end_menu(tmpwin, "Informations de version à afficher :");
     n = select_menu(tmpwin, PICK_ANY, &vi_pick);
     if (n > 0) {
         int i, newval = 0;
@@ -6640,11 +6666,11 @@ handler_windowborders(void)
     menu_item *mode_pick = (menu_item *) 0;
     int clr = NO_COLOR;
     static const char *const windowborders_text[] = {
-        "Off, never show borders",
-        "On, always show borders",
-        "Auto, on if display is at least (24+2)x(80+2)",
-        "On, except forced off for perm_invent",
-        "Auto, except forced off for perm_invent"
+        "Désactivé, jamais de bordures",
+        "Activé, toujours des bordures",
+        "Auto, activé si l'écran fait au moins (24+2)x(80+2)",
+        "Activé, sauf pour perm_invent (forcé à désactivé)",
+        "Auto, sauf pour perm_invent (forcé à désactivé)"
     };
 
     tmpwin = create_nhwindow(NHW_MENU);
@@ -6658,7 +6684,7 @@ handler_windowborders(void)
         add_menu(tmpwin, &nul_glyphinfo, &any, 'a' + i, '0' + i,
                  ATR_NONE, clr, mode_name, MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Select window borders mode:");
+    end_menu(tmpwin, "Mode des bordures de fenêtres :");
     if (select_menu(tmpwin, PICK_ONE, &mode_pick) > 0) {
         iflags.wc2_windowborders = mode_pick->item.a_int - 1;
         free((genericptr_t) mode_pick);
@@ -6687,7 +6713,7 @@ string_for_opt(char *opts, boolean val_optional)
 
     if (!colon || !*++colon) {
         if (!val_optional)
-            config_error_add("Missing parameter for '%s'", opts);
+            config_error_add("Paramètre manquant pour '%s'", opts);
         return empty_optstr;
     }
     return colon;
@@ -6706,8 +6732,8 @@ string_for_env_opt(const char *optname, char *opts, boolean val_optional)
 staticfn void
 bad_negation(const char *optname, boolean with_parameter)
 {
-    config_error_add("The %s option may not %sbe negated.", optname,
-                     with_parameter ? "both have a value and " : "");
+    config_error_add("L'option %s ne peut pas %sêtre niée.", optname,
+                     with_parameter ? "à la fois avoir une valeur et " : "");
 }
 
 /* go through all of the options and set the minmatch value
@@ -6813,10 +6839,10 @@ complain_about_duplicate(int optidx)
 #else /* !MAC68K */
     buf[0] = '\0';
     if (using_alias)
-        Sprintf(buf, " (via alias: %s)", allopt[optidx].alias);
-    config_error_add("%s option specified multiple times: %s%s",
-                     (allopt[optidx].opttyp == CompOpt) ? "compound"
-                                                        : "boolean",
+        Sprintf(buf, " (via l'alias : %s)", allopt[optidx].alias);
+    config_error_add("Option %s indiquée plusieurs fois : %s%s",
+                     (allopt[optidx].opttyp == CompOpt) ? "composée"
+                                                        : "booléenne",
                      allopt[optidx].name, buf);
 #endif /* ?MAC68K */
     return;
@@ -6826,9 +6852,10 @@ staticfn void
 rejectoption(const char *optname)
 {
 #ifdef MICRO
-    pline("\"%s\" settable only from %s.", optname, get_configfile());
+    pline("\"%s\" ne peut être réglée que depuis %s.", optname,
+          get_configfile());
 #else
-    pline("%s can be set only from NETHACKOPTIONS or %s.", optname,
+    pline("%s ne peut être réglée que depuis NETHACKOPTIONS ou %s.", optname,
           get_configfile());
 #endif
 }
@@ -7378,7 +7405,7 @@ initoptions_finish(void)
      * is even initialized, so check for that too.
      */
     if (iflags.hilite_delta && !wc2_supported("statushilites")) {
-        raw_printf("Status highlighting not supported for %s interface.",
+        raw_printf("Mise en valeur de l'état non prise en charge par l'interface %s.",
                     windowprocs.name);
         iflags.hilite_delta = 0;
     }
@@ -7516,18 +7543,18 @@ change_inv_order(char *op)
         oc_sym = def_char_to_objclass(*sp);
         /* reject bad or duplicate entries */
         if (oc_sym == MAXOCLASSES) { /* not an object class char */
-            config_error_add("Not an object class '%c'", *sp);
+            config_error_add("'%c' n'est pas une classe d'objets", *sp);
             retval = 0;
             fail = TRUE;
         } else if (!strchr(flags.inv_order, oc_sym)) {
             /* VENOM_CLASS, RANDOM_CLASS, and ILLOBJ_CLASS are excluded
                because they aren't in def_inv_order[] so don't make it
                into flags.inv_order, hence always fail this strchr() test */
-            config_error_add("Object class '%c' not allowed", *sp);
+            config_error_add("Classe d'objets '%c' non autorisée", *sp);
             retval = 0;
             fail = TRUE;
         } else if (strchr(sp + 1, *sp)) {
-            config_error_add("Duplicate object class '%c'", *sp);
+            config_error_add("Classe d'objets '%c' en double", *sp);
             retval = 0;
             fail = TRUE;
         }
@@ -7602,10 +7629,10 @@ feature_alert_opts(char *op, const char *optn)
         return 0;
     if (fnv > get_current_feature_ver()) {
         if (!go.opt_initial) {
-            You_cant("disable new feature alerts for future versions.");
+            You_cant("désactiver les alertes de nouveautés de versions futures.");
         } else {
             config_error_add(
-                        "%s=%s Invalid reference to a future version ignored",
+                        "%s=%s Référence invalide à une version future ignorée",
                              optn, op);
         }
         return 0;
@@ -7616,7 +7643,7 @@ feature_alert_opts(char *op, const char *optn)
         Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ,
                 FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
         pline(
-          "Feature change alerts disabled for NetHack %s features and prior.",
+          "Alertes de nouveautés désactivées pour NetHack %s et antérieurs.",
               buf);
     }
     return 1;
@@ -7673,7 +7700,7 @@ parsebindings(char *bindings)
     for (i = 0; i < SIZE(mousebtn_names); i++)
         if (!strcmp(bindings, mousebtn_names[i])) {
             if (!bind_mousebtn(i + 1, bind)) {
-                config_error_add("Error binding mouse button %i", i + 1);
+                config_error_add("Erreur d'association du bouton de souris %i", i + 1);
             } else {
                 return ret;
             }
@@ -7682,7 +7709,7 @@ parsebindings(char *bindings)
     /* read the key to be bound */
     key = txt2key(bindings);
     if (!key) {
-        config_error_add("Unknown key binding key '%s'", bindings);
+        config_error_add("Touche d'association inconnue '%s'", bindings);
         return FALSE;
     }
 
@@ -7694,7 +7721,7 @@ parsebindings(char *bindings)
     for (i = 0; default_menu_cmd_info[i].name; i++) {
         if (!strcmp(default_menu_cmd_info[i].name, bind)) {
             if (illegal_menu_cmd_key(key)) {
-                config_error_add("Bad menu key %s:%s", visctrl(key), bind);
+                config_error_add("Touche de menu incorrecte %s:%s", visctrl(key), bind);
                 return FALSE;
             } else {
                 add_menu_cmd_alias((char) key, default_menu_cmd_info[i].cmd);
@@ -7705,7 +7732,7 @@ parsebindings(char *bindings)
 
     /* extended command? */
     if (!bind_key(key, bind, TRUE)) {
-        config_error_add("Unknown key binding command '%s'", bind);
+        config_error_add("Commande d'association inconnue '%s'", bind);
         return FALSE;
     }
     return ret;
@@ -7716,12 +7743,12 @@ static const struct {
     xint8 msgtyp;
     const char *descr;
 } msgtype_names[] = {
-    { "show", MSGTYP_NORMAL, "Show message normally" },
-    { "hide", MSGTYP_NOSHOW, "Hide message" },
+    { "show", MSGTYP_NORMAL, "Afficher le message normalement" },
+    { "hide", MSGTYP_NOSHOW, "Masquer le message" },
     { "noshow", MSGTYP_NOSHOW, NULL },
-    { "stop", MSGTYP_STOP, "Prompt for more after the message" },
+    { "stop", MSGTYP_STOP, "Attendre une touche après le message" },
     { "more", MSGTYP_STOP, NULL },
-    { "norep", MSGTYP_NOREP, "Do not repeat the message" }
+    { "norep", MSGTYP_NOREP, "Ne pas répéter le message" }
 };
 
 staticfn const char *
@@ -7754,7 +7781,7 @@ query_msgtype(void)
                      ATR_NONE, clr,
                      msgtype_names[i].descr, MENU_ITEMFLAGS_NONE);
         }
-    end_menu(tmpwin, "How to show the message");
+    end_menu(tmpwin, "Comment afficher le message");
     pick_cnt = select_menu(tmpwin, PICK_ONE, &picks);
     destroy_nhwindow(tmpwin);
     if (pick_cnt > 0) {
@@ -7768,7 +7795,7 @@ query_msgtype(void)
 staticfn boolean
 msgtype_add(int typ, char *pattern)
 {
-    static const char *const re_error = "MSGTYPE regex error";
+    static const char *const re_error = "Erreur d'expression rationnelle MSGTYPE";
     struct plinemsg_type *tmp = (struct plinemsg_type *) alloc(sizeof *tmp);
 
     tmp->msgtype = typ;
@@ -7782,7 +7809,7 @@ msgtype_add(int typ, char *pattern)
         /* free first in case reason for failure was insufficient memory */
         regex_free(tmp->regex);
         free((genericptr_t) tmp);
-        config_error_add("%s: %s", re_error, re_error_desc);
+        config_error_add("%s : %s", re_error, re_error_desc);
         return FALSE;
     }
     tmp->pattern = dupstr(pattern);
@@ -7896,9 +7923,9 @@ msgtype_parse_add(char *str)
         if (typ != -1)
             return msgtype_add(typ, pattern);
         else
-            config_error_add("Unknown message type '%s'", msgtype);
+            config_error_add("Type de message inconnu '%s'", msgtype);
     } else {
-        config_error_add("Malformed MSGTYPE");
+        config_error_add("MSGTYPE mal formé");
     }
     return FALSE;
 }
@@ -7908,7 +7935,7 @@ msgtype_parse_add(char *str)
 staticfn boolean
 test_regex_pattern(const char *str, const char *errmsg)
 {
-    static const char def_errmsg[] = "NHregex error";
+    static const char def_errmsg[] = "Erreur NHregex";
     struct nhregex *match;
     char *re_error_desc, errbuf[BUFSZ];
     boolean retval;
@@ -7933,7 +7960,7 @@ test_regex_pattern(const char *str, const char *errmsg)
     regex_free(match);
     /* if returning failure, tell player */
     if (!retval)
-        config_error_add("%s: %s", errmsg, re_error_desc);
+        config_error_add("%s : %s", errmsg, re_error_desc);
 
     return retval;
 }
@@ -7983,18 +8010,18 @@ parse_role_opt(
                 op += (*op == '!') ? 1 : (op[2] != '-') ? 2 : 3;
             }
             if (!*op || *op == ' ') {
-                config_error_add("Negated nothing for '%s'", fullname);
+                config_error_add("Négation de rien pour '%s'", fullname);
                 return FALSE;
             }
             if (!first) {
                 if ((val_negated ^ prev_negated)
                     || (negated && val_negated)) {
-                    config_error_add("Invalid mixed negation for '%s%s'",
+                    config_error_add("Mélange de négations invalide pour '%s%s'",
                                      negated ? "!" : "", fullname);
                     return FALSE;
                 } else if (!negated && !val_negated) {
                     config_error_add(
-                    "Multiple role values only allowed when list is negated");
+                    "Plusieurs valeurs de rôle ne sont permises que si la liste est niée");
                     return FALSE;
                 }
             }
@@ -8016,7 +8043,7 @@ parse_role_opt(
                 if (!preval || *preval != '!')
                     clearrolefilter(which);
                 if (!setrolefilter(op)) {
-                    config_error_add("Invalid %s '%s'", fullname, op);
+                    config_error_add("%s invalide '%s'", fullname, op);
                     return FALSE;
                 }
                 saveoptstr(optidx, rolefilterstring(negbuf, which));
@@ -8076,14 +8103,14 @@ illegal_menu_cmd_key(uchar c)
 {
     if (c == 0 || c == '\r' || c == '\n' || c == '\033' || c == ' '
         || digit((char) c) || (letter((char) c) && c != '@')) {
-        config_error_add("Reserved menu command key '%s'", visctrl((char) c));
+        config_error_add("Touche de commande de menu réservée '%s'", visctrl((char) c));
         return TRUE;
     } else { /* reject default object class symbols */
         int j;
 
         for (j = 1; j < MAXOCLASSES; j++)
             if (c == (uchar) def_oc_syms[j].sym) {
-                config_error_add("Menu command key '%s' is an object class",
+                config_error_add("La touche de commande de menu '%s' est une classe d'objets",
                                  visctrl((char) c));
                 return TRUE;
             }
@@ -8118,7 +8145,7 @@ void
 add_menu_cmd_alias(char from_ch, char to_ch)
 {
     if (gn.n_menu_mapped >= MAX_MENU_MAPPED_CMDS) {
-        pline("out of menu map space.");
+        pline("plus de place pour les associations de menu.");
     } else {
         gm.mapped_menu_cmds[gn.n_menu_mapped] = from_ch;
         gm.mapped_menu_op[gn.n_menu_mapped] = to_ch;
@@ -8242,7 +8269,13 @@ fruitadd(char *str, struct fruit *replace_fruit)
              i++) {
             if (!strcmp(OBJ_NAME(objects[i]), svp.pl_fruit)
                 || (globpfx > 0 && !strcmp(OBJ_NAME(objects[i]),
-                                           &svp.pl_fruit[globpfx]))) {
+                                           &svp.pl_fruit[globpfx]))
+                /* noms anglais d'origine, encore reconnus par les voeux */
+                || (en_obj_names[i]
+                    && (!strcmp(en_obj_names[i], svp.pl_fruit)
+                        || (globpfx > 0
+                            && !strcmp(en_obj_names[i],
+                                       &svp.pl_fruit[globpfx]))))) {
                 found = TRUE;
                 break;
             }
@@ -8273,8 +8306,8 @@ fruitadd(char *str, struct fruit *replace_fruit)
                  || str_end_is(svp.pl_fruit, " egg"))
                 && ismnum(name_to_mon(svp.pl_fruit, (int *) 0)))) {
             Strcpy(buf, svp.pl_fruit);
-            Strcpy(svp.pl_fruit, "candied ");
-            nmcpy(svp.pl_fruit + 8, buf, PL_FSIZ - 8);
+            Strcpy(svp.pl_fruit, "confit de ");
+            nmcpy(svp.pl_fruit + 10, buf, PL_FSIZ - 10);
         }
         *altname = '\0';
         /* This flag indicates that a fruit has been made since the
@@ -8606,14 +8639,14 @@ doset_simple_menu(void)
            and show that, or whether #reqmenu and #options are both still
            bound to keys and show those, but if meta keys are involved
            the player might not know how to type them; keep this simple */
-        Strcpy(buf, "Use command '#optionsfull'"
-                    " to get the complete options list.");
+        Strcpy(buf, "Utilisez la commande '#optionsfull'"
+                    " pour obtenir la liste complète des options.");
         add_menu_str(tmpwin, buf);
     }
     any = cg.zeroany;
     any.a_int = -2 + 1;
     add_menu(tmpwin, &nul_glyphinfo, &any, '?', 0, ATR_NONE, NO_COLOR,
-             gs.simple_options_help ? "hide help" : "show help",
+             gs.simple_options_help ? "masquer l'aide" : "afficher l'aide",
              MENU_ITEMFLAGS_NONE);
 
     for (section = OptS_General; section < OptS_Advanced; section++) {
@@ -8655,10 +8688,10 @@ doset_simple_menu(void)
                                                    FALSE, buf2, empty_optstr);
                     Sprintf(buf, fmtstr, name,
                             ((reslt == optn_ok && buf2[0])
-                             ? (const char *) buf2 : "unknown"));
+                             ? (const char *) buf2 : "inconnu"));
                 break;
             default:
-                Sprintf(buf, "ERROR");
+                Sprintf(buf, "ERREUR");
                 break;
             }
             /* pickup_types is separated from autopickup due to the
@@ -8667,7 +8700,7 @@ doset_simple_menu(void)
                 || allopt[i].idx == opt_pickup_thrown
                 || allopt[i].idx == opt_pickup_stolen
                 || allopt[i].idx == opt_dropped_nopick)
-                Strcat(buf, "  (for autopickup)");
+                Strcat(buf, "  (ramassage automatique)");
             add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0,
                      ATR_NONE, NO_COLOR, buf, MENU_ITEMFLAGS_NONE);
             if (gs.simple_options_help && allopt[i].descr) {
@@ -8707,7 +8740,7 @@ doset_simple_menu(void)
                 if (reslt == optn_ok && allopt[k].idx != pfx_cond_)
                     opt_set_in_config[k] = TRUE;
             } else {
-                Sprintf(buf, "Set %s to what?", allopt[k].name);
+                Sprintf(buf, "Nouvelle valeur de %s ?", allopt[k].name);
                 getlin(buf, abuf);
                 if (abuf[0] != '\033') { /* ESC */
                     Sprintf(buf, "%s:", allopt[k].name);
@@ -8778,8 +8811,8 @@ term_for_boolean(int idx, boolean *b)
     int i, f_t = (*b) ? 1: 0;
     const char *boolean_term;
     static const char *const booleanterms[2][num_terms] = {
-        { "false", "off", "disabled", "excluded from build" },
-        { "true", "on", "enabled", "included"},
+        { "faux", "désactivé", "désactivé", "exclu de la compilation" },
+        { "vrai", "activé", "activé", "inclus"},
     };
 
     boolean_term = booleanterms[f_t][0];
@@ -8826,22 +8859,22 @@ doset(void) /* changing options via menu by Per Liboriussen */
     if (!skiphelp) {
         /* help text surrounding '?' choice should have exactly one NULL */
         static const char *const helptext[] = {
-            "For a brief explanation of how this works, type '?' to select",
-            "the next menu choice, then press <enter> or <return>.",
+            "Pour une brève explication du fonctionnement, tapez '?' pour",
+            "choisir l'élément suivant, puis appuyez sur <entrée>.",
             NULL, /* actual '?' menu entry gets inserted here */
-            ("[To suppress this menu help,"
-             " toggle off the 'cmdassist' option.]"),
+            ("[Pour masquer cette aide,"
+             " désactivez l'option 'cmdassist'.]"),
             "",
         };
         any = cg.zeroany;
         for (i = 0; i < SIZE(helptext); ++i) {
             if (helptext[i]) {
-                Sprintf(buf, "%4s%.75s", "", helptext[i]);
+                Sprintf(buf, "%4s%.90s", "", helptext[i]);
                 add_menu_str(tmpwin, buf);
             } else {
                 any.a_int = HELP_IDX + 1; /* handling pick_list subtracts 1 */
                 add_menu(tmpwin, &nul_glyphinfo, &any, '?', '?', ATR_NONE,
-                         clr, "view help for options menu",
+                         clr, "voir l'aide du menu des options",
                          MENU_ITEMFLAGS_SKIPINVERT);
             }
         }
@@ -8866,7 +8899,7 @@ doset(void) /* changing options via menu by Per Liboriussen */
 
     indexoffset = 1;
     any = cg.zeroany;
-    add_menu_heading(tmpwin, "Booleans (selecting will toggle value):");
+    add_menu_heading(tmpwin, "Booléens (sélectionner inverse la valeur) :");
     any.a_int = 0;
     /* first list any other non-modifiable booleans, then modifiable ones */
     for (pass = 0; pass <= 1; pass++)
@@ -8899,7 +8932,7 @@ doset(void) /* changing options via menu by Per Liboriussen */
 
     add_menu_str(tmpwin, "");
     add_menu_heading(tmpwin,
-                     "Compounds (selecting will prompt for new value):");
+                     "Composées (sélectionner demande une nouvelle valeur) :");
 
     for (pass = startpass; pass <= endpass; pass++)
         for (i = 0; (name = allopt[i].name) != 0; i++) {
@@ -8916,7 +8949,7 @@ doset(void) /* changing options via menu by Per Liboriussen */
         }
 
     add_menu_str(tmpwin, "");
-    add_menu_heading(tmpwin, "Other settings:");
+    add_menu_heading(tmpwin, "Autres réglages :");
 
     for (pass = startpass; pass <= endpass; pass++)
         for (i = 0; (name = allopt[i].name) != 0; i++) {
@@ -8934,11 +8967,11 @@ doset(void) /* changing options via menu by Per Liboriussen */
 
 #ifdef PREFIXES_IN_USE
     add_menu_str(tmpwin, "");
-    add_menu_heading(tmpwin, "Variable playground locations:");
+    add_menu_heading(tmpwin, "Emplacements variables du terrain de jeu :");
     for (i = 0; i < PREFIX_COUNT; i++)
         doset_add_menu(tmpwin, fqn_prefix_names[i], fmtstr_doset, -1, 0);
 #endif
-    end_menu(tmpwin, "Set what options?");
+    end_menu(tmpwin, "Régler quelles options ?");
     go.opt_need_redraw = FALSE;
     go.opt_need_glyph_reset = FALSE;
 
@@ -8979,7 +9012,8 @@ doset(void) /* changing options via menu by Per Liboriussen */
                 } else {
                     char abuf[BUFSZ];
 
-                    Sprintf(buf, "Set %s to what?", allopt[opt_indx].name);
+                    Sprintf(buf, "Nouvelle valeur de %s ?",
+                            allopt[opt_indx].name);
                     abuf[0] = '\0';
                     getlin(buf, abuf);
                     if (abuf[0] == '\033')
@@ -9062,7 +9096,7 @@ doset_add_menu(
     int indexoffset)    /* value to add to index in allopt[],
                          * or zero if option cannot be changed */
 {
-    const char *value = "unknown"; /* current value */
+    const char *value = "inconnu"; /* current value */
     const char *indent;
     char buf[BUFSZ], buf2[BUFSZ];
     anything any;
@@ -9092,7 +9126,7 @@ doset_add_menu(
                 Sprintf(buf2, "%s", gf.fqn_prefix[j]);
 #endif
         if (!buf2[0])
-            Strcpy(buf2, "unknown");
+            Strcpy(buf2, "inconnu");
         value = (const char *) buf2;
     }
 
@@ -9112,11 +9146,11 @@ show_menu_controls(winid win, boolean dolist)
         const char *key, *desc;
     };
     static const struct xtra_cntrls hardcoded[] = {
-        { "Return", "Accept current choice(s) and dismiss menu" },
-        { "Enter",  "Same as Return" },
-        { "Space",  "If not on last page, advance one page;" },
-        { "     ",  "when on last page, treat like Return" },
-        { "Escape", "Cancel menu without making any choice(s)" },
+        { "Retour", "Valider le(s) choix et fermer le menu" },
+        { "Entrée", "Comme Retour" },
+        { "Espace", "Avancer d'une page si ce n'est pas la dernière ;" },
+        { "     ",  "sur la dernière page, comme Retour" },
+        { "Échap",  "Annuler le menu sans rien choisir" },
         { (char *) 0, (char *) 0}
     };
     static const char mc_fmt[] = "%8s     %-6s %s",
@@ -9131,7 +9165,7 @@ show_menu_controls(winid win, boolean dolist)
      * with a fixed-width font or will look dreadful.
      */
 
-    putstr(win, 0, "Menu control keys:");
+    putstr(win, 0, "Touches de contrôle des menus :");
     if (dolist) { /* key bindings help: '?i' */
         int i;
         char ch;
@@ -9152,58 +9186,58 @@ show_menu_controls(winid win, boolean dolist)
         arg = ""; /* no extra prefix for 'dolist' */
     } else { /* menu controls help: '?k' */
         putstr(win, 0, "");
-        Sprintf(buf, mc_altfmt, "", "Whole", "Current");
+        Sprintf(buf, mc_altfmt, "", "Menu", " Page");
         putstr(win, 0, buf);
-        Sprintf(buf, mc_altfmt, "", " Menu", " Page");
+        Sprintf(buf, mc_altfmt, "", "entier", " actuelle");
         putstr(win, 0, buf);
-        Sprintf(buf, mc_fmt, "Select",
+        Sprintf(buf, mc_fmt, "Choisir",
                 visctrl(get_menu_cmd_key(MENU_SELECT_ALL)),
                 visctrl(get_menu_cmd_key(MENU_SELECT_PAGE)));
         putstr(win, 0, buf);
-        Sprintf(buf, mc_fmt, "Invert",
+        Sprintf(buf, mc_fmt, "Inverser",
                 visctrl(get_menu_cmd_key(MENU_INVERT_ALL)),
                 visctrl(get_menu_cmd_key(MENU_INVERT_PAGE)));
         putstr(win, 0, buf);
-        Sprintf(buf, mc_fmt, "Deselect",
+        Sprintf(buf, mc_fmt, "Retirer",
                 visctrl(get_menu_cmd_key(MENU_UNSELECT_ALL)),
                 visctrl(get_menu_cmd_key(MENU_UNSELECT_PAGE)));
         putstr(win, 0, buf);
         putstr(win, 0, "");
-        Sprintf(buf, mc_fmt, "Go to",
+        Sprintf(buf, mc_fmt, "Aller",
                 visctrl(get_menu_cmd_key(MENU_NEXT_PAGE)),
-                "Next page");
+                "Page suivante");
         putstr(win, 0, buf);
         Sprintf(buf, mc_fmt, "",
                 visctrl(get_menu_cmd_key(MENU_PREVIOUS_PAGE)),
-                "Previous page");
+                "Page précédente");
         putstr(win, 0, buf);
         Sprintf(buf, mc_fmt, "",
                 visctrl(get_menu_cmd_key(MENU_FIRST_PAGE)),
-                "First page");
+                "Première page");
         putstr(win, 0, buf);
         Sprintf(buf, mc_fmt, "",
                 visctrl(get_menu_cmd_key(MENU_LAST_PAGE)),
-                "Last page");
+                "Dernière page");
         putstr(win, 0, buf);
         if (has_menu_shift) {
-            Sprintf(buf, mc_fmt, "Pan view",
+            Sprintf(buf, mc_fmt, "Glisser",
                     visctrl(get_menu_cmd_key(MENU_SHIFT_RIGHT)),
-                    "Right (perm_invent only)");
+                    "À droite (perm_invent seulement)");
             putstr(win, 0, buf);
             Sprintf(buf, mc_fmt, "",
                     visctrl(get_menu_cmd_key(MENU_SHIFT_LEFT)),
-                    "Left");
+                    "À gauche");
             putstr(win, 0, buf);
         }
         putstr(win, 0, "");
-        Sprintf(buf, mc_fmt, "Search",
+        Sprintf(buf, mc_fmt, "Chercher",
                 visctrl(get_menu_cmd_key(MENU_SEARCH)),
-                "Exter a target string and invert all matching entries");
+                "Saisir un texte et inverser les éléments correspondants");
         putstr(win, 0, buf);
         /* separator before hardcoded */
         putstr(win, 0, "");
         fmt = "%9s  %-8s %s";
-        arg = "Other "; /* prefix for first hardcoded[] entry, then reset */
+        arg = "Autres "; /* prefix for first hardcoded[] entry, then reset */
     }
     for (xcp = hardcoded; xcp->key; ++xcp) {
         Sprintf(buf, fmt, arg, xcp->key, xcp->desc);
@@ -9244,7 +9278,10 @@ DISABLE_WARNING_FORMAT_NONLITERAL
 
 /* common to msg-types, menu-colors, autopickup-exceptions */
 staticfn int
-handle_add_list_remove(const char *optname, int numtotal)
+handle_add_list_remove(
+    const char *un_nom,   /* "une couleur de menu" */
+    const char *des_noms, /* "les couleurs de menu" */
+    int numtotal)
 {
     winid tmpwin;
     anything any;
@@ -9254,10 +9291,10 @@ handle_add_list_remove(const char *optname, int numtotal)
         char letr;
         const char *desc;
     } action_titles[] = {
-        { 'a', "add new %s" },         /* [0] */
-        { 'l', "list %s" },            /* [1] */
-        { 'r', "remove existing %s" }, /* [2] */
-        { 'x', "exit this menu" },     /* [3] */
+        { 'a', "ajouter %s" },         /* [0] */
+        { 'l', "lister %s" },          /* [1] */
+        { 'r', "supprimer %s" },       /* [2] */
+        { 'x', "quitter ce menu" },    /* [3] */
     };
     int clr = NO_COLOR;
 
@@ -9272,12 +9309,12 @@ handle_add_list_remove(const char *optname, int numtotal)
         if (!numtotal && (i == 1 || i == 2))
             continue;
         Sprintf(tmpbuf, action_titles[i].desc,
-                (i == 1) ? makeplural(optname) : optname);
+                (i == 0) ? un_nom : des_noms);
         add_menu(tmpwin, &nul_glyphinfo,&any, action_titles[i].letr,
                  0, ATR_NONE, clr, tmpbuf,
                  (i == 3) ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     }
-    end_menu(tmpwin, "Do what?");
+    end_menu(tmpwin, "Que faire ?");
     if ((pick_cnt = select_menu(tmpwin, PICK_ONE, &pick_list)) > 0) {
         opt_idx = pick_list[0].item.a_int - 1;
         if (pick_cnt > 1 && opt_idx == 3)
@@ -9299,16 +9336,17 @@ dotogglepickup(void)
     flags.pickup = !flags.pickup;
     if (flags.pickup) {
         oc_to_str(flags.pickup_types, ocl);
-        Sprintf(buf, "ON, for %s objects%s", ocl[0] ? ocl : "all",
+        Sprintf(buf, "ACTIVÉ, pour %s%s%s",
+                ocl[0] ? "les objets " : "tous les objets", ocl,
                 (ga.apelist)
                     ? ((count_apes() == 1)
-                           ? ", with one exception"
-                           : ", with some exceptions")
+                           ? ", avec une exception"
+                           : ", avec quelques exceptions")
                     : "");
     } else {
-        Strcpy(buf, "OFF");
+        Strcpy(buf, "DÉSACTIVÉ");
     }
-    pline("Autopickup: %s.", buf);
+    pline("Ramassage automatique : %s.", buf);
     return ECMD_OK;
 }
 
@@ -9339,8 +9377,9 @@ int
 add_autopickup_exception(const char *mapping)
 {
     static const char
-        APE_regex_error[] = "regex error in AUTOPICKUP_EXCEPTION",
-        APE_syntax_error[] = "syntax error in AUTOPICKUP_EXCEPTION";
+        APE_regex_error[] =
+            "erreur d'expression rationnelle dans AUTOPICKUP_EXCEPTION",
+        APE_syntax_error[] = "erreur de syntaxe dans AUTOPICKUP_EXCEPTION";
 
     struct autopickup_exception *ape;
     char text[256], end;
@@ -9374,7 +9413,7 @@ add_autopickup_exception(const char *mapping)
         /* free first in case reason for failure was insufficient memory */
         regex_free(ape->regex);
         free((genericptr_t) ape);
-        config_error_add("%s: %s", APE_regex_error, re_error_desc);
+        config_error_add("%s : %s", APE_regex_error, re_error_desc);
         return 0;
     }
     ape->pattern = dupstr(text);
@@ -9467,33 +9506,34 @@ sym_val(const char *strval) /* up to 4*BUFSZ-1 long; only first few
 /* data for option_help() */
 static const char *opt_intro[] = {
     "",
-    "                 NetHack Options Help:", "",
+    "                 Aide des options de NetHack :", "",
 #define CONFIG_SLOT 3 /* fill in next value at run-time */
     (char *) 0,
 #if !defined(MICRO) && !defined(MAC68K)
-    "or use `NETHACKOPTIONS=\"<options>\"' in your environment",
+    "ou utilisez `NETHACKOPTIONS=\"<options>\"' dans votre environnement",
 #endif
-    "(<options> is a list of options separated by commas)",
+    "(<options> est une liste d'options séparées par des virgules)",
 #ifdef VMS
-    "-- for example, $ DEFINE NETHACKOPTIONS \"noautopickup,fruit:kumquat\"",
+    "-- par exemple, $ DEFINE NETHACKOPTIONS \"noautopickup,fruit:kumquat\"",
 #endif
-    "or press \"O\" while playing and use the menu.",
+    "ou appuyez sur \"O\" en cours de partie et utilisez le menu.",
     "",
-    ("Boolean options (which can be negated by prefixing them"
-     " with '!' or \"no\"):"),
+    ("Options booléennes (que l'on peut nier en les préfixant"
+     " par '!' ou \"no\") :"),
     (char *) 0
 };
 
 static const char *const opt_epilog[] = {
     "",
-    "Some of the options can only be set before the game is started;",
-    "those items will not be selectable in the 'O' command's menu.",
-    "Some options are stored in a game's save file, and will keep saved",
-    "values when restoring that game even if you have updated your config-",
-    "uration file to change them.  Such changes will matter for new games.",
-    "The \"other settings\" can be set with 'O', but when set within the",
-    "configuration file they use their own directives rather than OPTIONS.",
-    "See NetHack's \"Guidebook\" for details.",
+    "Certaines options ne peuvent être réglées qu'avant le début de la",
+    "partie ; elles ne seront pas sélectionnables dans le menu de 'O'.",
+    "Certaines options sont stockées dans la sauvegarde d'une partie et",
+    "gardent leur valeur à la reprise de cette partie, même si vous avez",
+    "modifié votre fichier de configuration. Ces changements ne vaudront",
+    "que pour les nouvelles parties.",
+    "Les \"autres réglages\" se règlent avec 'O', mais dans le fichier de",
+    "configuration ils utilisent leurs propres directives au lieu d'OPTIONS.",
+    "Consultez le \"Guidebook\" de NetHack pour plus de détails.",
     (char *) 0
 };
 
@@ -9507,7 +9547,8 @@ option_help(void)
 
     datawin = create_nhwindow(NHW_TEXT);
     Snprintf(buf, sizeof buf,
-             "Set options as OPTIONS=<options> in %s", get_configfile());
+             "Réglez les options avec OPTIONS=<options> dans %s",
+             get_configfile());
     opt_intro[CONFIG_SLOT] = (const char *) buf;
     for (i = 0; opt_intro[i]; i++)
         putstr(datawin, 0, opt_intro[i]);
@@ -9529,7 +9570,7 @@ option_help(void)
     next_opt(datawin, "");
 
     /* Compound options */
-    putstr(datawin, 0, "Compound options:");
+    putstr(datawin, 0, "Options composées :");
     for (i = 0; allopt[i].name; i++) {
         if (allopt[i].opttyp != CompOpt
             || (allopt[i].setwhere == set_wizonly && !wizard))
@@ -9549,7 +9590,7 @@ option_help(void)
     putstr(datawin, 0, "");
 
     /* Compound options */
-    putstr(datawin, 0, "Other settings:");
+    putstr(datawin, 0, "Autres réglages :");
     for (i = 0; allopt[i].name; i++) {
         if (allopt[i].opttyp != OthrOpt)
             continue;
@@ -10135,7 +10176,7 @@ wc_set_window_colors(char *op)
                 }
                 if (wcolors_opt[j] != 0) {
                     config_error_add(
-                       "windowcolors for %s windows specified multiple times",
+                       "windowcolors indiqué plusieurs fois pour les fenêtres %s",
                                      wcnames[j]);
                 }
                 wcolors_opt[j]++;
@@ -10143,7 +10184,7 @@ wc_set_window_colors(char *op)
             }
         }
         if (j == WC_COUNT) {
-            config_error_add("windowcolors for unrecognized window type: %s",
+            config_error_add("windowcolors pour un type de fenêtre inconnu : %s",
                              wn);
         }
     }

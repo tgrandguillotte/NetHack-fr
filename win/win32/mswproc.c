@@ -452,7 +452,7 @@ prompt_for_player_selection(void)
             any.a_int = i + 1; /* must be non-zero */
             add_menu(win, &nul_glyphinfo, &any, 'q', 0,
                      ATR_NONE, clr, "Quit", MENU_ITEMFLAGS_NONE);
-            Snprintf(pbuf, sizeof pbuf, "Pick a role for your %s", plbuf);
+            Snprintf(pbuf, sizeof pbuf, "Choisissez un rôle pour votre %s", plbuf);
             end_menu(win, pbuf);
             n = select_menu(win, PICK_ONE, &selected);
             destroy_nhwindow(win);
@@ -526,7 +526,7 @@ prompt_for_player_selection(void)
                 any.a_int = i + 1; /* must be non-zero */
                 add_menu(win, &nul_glyphinfo, &any, 'q', 0,
                          ATR_NONE, clr, "Quit", MENU_ITEMFLAGS_NONE);
-                Snprintf(pbuf, sizeof pbuf, "Pick the race of your %s", plbuf);
+                Snprintf(pbuf, sizeof pbuf, "Choisissez la race de votre %s", plbuf);
                 end_menu(win, pbuf);
                 n = select_menu(win, PICK_ONE, &selected);
                 destroy_nhwindow(win);
@@ -601,7 +601,7 @@ prompt_for_player_selection(void)
                 any.a_int = i + 1; /* must be non-zero */
                 add_menu(win, &nul_glyphinfo, &any, 'q', 0,
                          ATR_NONE, clr, "Quit", MENU_ITEMFLAGS_NONE);
-                Snprintf(pbuf, sizeof pbuf, "Pick the gender of your %s", plbuf);
+                Snprintf(pbuf, sizeof pbuf, "Choisissez le sexe de votre %s", plbuf);
                 end_menu(win, pbuf);
                 n = select_menu(win, PICK_ONE, &selected);
                 destroy_nhwindow(win);
@@ -675,7 +675,7 @@ prompt_for_player_selection(void)
                 any.a_int = i + 1; /* must be non-zero */
                 add_menu(win, &nul_glyphinfo, &any, 'q', 0,
                          ATR_NONE, clr, "Quit", MENU_ITEMFLAGS_NONE);
-                Snprintf(pbuf, sizeof pbuf, "Pick the alignment of your %s", plbuf);
+                Snprintf(pbuf, sizeof pbuf, "Choisissez l'alignement de votre %s", plbuf);
                 end_menu(win, pbuf);
                 n = select_menu(win, PICK_ONE, &selected);
                 destroy_nhwindow(win);

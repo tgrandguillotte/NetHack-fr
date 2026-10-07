@@ -598,10 +598,10 @@ sortloot_descr(int otyp, char *outbuf)
 /* also used in options.c (optfn_sortdiscoveries) */
 static const char disco_order_let[] = "osca";
 static const char *const disco_orders_descr[] = {
-    "by order of discovery within each class",
-    "sortloot order (by class with some sub-class groupings)",
-    "alphabetical within each class",
-    "alphabetical across all classes",
+    "par ordre de découverte dans chaque classe",
+    "ordre 'sortloot' (par classe, avec des regroupements par sous-classe)",
+    "par ordre alphabétique dans chaque classe",
+    "par ordre alphabétique toutes classes confondues",
     (char *) 0
 };
 
@@ -635,13 +635,13 @@ choose_disco_sort(
            chosen sort will stick and also apply to '\' usage */
         add_menu_str(tmpwin, "");
         add_menu_str(tmpwin,
-                     "Note: full alphabetical and alphabetical within class");
+                     "Note : l'ordre alphabétique global et l'ordre alphabétique par");
         add_menu_str(tmpwin,
-                     "      are equivalent for single class discovery, but");
+                     "       classe sont équivalents pour une seule classe, mais la");
         add_menu_str(tmpwin,
-                    "      will matter for future use of total discoveries.");
+                    "       différence comptera pour la liste complète des découvertes.");
     }
-    end_menu(tmpwin, "Ordering of discoveries");
+    end_menu(tmpwin, "Ordre des découvertes");
 
     n = select_menu(tmpwin, PICK_ONE, &selected);
     destroy_nhwindow(tmpwin);
@@ -671,13 +671,16 @@ disco_typename(int otyp)
                                   non-magic so pre-discovered, only applies
                                   to magic harp and will only be seen if
                                   magic harp has been 'called' something) */
-                               : "harp");
+                               : "harpe");
 
         if (!actualn) { /* won't happen; used to pacify static analyzer */
             ;
         } else if (strstri(result, " called")) {
             Sprintf(buf, " [%s] called", actualn);
             (void) strsubst(result, " called", buf);
+        } else if (strstri(result, " appel")) { /* "appelé(e)(s)" */
+            Sprintf(buf, " [%s] appel", actualn);
+            (void) strsubst(result, " appel", buf);
         } else if (strstri(result, " (")) {
             Sprintf(buf, " [%s] (", actualn);
             (void) strsubst(result, " (", buf);
@@ -724,16 +727,18 @@ disco_append_typename(char *buf, int dis)
 staticfn void
 disco_fmt_uniq(int uidx, char *outbuf)
 {
-    Sprintf(outbuf, "  %s", objects[uidx].oc_name_known
-                              ? OBJ_NAME(objects[uidx])
-                              : OBJ_DESCR(objects[uidx]));
     /* in the spellbooks section of main discoveries list, encountered
        but not fully discovered Book of the Dead is shown as
        "spellbook (papyrus)" like other encountered but not discovered books;
-       in the unique/relics section we want "papyrus spellbook" instead */
+       in the unique/relics section we want "papyrus spellbook" instead
+       [French: "grimoire de papyrus"] */
     if (!objects[uidx].oc_name_known
         && objects[uidx].oc_class == SPBOOK_CLASS)
-        Strcat(outbuf, " spellbook");
+        Sprintf(outbuf, "  grimoire %s", de(OBJ_DESCR(objects[uidx])));
+    else
+        Sprintf(outbuf, "  %s", objects[uidx].oc_name_known
+                                  ? OBJ_NAME(objects[uidx])
+                                  : OBJ_DESCR(objects[uidx]));
 }
 
 /* sort and output sorted_lines to window and free the lines */
@@ -785,7 +790,7 @@ dodiscovered(void) /* free after Robert Viduya */
     sortindx = strchr(disco_order_let, flags.discosort) - disco_order_let;
 
     tmpwin = create_nhwindow(NHW_TEXT);
-    Sprintf(buf, "Discoveries, %s", disco_orders_descr[sortindx]);
+    Sprintf(buf, "Découvertes, %s", disco_orders_descr[sortindx]);
     putstr(tmpwin, 0, buf);
     putstr(tmpwin, 0, "");
 
@@ -804,7 +809,7 @@ dodiscovered(void) /* free after Robert Viduya */
             || (objects[uidx].oc_encountered && uidx != AMULET_OF_YENDOR)) {
             if (!dis++)
                 putstr(tmpwin, iflags.menu_headings.attr,
-                       "Unique items or Relics");
+                       "Objets uniques ou reliques");
             ++uniq_ct;
             disco_fmt_uniq(uidx, buf);
             putstr(tmpwin, 0, buf);
@@ -854,7 +859,7 @@ dodiscovered(void) /* free after Robert Viduya */
         }
     }
     if (ct == 0) {
-        You("haven't discovered anything yet...");
+        You("n'avez encore rien découvert...");
     } else {
         if (sorted_ct) {
             /* if we're alphabetizing by class, we've already shown the
@@ -862,7 +867,7 @@ dodiscovered(void) /* free after Robert Viduya */
                classes, we normally don't need a header; but it we showed
                any unique items or any artifacts then we do need one */
             if ((uniq_ct || arti_ct) && alphabetized && !alphabyclass)
-                putstr(tmpwin, iflags.menu_headings.attr, "Discovered items");
+                putstr(tmpwin, iflags.menu_headings.attr, "Objets découverts");
             disco_output_sorted(tmpwin, sorted_lines, sorted_ct, lootsort);
         }
         display_nhwindow(tmpwin, TRUE);
@@ -891,10 +896,10 @@ int
 doclassdisco(void)
 {
     static NEARDATA const char
-        prompt[] = "View discoveries for which sort of objects?",
-        havent_discovered_any[] = "haven't discovered any %s yet.",
-        unique_items[] = "unique items or relics",
-        artifact_items[] = "artifacts";
+        prompt[] = "Voir les découvertes pour quelle sorte d'objets ?",
+        havent_discovered_any[] = "n'avez encore rien découvert parmi les %s.",
+        unique_items[] = "objets uniques ou reliques",
+        artifact_items[] = "artefacts";
     winid tmpwin = WIN_ERR;
     menu_item *pick_list = 0;
     anything any;
@@ -990,7 +995,7 @@ doclassdisco(void)
 
     /* there might not be anything for us to do... */
     if (!discosyms[0]) {
-        You(havent_discovered_any, "items");
+        You(havent_discovered_any, "objets");
         if (tmpwin != WIN_ERR)
             destroy_nhwindow(tmpwin);
         return ECMD_OK;
@@ -1066,7 +1071,7 @@ doclassdisco(void)
            but requires at least one artifact discovery for other styles
            [could fix that by forcing the 'a' choice into the pick-class
            menu when running in wizard mode] */
-        if (wizard && y_n("Dump information about all artifacts?") == 'y') {
+        if (wizard && y_n("Afficher les informations sur tous les artefacts ?") == 'y') {
             dump_artifact_info(tmpwin);
             ct = NROFARTIFACTS; /* non-zero vs zero is what matters below */
             break;
@@ -1081,10 +1086,10 @@ doclassdisco(void)
         /* this should never happen but has been observed via the fuzzer */
         if (oclass == MAXOCLASSES)
             impossible("doclassdisco: invalid object class '%s'", visctrl(c));
-        Sprintf(buf, "Discovered %s in %s", let_to_name(oclass, FALSE, FALSE),
-                (flags.discosort == 'o') ? "order of discovery"
-                : (flags.discosort == 's') ? "'sortloot' order"
-                  : "alphabetical order");
+        Sprintf(buf, "Découvertes (%s), %s", let_to_name(oclass, FALSE, FALSE),
+                (flags.discosort == 'o') ? "par ordre de découverte"
+                : (flags.discosort == 's') ? "dans l'ordre 'sortloot'"
+                  : "par ordre alphabétique");
         putstr(tmpwin, 0, buf); /* skip iflags.menu_headings */
         sorted_ct = 0;
         for (i = svb.bases[(int) oclass]; i <= svb.bases[oclass + 1] - 1;
@@ -1178,11 +1183,11 @@ rename_disco(void)
         }
     }
     if (ct == 0) {
-        You("haven't discovered anything yet...");
+        You("n'avez encore rien découvert...");
     } else if (mn == 0) {
-        pline("None of your discoveries can be assigned names...");
+        pline("Aucune de vos découvertes ne peut recevoir de nom...");
     } else {
-        end_menu(tmpwin, "Pick an object type to name");
+        end_menu(tmpwin, "Choisissez un type d'objet à nommer");
         dis = STRANGE_OBJECT;
         sl = select_menu(tmpwin, PICK_ONE, &selected);
         if (sl > 0) {

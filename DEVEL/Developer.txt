@@ -8,246 +8,267 @@
 # Copyright (c) 2015 by Kenneth Lorber, Kensington, Maryland
 # NetHack may be freely redistributed.  See license for details.
 
-Welcome to the NetHack Infrastructure Developer's Guide.
+[Note : ce fichier est la traduction française du document d'origine
+« Developer.txt » de NetHack.]
 
-This is the info you need if you are developing code for NetHack.
-(This information is from DevTeam.  If you are working with a variant please
-check for additional documentation for that variant.)
+Bienvenue dans le guide du développeur de l'infrastructure de NetHack.
 
-For information on building NetHack, see README in the top level directory.
-For information on playing NetHack, see the Guidebook in the doc directory.
+Vous trouverez ici les informations nécessaires pour développer du code pour
+NetHack.  (Ces informations proviennent de la DevTeam.  Si vous travaillez
+sur une variante, recherchez la documentation supplémentaire propre à cette
+variante.)
 
-DANGER!  WORK IN PROGRESS!  Known issues marked XXX.
+Pour des informations sur la compilation de NetHack, consultez le README du
+répertoire racine.
+Pour des informations sur la façon de jouer à NetHack, consultez le Guidebook
+dans le répertoire doc.
 
-CONTENTS
-1. email
-2. git repositories
-3. bug reporting
-4. git configuration
-5. variable expansion
-6. reserved names
+DANGER !  TRAVAIL EN COURS !  Les problèmes connus sont marqués XXX.
+
+SOMMAIRE
+1. e-mail
+2. dépôts git
+3. signalement des bogues
+4. configuration de git
+5. expansion de variables
+6. noms réservés
 7. nhadd/nhcommit
 8. hooks
 ------------------------------------------------------------------------------
-1. email
-Email to devteam@nethack.org will usually get a response, but it may take a
-while.  Please do not send save files, binary screen grabs, or other large
-things.
+1. e-mail
+Un e-mail envoyé à devteam@nethack.org obtiendra en général une réponse, mais
+cela peut prendre un certain temps.  Merci de ne pas envoyer de fichiers de
+sauvegarde, de captures d'écran binaires ni d'autres fichiers volumineux.
 ------------------------------------------------------------------------------
-2. git repositories
-The public NetHack git repository is available (read-only) at:
+2. dépôts git
+Le dépôt git public de NetHack est disponible (en lecture seule) à :
     https://github.com/NetHack/NetHack
-     or
+     ou
     https://sourceforge.net/p/nethack/NetHack/
 
-Branches:
-NetHack-3.6.0	The 3.6.0 release code and subsequent fixes and additions.
+Branches :
+NetHack-3.6.0	Le code de la version 3.6.0, avec les corrections et ajouts
+		ultérieurs.
 ------------------------------------------------------------------------------
-3. bug reporting
-Please use the form at http://www.nethack.org/common/contact.html (or send
-us an email if that's more appropriate).
+3. signalement des bogues
+Veuillez utiliser le formulaire à l'adresse
+http://www.nethack.org/common/contact.html (ou nous envoyer un e-mail si
+c'est plus approprié).
 ------------------------------------------------------------------------------
-4. git configuration
+4. configuration de git
 
-NOTE: These instructions assume you are on the default branch; this _is_
-      where you want to be for setting things up.  This may or may not be
-      the branch you want to use for your changes; see the appropriate
-      project private documentation for more information (if you are working
-      alone we suggest using branch names starting with "LOCAL-").
+NOTE : ces instructions supposent que vous êtes sur la branche par défaut ;
+      c'est _bien_ là que vous devez être pour la mise en place.  Ce n'est
+      pas forcément la branche que vous utiliserez pour vos modifications ;
+      consultez la documentation privée du projet concerné pour plus
+      d'informations (si vous travaillez seul, nous vous suggérons des noms
+      de branche commençant par « LOCAL- »).
 
-NOTE: The following instructions require perl.  If you do not have perl on
-      your system, please install it before proceeding.
+NOTE : les instructions suivantes nécessitent perl.  Si perl n'est pas
+      présent sur votre système, installez-le avant de continuer.
 
-NOTE: More information on nhgitset.pl is available before installation via:
+NOTE : avant l'installation, des informations complémentaires sur
+      nhgitset.pl sont disponibles via :
            perldoc DEVEL/nhgitset.pl
-      After installation, the same information is available with:
+      Après l'installation, les mêmes informations sont disponibles avec :
            git nhhelp nhgitset
 
-A. If you have never set up git on this machine before:
-   (This assumes you will only be using git for NetHack.  If you are going to
-   use it for other projects as well, think before you type.)
-	Tell git what name (or nickname) and email address to use for you:
+A. Si vous n'avez jamais configuré git sur cette machine :
+   (Ceci suppose que vous n'utiliserez git que pour NetHack.  Si vous comptez
+   l'utiliser aussi pour d'autres projets, réfléchissez avant de taper.)
+	Indiquez à git le nom (ou pseudonyme) et l'adresse e-mail à utiliser :
 		git config --global user.name "MY NAME"
 		git config --global user.email USER@EXAMPLE.COM
-   You probably want to set up a credential cache.
-	macOS (10 or greater):
+   Vous voudrez probablement mettre en place un cache d'identifiants.
+	macOS (10 ou ultérieur) :
 	    git config --global credential.helper osxkeychain
-	Linux:
-	    (This will vary by distribution.)
+	Linux :
+	    (Cela dépend de la distribution.)
 	    cd /usr/share/doc/git/contrib/credential/libsecret
 	    sudo apt-get install libglib-2.0-dev libsecret-1-dev
 	    sudo make
 	    git config --global credential.helper `pwd`/git-credential-libsecret
-		OR
+		OU
 	    sudo yum install git-credential-libsecret
 	    git config --global credential.helper /usr/libexec/git-core/git-credential-libsecret
-	Windows: (The following three assume that Git for Windows is already installed on
-	          the underlying Windows system https://git-scm.com/download/win):
+	Windows : (les trois cas suivants supposent que Git for Windows est
+	          déjà installé sur le système Windows sous-jacent,
+	          https://git-scm.com/download/win) :
 	    git config --global credential.helper store
-          MSYS2 UCRT64 bash shell:
+          Shell bash MSYS2 UCRT64 :
             git config --global credential.helper "/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
-	  Windows Subsystem for Linux 2 (WSL2) bash shell:
+	  Shell bash Windows Subsystem for Linux 2 (WSL2) :
             git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
-B. Specify the prefix for variable substitution:
-   (This assumes you are not a member of DevTeam or any variant's development
-   team.  If you are, this may be wrong.  Look for more specific documentation.
-   For example, this file uses "MINE" for the substitution prefix - this will
-   almost always be wrong if you are working with someone else.)
-	Decide where you want to put this info; it should NOT be inside the
-	tree you cloned from git.  I use ~/nethack/GITADDDIR; for that base,
-	create the needed directories and edit the file:
+B. Indiquez le préfixe pour la substitution de variables :
+   (Ceci suppose que vous n'êtes membre ni de la DevTeam ni de l'équipe de
+   développement d'une variante.  Si vous l'êtes, ceci peut être erroné.
+   Recherchez une documentation plus spécifique.  Par exemple, ce fichier
+   utilise « MINE » comme préfixe de substitution - ce sera presque toujours
+   faux si vous travaillez avec quelqu'un d'autre.)
+	Choisissez où placer ces informations ; elles ne doivent PAS se
+	trouver dans l'arborescence clonée depuis git.  J'utilise
+	~/nethack/GITADDDIR ; pour cette base, créez les répertoires
+	nécessaires et éditez le fichier :
 		~/nethack/GITADDDIR/DOTGIT/PRE
-	Put this in it, adapting it to your variant (if your OS is not Unix-like
-	you may need to change the first line):
+	Mettez-y ceci, en l'adaptant à votre variante (si votre système n'est
+	pas de type Unix, vous devrez peut-être modifier la première ligne) :
 		#!/bin/sh
 		git config nethack.substprefix MINE
 		git config nethack.projectname MineHack
-	Now make it executable:
+	Rendez-le ensuite exécutable :
 		chmod +x ~/nethack/GITADDDIR/DOTGIT/PRE
-C. Configure the repository:
-	- cd to the top level of the repository
-	- tell the repository about the directory you created above:
+C. Configurez le dépôt :
+	- placez-vous (cd) à la racine du dépôt
+	- indiquez au dépôt le répertoire créé ci-dessus :
 		git config nethack.gitadddir FULL_PATH_TO_GITADDDIR
-	   so for the example above:
+	   soit, pour l'exemple ci-dessus :
 		git config nethack.gitadddir ~/nethack/GITADDDIR
-	- do the automated setup:
+	- lancez la configuration automatique :
 		perl DEVEL/nhgitset.pl
-	  If it complains, fix what it complains about.  nhgitset.pl accepts
-	  the following options:
-		-v verbose
-		-n dry run
-   You can re-run nhgitset.pl as often as needed; occasionally we will
-   update it (or something it installs) and you will need to run it again
-   so the changes take effect.
-D. aliases
-   Two aliases are installed by nhgitset.pl:
+	  S'il se plaint, corrigez ce dont il se plaint.  nhgitset.pl accepte
+	  les options suivantes :
+		-v mode verbeux
+		-n simulation (rien n'est modifié)
+   Vous pouvez relancer nhgitset.pl aussi souvent que nécessaire ; il nous
+   arrive de le mettre à jour (ou de mettre à jour un élément qu'il installe)
+   et vous devrez alors le relancer pour que les changements prennent effet.
+D. Alias
+   nhgitset.pl installe deux alias :
 	nhadd
 	nhcommit
-   These two commands take the same options as the normal git add and commit
-   commands but perform RCS/CVS-style variable substitution.
+   Ces deux commandes acceptent les mêmes options que les commandes git add
+   et commit habituelles, mais effectuent une substitution de variables à la
+   manière de RCS/CVS.
 
-   Note that nothing terrible will happen if you do not use the nh* versions
-   of the commands.
+   Notez qu'il ne se passera rien de grave si vous n'utilisez pas les
+   versions nh* de ces commandes.
 
-   Supported substitutions:
-	MINE-Date	the commit time and date
-   Experimental substitutions:
-	MINE-Revision	CVS style revision number
-	MINE-Branch	the current git branch
+   Substitutions prises en charge :
+	MINE-Date	la date et l'heure du commit
+   Substitutions expérimentales :
+	MINE-Revision	numéro de révision à la manière de CVS
+	MINE-Branch	la branche git courante
 
-   For direct access to the substitution mechanism, use:
+   Pour accéder directement au mécanisme de substitution, utilisez :
 	nhsub
 
-   See the section "nhadd/nhcommit" for details on those aliases.
-   Run "perldoc DEVEL/hooksdir/nhsub" for details on nhsub.
+   Voir la section « nhadd/nhcommit » pour les détails sur ces alias.
+   Lancez « perldoc DEVEL/hooksdir/nhsub » pour les détails sur nhsub.
 
-That's it.  If you need to do something more when setting up your repository,
-keep reading.  Otherwise, you are done with this section.
+C'est tout.  Si vous avez besoin de faire autre chose lors de la mise en
+place de votre dépôt, poursuivez la lecture.  Sinon, vous en avez terminé
+avec cette section.
 
-1) to run your own hooks in addition to ours:
-	name your hook
+1) pour exécuter vos propres hooks en plus des nôtres :
+	nommez votre hook
 		WHEN-HOOKNAME
-	where WHEN is
-		PRE	(run your code before the NetHack hook)
-		POST	(run your code after the NetHack hook)
-	and HOOKNAME is the normal git name of the hook.
-   Make sure the hooks are executable (chmod +x ...).
-   Be sure to test carefully since the composition of two bits of code may or
-   may not do what you want.
-2) to install other bits on setup:
-	Put additional files in the GITADDDIR tree.  Use "DOTGIT" instead of
-	".git".  If a file called PRE, POST, or INSTEAD exists in a
-	subdirectory of GITADDDIR, it is run before the copy, after the copy,
-	or instead of the copy.  No copy operation is attempted in the DOTGIT
-	directory; use a script and standard git commands to change the
-	contents as needed.
-3) NB: In all namespaces, anything that matches m/^nh/i or m/^nethack/i is
-   reserved.
+	où WHEN vaut
+		PRE	(exécute votre code avant le hook de NetHack)
+		POST	(exécute votre code après le hook de NetHack)
+	et HOOKNAME est le nom git habituel du hook.
+   Assurez-vous que les hooks sont exécutables (chmod +x ...).
+   Testez soigneusement, car la composition de deux morceaux de code peut ne
+   pas faire ce que vous voulez.
+2) pour installer d'autres éléments lors de la mise en place :
+	Placez les fichiers supplémentaires dans l'arborescence GITADDDIR.
+	Utilisez « DOTGIT » au lieu de « .git ».  Si un fichier nommé PRE,
+	POST ou INSTEAD existe dans un sous-répertoire de GITADDDIR, il est
+	exécuté avant la copie, après la copie ou à la place de la copie.
+	Aucune copie n'est tentée dans le répertoire DOTGIT ; utilisez un
+	script et les commandes git standard pour en modifier le contenu
+	selon les besoins.
+3) N.B. : dans tous les espaces de noms, tout ce qui correspond à m/^nh/i ou
+   m/^nethack/i est réservé.
 ------------------------------------------------------------------------------
-5. variable expansion
+5. expansion de variables
 A. Introduction
-   We have implemented an RCS/CVS/SVN style variable expansion mechanism.
-   References of either of the formats:
+   Nous avons mis en place un mécanisme d'expansion de variables à la
+   manière de RCS/CVS/SVN.  Les références de l'un ou l'autre des formats :
 	$PREFIX-VARNAME$
 	$PREFIX-VARNAME: VALUE $
-   will be handled (if enabled).
+   seront traitées (si le mécanisme est activé).
 
-   The PREFIX is the value in the git config variable nethack.substprefix.
-   VARNAME is one of:
+   PREFIX est la valeur de la variable de configuration git
+   nethack.substprefix.
+   VARNAME est l'un des noms suivants :
 	Date
 	Branch
 	Revision
-   other names will give a warning.
+   tout autre nom provoquera un avertissement.
 
-B. Enabling variable expansion
-   Variable expansion is controlled by the .gitattributes file.
+B. Activation de l'expansion de variables
+   L'expansion de variables est contrôlée par le fichier .gitattributes.
 
-   To enable variable expansion:
+   Pour activer l'expansion de variables :
         pattern NHSUBST
-   To disable variable expansion:
+   Pour désactiver l'expansion de variables :
 	pattern -NHSUBST
 
-   More information: "git help gitattributes"
+   Plus d'informations : « git help gitattributes »
 
-C. Oddities
-   To trigger variable expansion, you _must_ use "git nhadd" or "git nhcommit"
-   instead of "git add" or "git commit."  Nothing terrible will happen if you
-   use the wrong one, but the values will not be updated.
+C. Bizarreries
+   Pour déclencher l'expansion de variables, vous _devez_ utiliser
+   « git nhadd » ou « git nhcommit » au lieu de « git add » ou
+   « git commit ».  Il ne se passera rien de grave si vous utilisez la
+   mauvaise commande, mais les valeurs ne seront pas mises à jour.
 
-   Variable expansion modifies the files in the work tree - your editor or
-   IDE may or may not be happy with this.
+   L'expansion de variables modifie les fichiers de l'arbre de travail ;
+   votre éditeur ou votre IDE ne l'apprécieront pas forcément.
 
-D. Using your own hooks
-   You can use your own hooks - put them in .git/hooks as usual BUT name them
-   as follows:
+D. Utilisation de vos propres hooks
+   Vous pouvez utiliser vos propres hooks : placez-les comme d'habitude dans
+   .git/hooks MAIS nommez-les ainsi :
 	WHEN-HOOKNAME
-   where WHEN is:
-	PRE	(execute the code before the NetHack hook)
-	POST	(execute the code after the NetHack hook)
-   and HOOKNAME is the normal git name for the hook.
+   où WHEN vaut :
+	PRE	(exécute le code avant le hook de NetHack)
+	POST	(exécute le code après le hook de NetHack)
+   et HOOKNAME est le nom git habituel du hook.
 
-   Test carefully - interactions between hooks can be nasty.
+   Testez soigneusement : les interactions entre hooks peuvent être
+   pénibles.
 ------------------------------------------------------------------------------
-6. reserved names
-   Anything that matches m/^nh/i or m/^nethack/i is reserved in all
-   namespaces (environment, file names, git config, etc).
+6. noms réservés
+   Tout ce qui correspond à m/^nh/i ou m/^nethack/i est réservé dans tous
+   les espaces de noms (environnement, noms de fichiers, configuration git,
+   etc.).
 ------------------------------------------------------------------------------
 7. nhadd/nhcommit
-   nhadd is essentially "git nhsub $*; git add $*"
-   nhcommit is essentially "git nhsub $*; git commit $*"
+   nhadd revient essentiellement à « git nhsub $*; git add $* »
+   nhcommit revient essentiellement à « git nhsub $*; git commit $* »
 
-   As "git add" and "git commit" have complex arguments, nhsub attempts to
-   do the right thing - or at least something reasonable - for most arguments.
-   If nhadd/nhcommit don't do what you need, run "git nhsub" on its own then
-   add/commit.
+   Comme « git add » et « git commit » ont des arguments complexes, nhsub
+   tente de faire ce qu'il faut - ou du moins quelque chose de raisonnable -
+   pour la plupart des arguments.  Si nhadd/nhcommit ne font pas ce dont vous
+   avez besoin, lancez « git nhsub » seul, puis faites add/commit.
 
-   So when do I need to use what?
-   The object is to get nhsub run right before git takes a snapshot of each
-   file.  So for example:
-   - use "git nhcommit <filespec>" instead of "git commit <filespec>"
-   - use "git nhadd <filespec>" instead of "git add <filespec>"
-   - use either "git commit" or "git nhcommit" (because the snapshot was
-     already taken)
-   - if you use "git nhsub <filespec>" then you can "git add <filespec>" or
-     "git commit <filespec>" 
+   Alors, quand faut-il utiliser quoi ?
+   Le but est que nhsub soit exécuté juste avant que git ne prenne un
+   instantané de chaque fichier.  Par exemple :
+   - utilisez « git nhcommit <filespec> » au lieu de
+     « git commit <filespec> »
+   - utilisez « git nhadd <filespec> » au lieu de « git add <filespec> »
+   - utilisez indifféremment « git commit » ou « git nhcommit » (car
+     l'instantané a déjà été pris)
+   - si vous utilisez « git nhsub <filespec> », vous pouvez ensuite faire
+     « git add <filespec> » ou « git commit <filespec> »
 
-   For more complex situations, "git nhsub" takes -v and -n flags - see
-   "perldoc DEVEL/hooksdir/nhsub".
-   
+   Pour des situations plus complexes, « git nhsub » accepte les options -v
+   et -n - voir « perldoc DEVEL/hooksdir/nhsub ».
+
 ------------------------------------------------------------------------------
 8. hooks
 
-   nhgitset.pl also installs hooks into .git/hooks.  These hooks provide
-   a framework which allows local hook code to co-exist with hook code we
-   supply - see DEVEL/hooksdir/NHgithook.pm for details.
+   nhgitset.pl installe aussi des hooks dans .git/hooks.  Ces hooks
+   fournissent un cadre qui permet au code de hook local de coexister avec
+   le code de hook que nous fournissons - voir DEVEL/hooksdir/NHgithook.pm
+   pour les détails.
 
-   We currently use the following hooks:
+   Nous utilisons actuellement les hooks suivants :
     post-checkout
     post-commit
     post-merge
-   These are used to generate dat/gitinfo.txt which provides the data that
-   ends up available through the game command #version and the command line
-   option --version.
+   Ils servent à générer dat/gitinfo.txt, qui fournit les données finalement
+   accessibles via la commande de jeu #version et l'option de ligne de
+   commande --version.
 
 ------------------------------------------------------------------------------
-

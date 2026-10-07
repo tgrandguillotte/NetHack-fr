@@ -22,29 +22,32 @@ staticfn void return_from_mtoss(struct monst *, struct obj *, boolean);
  * Keep consistent with breath weapons in zap.c, and AD_* in monattk.h.
  */
 static NEARDATA const char *breathwep[] = {
-    "fragments", "fire", "frost", "sleep gas", "a disintegration blast",
-    "lightning", "poison gas", "acid", "strange breath #8",
-    "strange breath #9"
+    "des fragments", "du feu", "du givre", "du gaz soporifique",
+    "un souffle désintégrant", "des éclairs", "du gaz empoisonné",
+    "de l'acide", "un souffle étrange n°8", "un souffle étrange n°9"
 };
 
 /* hallucinatory ray types */
 static const char *const hallublasts[] = {
-    "asteroids", "beads", "bubbles", "butterflies", "champagne", "chaos",
-    "coins", "cotton candy", "crumbs", "dark matter", "darkness", "data",
-    "dust specks", "emoticons", "emotions", "entropy", "flowers", "foam",
-    "fog", "gamma rays", "gelatin", "gemstones", "ghosts", "glass shards",
-    "glitter", "good vibes", "gravel", "gravity", "gravy", "grawlixes",
-    "holy light", "hornets", "hot air", "hyphens", "hypnosis", "infrared",
-    "insects", "jargon", "laser beams", "leaves", "lightening", "logic gates",
-    "magma", "marbles", "mathematics", "megabytes", "metal shavings",
-    "metapatterns", "meteors", "mist", "mud", "music", "nanites", "needles",
-    "noise", "nostalgia", "oil", "paint", "photons", "pixels", "plasma",
-    "polarity", "powder", "powerups", "prismatic light", "pure logic",
-    "purple", "radio waves", "rainbows", "rock music", "rocket fuel", "rope",
-    "sadness", "salt", "sand", "scrolls", "sludge", "smileys", "snowflakes",
-    "sparkles", "specularity", "spores", "stars", "steam", "tetrahedrons",
-    "text", "the past", "tornadoes", "toxic waste", "ultraviolet light",
-    "viruses", "water", "waveforms", "wind", "X-rays", "zorkmids"
+    "astéroïdes", "perles", "bulles", "papillons", "champagne", "chaos",
+    "pièces", "barbe à papa", "miettes", "matière noire", "ténèbres",
+    "données", "grains de poussière", "émoticônes", "émotions", "entropie",
+    "fleurs", "mousse", "brouillard", "rayons gamma", "gélatine",
+    "pierres précieuses", "fantômes", "éclats de verre", "paillettes",
+    "bonnes vibrations", "gravier", "gravité", "sauce", "jurons",
+    "lumière sacrée", "frelons", "air chaud", "traits d'union", "hypnose",
+    "infrarouge", "insectes", "jargon", "rayons laser", "feuilles",
+    "éclairs de génie", "portes logiques", "magma", "billes",
+    "mathématiques", "mégaoctets", "copeaux de métal", "métamotifs",
+    "météores", "brume", "boue", "musique", "nanites", "aiguilles", "bruit",
+    "nostalgie", "huile", "peinture", "photons", "pixels", "plasma",
+    "polarité", "poudre", "bonus", "lumière prismatique", "logique pure",
+    "violet", "ondes radio", "arcs-en-ciel", "rock'n'roll",
+    "carburant de fusée", "corde", "tristesse", "sel", "sable", "parchemins",
+    "vase", "smileys", "flocons de neige", "étincelles", "spécularité",
+    "spores", "étoiles", "vapeur", "tétraèdres", "texte", "passé",
+    "tornades", "déchets toxiques", "lumière ultraviolette", "virus", "eau",
+    "formes d'onde", "vent", "rayons X", "zorkmids"
 };
 
 /* Return a random hallucinatory blast. */
@@ -95,7 +98,10 @@ thitu(
         knm = name;
         /* [perhaps ought to check for plural here too] */
         if (!strncmpi(name, "the ", 4) || !strncmpi(name, "an ", 3)
-            || !strncmpi(name, "a ", 2))
+            || !strncmpi(name, "a ", 2) || !strncmpi(name, "le ", 3)
+            || !strncmpi(name, "la ", 3) || !strncmpi(name, "l'", 2)
+            || !strncmpi(name, "les ", 4) || !strncmpi(name, "un ", 3)
+            || !strncmpi(name, "une ", 4) || !strncmpi(name, "des ", 4))
             kprefix = KILLED_BY;
     }
     onm = (obj && obj_is_pname(obj)) ? the(name)
@@ -106,22 +112,22 @@ thitu(
     if (u.uac + tlev <= (dieroll = rnd(20))) {
         ++gm.mesg_given;
         if (Blind || !flags.verbose) {
-            pline("It misses.");
+            pline("Ça vous rate.");
         } else if (u.uac + tlev <= dieroll - 2) {
             if (onm != onmbuf)
                 Strcpy(onmbuf, onm); /* [modifiable buffer for upstart()] */
-            pline("%s %s you.", upstart(onmbuf), vtense(onmbuf, "miss"));
+            pline("%s vous %s.", upstart(onmbuf), vtense(onmbuf, "rater"));
         } else
-            You("are almost hit by %s.", onm);
+            You("êtes presque touché%s par %s.", UE, onm);
         return 0;
     } else {
         if (Blind || !flags.verbose)
-            You("are hit%s", exclam(dam));
+            You("êtes touché%s%s", UE, exclam(dam));
         else
-            You("are hit by %s%s", onm, exclam(dam));
+            You("êtes touché%s par %s%s", UE, onm, exclam(dam));
 
         if (is_acid && Acid_resistance) {
-            pline("It doesn't seem to hurt you.");
+            pline("Ça ne semble pas vous faire de mal.");
             monstseesu(M_SEEN_ACID);
         } else if (obj && stone_missile(obj)
                    && passes_rocks(gy.youmonst.data)) {
@@ -129,8 +135,9 @@ thitu(
                we avoid "passes through you" for horizontal flight path
                because missile stops and that wording would suggest that
                it should keep going */
-            pline("It %s you.",
-                  named ? "passes harmlessly through" : "doesn't harm");
+            pline("%s.",
+                  named ? "Ça vous traverse sans dommage"
+                        : "Ça ne vous fait aucun mal");
         } else if (obj && obj->oclass == POTION_CLASS) {
             /* an explosion which scatters objects might hit hero with one
                (potions deliberately thrown at hero are handled by m_throw) */
@@ -140,11 +147,11 @@ thitu(
             if (obj && objects[obj->otyp].oc_material == SILVER
                 && Hate_silver) {
                 /* extra damage already applied by dmgval() */
-                pline_The("silver sears your flesh!");
+                pline_The("L'argent vous brûle la chair !");
                 exercise(A_CON, FALSE);
             }
             if (is_acid) {
-                pline("It burns!");
+                pline("Ça brûle !");
                 monstunseesu(M_SEEN_ACID);
             }
             losehp(dam, knm, kprefix); /* acid damage */
@@ -288,9 +295,9 @@ monshoot(struct monst *mtmp, struct obj *otmp, struct obj *mwep)
         gm.m_shot.s = ammo_and_launcher(otmp, mwep) ? TRUE : FALSE;
         Strcpy(trgbuf, mtarg ? some_mon_nam(mtarg) : "");
         set_msg_xy(mtmp->mx, mtmp->my);
-        pline("%s %s %s%s%s!", Monnam(mtmp),
-              gm.m_shot.s ? "shoots" : "throws", onm,
-              mtarg ? " at " : "", trgbuf);
+        pline("%s %s %s%s%s !", Monnam(mtmp),
+              gm.m_shot.s ? "tire" : "lance", onm,
+              mtarg ? " sur " : "", trgbuf);
         gm.m_shot.o = otmp->otyp;
     } else {
         gm.m_shot.o = STRANGE_OBJECT; /* don't give multishot feedback */
@@ -352,7 +359,7 @@ ohitmon(
             if (vis)
                 miss(distant_name(otmp, mshot_xname), mtmp);
             else if (verbose && !gm.mtarget)
-                pline("It is missed.");
+                pline("Quelque chose est raté.");
         }
         if (!range) { /* Last position; object drops */
             (void) drop_throw(otmp, 0, mtmp->mx, mtmp->my);
@@ -383,34 +390,35 @@ ohitmon(
         Soundeffect(se_splat_egg, 35);
         if (vis) {
             if (otmp->otyp == EGG) {
-                pline("Splat!  %s is hit with %s egg!", Monnam(mtmp),
-                      otmp->known ? an(mons[otmp->corpsenm].pmnames[NEUTRAL])
-                                  : "an");
+                pline("Splat !  %s est touché%s par un œuf%s%s !",
+                      Monnam(mtmp), accord(mon_nam(mtmp)),
+                      otmp->known ? " " : "",
+                      otmp->known ? de(mons[otmp->corpsenm].pmnames[NEUTRAL])
+                                  : "");
             } else {
                 char how[BUFSZ];
 
                 if (!harmless)
                     Strcpy(how, exclam(damage)); /* "!" or "." */
                 else
-                    Sprintf(how, " but passes harmlessly through %.9s.",
-                            mhim(mtmp));
+                    Strcpy(how, " mais passe au travers sans dommage.");
                 hit(distant_name(otmp, mshot_xname), mtmp, how);
             }
         } else if (verbose && !gm.mtarget)
-            pline("%s%s is hit%s", (otmp->otyp == EGG) ? "Splat!  " : "",
-                  Monnam(mtmp), exclam(damage));
+            pline("%s%s est touché%s%s", (otmp->otyp == EGG) ? "Splat !  " : "",
+                  Monnam(mtmp), accord(mon_nam(mtmp)), exclam(damage));
 
         if (otmp->opoisoned && is_poisonable(otmp)) {
             if (resists_poison(mtmp)) {
                 if (vis)
-                    pline_The("poison doesn't seem to affect %s.",
+                    pline_The("Le poison ne semble pas affecter %s.",
                               mon_nam(mtmp));
             } else {
                 if (rn2(30)) {
                     damage += rnd(6);
                 } else {
                     if (vis)
-                        pline_The("poison was deadly...");
+                        pline_The("Le poison était mortel...");
                     damage = mtmp->mhp;
                 }
             }
@@ -421,24 +429,26 @@ ohitmon(
 
             /* note: extra silver damage is handled by dmgval() */
             if (vis) {
-                char *m_name = mon_nam(mtmp);
+                char m_name[BUFSZ];
 
-                if (flesh) /* s_suffix returns a modifiable buffer */
-                    m_name = strcat(s_suffix(m_name), " flesh");
-                pline_The("silver sears %s!", m_name);
+                if (flesh)
+                    Sprintf(m_name, "la chair %s", du(mon_nam(mtmp)));
+                else
+                    Strcpy(m_name, mon_nam(mtmp));
+                pline_The("L'argent brûle %s !", m_name);
             } else if (verbose && !gm.mtarget) {
-                pline("%s is seared!", flesh ? "Its flesh" : "It");
+                pline("%s !", flesh ? "Sa chair est brûlée" : "Ça brûle");
             }
         }
         if (otmp->otyp == ACID_VENOM && cansee(mtmp->mx, mtmp->my)) {
             if (resists_acid(mtmp)) {
                 if (vis || (verbose && !gm.mtarget))
-                    pline("%s is unaffected.", Monnam(mtmp));
+                    pline("%s n'est pas affecté%s.", Monnam(mtmp), accord(mon_nam(mtmp)));
             } else {
                 if (vis)
-                    pline_The("%s burns %s!", hliquid("acid"), mon_nam(mtmp));
+                    pline("%s brûle %s !", The(hliquid("acide")), mon_nam(mtmp));
                 else if (verbose && !gm.mtarget)
-                    pline("It is burned!");
+                    pline("Quelque chose est brûlé !");
             }
         }
         if (otmp->otyp == EGG && touch_petrifies(&mons[otmp->corpsenm])) {
@@ -453,9 +463,10 @@ ohitmon(
             mtmp->mhp -= damage;
             if (DEADMONSTER(mtmp)) {
                 if (vis || (verbose && !gm.mtarget))
-                    pline("%s is %s!", Monnam(mtmp),
+                    pline("%s est %s%s !", Monnam(mtmp),
                           (nonliving(mtmp->data) || is_vampshifter(mtmp)
-                           || !canspotmon(mtmp)) ? "destroyed" : "killed");
+                           || !canspotmon(mtmp)) ? "détruit" : "tué",
+                          accord(mon_nam(mtmp)));
                 /* don't blame hero for unknown rolling boulder trap */
                 if (!svc.context.mon_moving
                    && (otmp->otyp != BOULDER || range >= 0 || otmp->otrapped))
@@ -477,9 +488,10 @@ ohitmon(
                    two message [first via hit() above] sequence:
                    "The {splash of venom,cream pie} hits <mon>."
                    "<Mon> is blinded by the {venom,pie}." */
-                pline("%s is blinded by %s.", Monnam(mtmp),
-                      the((otmp->oclass == VENOM_CLASS) ? "venom"
-                          : (otmp->otyp == CREAM_PIE) ? "pie"
+                pline("%s est aveuglé%s par %s.", Monnam(mtmp),
+                      accord(mon_nam(mtmp)),
+                      the((otmp->oclass == VENOM_CLASS) ? "venin"
+                          : (otmp->otyp == CREAM_PIE) ? "tarte"
                             : xname(otmp))); /* catchall; not used */
             mtmp->mcansee = 0;
             tmp = (int) mtmp->mblinded + rnd(25) + 20;
@@ -510,18 +522,19 @@ ucatchgem(
     /* won't catch rock or gray stone; catch (then drop) worthless glass */
     if (gem->otyp <= LAST_GLASS_GEM && is_unicorn(gy.youmonst.data)) {
         char *gem_xname = xname(gem),
-             *mon_s_name = s_suffix(mon_nam(mon));
+             *mon_s_name = du(mon_nam(mon));
 
         if (gem->otyp >= FIRST_GLASS_GEM) {
-            You("catch the %s.", gem_xname);
-            You("are not interested in %s junk.", mon_s_name);
+            You("attrapez %s.", the(gem_xname));
+            pline("La camelote %s ne vous intéresse pas.", mon_s_name);
             makeknown(gem->otyp);
             dropy(gem);
         } else {
-            You("accept %s gift in the spirit in which it was intended.",
+            You("acceptez le cadeau %s dans l'esprit où il a été offert.",
                 mon_s_name);
-            (void) hold_another_object(gem, "You catch, but drop, %s.",
-                                       gem_xname, "You catch:");
+            (void) hold_another_object(gem,
+                                       "Vous attrapez %s, mais le lâchez.",
+                                       an(gem_xname), "Vous attrapez :");
         }
         return TRUE;
     }
@@ -541,9 +554,9 @@ u_catch_thrown_obj(struct obj *otmp)
         && calc_capacity(otmp->owt) <= SLT_ENCUMBER && !rn2(catch_chance)) {
         char buf[BUFSZ];
 
-        Snprintf(buf, BUFSZ, "You catch the %s!", simpleonames(otmp));
-        (void) hold_another_object(otmp, "You catch, but drop, the %s.",
-                                   simpleonames(otmp), buf);
+        Snprintf(buf, BUFSZ, "Vous attrapez %s !", the(simpleonames(otmp)));
+        (void) hold_another_object(otmp, "Vous attrapez %s, mais le lâchez.",
+                                   the(simpleonames(otmp)), buf);
         return TRUE;
     }
     return FALSE;
@@ -622,10 +635,10 @@ m_throw(
     if ((singleobj->cursed || singleobj->greased) && (dx || dy) && !rn2(7)) {
         if (canseemon(mon) && flags.verbose) {
             if (is_ammo(singleobj))
-                pline("%s misfires!", Monnam(mon));
+                pline("%s rate son tir !", Monnam(mon));
             else
-                pline("%s as %s throws it!", Tobjnam(singleobj, "slip"),
-                      mon_nam(mon));
+                pline("%s des mains %s au moment du lancer !",
+                      Tobjnam(singleobj, "glisser"), du(mon_nam(mon)));
         }
         dx = rn2(3) - 1;
         dy = rn2(3) - 1;
@@ -760,9 +773,9 @@ m_throw(
                 blindinc = rnd(25);
                 if (singleobj->otyp == CREAM_PIE) {
                     if (!Blind)
-                        pline("Yecch!  You've been creamed.");
+                        pline("Beurk !  Vous voilà tartiné%s de crème.", UE);
                     else
-                        pline("There's %s sticky all over your %s.",
+                        pline("Il y a %s de collant partout sur votre %s.",
                               something, body_part(FACE));
                 } else if (singleobj->otyp == BLINDING_VENOM) {
                     const char *eyes = body_part(EYE);
@@ -771,9 +784,12 @@ m_throw(
                         eyes = makeplural(eyes);
                     /* venom in the eyes */
                     if (!Blind)
-                        pline_The("venom blinds you.");
+                        pline_The("Le venin vous aveugle.");
                     else
-                        Your("%s %s.", eyes, vtense(eyes, "sting"));
+                        pline("%s %s %s.",
+                              (eyecount(gy.youmonst.data) != 1) ? "Vos"
+                                                                : "Votre",
+                              eyes, vtense(eyes, "piquer"));
                 }
             }
             if (hitu && singleobj->otyp == EGG) {
@@ -803,14 +819,16 @@ m_throw(
                    in order to get "Grimtooth" rather than "The Grimtooth" */
                 if (range && cansee(gb.bhitpos.x, gb.bhitpos.y)
                     && IS_SINK(levl[gb.bhitpos.x][gb.bhitpos.y].typ))
-                    pline("%s %s onto the sink.", The(mshot_xname(singleobj)),
-                          otense(singleobj, Hallucination ? "plop" : "drop"));
+                    pline("%s %s sur l'évier.", The(mshot_xname(singleobj)),
+                          otense(singleobj, Hallucination ? "faire plouf"
+                                                          : "tomber"));
                 else if (gm.m_shot.n > 1
                          && (!gm.mesg_given
                              || gb.bhitpos.x != u.ux || gb.bhitpos.y != u.uy)
                          && (cansee(gb.bhitpos.x, gb.bhitpos.y)
                              || (gm.marcher && canseemon(gm.marcher))))
-                    pline("%s misses.", The(mshot_xname(singleobj)));
+                    pline("%s %s sa cible.", The(mshot_xname(singleobj)),
+                          otense(singleobj, "manquer"));
                 if (!tethered_weapon) {
                     (void) drop_throw(singleobj, 0,
                                       gb.bhitpos.x, gb.bhitpos.y);
@@ -883,8 +901,8 @@ return_from_mtoss(
             static long do_not_annoy = 0;
 
             if (!do_not_annoy || (svm.moves - do_not_annoy) > 500L) {
-                pline("%s to %s %s!", Tobjnam(otmp, "return"),
-                      s_suffix(mon_nam(magr)), mbodypart(magr, HAND));
+                pline("%s dans %s %s !", Tobjnam(otmp, "revenir"),
+                      the(mbodypart(magr, HAND)), du(mon_nam(magr)));
                 do_not_annoy = svm.moves;
             }
             if (otmp) {
@@ -902,21 +920,22 @@ return_from_mtoss(
             dmg = rn2(2);
             if (!dmg) {
                 if (canseemon(magr)) {
-                    pline("%s back to %s, landing %s %s %s.",
-                          Tobjnam(otmp, "return"), mon_nam(magr),
-                          mlevitating ? "beneath" : "at", mhis(magr),
+                    pline("%s vers %s et %s %s ses %s.",
+                          Tobjnam(otmp, "revenir"), mon_nam(magr),
+                          otense(otmp, "atterrir"),
+                          mlevitating ? "sous" : "à",
                           makeplural(mbodypart(magr, FOOT)));
                 } else if (!Deaf) {
-                    You_hear("%s land near %s.", Something, mon_nam(magr));
+                    You_hear("%s atterrir près %s.", something, du(mon_nam(magr)));
                 }
             } else {
                 dmg += rnd(3);
                 if (canseemon(magr)) {
-                    pline("%s back toward %s, hitting %s %s!",
-                          Tobjnam(otmp, "fly"), mon_nam(magr),
-                          mhis(magr), body_part(ARM));
+                    pline("%s vers %s et l'atteint au %s !",
+                          Tobjnam(otmp, "revenir"), mon_nam(magr),
+                          body_part(ARM));
                 } else if (!Deaf) {
-                    You_hear("%s hit %s with a thud!", something,
+                    You_hear("%s heurter %s avec un bruit sourd !", something,
                              mon_nam(magr));
                 }
                 hits_thrower = TRUE;
@@ -927,7 +946,7 @@ return_from_mtoss(
         /* it didn't make it back to thrower's location */
         if (tethered_weapon)
             tmp_at(DISP_END, 0);
-        You_hear("a loud snap!");
+        You_hear("un claquement sec !");
         notcaught = TRUE;
     }
     if (otmp) {
@@ -953,7 +972,7 @@ return_from_mtoss(
                 /* Some sound effects when item lands in water or lava */
                 if (is_pool(x, y) || (is_lava(x, y) && !is_flammable(otmp))) {
                     Soundeffect(se_splash, 50);
-                    pline((weight(otmp) > 9) ? "Splash!" : "Plop!");
+                    pline((weight(otmp) > 9) ? "Splash !" : "Plouf !");
                 }
             }
             if (obj_sheds_light(otmp))
@@ -1020,11 +1039,11 @@ spitmm(struct monst *mtmp, struct attack *mattk, struct monst *mtarg)
     if (mtmp->mcan) {
         if (!Deaf && mdistu(mtmp) < BOLT_LIM * BOLT_LIM) {
             if (canspotmon(mtmp)) {
-                pline("A dry rattle comes from %s throat.",
-                      s_suffix(mon_nam(mtmp)));
+                pline("Un râle sec sort de la gorge %s.",
+                      du(mon_nam(mtmp)));
             } else {
                 Soundeffect(se_dry_throat_rattle, 50);
-                You_hear("a dry rattle nearby.");
+                You_hear("un râle sec tout près.");
             }
         }
         return M_ATTK_MISS;
@@ -1049,7 +1068,7 @@ spitmm(struct monst *mtmp, struct attack *mattk, struct monst *mtarg)
         }
         if (!rn2(BOLT_LIM-distmin(mtmp->mx,mtmp->my,tx,ty))) {
             if (canseemon(mtmp))
-                pline("%s spits venom!", Monnam(mtmp));
+                pline("%s crache du venin !", Monnam(mtmp));
             if (!utarg)
                 gm.mtarget = mtarg;
             m_throw(mtmp, mtmp->mx, mtmp->my, sgn(gt.tbx), sgn(gt.tby),
@@ -1083,7 +1102,7 @@ staticfn const char *
 breathwep_name(int typ)
 {
     if (Hallucination)
-        return rnd_hallublast();
+        return du(rnd_hallublast());
 
     return breathwep[BZ_OFS_AD(typ)];
 }
@@ -1099,10 +1118,10 @@ breamm(struct monst *mtmp, struct attack *mattk, struct monst *mtarg)
         if (mtmp->mcan) {
             if (!Deaf) {
                 if (canseemon(mtmp)) {
-                    pline("%s coughs.", Monnam(mtmp));
+                    pline("%s tousse.", Monnam(mtmp));
                 } else {
                     Soundeffect(se_cough, 100);
-                    You_hear("a cough.");
+                    You_hear("quelqu'un tousser.");
                 }
             }
             return M_ATTK_MISS;
@@ -1117,7 +1136,7 @@ breamm(struct monst *mtmp, struct attack *mattk, struct monst *mtarg)
         if (!mtmp->mspec_used && rn2(3)) {
             if (BZ_VALID_ADTYP(typ)) {
                 if (canseemon(mtmp))
-                    pline("%s breathes %s!",
+                    pline("%s crache %s !",
                           Monnam(mtmp), breathwep_name(typ));
                 gb.buzzer = mtmp;
                 dobuzz(BZ_M_BREATH(BZ_OFS_AD(typ)), (int) mattk->damn,
@@ -1434,11 +1453,11 @@ hit_bars(
         /* breakage makes its own noises */
         if (obj_type == POT_ACID) {
             if (cansee(barsx, barsy) && !nodissolve) {
-                pline_The("iron bars are dissolved!");
+                pline_The("Les barreaux de fer sont dissous !");
             } else {
                 Soundeffect(se_angry_snakes, 100);
-                You_hear(Hallucination ? "angry snakes!"
-                                       : "a hissing noise.");
+                You_hear(Hallucination ? "des serpents en colère !"
+                                       : "un sifflement.");
             }
             if (!nodissolve)
                 dissolve_bars(barsx, barsy);
@@ -1451,7 +1470,7 @@ hit_bars(
                 se_bars_clink, se_bars_clonk
             };
             static const char *const barsounds[] = {
-                "", "Whang", "Whap", "Flapp", "Clink", "Clonk"
+                "", "Bang", "Paf", "Flap", "Cling", "Clonk"
             };
             int bsindx = (obj_type == BOULDER || obj_type == HEAVY_IRON_BALL)
                          ? 1
@@ -1464,7 +1483,7 @@ hit_bars(
                            : SIZE(barsounds) - 1;
 
             Soundeffect(se[bsindx], 100);
-            pline("%s!", barsounds[bsindx]);
+            pline("%s !", barsounds[bsindx]);
             nhUse(se[bsindx]);
         }
         if (!(harmless_missile(otmp) || is_flimsy(otmp)))
@@ -1483,7 +1502,7 @@ hit_bars(
             int chance = (melee_attk ? 40 : 60) - acurrstr() - spe;
 
             if (!rn2(max(2, chance))) {
-                You("break the bars apart!");
+                You("brisez les barreaux !");
                 dissolve_bars(barsx, barsy);
                 noise = noise * 2;
             }

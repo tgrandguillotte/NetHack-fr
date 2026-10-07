@@ -1,58 +1,59 @@
-	Depending upon hardware or operating system or NetHack's interface,
-	some keystrokes may be off-limits.
+	Selon le matériel, le système d'exploitation ou l'interface de
+	NetHack, certaines touches peuvent être inutilisables.
 
-	For example, ^S and ^Q are often used for XON/XOFF flow-control,
-	meaning that ^S suspends output and subsequent ^Q resumes suspended
-	output.  When that is the case, neither of those characters will
-	reach NetHack when it is waiting for a command keystroke.  So they
-	aren't used as commands, but 'whatdoes' might not be able to tell
-	you that if they don't get passed through to NetHack.
+	Par exemple, ^S et ^Q servent souvent au contrôle de flux XON/XOFF :
+	^S suspend l'affichage et un ^Q ultérieur le reprend.  Dans ce cas,
+	aucun de ces deux caractères ne parvient à NetHack quand il attend
+	une touche de commande.  Ils ne servent donc pas de commandes, mais
+	'whatdoes' ne pourra peut-être pas vous le dire s'ils ne sont pas
+	transmis à NetHack.
 
-	^M or <return> or <enter> is likely to be transformed into ^J or
-	<linefeed> or 'newline' before being passed to NetHack for handling.
-	So it isn't used as a command, and 'whatdoes' might seem as if it
-	is reporting the wrong character but will be operating correctly if
-	it describes ^J when you type ^M.
+	^M, <retour> ou <entrée> est probablement transformé en ^J, <saut
+	de ligne> ou 'newline' avant d'être transmis à NetHack.  Il ne sert
+	donc pas de commande, et 'whatdoes' peut sembler indiquer le mauvais
+	caractère, mais il fonctionne correctement s'il décrit ^J quand vous
+	tapez ^M.
 
-	A NUL character, which is typed as ^<space> on some keyboards,
-	^@ on others, and maybe not typeable at all on yet others, is not
-	used as a command, and will be converted into ESC before reaching
-	'whatdoes'.  Unlike ^M, this transformation is performed within
-	NetHack.  But like ^M, if you type NUL and get feedback about ESC,
-	the situation is expected.
+	Le caractère NUL, qui se tape ^<espace> sur certains claviers, ^@
+	sur d'autres et ne peut peut-être pas se taper du tout sur d'autres
+	encore, ne sert pas de commande et est converti en ESC avant
+	d'atteindre 'whatdoes'.  Contrairement à ^M, cette transformation est
+	faite par NetHack.  Mais comme pour ^M, si vous tapez NUL et obtenez
+	une réponse concernant ESC, c'est normal.
 
-	ESC itself is a synonym for ^[, and is another source of oddity.
-	Various function keys, including cursor arrow keys, may transmit
-	an "escape sequence" of ESC + [ + other stuff, confusing NetHack
-	as to what command was intended since the ESC will be processed
-	and then whatever follows will seem to NetHack like--and be used
-	as--something typed by the user.  (If you press a function key and
-	a menu of the armor your hero is wearing appears, what happened
-	was that an escape sequence was sent to NetHack, its ESC aborted
-	any pending key operation, its '[' was then treated as a command
-	to show worn armor, and the "other stuff" probably got silently
-	discarded as invalid choices while you dismissed the menu.)
+	ESC lui-même est un synonyme de ^[, et une autre source de
+	bizarreries.  Diverses touches de fonction, dont les flèches,
+	peuvent envoyer une "séquence d'échappement" ESC + [ + autre chose,
+	ce qui embrouille NetHack sur la commande voulue : l'ESC est traité,
+	puis ce qui suit semble à NetHack -- et est utilisé comme -- une
+	saisie de l'utilisateur.  (Si vous appuyez sur une touche de fonction
+	et qu'un menu de l'armure portée par votre héros apparaît, c'est
+	qu'une séquence d'échappement a été envoyée à NetHack : son ESC a
+	annulé l'opération en cours, son '[' a été traité comme la commande
+	d'affichage de l'armure portée, et "l'autre chose" a sans doute été
+	rejetée silencieusement comme choix invalide pendant que vous fermiez
+	le menu.)
 
-	If you have NetHack's 'altmeta' option enabled, meaning that the
-	<alt> or <option> key, when used as shift while typing some other
-	character, transmits ESC and then the other character so NetHack
-	should treat that other character as a meta-character, then ESC
-	takes on added potential for confusion.  Implicit in the handling
-	of a two character sequence ESC + something is the fact that when
-	NetHack sees ESC, it needs to wait for another character before
-	it can decide what to do.  So if you type ESC manually, you'll
-	need to type it a second time or NetHack will sit there waiting.
-	(It will then be treated as if you typed ESC rather than M-ESC.)
+	Si l'option 'altmeta' de NetHack est activée, c'est-à-dire que la
+	touche <alt> ou <option>, tenue pendant la frappe d'un autre
+	caractère, envoie ESC puis cet autre caractère pour que NetHack le
+	traite comme un méta-caractère, ESC devient encore plus source de
+	confusion.  Pour gérer une séquence de deux caractères ESC + quelque
+	chose, NetHack doit, quand il voit ESC, attendre un autre caractère
+	avant de décider quoi faire.  Si vous tapez ESC à la main, il vous
+	faudra donc le taper une seconde fois, sinon NetHack restera là à
+	attendre.  (Ce sera alors traité comme si vous aviez tapé ESC et non
+	M-ESC.)
 
-	On some systems, typing ^\ will send a QUIT signal to the current
-	process, probably killing it and possibly causing it to save a
-	core dump.  It is not used for any NetHack command, so don't type
-	that character.
+	Sur certains systèmes, taper ^\ envoie un signal QUIT au processus
+	courant, ce qui le tue probablement et peut produire un fichier
+	core.  Il ne sert à aucune commande de NetHack : ne tapez donc pas
+	ce caractère.
 
-	One last note:  characters shown as ^x mean that you should hold
-	down the <control> or <ctrl> key as a shift and then type 'x'.
-	Control characters are all implicitly uppercase, but you don't
-	need to press the shift key while typing them.  The opposite is
-	true for meta-characters:  they can be either case, so you need
-	to use shift as well as <meta> or <alt> to generate an uppercase
-	letter meta-character.
+	Une dernière remarque :  les caractères notés ^x signifient que vous
+	devez maintenir la touche <contrôle> ou <ctrl> comme une touche Maj
+	puis taper 'x'.  Les caractères de contrôle sont tous implicitement
+	en majuscules, mais vous n'avez pas besoin d'appuyer sur Maj pour les
+	taper.  C'est l'inverse pour les méta-caractères :  ils peuvent être
+	en majuscule ou en minuscule, il faut donc utiliser Maj en plus de
+	<méta> ou <alt> pour obtenir un méta-caractère majuscule.

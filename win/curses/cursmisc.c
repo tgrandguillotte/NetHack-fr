@@ -700,7 +700,7 @@ curses_view_file(const char *filename, boolean must_exist)
 
     if (fp == NULL) {
         if (must_exist)
-            pline("Cannot open \"%s\" for reading!", filename);
+            pline("Impossible d'ouvrir \"%s\" en lecture !", filename);
         return;
     }
 

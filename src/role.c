@@ -28,20 +28,20 @@
 /* NUM_ROLES is defined in hack.h */
 
 const struct Role roles[NUM_ROLES+1] = {
-    { { "Archeologist", 0 },
-      { { "Digger", 0 },
-        { "Field Worker", 0 },
-        { "Investigator", 0 },
-        { "Exhumer", 0 },
-        { "Excavator", 0 },
-        { "Spelunker", 0 },
-        { "Speleologist", 0 },
-        { "Collector", 0 },
-        { "Curator", 0 } },
+    { { "Archéologue", 0 },
+      { { "Creuseur", "Creuseuse" },
+        { "Ouvrier de terrain", "Ouvrière de terrain" },
+        { "Enquêteur", "Enquêtrice" },
+        { "Exhumeur", "Exhumeuse" },
+        { "Excavateur", "Excavatrice" },
+        { "Spéléologue amateur", 0 },
+        { "Spéléologue", 0 },
+        { "Collectionneur", "Collectionneuse" },
+        { "Conservateur", "Conservatrice" } },
       "Quetzalcoatl", "Camaxtli", "Huhetotl", /* Central American */
       "Arc",
-      "the College of Archeology",
-      "the Tomb of the Toltec Kings",
+      "le Collège d'Archéologie",
+      "la Tombe des Rois toltèques",
       PM_ARCHEOLOGIST,
       NON_PM,
       PM_LORD_CARNARVON,
@@ -69,20 +69,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_MAGIC_MAPPING,
       -4 },
-    { { "Barbarian", 0 },
-      { { "Plunderer", "Plunderess" },
-        { "Pillager", 0 },
+    { { "Barbare", 0 },
+      { { "Pillard", "Pillarde" },
+        { "Saccageur", "Saccageuse" },
         { "Bandit", 0 },
-        { "Brigand", 0 },
-        { "Raider", 0 },
-        { "Reaver", 0 },
-        { "Slayer", 0 },
-        { "Chieftain", "Chieftainess" },
-        { "Conqueror", "Conqueress" } },
+        { "Brigand", "Brigande" },
+        { "Maraudeur", "Maraudeuse" },
+        { "Ravageur", "Ravageuse" },
+        { "Tueur", "Tueuse" },
+        { "Chef de clan", "Cheffe de clan" },
+        { "Conquérant", "Conquérante" } },
       "Mitra", "Crom", "Set", /* Hyborian */
       "Bar",
-      "the Camp of the Duali Tribe",
-      "the Duali Oasis",
+      "le Camp de la tribu Duali",
+      "l'Oasis Duali",
       PM_BARBARIAN,
       NON_PM,
       PM_PELIAS,
@@ -110,20 +110,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_HASTE_SELF,
       -4 },
-    { { "Caveman", "Cavewoman" },
+    { { "Homme des cavernes", "Femme des cavernes" },
       { { "Troglodyte", 0 },
-        { "Aborigine", 0 },
-        { "Wanderer", 0 },
-        { "Vagrant", 0 },
-        { "Wayfarer", 0 },
-        { "Roamer", 0 },
-        { "Nomad", 0 },
-        { "Rover", 0 },
-        { "Pioneer", 0 } },
+        { "Aborigène", 0 },
+        { "Vagabond", "Vagabonde" },
+        { "Errant", "Errante" },
+        { "Chemineau", 0 },
+        { "Baladin", "Baladine" },
+        { "Nomade", 0 },
+        { "Coureur", "Coureuse" },
+        { "Pionnier", "Pionnière" } },
       "Anu", "_Ishtar", "Anshar", /* Babylonian */
       "Cav",
-      "the Caves of the Ancestors",
-      "the Dragon's Lair",
+      "les Cavernes des Ancêtres",
+      "l'Antre du Dragon",
       PM_CAVE_DWELLER,
       PM_LITTLE_DOG,
       PM_SHAMAN_KARNOV,
@@ -151,20 +151,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_DIG,
       -4 },
-    { { "Healer", 0 },
-      { { "Rhizotomist", 0 },
-        { "Empiric", 0 },
-        { "Embalmer", 0 },
-        { "Dresser", 0 },
+    { { "Guérisseur", "Guérisseuse" },
+      { { "Rhizotomiste", 0 },
+        { "Empirique", 0 },
+        { "Embaumeur", "Embaumeuse" },
+        { "Panseur", "Panseuse" },
         { "Medicus ossium", "Medica ossium" },
-        { "Herbalist", 0 },
+        { "Herboriste", 0 },
         { "Magister", "Magistra" },
-        { "Physician", 0 },
-        { "Chirurgeon", 0 } },
+        { "Médecin", 0 },
+        { "Chirurgien", "Chirurgienne" } },
       "_Athena", "Hermes", "Poseidon", /* Greek */
       "Hea",
-      "the Temple of Epidaurus",
-      "the Temple of Coeus",
+      "le Temple d'Épidaure",
+      "le Temple de Céos",
       PM_HEALER,
       NON_PM,
       PM_HIPPOCRATES,
@@ -191,20 +191,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_WIS,
       SPE_CURE_SICKNESS,
       -4 },
-    { { "Knight", 0 },
-      { { "Gallant", 0 },
-        { "Esquire", 0 },
-        { "Bachelor", 0 },
-        { "Sergeant", 0 },
-        { "Knight", 0 },
+    { { "Chevalier", 0 },
+      { { "Galant", "Galante" },
+        { "Écuyer", "Écuyère" },
+        { "Bachelier", "Bachelière" },
+        { "Sergent", 0 },
+        { "Chevalier", 0 },
         { "Banneret", 0 },
-        { "Chevalier", "Chevaliere" },
-        { "Seignieur", "Dame" },
+        { "Haut chevalier", "Haute chevalière" },
+        { "Seigneur", "Dame" },
         { "Paladin", 0 } },
       "Lugh", "_Brigit", "Manannan Mac Lir", /* Celtic */
       "Kni",
-      "Camelot Castle",
-      "the Isle of Glass",
+      "le Château de Camelot",
+      "l'Île de Verre",
       PM_KNIGHT,
       PM_PONY,
       PM_KING_ARTHUR,
@@ -231,20 +231,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_WIS,
       SPE_TURN_UNDEAD,
       -4 },
-    { { "Monk", 0 },
-      { { "Candidate", 0 },
+    { { "Moine", 0 },
+      { { "Candidat", "Candidate" },
         { "Novice", 0 },
-        { "Initiate", 0 },
-        { "Student of Stones", 0 },
-        { "Student of Waters", 0 },
-        { "Student of Metals", 0 },
-        { "Student of Winds", 0 },
-        { "Student of Fire", 0 },
-        { "Master", 0 } },
+        { "Initié", "Initiée" },
+        { "Élève des pierres", 0 },
+        { "Élève des eaux", 0 },
+        { "Élève des métaux", 0 },
+        { "Élève des vents", 0 },
+        { "Élève du feu", 0 },
+        { "Maître", 0 } },
       "Shan Lai Ching", "Chih Sung-tzu", "Huan Ti", /* Chinese */
       "Mon",
-      "the Monastery of Chan-Sune",
-      "the Monastery of the Earth-Lord",
+      "le Monastère de Chan-Sune",
+      "le Monastère du Seigneur de la Terre",
       PM_MONK,
       NON_PM,
       PM_GRAND_MASTER,
@@ -272,20 +272,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_WIS,
       SPE_RESTORE_ABILITY,
       -4 },
-    { { "Priest", "Priestess" },
-      { { "Aspirant", 0 },
+    { { "Prêtre", "Prêtresse" },
+      { { "Aspirant", "Aspirante" },
         { "Acolyte", 0 },
-        { "Adept", 0 },
-        { "Priest", "Priestess" },
-        { "Curate", 0 },
-        { "Canon", "Canoness" },
+        { "Adepte", 0 },
+        { "Prêtre", "Prêtresse" },
+        { "Vicaire", 0 },
+        { "Chanoine", "Chanoinesse" },
         { "Lama", 0 },
-        { "Patriarch", "Matriarch" },
-        { "High Priest", "High Priestess" } },
+        { "Patriarche", "Matriarche" },
+        { "Grand prêtre", "Grande prêtresse" } },
       0, 0, 0, /* deities from a randomly chosen other role will be used */
       "Pri",
-      "the Great Temple",
-      "the Temple of Nalzok",
+      "le Grand Temple",
+      "le Temple de Nalzok",
       PM_CLERIC,
       NON_PM,
       PM_ARCH_PRIEST,
@@ -315,20 +315,20 @@ const struct Role roles[NUM_ROLES+1] = {
       -4 },
     /* Note:  Rogue precedes Ranger so that use of `-R' on the command line
        retains its traditional meaning. */
-    { { "Rogue", 0 },
-      { { "Footpad", 0 },
-        { "Cutpurse", 0 },
-        { "Rogue", 0 },
-        { "Pilferer", 0 },
-        { "Robber", 0 },
-        { "Burglar", 0 },
-        { "Filcher", 0 },
-        { "Magsman", "Magswoman" },
-        { "Thief", 0 } },
+    { { "Voleur", "Voleuse" },
+      { { "Détrousseur", "Détrousseuse" },
+        { "Coupe-bourse", 0 },
+        { "Fripon", "Friponne" },
+        { "Chapardeur", "Chapardeuse" },
+        { "Dévaliseur", "Dévaliseuse" },
+        { "Cambrioleur", "Cambrioleuse" },
+        { "Filou", 0 },
+        { "Escroc", 0 },
+        { "Voleur", "Voleuse" } },
       "Issek", "Mog", "Kos", /* Nehwon */
       "Rog",
-      "the Thieves' Guild Hall",
-      "the Assassins' Guild Hall",
+      "la Maison de la Guilde des Voleurs",
+      "la Maison de la Guilde des Assassins",
       PM_ROGUE,
       NON_PM,
       PM_MASTER_OF_THIEVES,
@@ -355,7 +355,7 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_DETECT_TREASURE,
       -4 },
-    { { "Ranger", 0 },
+    { { "Rôdeur", "Rôdeuse" },
       {
 #if 0 /* OBSOLETE */
         {"Edhel",   "Elleth"},
@@ -370,19 +370,19 @@ const struct Role roles[NUM_ROLES+1] = {
         {"Elentar",     "Elentari"},   /* Star-king, -queen (Q.) */
         "Solonor Thelandira", "Aerdrie Faenya", "Lolth", /* Elven */
 #endif
-        { "Tenderfoot", 0 },
-        { "Lookout", 0 },
-        { "Trailblazer", 0 },
-        { "Reconnoiterer", "Reconnoiteress" },
-        { "Scout", 0 },
-        { "Arbalester", 0 }, /* One skilled at crossbows */
-        { "Archer", 0 },
-        { "Sharpshooter", 0 },
-        { "Marksman", "Markswoman" } },
+        { "Pied-tendre", 0 },
+        { "Guetteur", "Guetteuse" },
+        { "Défricheur", "Défricheuse" },
+        { "Observateur", "Observatrice" },
+        { "Éclaireur", "Éclaireuse" },
+        { "Arbalétrier", "Arbalétrière" }, /* One skilled at crossbows */
+        { "Archer", "Archère" },
+        { "Tireur d'élite", "Tireuse d'élite" },
+        { "Fin tireur", "Fine tireuse" } },
       "Mercury", "_Venus", "Mars", /* Roman/planets */
       "Ran",
-      "Orion's camp",
-      "the cave of the wumpus",
+      "le camp d'Orion",
+      "la grotte du wumpus",
       PM_RANGER,
       PM_LITTLE_DOG /* Orion & canis major */,
       PM_ORION,
@@ -410,7 +410,7 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_INVISIBILITY,
       -4 },
-    { { "Samurai", 0 },
+    { { "Samouraï", 0 },
       { { "Hatamoto", 0 },       /* Banner Knight */
         { "Ronin", 0 },          /* no allegiance */
         { "Ninja", "Kunoichi" }, /* secret society */
@@ -422,8 +422,8 @@ const struct Role roles[NUM_ROLES+1] = {
         { "Shogun", 0 } },       /* supreme commander, warlord */
       "_Amaterasu Omikami", "Raijin", "Susanowo", /* Japanese */
       "Sam",
-      "the Castle of the Taro Clan",
-      "the Shogun's Castle",
+      "le Château du clan Taro",
+      "le Château du Shogun",
       PM_SAMURAI,
       PM_LITTLE_DOG,
       PM_LORD_SATO,
@@ -450,20 +450,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_INT,
       SPE_CLAIRVOYANCE,
       -4 },
-    { { "Tourist", 0 },
-      { { "Rambler", 0 },
-        { "Sightseer", 0 },
-        { "Excursionist", 0 },
-        { "Peregrinator", "Peregrinatrix" },
-        { "Traveler", 0 },
-        { "Journeyer", 0 },
-        { "Voyager", 0 },
-        { "Explorer", 0 },
-        { "Adventurer", 0 } },
+    { { "Touriste", 0 },
+      { { "Promeneur", "Promeneuse" },
+        { "Visiteur", "Visiteuse" },
+        { "Excursionniste", 0 },
+        { "Pérégrin", "Pérégrine" },
+        { "Voyageur", "Voyageuse" },
+        { "Globe-trotteur", "Globe-trotteuse" },
+        { "Bourlingueur", "Bourlingueuse" },
+        { "Explorateur", "Exploratrice" },
+        { "Aventurier", "Aventurière" } },
       "Blind Io", "_The Lady", "Offler", /* Discworld */
       "Tou",
       "Ankh-Morpork",
-      "the Thieves' Guild Hall",
+      "la Maison de la Guilde des Voleurs",
       PM_TOURIST,
       NON_PM,
       PM_TWOFLOWER,
@@ -491,19 +491,19 @@ const struct Role roles[NUM_ROLES+1] = {
       SPE_CHARM_MONSTER,
       -4 },
     { { "Valkyrie", 0 },
-      { { "Stripling", 0 },
-        { "Skirmisher", 0 },
-        { "Fighter", 0 },
-        { "Man-at-arms", "Woman-at-arms" },
-        { "Warrior", 0 },
-        { "Swashbuckler", 0 },
-        { "Hero", "Heroine" },
-        { "Champion", 0 },
-        { "Lord", "Lady" } },
+      { { "Jouvenceau", "Jouvencelle" },
+        { "Escarmoucheur", "Escarmoucheuse" },
+        { "Combattant", "Combattante" },
+        { "Homme d'armes", "Femme d'armes" },
+        { "Guerrier", "Guerrière" },
+        { "Bretteur", "Bretteuse" },
+        { "Héros", "Héroïne" },
+        { "Champion", "Championne" },
+        { "Seigneur", "Dame" } },
       "Tyr", "Odin", "Loki", /* Norse */
       "Val",
-      "the Shrine of Destiny",
-      "the cave of Surtur",
+      "le Sanctuaire du Destin",
+      "la grotte de Surtur",
       PM_VALKYRIE,
       NON_PM /*PM_WINTER_WOLF_CUB*/,
       PM_NORN,
@@ -530,20 +530,20 @@ const struct Role roles[NUM_ROLES+1] = {
       A_WIS,
       SPE_CONE_OF_COLD,
       -4 },
-    { { "Wizard", 0 },
-      { { "Evoker", 0 },
-        { "Conjurer", 0 },
+    { { "Magicien", "Magicienne" },
+      { { "Évocateur", "Évocatrice" },
+        { "Conjurateur", "Conjuratrice" },
         { "Thaumaturge", 0 },
-        { "Magician", 0 },
-        { "Enchanter", "Enchantress" },
-        { "Sorcerer", "Sorceress" },
-        { "Necromancer", 0 },
-        { "Wizard", 0 },
+        { "Prestidigitateur", "Prestidigitatrice" },
+        { "Enchanteur", "Enchanteresse" },
+        { "Sorcier", "Sorcière" },
+        { "Nécromancien", "Nécromancienne" },
+        { "Magicien", "Magicienne" },
         { "Mage", 0 } },
       "Ptah", "Thoth", "Anhur", /* Egyptian */
       "Wiz",
-      "the Lonely Tower",
-      "the Tower of Darkness",
+      "la Tour Solitaire",
+      "la Tour des Ténèbres",
       PM_WIZARD,
       PM_KITTEN,
       PM_NEFERET_THE_GREEN,
@@ -580,11 +580,11 @@ const struct Role roles[NUM_ROLES+1] = {
 /* NUM_RACES is defined in hack.h */
 const struct Race races[NUM_RACES + 1] = {
     {
-        "human",
-        "human",
-        "humanity",
+        "humain",
+        "humain",
+        "humains",
         "Hum",
-        { "man", "woman" },
+        { "homme", "femme" },
         PM_HUMAN,
         PM_HUMAN_MUMMY,
         PM_HUMAN_ZOMBIE,
@@ -601,9 +601,9 @@ const struct Race races[NUM_RACES + 1] = {
         { 1, 0, 2, 0, 2, 0 }  /* Energy */
     },
     {
-        "elf",
-        "elven",
-        "elvenkind",
+        "elfe",
+        "elfe",
+        "elfes",
         "Elf",
         { 0, 0 },
         PM_ELF,
@@ -621,9 +621,9 @@ const struct Race races[NUM_RACES + 1] = {
         { 2, 0, 3, 0, 3, 0 }  /* Energy */
     },
     {
-        "dwarf",
-        "dwarven",
-        "dwarvenkind",
+        "nain",
+        "nain",
+        "nains",
         "Dwa",
         { 0, 0 },
         PM_DWARF,
@@ -642,8 +642,8 @@ const struct Race races[NUM_RACES + 1] = {
     },
     {
         "gnome",
-        "gnomish",
-        "gnomehood",
+        "gnome",
+        "gnomes",
         "Gno",
         { 0, 0 },
         PM_GNOME,
@@ -661,9 +661,9 @@ const struct Race races[NUM_RACES + 1] = {
         { 2, 0, 2, 0, 2, 0 }  /* Energy */
     },
     {
-        "orc",
-        "orcish",
-        "orcdom",
+        "orque",
+        "orque",
+        "orques",
         "Orc",
         { 0, 0 },
         PM_ORC,
@@ -686,19 +686,21 @@ const struct Race races[NUM_RACES + 1] = {
 
 /* Table of all genders */
 const struct Gender genders[] = {
-    { "male", "he", "him", "his", "Mal", ROLE_MALE },
-    { "female", "she", "her", "her", "Fem", ROLE_FEMALE },
-    { "neuter", "it", "it", "its", "Ntr", ROLE_NEUTER },
+    /* French possessives agree with the possessed noun, not the
+       possessor: "son" is the default (masculine) form for all three */
+    { "masculin", "il", "le", "son", "Mal", ROLE_MALE },
+    { "féminin", "elle", "la", "son", "Fem", ROLE_FEMALE },
+    { "neutre", "il", "le", "son", "Ntr", ROLE_NEUTER },
     /* used by pronoun_gender() when hallucinating */
-    { "group", "they", "them", "their", "Grp", 0 },
+    { "groupe", "ils", "les", "leur", "Grp", 0 },
 };
 
 /* Table of all alignments */
 const struct Align aligns[] = {
-    { "law", "lawful", "Law", ROLE_LAWFUL, A_LAWFUL },
-    { "balance", "neutral", "Neu", ROLE_NEUTRAL, A_NEUTRAL },
-    { "chaos", "chaotic", "Cha", ROLE_CHAOTIC, A_CHAOTIC },
-    { "evil", "unaligned", "Una", 0, A_NONE }
+    { "loi", "loyal", "Law", ROLE_LAWFUL, A_LAWFUL },
+    { "équilibre", "neutre", "Neu", ROLE_NEUTRAL, A_NEUTRAL },
+    { "chaos", "chaotique", "Cha", ROLE_CHAOTIC, A_CHAOTIC },
+    { "mal", "non aligné", "Una", 0, A_NONE }
 };
 
 staticfn int randrole_filtered(void);
@@ -708,6 +710,34 @@ staticfn int race_alignmentcount(int);
 
 /* used by str2XXX() */
 static char NEARDATA randomstr[] = "random";
+static const char NEARDATA randomstr_fr[] = "aléatoire";
+
+/* original English names, still accepted by str2XXX() (options, command
+   line, name suffix) so that existing configuration files keep working;
+   same order as roles[], races[], genders[] and aligns[] */
+static const char *const en_role_names[][2] = {
+    { "Archeologist", 0 }, { "Barbarian", 0 }, { "Caveman", "Cavewoman" },
+    { "Healer", 0 }, { "Knight", 0 }, { "Monk", 0 },
+    { "Priest", "Priestess" }, { "Rogue", 0 }, { "Ranger", 0 },
+    { "Samurai", 0 }, { "Tourist", 0 }, { "Valkyrie", 0 }, { "Wizard", 0 },
+};
+static const char *const en_race_names[][2] = {
+    { "human", "human" }, { "elf", "elven" }, { "dwarf", "dwarven" },
+    { "gnome", "gnomish" }, { "orc", "orcish" },
+};
+static const char *const en_gend_names[] = { "male", "female", "neuter" };
+static const char *const en_align_names[] = { "lawful", "neutral", "chaotic" };
+
+staticfn boolean is_randomstr(const char *, int);
+
+/* does str (of length len) designate a random choice? */
+staticfn boolean
+is_randomstr(const char *str, int len)
+{
+    return (boolean) ((len == 1 && (*str == '*' || *str == '@'))
+                      || !strncmpi(str, randomstr, len)
+                      || !strncmpi(str, randomstr_fr, len));
+}
 
 boolean
 validrole(int rolenum)
@@ -754,6 +784,13 @@ str2role(const char *str)
 
     /* Match as much of str as is provided */
     len = Strlen(str);
+    /* a single letter keeps its traditional (English) meaning, so that
+       -R still means Rogue, -H Healer, &c */
+    if (len == 1) {
+        for (i = 0; roles[i].name.m && i < SIZE(en_role_names); i++)
+            if (!strncmpi(str, en_role_names[i][0], len))
+                return i;
+    }
     for (i = 0; roles[i].name.m; i++) {
         /* Does it match the male name? */
         if (!strncmpi(str, roles[i].name.m, len))
@@ -765,9 +802,15 @@ str2role(const char *str)
         if (!strcmpi(str, roles[i].filecode))
             return i;
     }
+    /* Or the original English names? */
+    for (i = 0; roles[i].name.m && i < SIZE(en_role_names); i++) {
+        if (!strncmpi(str, en_role_names[i][0], len))
+            return i;
+        if (en_role_names[i][1] && !strncmpi(str, en_role_names[i][1], len))
+            return i;
+    }
 
-    if ((len == 1 && (*str == '*' || *str == '@'))
-        || !strncmpi(str, randomstr, len))
+    if (is_randomstr(str, len))
         return ROLE_RANDOM;
 
     /* Couldn't find anything appropriate */
@@ -831,9 +874,14 @@ str2race(const char *str)
         if (!strcmpi(str, races[i].filecode))
             return i;
     }
+    /* Or the original English noun or adjective? */
+    for (i = 0; races[i].noun && i < SIZE(en_race_names); i++) {
+        if (!strncmpi(str, en_race_names[i][0], len)
+            || !strncmpi(str, en_race_names[i][1], len))
+            return i;
+    }
 
-    if ((len == 1 && (*str == '*' || *str == '@'))
-        || !strncmpi(str, randomstr, len))
+    if (is_randomstr(str, len))
         return ROLE_RANDOM;
 
     /* Couldn't find anything appropriate */
@@ -895,8 +943,11 @@ str2gend(const char *str)
         if (!strcmpi(str, genders[i].filecode))
             return i;
     }
-    if ((len == 1 && (*str == '*' || *str == '@'))
-        || !strncmpi(str, randomstr, len))
+    /* Or the original English adjective? */
+    for (i = 0; i < ROLE_GENDERS && i < SIZE(en_gend_names); i++)
+        if (!strncmpi(str, en_gend_names[i], len))
+            return i;
+    if (is_randomstr(str, len))
         return ROLE_RANDOM;
 
     /* Couldn't find anything appropriate */
@@ -958,8 +1009,11 @@ str2align(const char *str)
         if (!strcmpi(str, aligns[i].filecode))
             return i;
     }
-    if ((len == 1 && (*str == '*' || *str == '@'))
-        || !strncmpi(str, randomstr, len))
+    /* Or the original English adjective? */
+    for (i = 0; i < ROLE_ALIGNS && i < SIZE(en_align_names); i++)
+        if (!strncmpi(str, en_align_names[i], len))
+            return i;
+    if (is_randomstr(str, len))
         return ROLE_RANDOM;
 
     /* Couldn't find anything appropriate */
@@ -1324,25 +1378,31 @@ rolefilterstring(char *outbuf, int which)
     case RS_ROLE:
         for (i = 0; i < SIZE(roles) - 1; ++i) {
             if (gr.rfilter.roles[i])
-                Sprintf(eos(outbuf), " !%.3s", roles[i].name.m);
+                Sprintf(eos(outbuf), " !%s", roles[i].filecode);
         }
         break;
     case RS_RACE:
         for (i = 0; i < SIZE(races) - 1; ++i) {
             if ((gr.rfilter.mask & races[i].selfmask) != 0)
-                Sprintf(eos(outbuf), " !%s", races[i].noun);
+                Sprintf(eos(outbuf), " !%s", (i < SIZE(en_race_names))
+                                                ? en_race_names[i][0]
+                                                : races[i].filecode);
         }
         break;
     case RS_GENDER:
         for (i = 0; i < SIZE(genders) - 1; ++i) {
             if ((gr.rfilter.mask & genders[i].allow) != 0)
-                Sprintf(eos(outbuf), " !%s", genders[i].adj);
+                Sprintf(eos(outbuf), " !%s", (i < SIZE(en_gend_names))
+                                                ? en_gend_names[i]
+                                                : genders[i].filecode);
         }
         break;
     case RS_ALGNMNT:
         for (i = 0; i < SIZE(aligns) - 1; ++i) {
             if ((gr.rfilter.mask & aligns[i].allow) != 0)
-                Sprintf(eos(outbuf), " !%s", aligns[i].adj);
+                Sprintf(eos(outbuf), " !%s", (i < SIZE(en_align_names))
+                                                ? en_align_names[i]
+                                                : aligns[i].filecode);
         }
         break;
     default:
@@ -1380,18 +1440,13 @@ clearrolefilter(int which)
     }
 }
 
+/* separator between the items of "race, rôle, sexe et alignement" */
 staticfn char *
 promptsep(char *buf, int num_post_attribs)
 {
-    const char *conjuct = "and ";
-
-    if (num_post_attribs > 1 && gr.role_post_attribs < num_post_attribs
-        && gr.role_post_attribs > 1)
-        Strcat(buf, ",");
-    Strcat(buf, " ");
+    if (gr.role_post_attribs < num_post_attribs)
+        Strcat(buf, (gr.role_post_attribs == 1) ? " et " : ", ");
     --gr.role_post_attribs;
-    if (!gr.role_post_attribs && num_post_attribs > 1)
-        Strcat(buf, conjuct);
     return buf;
 }
 
@@ -1427,15 +1482,38 @@ race_alignmentcount(int racenum)
     return aligncount;
 }
 
+/* append a space (unless buf is empty) and a French adjective, put in the
+   feminine when 'fem' is set ("loyal" -> "loyale", "nain" -> "naine";
+   adjectives already ending in 'e' are invariable) */
+staticfn void
+cat_adj(char *buf, const char *adj, boolean fem)
+{
+    size_t l;
+
+    if (*buf)
+        Strcat(buf, " ");
+    Strcat(buf, adj);
+    l = strlen(buf);
+    if (fem && l > 0 && buf[l - 1] != 'e')
+        Strcat(buf, "e");
+}
+
+/*
+ * Build a description of the character such as "Femme des cavernes gnome
+ * loyale", "naine chaotique" or "personnage loyal" (no article; callers
+ * use it as "de votre %s").  As a side effect, gr.role_pa[] and
+ * gr.role_post_attribs record which aspects still have to be chosen.
+ */
 char *
 root_plselection_prompt(
     char *suppliedbuf, int buflen,
     int rolenum, int racenum, int gendnum, int alignnum)
 {
-    int k, gendercount = 0, aligncount = 0;
+    int k, gendercount = 0;
     char buf[BUFSZ];
-    static char err_ret[] = " character's";
-    boolean donefirst = FALSE;
+    static char err_ret[] = "personnage";
+    const char *algnadj = 0, *gendadj = 0, *raceword = 0, *roleword = 0;
+    boolean racenoun = FALSE, fem;
 
     if (!suppliedbuf || buflen < 1)
         return err_ret;
@@ -1447,26 +1525,16 @@ root_plselection_prompt(
     buf[0] = '\0';
     *suppliedbuf = '\0';
 
-    /* How many alignments are allowed for the desired race? */
-    if (racenum != ROLE_NONE && racenum != ROLE_RANDOM)
-        aligncount = race_alignmentcount(racenum);
-
+    /* alignment */
     if (alignnum != ROLE_NONE && alignnum != ROLE_RANDOM
         && ok_align(rolenum, racenum, gendnum, alignnum)) {
-#if 0   /* 'if' and 'else' had duplicate code here; probably a copy+parse
-         * oversight; if a problem with filtering of random role selection
-         * crops up, this is probably the place to start looking */
-
-        /* if race specified, and multiple choice of alignments for it */
-        if ((racenum >= 0) && (aligncount > 1)) {
-        } else {
-        }
-#endif  /* the four lines of code below were in both 'if' and 'else' above */
-        if (donefirst)
-            Strcat(buf, " ");
-        Strcat(buf, aligns[alignnum].adj);
-        donefirst = TRUE;
+        algnadj = aligns[alignnum].adj;
     } else {
+        int aligncount = 0;
+
+        /* How many alignments are allowed for the desired race? */
+        if (racenum != ROLE_NONE && racenum != ROLE_RANDOM)
+            aligncount = race_alignmentcount(racenum);
         /* in case we got here by failing the ok_align() test */
         if (alignnum != ROLE_RANDOM)
             alignnum = ROLE_NONE;
@@ -1481,7 +1549,6 @@ root_plselection_prompt(
             gr.role_post_attribs++;
         }
     }
-    /* <your lawful> */
 
     /* How many genders are allowed for the desired role? */
     if (validrole(rolenum))
@@ -1492,17 +1559,10 @@ root_plselection_prompt(
             /* if role specified, and multiple choice of genders for it,
                and name of role itself does not distinguish gender */
             if ((rolenum != ROLE_NONE) && (gendercount > 1)
-                && !roles[rolenum].name.f) {
-                if (donefirst)
-                    Strcat(buf, " ");
-                Strcat(buf, genders[gendnum].adj);
-                donefirst = TRUE;
-            }
+                && !roles[rolenum].name.f)
+                gendadj = genders[gendnum].adj;
         } else {
-            if (donefirst)
-                Strcat(buf, " ");
-            Strcat(buf, genders[gendnum].adj);
-            donefirst = TRUE;
+            gendadj = genders[gendnum].adj;
         }
     } else {
         /* if gender not specified, but role is specified
@@ -1514,21 +1574,15 @@ root_plselection_prompt(
             gr.role_post_attribs++;
         }
     }
-    /* <your lawful female> */
 
     if (racenum != ROLE_NONE && racenum != ROLE_RANDOM) {
         if (validrole(rolenum)
             && ok_race(rolenum, racenum, gendnum, alignnum)) {
-            if (donefirst)
-                Strcat(buf, " ");
-            Strcat(buf, (rolenum == ROLE_NONE) ? races[racenum].noun
-                                               : races[racenum].adj);
-            donefirst = TRUE;
+            raceword = (rolenum == ROLE_NONE) ? races[racenum].noun
+                                              : races[racenum].adj;
         } else if (!validrole(rolenum)) {
-            if (donefirst)
-                Strcat(buf, " ");
-            Strcat(buf, races[racenum].noun);
-            donefirst = TRUE;
+            raceword = races[racenum].noun;
+            racenoun = TRUE;
         } else {
             gr.role_pa[BP_RACE] = 1;
             gr.role_post_attribs++;
@@ -1537,41 +1591,49 @@ root_plselection_prompt(
         gr.role_pa[BP_RACE] = 1;
         gr.role_post_attribs++;
     }
-    /* <your lawful female gnomish> || <your lawful female gnome> */
 
     if (validrole(rolenum)) {
         assert(IndexOkT(rolenum, roles));
-        if (donefirst)
-            Strcat(buf, " ");
         if (gendnum != ROLE_NONE) {
             if (gendnum == 1 && roles[rolenum].name.f)
-                Strcat(buf, roles[rolenum].name.f);
+                roleword = roles[rolenum].name.f;
             else
-                Strcat(buf, roles[rolenum].name.m);
+                roleword = roles[rolenum].name.m;
         } else {
-            if (roles[rolenum].name.f) {
-                Strcat(buf, roles[rolenum].name.m);
-                Strcat(buf, "/");
-                Strcat(buf, roles[rolenum].name.f);
-            } else
-                Strcat(buf, roles[rolenum].name.m);
+            roleword = 0; /* built below, "Prêtre/Prêtresse" */
         }
-        donefirst = TRUE;
     } else if (rolenum == ROLE_NONE) {
         gr.role_pa[BP_ROLE] = 1;
         gr.role_post_attribs++;
     }
 
-    if ((racenum == ROLE_NONE || racenum == ROLE_RANDOM)
-        && !validrole(rolenum)) {
-        if (donefirst)
-            Strcat(buf, " ");
-        Strcat(buf, "character");
-        /*donefirst = TRUE;*/
+    /* French word order: noun first, then the adjectives
+       <Femme des cavernes> <gnome> <loyale> || <gnome loyale>
+       || <personnage féminin loyal> */
+    fem = (gendnum == 1);
+    if (validrole(rolenum)) {
+        if (roleword) {
+            Strcpy(buf, roleword);
+        } else {
+            Strcpy(buf, roles[rolenum].name.m);
+            if (roles[rolenum].name.f) {
+                Strcat(buf, "/");
+                Strcat(buf, roles[rolenum].name.f);
+            }
+        }
+        if (raceword)
+            cat_adj(buf, raceword, fem);
+    } else if (raceword) {
+        cat_adj(buf, raceword, fem && racenoun);
+    } else {
+        Strcpy(buf, "personnage");
+        fem = FALSE; /* adjectives agree with "personnage" */
     }
-    /* <your lawful female gnomish cavewoman> || <your lawful female gnome>
-     *    || <your lawful female character>
-     */
+    if (gendadj)
+        cat_adj(buf, gendadj, fem);
+    if (algnadj)
+        cat_adj(buf, algnadj, fem);
+
     if (buflen > (int) (strlen(buf) + 1)) {
         Strcpy(suppliedbuf, buf);
         return suppliedbuf;
@@ -1584,41 +1646,22 @@ build_plselection_prompt(
     char *buf, int buflen,
     int rolenum, int racenum, int gendnum, int alignnum)
 {
-    const char *defprompt = "Shall I pick a character for you? [ynaq] ";
+    const char *defprompt = "Dois-je choisir un personnage pour vous ? [ynaq] ";
     int num_post_attribs = 0;
-    char tmpbuf[BUFSZ], *p;
+    char tmpbuf[BUFSZ];
 
     if (buflen < QBUFSZ)
         return (char *) defprompt;
 
-    Strcpy(tmpbuf, "Shall I pick ");
-    if (racenum != ROLE_NONE || validrole(rolenum))
-        Strcat(tmpbuf, "your ");
-    else
-        Strcat(tmpbuf, "a ");
-    /* <your> */
-
-    (void) root_plselection_prompt(eos(tmpbuf), buflen - Strlen(tmpbuf),
+    tmpbuf[0] = '\0';
+    (void) root_plselection_prompt(tmpbuf, (int) sizeof tmpbuf,
                                    rolenum, racenum, gendnum, alignnum);
-    /* "Shall I pick a character's role, race, gender, and alignment for you?"
-       plus " [ynaq] (y)" is a little too long for a conventional 80 columns;
-       also, "pick a character's <anything>" sounds a bit stilted */
-    strsubst(tmpbuf, "pick a character", "pick character");
-    Sprintf(buf, "%s", s_suffix(tmpbuf));
-    /* don't bother splitting caveman/cavewoman or priest/priestess
-       in order to apply possessive suffix to both halves, but do
-       change "priest/priestess'" to "priest/priestess's" */
-    if ((p = strstri(buf, "priest/priestess'")) != 0
-        && p[sizeof "priest/priestess'" - sizeof ""] == '\0')
-        strkitten(buf, 's');
-
-    /* buf should now be:
-     *    <your lawful female gnomish cavewoman's>
-     * || <your lawful female gnome's>
-     * || <your lawful female character's>
-     *
-     * Now append the post attributes to it
+    /* tmpbuf should now be:
+     *    <Femme des cavernes gnome loyale>
+     * || <gnome loyale>
+     * || <personnage féminin loyal>
      */
+    Strcpy(buf, "Dois-je choisir ");
     num_post_attribs = gr.role_post_attribs;
     if (!num_post_attribs) {
         /* some constraints might have been mutually exclusive, in which case
@@ -1634,24 +1677,36 @@ build_plselection_prompt(
         num_post_attribs = gr.role_post_attribs;
     }
     if (num_post_attribs) {
+        /* "race, rôle, sexe et alignement de votre <personnage>" */
         if (gr.role_pa[BP_RACE]) {
-            (void) promptsep(eos(buf), num_post_attribs);
+            (void) promptsep(buf, num_post_attribs);
             Strcat(buf, "race");
         }
         if (gr.role_pa[BP_ROLE]) {
-            (void) promptsep(eos(buf), num_post_attribs);
-            Strcat(buf, "role");
+            (void) promptsep(buf, num_post_attribs);
+            Strcat(buf, "rôle");
         }
         if (gr.role_pa[BP_GEND]) {
-            (void) promptsep(eos(buf), num_post_attribs);
-            Strcat(buf, "gender");
+            (void) promptsep(buf, num_post_attribs);
+            Strcat(buf, "sexe");
         }
         if (gr.role_pa[BP_ALIGN]) {
-            (void) promptsep(eos(buf), num_post_attribs);
-            Strcat(buf, "alignment");
+            (void) promptsep(buf, num_post_attribs);
+            Strcat(buf, "alignement");
+        }
+        if (strlen(buf) + strlen(tmpbuf) + 30 < (size_t) buflen) {
+            Strcat(buf, " de votre ");
+            Strcat(buf, tmpbuf);
+        }
+    } else {
+        if (strlen(buf) + strlen(tmpbuf) + 30 < (size_t) buflen) {
+            Strcat(buf, "votre ");
+            Strcat(buf, tmpbuf);
+        } else {
+            Strcat(buf, "votre personnage");
         }
     }
-    Strcat(buf, " for you? [ynaq] ");
+    Strcat(buf, " ? [ynaq] ");
     return buf;
 }
 
@@ -1725,9 +1780,9 @@ plnamesuffix(void)
 void
 role_selection_prolog(int which, winid where)
 {
-    static const char NEARDATA choosing[] = " choosing now",
-                               not_yet[] = " not yet specified",
-                               rand_choice[] = " random";
+    static const char NEARDATA choosing[] = " en cours de choix",
+                               not_yet[] = " pas encore choisi",
+                               rand_choice[] = " aléatoire";
     char buf[BUFSZ];
     int r, c, gend, a, allowmask;
 
@@ -1768,11 +1823,11 @@ role_selection_prolog(int which, winid where)
     /* [g and a don't constrain anything sufficiently
        to narrow something done to a single choice] */
 
-    Sprintf(buf, "%12s ", "name:");
+    Strcpy(buf, "       nom : ");
     Strcat(buf, (which == RS_NAME) ? choosing
                 : !*svp.plname ? not_yet : svp.plname);
     putstr(where, 0, buf);
-    Sprintf(buf, "%12s ", "role:");
+    Strcpy(buf, "      rôle : ");
     assert(which == RS_ROLE || r == ROLE_NONE || r == ROLE_RANDOM
            || IndexOkT(r, roles));
     Strcat(buf, (which == RS_ROLE) ? choosing
@@ -1789,7 +1844,7 @@ role_selection_prolog(int which, winid where)
             Sprintf(eos(buf), "/%s", roles[r].name.f);
     }
     putstr(where, 0, buf);
-    Sprintf(buf, "%12s ", "race:");
+    Strcpy(buf, "      race : ");
     assert(which == RS_RACE || c == ROLE_NONE || c == ROLE_RANDOM
            || IndexOkT(c, races));
     Strcat(buf, (which == RS_RACE) ? choosing
@@ -1797,13 +1852,13 @@ role_selection_prolog(int which, winid where)
                   : (c == ROLE_RANDOM) ? rand_choice
                     : races[c].noun);
     putstr(where, 0, buf);
-    Sprintf(buf, "%12s ", "gender:");
+    Strcpy(buf, "      sexe : ");
     Strcat(buf, (which == RS_GENDER) ? choosing
                 : (gend == ROLE_NONE) ? not_yet
                   : (gend == ROLE_RANDOM) ? rand_choice
                     : genders[gend].adj);
     putstr(where, 0, buf);
-    Sprintf(buf, "%12s ", "alignment:");
+    Strcpy(buf, "alignement : ");
     Strcat(buf, (which == RS_ALGNMNT) ? choosing
                 : (a == ROLE_NONE) ? not_yet
                   : (a == ROLE_RANDOM) ? rand_choice
@@ -1824,6 +1879,15 @@ role_menu_extra(int which, winid where, boolean preselect)
     };
     anything any;
     char buf[BUFSZ];
+    /* what[] in two forms: "Choisir d'abord le rôle" and
+       "Choisir d'abord un autre rôle" */
+    static const char *const what_the[] = {
+        "le nom", "le rôle", "la race", "le sexe", "l'alignement"
+    };
+    static const char *const what_other[] = {
+        "un autre nom", "un autre rôle", "une autre race", "un autre sexe",
+        "un autre alignement"
+    };
     const char *what = 0, *constrainer = 0, *forcedvalue = 0;
     int f = 0, r, c, gend, a, i, allowmask;
     int clr = NO_COLOR;
@@ -1841,8 +1905,8 @@ role_menu_extra(int which, winid where, boolean preselect)
             if (i != f && !gr.rfilter.roles[i])
                 break;
         if (i == SIZE(roles) - 1) {
-            constrainer = "filter";
-            forcedvalue = "role";
+            constrainer = "le filtre";
+            forcedvalue = "le rôle";
         }
         break;
     case RS_RACE:
@@ -1854,14 +1918,14 @@ role_menu_extra(int which, winid where, boolean preselect)
             if (allowmask == MH_HUMAN)
                 c = 0; /* races[human] */
             if (c >= 0) {
-                constrainer = "role";
+                constrainer = "le rôle";
                 forcedvalue = races[c].noun;
             } else if (f >= 0 && ((allowmask & ~gr.rfilter.mask)
                                   == races[f].selfmask)) {
                 /* if there is only one race choice available due to user
                    options disallowing others, race menu entry is disabled */
-                constrainer = "filter";
-                forcedvalue = "race";
+                constrainer = "le filtre";
+                forcedvalue = "la race";
             }
         }
         break;
@@ -1876,14 +1940,14 @@ role_menu_extra(int which, winid where, boolean preselect)
             else if (allowmask == ROLE_FEMALE)
                 gend = 1; /* genders[female] */
             if (gend >= 0) {
-                constrainer = "role";
+                constrainer = "le rôle";
                 forcedvalue = genders[gend].adj;
             } else if (f >= 0 && ((allowmask & ~gr.rfilter.mask)
                                   == genders[f].allow)) {
                 /* if there is only one gender choice available due to user
                    options disallowing other, gender menu entry is disabled */
-                constrainer = "filter";
-                forcedvalue = "gender";
+                constrainer = "le filtre";
+                forcedvalue = "le sexe";
             }
         }
         break;
@@ -1900,7 +1964,7 @@ role_menu_extra(int which, winid where, boolean preselect)
             else if (allowmask == AM_CHAOTIC)
                 a = 2; /* aligns[chaotic] */
             if (a >= 0)
-                constrainer = "role";
+                constrainer = "le rôle";
         }
         if (c >= 0 && !constrainer) {
             allowmask = races[c].allow & ROLE_ALIGNMASK;
@@ -1911,14 +1975,14 @@ role_menu_extra(int which, winid where, boolean preselect)
             else if (allowmask == AM_CHAOTIC)
                 a = 2; /* aligns[chaotic] */
             if (a >= 0)
-                constrainer = "race";
+                constrainer = "la race";
         }
         if (f >= 0 && !constrainer
             && (ROLE_ALIGNMASK & ~gr.rfilter.mask) == aligns[f].allow) {
             /* if there is only one alignment choice available due to user
                options disallowing others, algn menu entry is disabled */
-            constrainer = "filter";
-            forcedvalue = "alignment";
+            constrainer = "le filtre";
+            forcedvalue = "l'alignement";
         }
         if (a >= 0)
             forcedvalue = aligns[a].adj;
@@ -1929,30 +1993,32 @@ role_menu_extra(int which, winid where, boolean preselect)
     if (constrainer) {
         any.a_int = 0;
         /* use four spaces of padding to fake a grayed out menu choice */
-        Sprintf(buf, "%4s%s forces %s", "", constrainer, forcedvalue);
+        Sprintf(buf, "%4s%s impose %s", "", constrainer, forcedvalue);
+        buf[4] = highc(buf[4]); /* "Le filtre", "La race" */
         add_menu_str(where, buf);
     } else if (what) {
         any.a_int = RS_menu_arg(which);
-        Sprintf(buf, "Pick%s %s first", (f >= 0) ? " another" : "", what);
+        Sprintf(buf, "Choisir d'abord %s",
+                (f >= 0) ? what_other[which] : what_the[which]);
         add_menu(where, &nul_glyphinfo, &any, RS_menu_let[which], 0,
                  ATR_NONE, clr, buf, MENU_ITEMFLAGS_NONE);
     } else if (which == RS_filter) {
-        char setfiltering[40];
+        char setfiltering[80];
 
         any.a_int = RS_menu_arg(RS_filter);
-        Sprintf(setfiltering, "%s role/race/&c filtering",
-                gotrolefilter() ? "Reset" : "Set");
+        Sprintf(setfiltering, "%s le filtrage rôle/race/etc.",
+                gotrolefilter() ? "Réinitialiser" : "Définir");
         add_menu(where, &nul_glyphinfo, &any, '~', 0, ATR_NONE,
                  clr, setfiltering, MENU_ITEMFLAGS_NONE);
     } else if (which == ROLE_RANDOM) {
         any.a_int = ROLE_RANDOM;
         add_menu(where, &nul_glyphinfo, &any, '*', 0,
-                 ATR_NONE, clr, "Random",
+                 ATR_NONE, clr, "Aléatoire",
                  preselect ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     } else if (which == ROLE_NONE) {
         any.a_int = ROLE_NONE;
         add_menu(where, &nul_glyphinfo, &any, 'q', 0,
-                 ATR_NONE, clr, "Quit",
+                 ATR_NONE, clr, "Quitter",
                  preselect ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
     } else {
         impossible("role_menu_extra: bad arg (%d)", which);
@@ -2082,7 +2148,15 @@ role_init(void)
         gu.urole.cgod = roles[flags.pantheon].cgod;
     }
     /* 0 or 1; no gods are neuter, nor is gender randomized */
-    svq.quest_status.godgend = !strcmpi(align_gtitle(alignmnt), "goddess");
+    {
+        /* goddesses are flagged by a leading underscore (don't compare
+           align_gtitle()'s result, which may be translated) */
+        const char *gnam = (alignmnt == A_LAWFUL) ? gu.urole.lgod
+                           : (alignmnt == A_NEUTRAL) ? gu.urole.ngod
+                             : gu.urole.cgod;
+
+        svq.quest_status.godgend = (gnam && *gnam == '_') ? 1 : 0;
+    }
 
     if (Role_if(PM_CLERIC))
         objects[SPE_LIGHT].oc_skill = P_CLERIC_SPELL;
@@ -2135,7 +2209,7 @@ Hello(struct monst *mtmp)
 #endif
                "Velkommen"; /* Norse */
     default:
-        return "Hello";
+        return "Bonjour";
     }
 }
 
@@ -2144,7 +2218,7 @@ Goodbye(void)
 {
     switch (Role_switch) {
     case PM_KNIGHT:
-        return "Fare thee well"; /* Olde English */
+        return "Portez-vous bien"; /* Olde English */
     case PM_SAMURAI:
         return "Sayonara"; /* Japanese */
     case PM_TOURIST:
@@ -2152,7 +2226,7 @@ Goodbye(void)
     case PM_VALKYRIE:
         return "Farvel"; /* Norse */
     default:
-        return "Goodbye";
+        return "Au revoir";
     }
 }
 
@@ -2194,6 +2268,51 @@ staticfn void setup_rolemenu(winid, boolean, int, int, int);
 staticfn void setup_racemenu(winid, boolean, int, int, int);
 staticfn void setup_gendmenu(winid, boolean, int, int, int);
 staticfn void setup_algnmenu(winid, boolean, int, int, int);
+staticfn void plsel_clear_letters(void);
+staticfn char plsel_letter(const char *, boolean);
+
+/* menu selector letters already in use in the menu being built; French
+   role names don't have distinct initials (Voleur/Valkyrie,
+   Moine/Magicien) and the role filter menu mixes all aspects */
+static char plsel_used[128];
+
+staticfn void
+plsel_clear_letters(void)
+{
+    (void) memset(plsel_used, 0, sizeof plsel_used);
+    /* reserved by role_menu_extra() */
+    plsel_used['q'] = plsel_used['*'] = plsel_used['~'] = 1;
+}
+
+/* pick a selector for 'name': its initial (lower or upper case per
+   'upper'), else the other case, else another letter of the name,
+   else any free letter */
+staticfn char
+plsel_letter(const char *name, boolean upper)
+{
+    const char *p;
+    char c;
+    int k;
+
+    for (p = name; *p; ++p) {
+        if (!((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z')))
+            continue;
+        for (k = 0; k < 2; ++k) {
+            /* k == 0: preferred case; k == 1: the other one */
+            c = ((k == 0) == upper) ? highc(*p) : lowc(*p);
+            if (!plsel_used[(int) c]) {
+                plsel_used[(int) c] = 1;
+                return c;
+            }
+        }
+    }
+    for (c = upper ? 'A' : 'a'; c <= (upper ? 'Z' : 'z'); ++c)
+        if (!plsel_used[(int) c]) {
+            plsel_used[(int) c] = 1;
+            return c;
+        }
+    return 0;
+}
 
 /* try to reduce clutter in the code below... */
 #define ROLE flags.initrole
@@ -2299,7 +2418,7 @@ genl_player_setup(int screenheight)
                     /* pick a random role */
                     k = pick_role(RACE, GEND, ALGN, PICK_RANDOM);
                     if (k < 0) {
-                        pline("Incompatible role!");
+                        pline("Rôle incompatible !");
                         k = randrole(FALSE);
                     }
                 } else {
@@ -2320,7 +2439,7 @@ genl_player_setup(int screenheight)
                     role_menu_extra(RS_ALGNMNT, win, FALSE);
                     role_menu_extra(RS_filter, win, FALSE);
                     role_menu_extra(ROLE_NONE, win, FALSE); /* quit */
-                    Strcpy(pbuf, "Pick a role or profession");
+                    Strcpy(pbuf, "Choisissez un rôle ou une profession");
                     end_menu(win, pbuf);
                     n = select_menu(win, PICK_ONE, &selected);
                     /*
@@ -2380,7 +2499,7 @@ genl_player_setup(int screenheight)
                 if (pick4u == 'y' || pick4u == 'a' || RACE == ROLE_RANDOM) {
                     k = pick_race(ROLE, GEND, ALGN, PICK_RANDOM);
                     if (k < 0) {
-                        pline("Incompatible race!");
+                        pline("Race incompatible !");
                         k = randrace(ROLE);
                     }
                 } else { /* pick4u == 'n' */
@@ -2414,7 +2533,7 @@ genl_player_setup(int screenheight)
                         role_menu_extra(RS_ALGNMNT, win, FALSE);
                         role_menu_extra(RS_filter, win, FALSE);
                         role_menu_extra(ROLE_NONE, win, FALSE); /* quit */
-                        Strcpy(pbuf, "Pick a race or species");
+                        Strcpy(pbuf, "Choisissez une race ou une espèce");
                         end_menu(win, pbuf);
                         n = select_menu(win, PICK_ONE, &selected);
                         if (n > 0) {
@@ -2468,7 +2587,7 @@ genl_player_setup(int screenheight)
                 if (pick4u == 'y' || pick4u == 'a' || GEND == ROLE_RANDOM) {
                     k = pick_gend(ROLE, RACE, ALGN, PICK_RANDOM);
                     if (k < 0) {
-                        pline("Incompatible gender!");
+                        pline("Sexe incompatible !");
                         k = randgend(ROLE, RACE);
                     }
                 } else { /* pick4u == 'n' */
@@ -2502,7 +2621,7 @@ genl_player_setup(int screenheight)
                         role_menu_extra(RS_ALGNMNT, win, FALSE);
                         role_menu_extra(RS_filter, win, FALSE);
                         role_menu_extra(ROLE_NONE, win, FALSE); /* quit */
-                        Strcpy(pbuf, "Pick a gender or sex");
+                        Strcpy(pbuf, "Choisissez un sexe");
                         end_menu(win, pbuf);
                         n = select_menu(win, PICK_ONE, &selected);
                         if (n > 0) {
@@ -2556,7 +2675,7 @@ genl_player_setup(int screenheight)
                 if (pick4u == 'y' || pick4u == 'a' || ALGN == ROLE_RANDOM) {
                     k = pick_align(ROLE, RACE, GEND, PICK_RANDOM);
                     if (k < 0) {
-                        pline("Incompatible alignment!");
+                        pline("Alignement incompatible !");
                         k = randalign(ROLE, RACE);
                     }
                 } else { /* pick4u == 'n' */
@@ -2588,7 +2707,7 @@ genl_player_setup(int screenheight)
                         role_menu_extra(RS_GENDER, win, FALSE);
                         role_menu_extra(RS_filter, win, FALSE);
                         role_menu_extra(ROLE_NONE, win, FALSE); /* quit */
-                        Strcpy(pbuf, "Pick an alignment or creed");
+                        Strcpy(pbuf, "Choisissez un alignement ou une croyance");
                         end_menu(win, pbuf);
                         n = select_menu(win, PICK_ONE, &selected);
                         if (n > 0) {
@@ -2657,20 +2776,20 @@ genl_player_setup(int screenheight)
         /* [ynaq] menu choices */
         any.a_int = 1;
         add_menu(win, &nul_glyphinfo, &any, 'y', 0,
-                 ATR_NONE, clr, "Yes; start game", MENU_ITEMFLAGS_SELECTED);
+                 ATR_NONE, clr, "Oui ; commencer la partie", MENU_ITEMFLAGS_SELECTED);
         any.a_int = 2;
         add_menu(win, &nul_glyphinfo, &any, 'n', 0,
-                 ATR_NONE, clr, "No; choose role again", MENU_ITEMFLAGS_NONE);
+                 ATR_NONE, clr, "Non ; choisir à nouveau le rôle", MENU_ITEMFLAGS_NONE);
         if (iflags.renameallowed) {
             any.a_int = 3;
             add_menu(win, &nul_glyphinfo, &any, 'a', 0, ATR_NONE,
-                     clr, "Not yet; choose another name",
+                     clr, "Pas encore ; choisir un autre nom",
                      MENU_ITEMFLAGS_NONE);
         }
         any.a_int = -1;
         add_menu(win, &nul_glyphinfo, &any, 'q', 0,
-                 ATR_NONE, clr, "Quit", MENU_ITEMFLAGS_NONE);
-        Sprintf(pbuf, "Is this ok? [yn%sq]", iflags.renameallowed ? "a" : "");
+                 ATR_NONE, clr, "Quitter", MENU_ITEMFLAGS_NONE);
+        Sprintf(pbuf, "Est-ce correct ? [yn%sq]", iflags.renameallowed ? "a" : "");
         end_menu(win, pbuf);
         n = select_menu(win, PICK_ONE, &selected);
         /* [pick-one menus with a preselected entry behave oddly...] */
@@ -2734,25 +2853,27 @@ reset_role_filtering(void)
 
     win = create_nhwindow(NHW_MENU);
     start_menu(win, MENU_BEHAVE_STANDARD);
+    plsel_clear_letters();
 
     /* no extra blank line preceding this entry; end_menu supplies one */
-    add_menu_str(win, "Unacceptable roles");
+    add_menu_str(win, "Rôles refusés");
     setup_rolemenu(win, FALSE, ROLE_NONE, ROLE_NONE, ROLE_NONE);
 
     add_menu_str(win, "");
-    add_menu_str(win, "Unacceptable races");
+    add_menu_str(win, "Races refusées");
     setup_racemenu(win, FALSE, ROLE_NONE, ROLE_NONE, ROLE_NONE);
 
     add_menu_str(win, "");
-    add_menu_str(win, "Unacceptable genders");
+    add_menu_str(win, "Sexes refusés");
     setup_gendmenu(win, FALSE, ROLE_NONE, ROLE_NONE, ROLE_NONE);
 
     add_menu_str(win, "");
-    add_menu_str(win, "Unacceptable alignments");
+    add_menu_str(win, "Alignements refusés");
     setup_algnmenu(win, FALSE, ROLE_NONE, ROLE_NONE, ROLE_NONE);
 
-    Sprintf(filterprompt, "Pick all that apply%s",
-            gotrolefilter() ? " and/or unpick any that no longer apply" : "");
+    Sprintf(filterprompt, "Cochez tout ce qui s'applique%s",
+            gotrolefilter() ? " et/ou décochez ce qui ne s'applique plus"
+                            : "");
     end_menu(win, filterprompt);
     n = select_menu(win, PICK_ANY, &selected);
 
@@ -2805,32 +2926,31 @@ maybe_skip_seps(int rows, int aspect)
 staticfn winid
 plsel_startmenu(int ttyrows, int aspect)
 {
-    char qbuf[QBUFSZ];
+    char qbuf[BUFSZ];
     winid win;
     const char *rolename;
+    boolean fem = (GEND == 1);
 
     /* whatever aspect was just chosen might force others (Orc => chaotic,
        Samurai => Human+lawful, Valkyrie => female) */
     rigid_role_checks();
 
-    rolename = (ROLE < 0) ? "<role>"
+    rolename = (ROLE < 0) ? "<rôle>"
                : (GEND == 1 && roles[ROLE].name.f) ? roles[ROLE].name.f
                  : roles[ROLE].name.m;
     if (!svp.plname[0] || ROLE < 0 || RACE < 0 || GEND < 0 || ALGN < 0) {
-        /* "<role> <race.noun> <gender> <alignment>" */
-        Sprintf(qbuf, "%.20s %.20s %.20s %.20s",
+        /* "<rôle> <race.noun> <sexe> <alignement>" */
+        Sprintf(qbuf, "%.40s %.20s %.20s %.20s",
                 rolename,
                 (RACE < 0) ? "<race>" : races[RACE].noun,
-                (GEND < 0) ? "<gender>" : genders[GEND].adj,
-                (ALGN < 0) ? "<alignment>" : aligns[ALGN].adj);
+                (GEND < 0) ? "<sexe>" : genders[GEND].adj,
+                (ALGN < 0) ? "<alignement>" : aligns[ALGN].adj);
     } else {
-        /* "<name> the <alignment> <gender> <race.adjective> <role>" */
-        Sprintf(qbuf, "%.20s the %.20s %.20s %.20s %.20s",
-                svp.plname,
-                aligns[ALGN].adj,
-                genders[GEND].adj,
-                races[RACE].adj,
-                rolename);
+        /* "<nom>, <rôle> <race.adj> <sexe> <alignement>" (accordés) */
+        Sprintf(qbuf, "%.40s, %.40s", svp.plname, rolename);
+        cat_adj(qbuf, races[RACE].adj, fem);
+        cat_adj(qbuf, genders[GEND].adj, fem);
+        cat_adj(qbuf, aligns[ALGN].adj, fem);
     }
 
     win = create_nhwindow(NHW_MENU);
@@ -2860,10 +2980,12 @@ setup_rolemenu(
     anything any;
     int i;
     boolean role_ok;
-    char thisch, lastch = '\0', rolenamebuf[50];
+    char thisch, rolenamebuf[80];
     int clr = NO_COLOR;
 
     any = cg.zeroany; /* zero out all bits */
+    if (filtering)
+        plsel_clear_letters();
     for (i = 0; roles[i].name.m; i++) {
         /* role can be constrained by any of race, gender, or alignment */
         role_ok = (ok_role(i, race, gend, algn)
@@ -2876,9 +2998,7 @@ setup_rolemenu(
             any.a_int = i + 1;
         else
             any.a_string = roles[i].name.m;
-        thisch = lowc(*roles[i].name.m);
-        if (thisch == lastch)
-            thisch = highc(thisch);
+        thisch = plsel_letter(roles[i].name.m, FALSE);
         Strcpy(rolenamebuf, roles[i].name.m);
         if (roles[i].name.f) {
             /* role has distinct name for female (C,P) */
@@ -2894,10 +3014,9 @@ setup_rolemenu(
         /* !filtering implies reset_role_filtering() where we want to
            mark this role as preselected if current filter excludes it */
         add_menu(win, &nul_glyphinfo, &any, thisch, 0,
-                 ATR_NONE, clr, an(rolenamebuf),
+                 ATR_NONE, clr, rolenamebuf,
                  (!filtering && !role_ok)
                     ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
-        lastch = thisch;
     }
 }
 
@@ -2925,13 +3044,14 @@ setup_racemenu(
             any.a_int = i + 1;
         else
             any.a_string = races[i].noun;
-        this_ch = *races[i].noun;
+        this_ch = filtering ? *races[i].noun
+                  : plsel_letter(races[i].noun, TRUE);
         /* filtering: picking race, so choose by first letter, with
            capital letter as unseen accelerator;
            !filtering: resetting filter rather than picking, choose by
            capital letter since lowercase role letters will be present */
         add_menu(win, &nul_glyphinfo, &any,
-                 filtering ? this_ch : highc(this_ch),
+                 this_ch,
                  filtering ? highc(this_ch) : 0,
                  ATR_NONE, clr, races[i].noun,
                  (!filtering && !race_ok)
@@ -2963,11 +3083,12 @@ setup_gendmenu(
             any.a_int = i + 1;
         else
             any.a_string = genders[i].adj;
-        this_ch = *genders[i].adj;
+        this_ch = filtering ? *genders[i].adj
+                  : plsel_letter(genders[i].adj, TRUE);
         /* (see setup_racemenu for explanation of selector letters
            and setup_rolemenu for preselection) */
         add_menu(win, &nul_glyphinfo, &any,
-                 filtering ? this_ch : highc(this_ch),
+                 this_ch,
                  filtering ? highc(this_ch) : 0,
                  ATR_NONE, clr, genders[i].adj,
                  (!filtering && !gend_ok)
@@ -2999,11 +3120,12 @@ setup_algnmenu(
             any.a_int = i + 1;
         else
             any.a_string = aligns[i].adj;
-        this_ch = *aligns[i].adj;
+        this_ch = filtering ? *aligns[i].adj
+                  : plsel_letter(aligns[i].adj, TRUE);
         /* (see setup_racemenu for explanation of selector letters
            and setup_rolemenu for preselection) */
         add_menu(win, &nul_glyphinfo, &any,
-                 filtering ? this_ch : highc(this_ch),
+                 this_ch,
                  filtering ? highc(this_ch) : 0,
                  ATR_NONE, clr, aligns[i].adj,
                  (!filtering && !algn_ok)

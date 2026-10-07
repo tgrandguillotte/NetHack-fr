@@ -1,101 +1,111 @@
-# Building NetHack for Classic Mac OS (68k / PowerPC)
+# Compiler NetHack pour le Mac OS classique (68k / PowerPC)
 
-Cross-compiled with the [Retro68](https://github.com/autc04/Retro68) GCC
-toolchain. Three targets:
+*(Traduction française du document d'origine en anglais.)*
 
-- **68k** — System 7+ on 68020+ in 32-bit addressing mode
-- **PowerPC** — System 7.x through Mac OS 9 (CFM/PEF, no Carbon)
-- **Fat** — one app that runs native on both
+Compilation croisée avec la chaîne d'outils GCC
+[Retro68](https://github.com/autc04/Retro68). Trois cibles :
 
-## What you need
+- **68k** — System 7+ sur 68020+ en mode d'adressage 32 bits
+- **PowerPC** — de System 7.x à Mac OS 9 (CFM/PEF, sans Carbon)
+- **Fat** — une seule application qui s'exécute nativement sur les deux
 
-- Retro68 toolchain at `/opt/retro68` (or set `RETRO68=`). Verified with its
-  default GCC 12 through GCC 16; the build pins `-std=gnu17` automatically.
-- Apple Universal Interfaces 3.x in `/opt/retro68/universal` (Retro68's bundled
-  Multiversal headers are incomplete). Install steps below.
-- Host tools: `hfsutils` and `python3`; optionally `sit` for the StuffIt
-  archive (see below) and `qemu-system-m68k` (8.0+) for testing.  Without
-  `sit` the packaging step skips the `.sit` and still writes the disk image
-  and MacBinary.
+## Ce dont vous avez besoin
 
-## Get the prerequisites
+- La chaîne d'outils Retro68 dans `/opt/retro68` (ou définissez `RETRO68=`).
+  Vérifiée avec son GCC 12 par défaut jusqu'à GCC 16 ; la compilation impose
+  automatiquement `-std=gnu17`.
+- Les Universal Interfaces 3.x d'Apple dans `/opt/retro68/universal` (les
+  en-têtes Multiversal fournis avec Retro68 sont incomplets). Étapes
+  d'installation ci-dessous.
+- Outils de l'hôte : `hfsutils` et `python3` ; en option, `sit` pour l'archive
+  StuffIt (voir ci-dessous) et `qemu-system-m68k` (8.0+) pour les tests. Sans
+  `sit`, l'étape d'empaquetage saute le `.sit` mais produit quand même l'image
+  disque et le fichier MacBinary.
 
-### Install Retro68 and the Universal Interfaces
+## Obtenir les prérequis
 
-Host packages (Debian/Ubuntu):
+### Installer Retro68 et les Universal Interfaces
+
+Paquets de l'hôte (Debian/Ubuntu) :
 
     sudo apt install build-essential cmake bison flex texinfo ruby hfsutils \
         libgmp-dev libmpfr-dev libmpc-dev libboost-all-dev
 
-### Install sit (optional, for the StuffIt archive)
+### Installer sit (facultatif, pour l'archive StuffIt)
 
-Build it from source and put it on `PATH`:
+Compilez-le depuis les sources et placez-le dans le `PATH` :
 
     git clone https://github.com/thecloudexpanse/sit.git
     cd sit && make
     cp sit ~/.local/bin/
 
-Skip this if you only need `NetHack.img` or `NetHack.bin`; the packaging
-targets note the missing tool and carry on.
+Sautez cette étape si vous n'avez besoin que de `NetHack.img` ou de
+`NetHack.bin` ; les cibles d'empaquetage signalent l'outil manquant et
+poursuivent.
 
-Clone with submodules (GCC and binutils are submodules):
+Clonez avec les sous-modules (GCC et binutils sont des sous-modules) :
 
     git clone --recursive https://github.com/autc04/Retro68.git
     cd Retro68
 
-Build the toolchain — binutils + GCC for 68k and PowerPC plus the host tools
-(Rez, MakePEF, Elf2Mac, ...) — from a separate build dir into an empty, writable
-`/opt/retro68`. This takes a while:
+Compilez la chaîne d'outils — binutils + GCC pour 68k et PowerPC, plus les
+outils de l'hôte (Rez, MakePEF, Elf2Mac, ...) — depuis un répertoire de
+compilation séparé, vers un `/opt/retro68` vide et accessible en écriture.
+Cela prend un certain temps :
 
     sudo mkdir -p /opt/retro68 && sudo chown $USER /opt/retro68
     mkdir ../Retro68-build && cd ../Retro68-build
     ../Retro68/build-toolchain.bash --prefix=/opt/retro68 --no-carbon
     cd ../Retro68
 
-> On a modern host (GCC 15+) the 68k GCC build can fail in libbacktrace with
-> *"NM has changed"*; add `--disable-lto` to the 68k `gcc/configure` line in
-> `build-toolchain.bash` (the PowerPC one already has it) and rerun.
+> Sur un hôte récent (GCC 15+), la compilation de GCC 68k peut échouer dans
+> libbacktrace avec le message *"NM has changed"* ; ajoutez `--disable-lto` à
+> la ligne `gcc/configure` 68k dans `build-toolchain.bash` (celle du PowerPC
+> l'a déjà) et relancez.
 
-Put the toolchain on `PATH` for the remaining steps:
+Placez la chaîne d'outils dans le `PATH` pour les étapes suivantes :
 
     export PATH=/opt/retro68/bin:$PATH
 
-Retro68's bundled "Multiversal" headers are incomplete, so install Apple's
-Universal Interfaces 3.x over them. Download the **MPW 3.5 Golden Master** disk
-image (MacBinary DiskCopy, ~25 MB, served as `mpw-gm.img__0.bin`) from
-<http://macintoshgarden.org/apps/macintosh-programmers-workshop> into the current
-(Retro68 source) directory, then — args to the second script are build-68k,
-build-PPC, skip-Carbon:
+Les en-têtes « Multiversal » fournis avec Retro68 sont incomplets ; installez
+donc par-dessus les Universal Interfaces 3.x d'Apple. Téléchargez l'image
+disque **MPW 3.5 Golden Master** (MacBinary DiskCopy, ~25 Mo, servie sous le
+nom `mpw-gm.img__0.bin`) depuis
+<http://macintoshgarden.org/apps/macintosh-programmers-workshop> dans le
+répertoire courant (sources de Retro68), puis — les arguments du second
+script sont build-68k, build-PPC, skip-Carbon :
 
     ./install-universal-interfaces.sh . mpw-gm.img__0.bin
     ./interfaces-and-libraries.sh /opt/retro68 ./InterfacesAndLibraries true true false
 
-`/opt/retro68/universal/CIncludes` now holds the ~390 Apple headers.
+`/opt/retro68/universal/CIncludes` contient désormais les ~390 en-têtes Apple.
 
-## Configure (once)
+## Configurer (une seule fois)
 
     cd NetHack
     sys/unix/setup.sh sys/unix/hints/linux.501
 
-## Build and package
+## Compiler et empaqueter
 
-Run the `*pkg` targets from `src/` (`make -C src`) — the top-level Makefile's
-generated Lua paths break them when invoked from the repository root.
+Lancez les cibles `*pkg` depuis `src/` (`make -C src`) — les chemins Lua
+générés par le Makefile principal les font échouer lorsqu'elles sont
+invoquées depuis la racine du dépôt.
 
 ### 68k
 
     make CROSS_TO_MAC68K=1 all
     make -C src CROSS_TO_MAC68K=1 mac68kpkg
 
-`targets/mac68k/`: `NetHack.img` (self-mounting SCSI disk, embeds the port's
-`.NHsd` driver), `NetHack.sit` (StuffIt), `NetHack.bin` (MacBinary).
+`targets/mac68k/` : `NetHack.img` (disque SCSI à montage automatique, qui
+intègre le pilote `.NHsd` du portage), `NetHack.sit` (StuffIt), `NetHack.bin`
+(MacBinary).
 
 ### PowerPC
 
     make CROSS_TO_MACPPC=1 all
     make -C src CROSS_TO_MACPPC=1 macppcpkg
 
-`targets/macppc/`: `NetHack.sit`, `NetHack.bin`.
+`targets/macppc/` : `NetHack.sit`, `NetHack.bin`.
 
 ### Fat (68k + PowerPC)
 
@@ -104,9 +114,9 @@ generated Lua paths break them when invoked from the repository root.
     make CROSS_TO_MACPPC=1 all
     make -C src CROSS_TO_MACPPC=1 macfatpkg
 
-`targets/macfat/`: `NetHack.sit`, `NetHack.bin` (+ `Recover.bin`).
+`targets/macfat/` : `NetHack.sit`, `NetHack.bin` (+ `Recover.bin`).
 
-## Test with QEMU (68k)
+## Tester avec QEMU (68k)
 
     qemu-system-m68k -M q800 -m 128 \
         -bios <quadra-800-rom> \
@@ -115,14 +125,14 @@ generated Lua paths break them when invoked from the repository root.
         -drive file=targets/mac68k/NetHack.img,format=raw,media=disk \
         -g 800x600x8
 
-`pram.img` (`if=mtd`) persists PRAM. The boot disk needs System 7.x with 32-bit
-addressing enabled (Memory control panel).
+`pram.img` (`if=mtd`) conserve la PRAM. Le disque de démarrage doit contenir
+System 7.x avec l'adressage 32 bits activé (tableau de bord Mémoire).
 
-## Tools (`sys/mac68k/tools/`)
+## Outils (`sys/mac68k/tools/`)
 
-| Script | Purpose |
-|--------|---------|
-| `make_scsi_image2.py` | Wrap an HFS image with Apple Partition Map for SCSI; `--driver <bin>` embeds the auto-mount driver |
-| `decode_hqx.py` | Decode BinHex 4.0 (`.hqx`) to data + resource forks |
-| `dump_rsrc.py` | Dump resource fork contents (types, IDs, sizes) |
-| `make_info.py` | Write a macutils `.info` sidecar for StuffIt staging |
+| Script | Rôle |
+|--------|------|
+| `make_scsi_image2.py` | Enveloppe une image HFS dans une Apple Partition Map pour SCSI ; `--driver <bin>` intègre le pilote de montage automatique |
+| `decode_hqx.py` | Décode le BinHex 4.0 (`.hqx`) en branches de données et de ressources |
+| `dump_rsrc.py` | Affiche le contenu de la branche de ressources (types, ID, tailles) |
+| `make_info.py` | Écrit un fichier annexe `.info` de macutils pour la préparation StuffIt |

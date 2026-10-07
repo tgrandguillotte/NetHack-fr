@@ -1,50 +1,54 @@
 $NHDT-Date$  $NHDT-Branch$:$NHDT-Revision$
 
-This GEM windowport was originally written by Marvin Bressler for
-NetHack 3.5 and rebased onto 3.7 / 5.0 in 2026, cross-compiled from
-Linux with m68k-atari-mint and tested on TT/Falcon and MagiC.  See
-sys/atari/Install.tos for the current build instructions and the
-authoritative requirements -- NetHack 5.0 with Lua needs considerably
-more RAM than the 2 MB figure quoted in the historical text below.
-The historical notes below are preserved as written.
+(Traduction française du document d'origine Install.gem.)
+
+Cette interface (window port) GEM a été écrite à l'origine par Marvin
+Bressler pour NetHack 3.5, puis portée sur 3.7 / 5.0 en 2026, compilée
+par compilation croisée depuis Linux avec m68k-atari-mint et testée sur
+TT/Falcon et MagiC.  Consultez sys/atari/Install.tos pour les instructions
+de compilation actuelles et les prérequis qui font foi -- NetHack 5.0 avec
+Lua nécessite nettement plus de RAM que les 2 Mo cités dans le texte
+historique ci-dessous.  Les notes historiques ci-dessous sont conservées
+telles qu'elles ont été écrites (ici traduites).
 
 -----
 
-Hi,
+Bonjour,
 
-This is nethack3.5.0 for Atari Gem and tty
-Windowing System.
+Voici nethack3.5.0 pour les systèmes de fenêtrage Atari Gem
+et tty.
 
-It is by far not complete or perfect.
-(My english too :-))
+Il est loin d'être complet ou parfait.
+(Mon anglais non plus :-))
 
-You need at least 2Meg free RAM,  16 colors and
-3 Meg free Disk space.
-In fact it works also with monochrome, but you
-have to create a nh2.img (and title2.img) on your own.
+Il vous faut au moins 2 Mo de RAM libre, 16 couleurs et
+3 Mo d'espace disque libre.
+En fait, il fonctionne aussi en monochrome, mais vous
+devrez créer vous-même un nh2.img (et un title2.img).
 
-Atari windowport changes from 3.3.0:
-added a ASCII-Mode in GEM   -> F2
-the cursor is switchable    -> F3
-added inventory/menu search -> :
-removed the redraw problem
-removed almost all flicker (except with NOVA-Card :-()
-placed the GEM-dialogues more pleasent
-tty corner windows (i.e. inv) display now correct in a vt52-win
-greyed out old messages
-placed the GEM-windows more convient
+Modifications de l'interface Atari depuis la 3.3.0 :
+ajout d'un mode ASCII dans GEM              -> F2
+curseur activable/désactivable              -> F3
+ajout d'une recherche inventaire/menu       -> :
+suppression du problème de réaffichage
+suppression de presque tout le scintillement (sauf avec une carte NOVA :-()
+placement plus agréable des boîtes de dialogue GEM
+les fenêtres d'angle tty (p. ex. inventaire) s'affichent désormais
+correctement dans une fenêtre vt52
+anciens messages grisés
+placement plus pratique des fenêtres GEM
 ...
 
-Feel free to contact me about Issues and Errors.
-e-mail: gaston@cs.tu-berlin.de
+N'hésitez pas à me contacter au sujet des problèmes et des erreurs.
+e-mail : gaston@cs.tu-berlin.de
 
-You use this program at your own risk, I can't 
-guarantee it will work or do you no harm.
+Vous utilisez ce programme à vos propres risques ; je ne peux
+garantir qu'il fonctionnera ni qu'il ne vous causera aucun tort.
 
-Look at the nethack licence too.
+Consultez aussi la licence de nethack.
 
-As you may have noticed the look and feel is from
-Warwick Allisons nethack3.1.3d Gem Version
-and I have used E_Gem2.2.0 from Christian Grunenberg.
+Comme vous l'avez peut-être remarqué, l'aspect et l'ergonomie
+viennent de la version Gem nethack3.1.3d de Warwick Allison,
+et j'ai utilisé E_Gem2.2.0 de Christian Grunenberg.
 
 Marvin

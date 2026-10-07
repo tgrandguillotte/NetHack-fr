@@ -1351,6 +1351,7 @@ extern boolean is_inuse(struct obj *) NONNULLARG1;
 extern struct obj *g_at(coordxy, coordxy);
 extern boolean splittable(struct obj *) NONNULLARG1;
 extern int any_obj_ok(struct obj *);
+extern const char *fr_verbe_getobj(const char *) NONNULLARG1;
 extern struct obj *getobj(const char *, int(*)(struct obj *), unsigned int);
 extern int ggetobj(const char *, int(*)(struct obj *), int, boolean,
                    unsigned *) NONNULLARG1;

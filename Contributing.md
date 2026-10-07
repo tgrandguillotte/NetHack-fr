@@ -1,11 +1,15 @@
-If you are making a GitHub pull request for NetHack, please follow these guidelines:
+*Traduction française du document d'origine.*
 
-1. The 50/72 Rule: Keep the subject line (the first line) under 50 characters
-for readability in git log --oneline. If you need a more detailed description
-(the body), wrap it at 72 characters.
+Si vous soumettez une pull request GitHub pour NetHack, veuillez suivre ces
+recommandations :
 
-2. Separate Subject from Body: Always include a blank line between the subject
-and the body. This helps Git tools correctly parse the message.
+1. La règle 50/72 : limitez la ligne de sujet (la première ligne) à moins de
+50 caractères pour qu'elle reste lisible dans git log --oneline. Si une
+description plus détaillée (le corps) est nécessaire, coupez ses lignes à
+72 caractères.
+
+2. Séparez le sujet du corps : insérez toujours une ligne vide entre le sujet
+et le corps. Cela permet aux outils Git d'analyser correctement le message.
 
 
 

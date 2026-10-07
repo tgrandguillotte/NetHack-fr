@@ -1,36 +1,40 @@
-Jan 2002
+(Traduction française du document d'origine en anglais.)
 
-The MPW compilers are now supported again.
+Janvier 2002
 
-Support for 68k has been discontinued due to a lack of a debugging
-system for 68k binaries.
+Les compilateurs MPW sont de nouveau pris en charge.
 
-Note that the tiled MacOS X port uses the Qt windowport and the UNIX
-build system, not this windowport code.
+La prise en charge du 68k a été abandonnée faute de système de débogage
+pour les binaires 68k.
 
-
-26 Nov, 1999
-
-NetHack 3.3.0 was built with Metrowerk's Pro 4 compiler on a PPC
-system.  We are still compiling with 68K alignment because we know
-it works.  No one has checked lately if the PPC alignment bug
-still exists.
+Notez que le portage MacOS X avec tuiles utilise l'interface (window port)
+Qt et le système de compilation UNIX, et non le code de cette interface.
 
 
-23 May, 1996
- 
-NetHack 3.2.1 was built with Metrowerk's DR8 compiler on a PPC system.
-The official 68K and PPC versions were compiled with 68K Alignment
-to share files.  The 3.2.0 versions were compiled with PPC alignment,
-but it was discovered that the Metrowerks 68K compiler has a bug with
-PPC alignment and structures that can be aligned to a single byte.  This
-bug _may_ be fixed in DR10, it is not fixed in DR9.  Why bother with PPC
-alignment at all?  Because the space saving from 68K alignment is small
-and the PowerPC version will run better.  The 68K version was compiled
-with 4 byte ints using the far model.
- 
-Only the Metrowerks compiler has been used to compile the code in a
-long time.  It is _very_ likely that the other compilers, Think C and
-MPW C, will no longer be able to compile NetHack out of the box.  They
-and their files have been moved to the "old" directory until such time
-that someone can compile with them.
+26 novembre 1999
+
+NetHack 3.3.0 a été compilé avec le compilateur Pro 4 de Metrowerks sur un
+système PPC. Nous compilons toujours avec l'alignement 68K, car nous
+savons qu'il fonctionne. Personne n'a vérifié récemment si le bogue
+d'alignement PPC existe encore.
+
+
+23 mai 1996
+
+NetHack 3.2.1 a été compilé avec le compilateur DR8 de Metrowerks sur un
+système PPC. Les versions officielles 68K et PPC ont été compilées avec
+l'alignement 68K afin de partager les fichiers. Les versions 3.2.0 avaient
+été compilées avec l'alignement PPC, mais on a découvert que le
+compilateur 68K de Metrowerks présente un bogue avec l'alignement PPC et
+les structures pouvant être alignées sur un seul octet. Ce bogue est
+_peut-être_ corrigé dans DR10 ; il ne l'est pas dans DR9. Pourquoi
+s'embêter avec l'alignement PPC ? Parce que le gain de place apporté par
+l'alignement 68K est faible et que la version PowerPC fonctionnera
+mieux. La version 68K a été compilée avec des int de 4 octets, en modèle
+« far ».
+
+Seul le compilateur Metrowerks a servi à compiler le code depuis
+longtemps. Il est _très_ probable que les autres compilateurs, Think C et
+MPW C, ne soient plus capables de compiler NetHack tel quel. Eux et leurs
+fichiers ont été déplacés dans le répertoire « old » jusqu'à ce que
+quelqu'un parvienne à compiler avec eux.

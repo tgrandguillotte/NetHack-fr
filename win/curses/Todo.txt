@@ -1,43 +1,49 @@
-Below are some things I would like to see
+Voici quelques améliorations que j'aimerais voir
 
-NETHACK INTERFACE
-=================
+(Traduction française du document d'origine Todo.txt.)
 
-(These are the functions in cursmain.c called by the core NetHack code)
+INTERFACE AVEC NETHACK
+======================
 
- * Implement curses_rip for optional fancier color tombstone, as well
- as one that will display correctly on smaller terminals.
- 
- * I am confused as to how mark_synch, wait_synch, and nh_delay_output
- should work.  Help, please?
- 
- * Both PDCurses and Ncurses have mouse support, so the poskey function
- could probably be implemented easily enough.
- 
- * raw_print is supposed to be able to work before the windowing system
- has been initialized, as well as after, so I am unsure if curses
- functions should be used here.  Maybe check to see if initscr() has
- been called, and use curses functions if so, and call initscr() from
- there is not?  Right now it is just a call to puts() with no support
- for bold text.
+(Il s'agit des fonctions de cursmain.c appelées par le cœur de NetHack)
+
+ * Implémenter curses_rip pour une pierre tombale en couleurs plus
+ élégante (facultative), ainsi qu'une version qui s'affiche correctement
+ sur les petits terminaux.
+
+ * Je ne comprends pas bien comment mark_synch, wait_synch et
+ nh_delay_output sont censées fonctionner.  Un coup de main, svp ?
+
+ * PDCurses et Ncurses gèrent tous deux la souris, donc la fonction poskey
+ pourrait sans doute être implémentée assez facilement.
+
+ * raw_print est censée pouvoir fonctionner avant comme après
+ l'initialisation du système de fenêtrage ; je ne sais donc pas s'il faut
+ y utiliser des fonctions curses.  Peut-être vérifier si initscr() a été
+ appelée, utiliser les fonctions curses le cas échéant, et sinon appeler
+ initscr() depuis là ?  Pour l'instant, ce n'est qu'un appel à puts(),
+ sans prise en charge du texte en gras.
 
 
-DISPLAY
-=======
+AFFICHAGE
+=========
 
- * Consolidate refreshes of the display for smoother output.
+ * Regrouper les rafraîchissements de l'affichage pour une sortie plus
+ fluide.
 
- * Horizontal scrollbar to show position for displays < 80 columns.
- 
- * Calls to getch() should probably be turned into wgetch() for the
- appropriate window.  This causes quirty cursor behavior under
- PDCurses, however.
+ * Barre de défilement horizontale indiquant la position pour les
+ affichages de moins de 80 colonnes.
 
- * Animation effects do not display properly - this could probably be
- fixed with a correct implementation of the curses_delay_output function.
+ * Les appels à getch() devraient sans doute être remplacés par des appels
+ à wgetch() pour la fenêtre appropriée.  Cela provoque toutefois un
+ comportement bizarre du curseur sous PDCurses.
 
- * Support option to set foreground and background colors for individual
- windows
+ * Les effets d'animation ne s'affichent pas correctement ; on pourrait
+ sans doute y remédier par une implémentation correcte de la fonction
+ curses_delay_output.
+
+ * Prendre en charge une option permettant de régler les couleurs de
+ premier plan et d'arrière-plan de chaque fenêtre
 
 
 MENUS
@@ -45,101 +51,108 @@ MENUS
 
 (cursdial.c)
 
- * Menus need to be able to accept a count as input, e.g. to specify
- how many items to drop.
- 
- * Currently the "preselected" flag for an individual menu item is
- ignored.  This should eventually be implemented.
- 
- * Menus probably should never overlap with the message window, since
- the user sometmes needs to be able to see the messages while the menu
- is active, e.g. when identifying multiple items one at a time.
- 
- * Perhaps allow for keyboard navigation of individual items, e.g.
- using the up and down arrows to move among the selectable items, and
- selecting individual items with the spacebar.  Perhaps the tab key
- could jump to the first selectable item after the next heading, and
- shift-tab could jump to the first item of the previous heading.
+ * Les menus doivent pouvoir accepter un nombre en entrée, par exemple
+ pour indiquer combien d'objets lâcher.
+
+ * Pour l'instant, l'indicateur « preselected » d'un élément de menu est
+ ignoré.  Il faudra l'implémenter à terme.
+
+ * Les menus ne devraient sans doute jamais chevaucher la fenêtre de
+ messages, car l'utilisateur a parfois besoin de voir les messages
+ pendant que le menu est actif, par exemple pour identifier plusieurs
+ objets un par un.
+
+ * Peut-être permettre de naviguer au clavier entre les éléments, par
+ exemple avec les flèches haut et bas pour passer d'un élément
+ sélectionnable à l'autre, et sélectionner un élément avec la barre
+ d'espace.  La touche Tab pourrait sauter au premier élément
+ sélectionnable après le titre suivant, et Maj-Tab au premier élément du
+ titre précédent.
 
 
-MESSAGE WINDOW
-==============
+FENÊTRE DE MESSAGES
+===================
 
 (cursmesg.c)
 
- * Hitting Esc at the more prompt (which is '>>' for the curses
- interface) should suppress the display of any further messages for
- that turn like the tty interface does.
+ * Appuyer sur Échap à l'invite « more » (qui est « >> » dans l'interface
+ curses) devrait supprimer l'affichage des messages suivants pour ce
+ tour, comme le fait l'interface tty.
 
 
-MAP WINDOW
-==========
+FENÊTRE DE LA CARTE
+===================
 
 (curswins.c)
 
- * The map window would probably benefit from a total redesign.  Right
- now, it uses a pad instead of a regular curses window, which causes a
- number of special cases in the code to account for it, and a separate
- window behind it just to draw the border.  It feels kludgy and
- annoying!
+ * La fenêtre de la carte gagnerait sans doute à être entièrement
+ repensée.  Pour l'instant, elle utilise un « pad » au lieu d'une fenêtre
+ curses ordinaire, ce qui oblige à traiter plusieurs cas particuliers dans
+ le code, ainsi qu'une fenêtre séparée placée derrière, uniquement pour
+ dessiner la bordure.  C'est bricolé et agaçant !
 
 
-STATUS WINDOW
-=============
+FENÊTRE D'ÉTAT
+==============
 
 (cursstat.c)
 
- * If the status window is on the right or left, then we have much more
- room to work with for each item horizontally.  Expand out some of the
- labels for clarity.  We can also list the current dungeon (e.g.
- Gnomish Mines) and perhaps show thermometer bars for hit points and
- magical power.
- 
- * Conversely, if we have a narrower display, compress some of the
- labels to save space, and do not display some items that never or
- rarely change (e.g. name, level and title, and alignment).  Perhaps
- display changes to these fields in the message window if they do
- happen to change (e.g. converting to a new alignment).
- 
- * Maybe add some configuration options for what colors are used and
- the like.
+ * Si la fenêtre d'état est à droite ou à gauche, on dispose de beaucoup
+ plus de place horizontale pour chaque élément.  Développer certains
+ libellés pour plus de clarté.  On peut aussi indiquer la branche
+ actuelle du donjon (par exemple les Mines des gnomes) et peut-être
+ afficher des barres de type thermomètre pour les points de vie et
+ l'énergie magique.
 
-OTHER DIALOGS
-=============
+ * À l'inverse, si l'affichage est plus étroit, abréger certains libellés
+ pour gagner de la place, et ne pas afficher les éléments qui ne changent
+ jamais ou rarement (par exemple le nom, le niveau et le titre, et
+ l'alignement).  Peut-être signaler dans la fenêtre de messages les
+ modifications de ces champs s'il leur arrive de changer (par exemple en
+ cas de conversion à un nouvel alignement).
+
+ * Peut-être ajouter des options de configuration pour les couleurs
+ utilisées, etc.
+
+AUTRES BOÎTES DE DIALOGUE
+=========================
 
 (cursdial.c)
 
- * curses_yn_function needs to accept a count if a '#' is present in
- choices string.
- 
- * Extended commands should be enterable letter-by-letter via a '#'
- prompt if user does not have the extmenu command set to TRUE.
- 
- * Character selection should allow for a random selection of any or
- all choices.
+ * curses_yn_function doit accepter un nombre si un « # » figure dans la
+ chaîne des choix.
+
+ * Les commandes étendues devraient pouvoir être saisies lettre par
+ lettre à l'invite « # » si l'utilisateur n'a pas mis l'option extmenu à
+ TRUE.
+
+ * La sélection du personnage devrait permettre un choix aléatoire pour
+ une partie ou la totalité des choix.
 
 
-OTHER PLATFORMS
-===============
+AUTRES PLATEFORMES
+==================
 
- * PDCurses also work on DOS and OS/2.  Porting the curses interface to
- these platforms should not be too difficult.
+ * PDCurses fonctionne aussi sous DOS et OS/2.  Porter l'interface curses
+ sur ces plateformes ne devrait pas être trop difficile.
 
 
-MISC
-====
+DIVERS
+======
 
- * Update documentation and in-game help to describe the newly-added
- options: cursesgraphics, term_rows, term_cols, and windowborders.
+ * Mettre à jour la documentation et l'aide du jeu pour décrire les
+ options récemment ajoutées : cursesgraphics, term_rows, term_cols et
+ windowborders.
 
- * Recognize "Alt" key in a platform-independent way to allow its use
- to select extended commands.  Currently this works for PDCurses.  For
- Ncurses, the Alt key works in an xterm or rxvt if the -meta8 flag is
- passed, but I'd like to see a general way of detecting it.
- 
- * PDCurses has a function named "addrawch" to output the visual
- representation of a control character to the screen without having the
- control character affect the display otherwise.  I would like to find
- a way to accomplish the same thing via Ncurses to e.g. be able to use
- a font like nh10 with the correct symbol mappings in an xterm or the
- like.
+ * Reconnaître la touche « Alt » de façon indépendante de la plateforme
+ pour permettre son utilisation dans la sélection des commandes étendues.
+ Pour l'instant, cela fonctionne avec PDCurses.  Avec Ncurses, la touche
+ Alt fonctionne dans un xterm ou un rxvt si l'option -meta8 est passée,
+ mais j'aimerais disposer d'un moyen général de la détecter.
+
+ * PDCurses dispose d'une fonction nommée « addrawch » qui affiche à
+ l'écran la représentation visuelle d'un caractère de contrôle sans que
+ celui-ci n'ait d'autre effet sur l'affichage.  J'aimerais trouver un
+ moyen d'obtenir le même résultat avec Ncurses, par exemple pour pouvoir
+ utiliser une police comme nh10 avec les bonnes correspondances de
+ symboles dans un xterm ou équivalent.

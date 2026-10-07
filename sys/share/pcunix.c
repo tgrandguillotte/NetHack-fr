@@ -76,7 +76,7 @@ getlock(void)
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
         chdirx(orgdir, 0);
 #endif
-        error("Quitting.");
+        error("Abandon.");
     }
 
     /* regularize(lock); */ /* already done in pcmain */
@@ -91,20 +91,20 @@ getlock(void)
 #endif
         perror(fq_lock);
         unlock_file(HLOCK);
-        error("Cannot open %s", fq_lock);
+        error("Impossible d'ouvrir %s", fq_lock);
     }
 
     (void) nhclose(fd);
 
     if (iflags.window_inited) {
 #ifdef SELF_RECOVER
-        c = y_n("There are files from a game in progress under your name. "
-               "Recover?");
+        c = y_n("Il existe des fichiers d'une partie en cours sous votre nom. "
+                "Récupérer ?");
 #else
-        pline("There is already a game in progress under your name.");
-        pline("You may be able to use \"recover %s\" to get it back.\n",
+        pline("Une partie est déjà en cours sous votre nom.");
+        pline("Vous pourrez peut-être utiliser \"recover %s\" pour la récupérer.\n",
               tbuf);
-        c = y_n("Do you want to destroy the old game?");
+        c = y_n("Voulez-vous détruire l'ancienne partie ?");
 #endif
     } else {
 #if defined(MSDOS) && defined(NO_TERMS)
@@ -115,13 +115,13 @@ getlock(void)
         c = 'n';
         ct = 0;
 #ifdef SELF_RECOVER
-        msmsg("There are files from a game in progress under your name. "
-              "Recover? [yn]");
+        msmsg("Il existe des fichiers d'une partie en cours sous votre nom. "
+              "Récupérer ? [yn]");
 #else
-        msmsg("\nThere is already a game in progress under your name.\n");
-        msmsg("If this is unexpected, you may be able to use \n");
-        msmsg("\"recover %s\" to get it back.", tbuf);
-        msmsg("\nDo you want to destroy the old game? [yn] ");
+        msmsg("\nUne partie est déjà en cours sous votre nom.\n");
+        msmsg("Si c'est inattendu, vous pourrez peut-être utiliser\n");
+        msmsg("\"recover %s\" pour la récupérer.", tbuf);
+        msmsg("\nVoulez-vous détruire l'ancienne partie ? [yn] ");
 #endif
         while ((ci = nhgetch()) != '\n') {
             if (ct > 0) {
@@ -145,7 +145,7 @@ getlock(void)
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
             chdirx(orgdir, 0);
 #endif
-            error("Couldn't destroy old game.");
+            error("Impossible de détruire l'ancienne partie.");
         }
 #else /*SELF_RECOVER*/
         if (recover_savefile()) {
@@ -159,7 +159,7 @@ getlock(void)
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
             chdirx(orgdir, 0);
 #endif
-            error("Couldn't recover old game.");
+            error("Impossible de récupérer l'ancienne partie.");
         }
 #endif /*SELF_RECOVER*/
     else {
@@ -167,7 +167,7 @@ getlock(void)
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
         chdirx(orgdir, 0);
 #endif
-        error("%s", "Cannot start a new game.");
+        error("%s", "Impossible de commencer une nouvelle partie.");
     }
 
 gotlock:
@@ -177,20 +177,20 @@ gotlock:
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
         chdirx(orgdir, 0);
 #endif
-        error("cannot creat file (%s.)", fq_lock);
+        error("Impossible de créer le fichier (%s).", fq_lock);
     } else {
         if (write(fd, (char *) &svh.hackpid, sizeof(svh.hackpid))
             != sizeof(svh.hackpid)) {
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
             chdirx(orgdir, 0);
 #endif
-            error("cannot write lock (%s)", fq_lock);
+            error("Impossible d'écrire le verrou (%s)", fq_lock);
         }
         if (nhclose(fd) == -1) {
 #if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
             chdirx(orgdir, 0);
 #endif
-            error("cannot close lock (%s)", fq_lock);
+            error("Impossible de fermer le verrou (%s)", fq_lock);
         }
     }
 #if defined(MSDOS) && defined(NO_TERMS)

@@ -8,10 +8,19 @@
 extern const char *const hu_stat[]; /* defined in eat.c */
 
 /* also used in insight.c */
+/* French: displayed encumbrance status (kept short for the status line);
+   hilite_status rules may also use the English names, see enc_stat_en[] */
 const char *const enc_stat[] = {
+    "",         "Chargé",   "Stressé",
+    "Tendu",    "Exténué",  "Surchargé"
+};
+#ifdef STATUS_HILITES
+/* original English names, still accepted in hilite_status rules */
+static const char *const enc_stat_en[] = {
     "",         "Burdened",  "Stressed",
     "Strained", "Overtaxed", "Overloaded"
 };
+#endif
 
 staticfn const char *rank(void);
 staticfn void bot_via_windowport(void);
@@ -58,22 +67,23 @@ do_statusline1(void)
     if ('a' <= newbot1[0] && newbot1[0] <= 'z')
         newbot1[0] += 'A' - 'a';
     newbot1[BOTL_NSIZ] = 0;
-    Sprintf(nb = eos(newbot1), " the ");
+    Sprintf(nb = eos(newbot1), " ");
 
     if (Upolyd) {
         char mbot[BUFSZ];
         int k = 0;
 
-        Strcpy(mbot, pmname(&mons[u.umonnum], Ugender));
+        Strcpy(mbot, the(pmname(&mons[u.umonnum], Ugender)));
         while (mbot[k] != 0) {
-            if ((k == 0 || (k > 0 && mbot[k - 1] == ' ')) && 'a' <= mbot[k]
-                && mbot[k] <= 'z')
+            /* capitalize words, but not the leading article */
+            if (k > 0 && (mbot[k - 1] == ' ' || mbot[k - 1] == '\'')
+                && 'a' <= mbot[k] && mbot[k] <= 'z')
                 mbot[k] += 'A' - 'a';
             k++;
         }
         Strcpy(nb = eos(nb), mbot);
     } else {
-        Strcpy(nb = eos(nb), rank());
+        Strcpy(nb = eos(nb), the(rank()));
     }
 
     Sprintf(nb = eos(nb), "  ");
@@ -82,14 +92,14 @@ do_statusline1(void)
     if ((i - j) > 0)
         Sprintf(nb = eos(nb), "%*s", i - j, " "); /* pad with spaces */
 
-    Sprintf(nb = eos(nb), "St:%s Dx:%-1d Co:%-1d In:%-1d Wi:%-1d Ch:%-1d",
+    Sprintf(nb = eos(nb), "Fo:%s Dx:%-1d Co:%-1d In:%-1d Sa:%-1d Ch:%-1d",
             get_strength_str(),
             ACURR(A_DEX), ACURR(A_CON), ACURR(A_INT), ACURR(A_WIS),
             ACURR(A_CHA));
     Sprintf(nb = eos(nb), "%s",
-            (u.ualign.type == A_CHAOTIC) ? "  Chaotic"
-              : (u.ualign.type == A_NEUTRAL) ? "  Neutral"
-                : "  Lawful");
+            (u.ualign.type == A_CHAOTIC) ? "  Chaotique"
+              : (u.ualign.type == A_NEUTRAL) ? "  Neutre"
+                : "  Loyal");
 #ifdef SCORE_ON_BOTL
     if (flags.showscore)
         Sprintf(nb = eos(nb), " S:%ld", botl_score());
@@ -140,18 +150,18 @@ do_statusline2(void)
     hpmax = Upolyd ? u.mhmax : u.uhpmax;
     if (hp < 0)
         hp = 0;
-    Sprintf(hlth, "HP:%d(%d) Pw:%d(%d) AC:%-2d",
+    Sprintf(hlth, "PV:%d(%d) Pm:%d(%d) CA:%-2d",
             min(hp, 9999), min(hpmax, 9999),
             min(u.uen, 9999), min(u.uenmax, 9999), u.uac);
     hln = strlen(hlth);
 
     /* experience */
     if (Upolyd)
-        Sprintf(expr, "HD:%d", mons[u.umonnum].mlevel);
+        Sprintf(expr, "DV:%d", mons[u.umonnum].mlevel);
     else if (flags.showexp)
-        Sprintf(expr, "Xp:%d/%-1ld", u.ulevel, u.uexp);
+        Sprintf(expr, "Exp:%d/%-1ld", u.ulevel, u.uexp);
     else
-        Sprintf(expr, "Xp:%d", u.ulevel);
+        Sprintf(expr, "Exp:%d", u.ulevel);
     xln = strlen(expr);
 
     /* time/move counter */
@@ -171,38 +181,38 @@ do_statusline2(void)
      * unusual for more than one of them to apply at a time.]
      */
     if (Stoned)
-        Strcpy(nb = eos(nb), " Stone");
+        Strcpy(nb = eos(nb), " Pierre");
     if (Slimed)
-        Strcpy(nb = eos(nb), " Slime");
+        Strcpy(nb = eos(nb), " Glu");
     if (Strangled)
-        Strcpy(nb = eos(nb), " Strngl");
+        Strcpy(nb = eos(nb), " Étrang");
     if (Sick) {
         if (u.usick_type & SICK_VOMITABLE)
-            Strcpy(nb = eos(nb), " FoodPois");
+            Strcpy(nb = eos(nb), " Intox");
         if (u.usick_type & SICK_NONVOMITABLE)
-            Strcpy(nb = eos(nb), " TermIll");
+            Strcpy(nb = eos(nb), " Malade");
     }
     if (u.uhs != NOT_HUNGRY)
         Sprintf(nb = eos(nb), " %s", hu_stat[u.uhs]);
     if ((cap = near_capacity()) > UNENCUMBERED)
         Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
     if (Blind)
-        Strcpy(nb = eos(nb), " Blind");
+        Strcpy(nb = eos(nb), " Aveugle");
     if (Deaf)
-        Strcpy(nb = eos(nb), " Deaf");
+        Strcpy(nb = eos(nb), " Sourd");
     if (Stunned)
-        Strcpy(nb = eos(nb), " Stun");
+        Strcpy(nb = eos(nb), " Étourdi");
     if (Confusion)
         Strcpy(nb = eos(nb), " Conf");
     if (Hallucination)
         Strcpy(nb = eos(nb), " Hallu");
     /* levitation and flying are mutually exclusive; riding is not */
     if (Levitation)
-        Strcpy(nb = eos(nb), " Lev");
+        Strcpy(nb = eos(nb), " Lév");
     if (Flying)
-        Strcpy(nb = eos(nb), " Fly");
+        Strcpy(nb = eos(nb), " Vol");
     if (u.usteed)
-        Strcpy(nb = eos(nb), " Ride");
+        Strcpy(nb = eos(nb), " Selle");
     cln = strlen(cond);
 
     /* version on status line, with leading space */
@@ -354,7 +364,7 @@ rank_of(int lev, short monnum, boolean female)
         return role->name.f;
     else if (role->name.m)
         return role->name.m;
-    return "Player";
+    return "Joueur";
 }
 
 staticfn const char *
@@ -447,28 +457,39 @@ describe_level(
     int ret = 1;
 
     if (Is_knox(&u.uz)) {
-        Sprintf(buf, "%s", svd.dungeons[u.uz.dnum].dname);
+        Sprintf(buf, "%s", dname_fr(svd.dungeons[u.uz.dnum].dname));
         addbranch = FALSE;
     } else if (In_quest(&u.uz)) {
-        Sprintf(buf, "Home %d", dunlev(&u.uz));
+        Sprintf(buf, "Foyer %d", dunlev(&u.uz));
     } else if (In_endgame(&u.uz)) {
         /* [3.6.2: this used to be "Astral Plane" or generic "End Game"] */
         (void) endgamelevelname(buf, depth(&u.uz));
         if (!addbranch)
+        {
             (void) strsubst(buf, "Plane of ", ""); /* just keep <element> */
+            /* French: "Plan du Feu" -> "Feu", "Plan de l'Air" -> "Air" */
+            (void) strsubst(buf, "Plan de l'", "");
+            (void) strsubst(buf, "Plan de la ", "");
+            (void) strsubst(buf, "Plan du ", "");
+            (void) strsubst(buf, "Plan des ", "");
+        }
         addbranch = FALSE;
     } else {
         /* ports with more room may expand this one */
         if (!addbranch)
             Sprintf(buf, "%s:%-2d", /* "Dlvl:n" (grep fodder) */
-                    In_tutorial(&u.uz) ? "Tutorial" : "Dlvl", depth(&u.uz));
+                    In_tutorial(&u.uz) ? "Tuto" : "Niv", depth(&u.uz));
         else
-            Sprintf(buf, "level %d", depth(&u.uz));
+            Sprintf(buf, "niveau %d", depth(&u.uz));
         ret = 0;
     }
     if (addbranch) {
-        Sprintf(eos(buf), ", %s", svd.dungeons[u.uz.dnum].dname);
+        Sprintf(eos(buf), ", %s", dname_fr(svd.dungeons[u.uz.dnum].dname));
         (void) strsubst(buf, "The ", "the ");
+        (void) strsubst(buf, ", Le ", ", le ");
+        (void) strsubst(buf, ", La ", ", la ");
+        (void) strsubst(buf, ", Les ", ", les ");
+        (void) strsubst(buf, ", L'", ", l'");
     }
     if (addspace)
         Strcat(buf, " ");
@@ -486,17 +507,17 @@ weapon_status(char *outbuf)
     if (!uwep) {
         /* no weapon; gloves imply hands; humanoid also implies hands;
            otherwise make no assumptions */
-        res = uarmg ? "Empty-hnd" /* empty handed means "gloves only" */
-              : humanoid(gy.youmonst.data) ? "Bare-hnds" /* bare hands */
-                : "No-weapon";
+        res = uarmg ? "Mains-vides" /* empty handed means "gloves only" */
+              : humanoid(gy.youmonst.data) ? "Mains-nues" /* bare hands */
+                : "Sans-arme";
     } else if (u.twoweap) {
         /* two-weaponing implies hands and a weapon or wep-tool
            (not other odd stuff) in each hand */
-        res = "Dual-weps";
+        res = "Deux-armes";
         /* note: dual wielding two lances doesn't produce double joust */
         if (u.usteed && (weapon_type(uwep) == P_LANCE
                          || weapon_type(uswapwep) == P_LANCE))
-            res = "Dual+joust"; /* lance behaves specially when mounted */
+            res = "Deux+joute"; /* lance behaves specially when mounted */
     } else {
         /* report most weapons by their skill class (so a katana will be
            described as a long sword, for instance; mattock and hook are
@@ -506,7 +527,7 @@ weapon_status(char *outbuf)
 
         if (u.usteed && skill == P_LANCE) {
             /* lance behaves specially when hero is mounted */
-            res = "joust";
+            res = "joute";
         } else if (uwep->otyp == AKLYS) {
             /* aklys behaves specially when thrown while wielded, so
                give it a distinct name instead of skill name of "club";
@@ -516,36 +537,38 @@ weapon_status(char *outbuf)
         } else if (is_sword(uwep)) {
             /* simplify short short/broad sword/long sword/two-handed sword
                (similar to messages when dropped due to slippery fingers) */
-            res = "sword";
+            res = "épée";
         } else {
             /* shorten several */
             switch (skill) {
             case P_QUARTERSTAFF:
-                res = "staff";
+                res = "bâton";
                 break;
             case P_MORNING_STAR:
-                res = "mrng-star"; /* still pretty long */
+                res = "morgenstern"; /* still pretty long */
                 break;
             case P_POLEARMS:
-                res = "pole";
+                res = "hast";
                 break;
             case P_UNICORN_HORN:
-                res = "unihorn";
+                res = "licorne";
                 break;
             default:
                 res = weapon_descr(uwep);
                 /* [should this be moved into weapon_descr()?] */
-                if (!strcmpi(res, "food") && uwep->otyp == CREAM_PIE)
-                    res = "pie";
+                if ((!strcmpi(res, "food") || !strcmpi(res, "nourriture"))
+                    && uwep->otyp == CREAM_PIE)
+                    res = "tarte";
                 break;
             }
         }
 
         if ((uwep->oclass == WEAPON_CLASS || is_weptool(uwep))
-            && bimanual(uwep) && *res != '2' && strncmpi(res, "two", 3))
-            Strcat(outbuf, "2H-");
+            && bimanual(uwep) && *res != '2' && strncmpi(res, "two", 3)
+            && strncmpi(res, "deux", 4))
+            Strcat(outbuf, "2M-");
         Strcpy(p = eos(outbuf), res), res = outbuf;
-        *p = highc(*p);
+        (void) fr_upstart(p);
         /* avoid embedded spaces since its designed to appear as part
            of a space-separated status line */
         (void) strNsubst(outbuf, " ", "-", 0);
@@ -565,15 +588,15 @@ armor_status(char *armbuf)
      * At present it just reports the "no armor" case.
      */
     if (n == 0) { /* no armor */
-        Strcpy(armbuf, "naked");
+        Strcpy(armbuf, flags.female ? "nue" : "nu");
     } else if (n == 1) { /* just one piece; spell it out */
-        Strcpy(armbuf, uarmg ? "gloves"
-                       : uarmc ? "cloak"
-                         : uarm  ? "suit"
-                           : uarmu ? "shirt"
+        Strcpy(armbuf, uarmg ? "gants"
+                       : uarmc ? "cape"
+                         : uarm  ? "armure"
+                           : uarmu ? "chemise"
                              : uarmh ? helm_simple_name(uarmh) /* hat|helm */
-                               : uarmf ? "boots"
-                                 : uarms ? "shield"
+                               : uarmf ? "bottes"
+                                 : uarms ? "bouclier"
                                    : ""); /* not possible */
     } else { /* more than one piece */
         char *p = armbuf;
@@ -588,13 +611,13 @@ armor_status(char *armbuf)
         if (uarm)
             *p++ = 'A'; /* suit but 's' is for shield */
         if (uarmu)
-            *p++ = 'U'; /* underwear? => shirt */
+            *p++ = 'T'; /* T-shirt => chemise */
         if (uarmh)
             *p++ = 'H'; /* hat/helm */
         if (uarmf)
             *p++ = 'B'; /* footwear => boots */
         if (uarms)
-            *p++ = 'S'; /* shield */
+            *p++ = 'E'; /* écu => bouclier */
         *p = '\0';
     }
     /*
@@ -702,25 +725,25 @@ staticfn void status_hilites_viewall(void);
  */
 static struct istat_s initblstats[MAXBLSTATS] = {
     INIT_BLSTAT("title", "%s", ANY_STR, MAXVALWIDTH, BL_TITLE),
-    INIT_BLSTAT("strength", " St:%s", ANY_INT, 10, BL_STR),
+    INIT_BLSTAT("strength", " Fo:%s", ANY_INT, 10, BL_STR),
     INIT_BLSTAT("dexterity", " Dx:%s", ANY_INT,  10, BL_DX),
     INIT_BLSTAT("constitution", " Co:%s", ANY_INT, 10, BL_CO),
     INIT_BLSTAT("intelligence", " In:%s", ANY_INT, 10, BL_IN),
-    INIT_BLSTAT("wisdom", " Wi:%s", ANY_INT, 10, BL_WI),
+    INIT_BLSTAT("wisdom", " Sa:%s", ANY_INT, 10, BL_WI),
     INIT_BLSTAT("charisma", " Ch:%s", ANY_INT, 10, BL_CH),
     INIT_BLSTAT("alignment", " %s", ANY_STR, 20, BL_ALIGN),
     INIT_BLSTAT("score", " S:%s", ANY_LONG, 30, BL_SCORE),
     INIT_BLSTAT("carrying-capacity", " %s", ANY_INT, 20, BL_CAP),
     INIT_BLSTAT("gold", " %s", ANY_LONG, 40, BL_GOLD),
-    INIT_BLSTATP("power", " Pw:%s", ANY_INT, 10, BL_ENEMAX, BL_ENE),
+    INIT_BLSTATP("power", " Pm:%s", ANY_INT, 10, BL_ENEMAX, BL_ENE),
     INIT_BLSTAT("power-max", "(%s)", ANY_INT, 10, BL_ENEMAX),
-    INIT_BLSTATP("experience-level", " Xp:%s", ANY_INT, 10, BL_XP, BL_XP),
-    INIT_BLSTAT("armor-class", " AC:%s", ANY_INT, 10, BL_AC),
-    INIT_BLSTAT("HD", " HD:%s", ANY_INT, 10, BL_HD),
+    INIT_BLSTATP("experience-level", " Exp:%s", ANY_INT, 10, BL_XP, BL_XP),
+    INIT_BLSTAT("armor-class", " CA:%s", ANY_INT, 10, BL_AC),
+    INIT_BLSTAT("HD", " DV:%s", ANY_INT, 10, BL_HD),
     INIT_BLSTAT("time", " T:%s", ANY_LONG, 30, BL_TIME),
     /* hunger used to be 'ANY_UINT'; see note below in bot_via_windowport() */
     INIT_BLSTAT("hunger", " %s", ANY_INT, 20, BL_HUNGER),
-    INIT_BLSTATP("hitpoints", " HP:%s", ANY_INT, 10, BL_HPMAX, BL_HP),
+    INIT_BLSTATP("hitpoints", " PV:%s", ANY_INT, 10, BL_HPMAX, BL_HP),
     INIT_BLSTAT("hitpoints-max", "(%s)", ANY_INT, 10, BL_HPMAX),
     INIT_BLSTAT("dungeon-level", "%s", ANY_STR, MAXVALWIDTH, BL_LEVELDESC),
     INIT_BLSTATP("experience", "/%s", ANY_LONG, 30, BL_EXP, BL_EXP),
@@ -780,37 +803,50 @@ static const struct condmap condition_aliases[] = {
 /* condition names and their abbreviations are used by windowport code */
 const struct conditions_t conditions[] = {
     /* ranking, mask, identifier, txt1, txt2, txt3 */
-    { 20, BL_MASK_BAREH,     bl_bareh,     { "Bare",     "Bar",   "Bh"  } },
-    { 10, BL_MASK_BLIND,     bl_blind,     { "Blind",    "Blnd",  "Bl"  } },
-    { 20, BL_MASK_BUSY,      bl_busy,      { "Busy",     "Bsy",   "By"  } },
+    /* French: displayed texts; hilite_status rules use the English
+       names in cond_en_names[] below (French names are accepted too) */
+    { 20, BL_MASK_BAREH,     bl_bareh,     { "MainsNues","MNu",   "Mn"  } },
+    { 10, BL_MASK_BLIND,     bl_blind,     { "Aveugle",  "Avgl",  "Av"  } },
+    { 20, BL_MASK_BUSY,      bl_busy,      { "Occupé",   "Occ",   "Oc"  } },
     { 10, BL_MASK_CONF,      bl_conf,      { "Conf",     "Cnf",   "Cf"  } },
-    { 10, BL_MASK_DEAF,      bl_deaf,      { "Deaf",     "Def",   "Df"  } },
-    { 15, BL_MASK_ELF_IRON,  bl_elf_iron,  { "Iron",     "Irn",   "Fe"  } },
-    { 10, BL_MASK_FLY,       bl_fly,       { "Fly",      "Fly",   "Fl"  } },
-    {  6, BL_MASK_FOODPOIS,  bl_foodpois,  { "FoodPois", "Fpois", "Poi" } },
-    { 20, BL_MASK_GLOWHANDS, bl_glowhands, { "Glow",     "Glo",   "Gl"  } },
-    {  2, BL_MASK_GRAB,      bl_grab,      { "Grab",     "Grb",   "Gr"  } },
+    { 10, BL_MASK_DEAF,      bl_deaf,      { "Sourd",    "Srd",   "Sd"  } },
+    { 15, BL_MASK_ELF_IRON,  bl_elf_iron,  { "Fer",      "Fer",   "Fe"  } },
+    { 10, BL_MASK_FLY,       bl_fly,       { "Vol",      "Vol",   "Vo"  } },
+    {  6, BL_MASK_FOODPOIS,  bl_foodpois,  { "Intox",    "Itx",   "Int" } },
+    { 20, BL_MASK_GLOWHANDS, bl_glowhands, { "Lueur",    "Lue",   "Lu"  } },
+    {  2, BL_MASK_GRAB,      bl_grab,      { "Saisi",    "Ssi",   "Sa"  } },
     { 10, BL_MASK_HALLU,     bl_hallu,     { "Hallu",    "Hal",   "Hl"  } },
-    { 20, BL_MASK_HELD,      bl_held,      { "Held",     "Hld",   "Hd"  } },
-    { 20, BL_MASK_ICY,       bl_icy,       { "Icy",      "Icy",   "Ic"  } },
-    {  8, BL_MASK_INLAVA,    bl_inlava,    { "InLava",   "Lav",   "La"  } },
-    { 10, BL_MASK_LEV,       bl_lev,       { "Lev",      "Lev",   "Lv"  } },
-    { 20, BL_MASK_PARLYZ,    bl_parlyz,    { "Parlyz",   "Para",  "Par" } },
-    { 10, BL_MASK_RIDE,      bl_ride,      { "Ride",     "Rid",   "Rd"  } },
+    { 20, BL_MASK_HELD,      bl_held,      { "Tenu",     "Tnu",   "Tn"  } },
+    { 20, BL_MASK_ICY,       bl_icy,       { "Glace",    "Glc",   "Gc"  } },
+    {  8, BL_MASK_INLAVA,    bl_inlava,    { "DansLave", "Lav",   "La"  } },
+    { 10, BL_MASK_LEV,       bl_lev,       { "Lév",      "Lév",   "Lv"  } },
+    { 20, BL_MASK_PARLYZ,    bl_parlyz,    { "Paral",    "Para",  "Par" } },
+    { 10, BL_MASK_RIDE,      bl_ride,      { "Selle",    "Sel",   "Se"  } },
     { 20, BL_MASK_SLEEPING,  bl_sleeping,  { "Zzz",      "Zzz",   "Zz"  } },
-    {  6, BL_MASK_SLIME,     bl_slime,     { "Slime",    "Slim",  "Slm" } },
-    { 20, BL_MASK_SLIPPERY,  bl_slippery,  { "Slip",     "Slp",   "Sl"  } },
-    {  6, BL_MASK_STONE,     bl_stone,     { "Stone",    "Ston",  "Sto" } },
-    {  4, BL_MASK_STRNGL,    bl_strngl,    { "Strngl",   "Stngl", "Str" } },
-    { 10, BL_MASK_STUN,      bl_stun,      { "Stun",     "Stun",  "St"  } },
-    { 15, BL_MASK_SUBMERGED, bl_submerged, { "Submrg",   "Subm",  "Sm"  } },
-    {  6, BL_MASK_TERMILL,   bl_termill,   { "TermIll",  "Ill",   "Ill" } },
-    { 20, BL_MASK_TETHERED,  bl_tethered,  { "Teth",     "Tth",   "Te"  } },
-    { 20, BL_MASK_TRAPPED,   bl_trapped,   { "Trap",     "Trp",   "Tr"  } },
-    { 20, BL_MASK_UNCONSC,   bl_unconsc,   { "Out",      "Out",   "KO"  } },
-    { 20, BL_MASK_WOUNDEDL,  bl_woundedl,  { "WLegs",    "Leg",   "Lg"  } },
-    { 20, BL_MASK_HOLDING,   bl_holding,   { "UHold",    "UHld",  "UHd" } },
+    {  6, BL_MASK_SLIME,     bl_slime,     { "Glu",      "Glu",   "Gu"  } },
+    { 20, BL_MASK_SLIPPERY,  bl_slippery,  { "Gliss",    "Gls",   "Gs"  } },
+    {  6, BL_MASK_STONE,     bl_stone,     { "Pierre",   "Pier",  "Pie" } },
+    {  4, BL_MASK_STRNGL,    bl_strngl,    { "Étrang",   "Étrg",  "Étr" } },
+    { 10, BL_MASK_STUN,      bl_stun,      { "Étourdi",  "Étdi",  "Éd"  } },
+    { 15, BL_MASK_SUBMERGED, bl_submerged, { "Immergé",  "Imm",   "Im"  } },
+    {  6, BL_MASK_TERMILL,   bl_termill,   { "Malade",   "Mal",   "Mal" } },
+    { 20, BL_MASK_TETHERED,  bl_tethered,  { "Attaché",  "Att",   "At"  } },
+    { 20, BL_MASK_TRAPPED,   bl_trapped,   { "Piégé",    "Pgé",   "Pg"  } },
+    { 20, BL_MASK_UNCONSC,   bl_unconsc,   { "KO",       "KO",    "KO"  } },
+    { 20, BL_MASK_WOUNDEDL,  bl_woundedl,  { "Jambes",   "Jmb",   "Jb"  } },
+    { 20, BL_MASK_HOLDING,   bl_holding,   { "Agrip",    "Agr",   "Ag"  } },
 };
+
+#ifdef STATUS_HILITES
+/* original English condition names (same order as conditions[]); these
+   are the canonical names written into and read from hilite_status rules */
+static const char *const cond_en_names[CONDITION_COUNT] = {
+    "Bare", "Blind", "Busy", "Conf", "Deaf", "Iron", "Fly", "FoodPois",
+    "Glow", "Grab", "Hallu", "Held", "Icy", "InLava", "Lev", "Parlyz",
+    "Ride", "Zzz", "Slime", "Slip", "Stone", "Strngl", "Stun", "Submrg",
+    "TermIll", "Teth", "Trap", "Out", "WLegs", "UHold",
+};
+#endif
 
 /* [perhaps these should all be opt_out with default of 'in';
    otherwise some players may never learn about them] */
@@ -851,7 +887,7 @@ struct condtests_t condtests[CONDITION_COUNT] = {
 /* condition indexing */
 int cond_idx[CONDITION_COUNT] = { 0 };
 
-static const char c_Wall[] = "Wall";
+static const char c_Wall[] = "Mur";
 /*
  *  Terrain descriptions for flags.terrainstatus; simplified from
  *  def_syms[].name and indexed by iflags.terrain_typ; should be
@@ -861,7 +897,7 @@ static const char c_Wall[] = "Wall";
  *  others can only occur when hero has the Passes_walls ability.
  */
 const char *terrain_descr[] = {
-/* 0*/ "Stone",         /* stone */
+/* 0*/ "Roche",         /* stone */
        c_Wall,          /* vwall */
        c_Wall,          /* hwall */
        c_Wall,          /* tlcorner */
@@ -873,31 +909,31 @@ const char *terrain_descr[] = {
        c_Wall,          /* tdwall */
 /*10*/ c_Wall,          /* tlwall */
        c_Wall,          /* trwall */
-       "Portcullis",    /* dbwall, closed drawbridge 'door' */
-       "Tree",
+       "Herse",         /* dbwall, closed drawbridge 'door' */
+       "Arbre",
        c_Wall,          /* sdoor: secret door */
-       "Stone",         /* scorr: secret corridor */
-       "Pool",          /* pool or non-moat water; can be boiled away */
-       "Moat",          /* water that can't be boiled away */
-       "Water",         /* water on Water level; can't be boiled or frozen */
-       "(gap)",         /* drawbridge_up; replaced by whatever is under */
-/*20*/ "Lava",          /* lavapool */
-       "LavaWall",      /* lava that extends to ceiling */
-       "Bars",          /* ironbars */
-       "Doorway",       /* doorless or broken door; diagonal movement is ok */
-       "Corridor",      /* replaced by "Floor" */
-       "Room",          /* also replaced by "Floor" */
-       "Stairs",
-       "Ladder",
-       "Fountain",
-       "Throne",
-/*30*/ "Sink",
-       "Grave",
-       "Altar",
-       "Ice",
-       "Bridge",        /* drawbridge_down, span across moat/ice/lava/floor */
+       "Roche",         /* scorr: secret corridor */
+       "Bassin",        /* pool or non-moat water; can be boiled away */
+       "Douves",        /* water that can't be boiled away */
+       "Eau",           /* water on Water level; can't be boiled or frozen */
+       "(vide)",        /* drawbridge_up; replaced by whatever is under */
+/*20*/ "Lave",          /* lavapool */
+       "Mur-de-lave",   /* lava that extends to ceiling */
+       "Barreaux",      /* ironbars */
+       "Embrasure",     /* doorless or broken door; diagonal movement is ok */
+       "Couloir",       /* replaced by "Floor" */
+       "Salle",         /* also replaced by "Floor" */
+       "Escalier",
+       "Échelle",
+       "Fontaine",
+       "Trône",
+/*30*/ "Évier",
+       "Tombe",
+       "Autel",
+       "Glace",
+       "Pont",          /* drawbridge_down, span across moat/ice/lava/floor */
        "Air",           /* open air on Air level or bubble on Water level */
-       "Cloud",         /* [part of] a cloud or Air level */
+       "Nuage",         /* [part of] a cloud or Air level */
        /*
         */
 /*37*/ "",              /* MAX_TYPE; skipped ratther than overloaded */
@@ -905,14 +941,14 @@ const char *terrain_descr[] = {
        /*
         * additional terrain names that aren't simple levl[][].typ values
         */
-/*39*/ "Floor",         /* substituted for room or corridor */
-/*40*/ "Ground",        /* 'room' on Earth level */
-       "Open-door",     /* open (not broken or doorless) */
-       "Shut-door",     /* closed or locked (or trapped) */
-       "Swamp",         /* Juiblex level */
-       "Submerged",     /* under water */
-       "Sea",           /* moat terrain on Medusa's level: "shallow sea" */
-       "WaterWall",     /* water that extends to the ceiling */
+/*39*/ "Sol",           /* substituted for room or corridor */
+/*40*/ "Terre",         /* 'room' on Earth level */
+       "Porte-ouverte", /* open (not broken or doorless) */
+       "Porte-fermée",  /* closed or locked (or trapped) */
+       "Marais",        /* Juiblex level */
+       "Immergé",       /* under water */
+       "Mer",           /* moat terrain on Medusa's level: "shallow sea" */
+       "Mur-d'eau",     /* water that extends to the ceiling */
 };
 
 /* cache-related */
@@ -989,19 +1025,20 @@ bot_via_windowport(void)
     Strcpy(nb = buf, svp.plname);
     nb[0] = highc(nb[0]);
     titl = !Upolyd ? rank() : pmname(&mons[u.umonnum], Ugender);
-    i = (int) (strlen(buf) + sizeof " the " + strlen(titl) - sizeof "");
+    titl = the(titl); /* French: "Bob le Pilleur" */
+    i = (int) (strlen(buf) + sizeof " " + strlen(titl) - sizeof "");
     /* if "Name the Rank/monster" is too long, we truncate the name but
        always keep at least BOTL_NSIZ characters of it; when hitpointbar is
        enabled, anything beyond 30 (long monster name) will be truncated */
     if (i > 30) {
-        i = 30 - (int) (sizeof " the " + strlen(titl) - sizeof "");
+        i = 30 - (int) (sizeof " " + strlen(titl) - sizeof "");
         nb[max(i, BOTL_NSIZ)] = '\0';
     }
-    Strcpy(nb = eos(nb), " the ");
+    Strcpy(nb = eos(nb), " ");
     Strcpy(nb = eos(nb), titl);
-    if (Upolyd) { /* when poly'd, capitalize monster name */
-        for (i = 0; nb[i]; i++)
-            if (i == 0 || nb[i - 1] == ' ')
+    if (Upolyd) { /* when poly'd, capitalize monster name (not article) */
+        for (i = 1; nb[i]; i++)
+            if (nb[i - 1] == ' ' || nb[i - 1] == '\'')
                 nb[i] = highc(nb[i]);
     }
     Sprintf(gb.blstats[idx][BL_TITLE].val, "%-30s", buf);
@@ -1021,10 +1058,10 @@ bot_via_windowport(void)
 
     /* Alignment */
     Strcpy(gb.blstats[idx][BL_ALIGN].val, (u.ualign.type == A_CHAOTIC)
-                                          ? "Chaotic"
+                                          ? "Chaotique"
                                           : (u.ualign.type == A_NEUTRAL)
-                                               ? "Neutral"
-                                               : "Lawful");
+                                               ? "Neutre"
+                                               : "Loyal");
 
     /* Score */
     gb.blstats[idx][BL_SCORE].a.a_long =
@@ -1217,7 +1254,12 @@ bot_via_windowport(void)
         if (condtests[bl_parlyz].enabled
             && cache_multi_reason && !cache_avail[1]) {
                 cache_reslt[1] = (!strncmp(cache_multi_reason, "paralyzed", 9)
-                                 || !strncmp(cache_multi_reason, "frozen", 6));
+                                 || !strncmp(cache_multi_reason, "frozen", 6)
+                                 /* French multi_reason texts */
+                                 || !strncmp(cache_multi_reason, "paralysé",
+                                             strlen("paralysé"))
+                                 || !strncmp(cache_multi_reason, "figé",
+                                             strlen("figé")));
                 cache_avail[1] = TRUE;
         }
         if (cache_avail[0] && cache_reslt[0]) {
@@ -1376,7 +1418,7 @@ boolean
 cond_menu(void)
 {
     static const char *const menutitle[2] = {
-        "alphabetically", "by ranking"
+        "alphabétique", "par importance"
     };
     int i, res, idx = 0;
     int sequence[CONDITION_COUNT];
@@ -1401,13 +1443,13 @@ cond_menu(void)
 
         any = cg.zeroany;
         any.a_int = 1;
-        Sprintf(mbuf, "change sort order from \"%s\" to \"%s\"",
+        Sprintf(mbuf, "passer du tri \"%s\" au tri \"%s\"",
                 menutitle[gc.condmenu_sortorder],
                 menutitle[1 - gc.condmenu_sortorder]);
         add_menu(tmpwin, &nul_glyphinfo, &any, 'S', 0, ATR_NONE,
                  clr, mbuf, MENU_ITEMFLAGS_SKIPINVERT);
         any = cg.zeroany;
-        Sprintf(mbuf, "sorted %s", menutitle[gc.condmenu_sortorder]);
+        Sprintf(mbuf, "tri %s", menutitle[gc.condmenu_sortorder]);
         add_menu_heading(tmpwin, mbuf);
         for (i = 0; i < SIZE(condtests); i++) {
             idx = sequence[i];
@@ -1420,7 +1462,7 @@ cond_menu(void)
                         ? MENU_ITEMFLAGS_SELECTED : MENU_ITEMFLAGS_NONE);
         }
 
-        end_menu(tmpwin, "Choose status conditions to toggle");
+        end_menu(tmpwin, "Choisissez les états à activer ou désactiver");
 
         res = select_menu(tmpwin, PICK_ANY, &picks);
         destroy_nhwindow(tmpwin);
@@ -2212,8 +2254,8 @@ static const struct fieldid_t {
 };
 
 /* format arguments */
-static const char threshold_value[] = "hilite_status threshold ",
-                  is_out_of_range[] = " is out of range";
+static const char threshold_value[] = "seuil hilite_status ",
+                  is_out_of_range[] = " hors limites";
 
 
 /* field name to bottom line index */
@@ -2338,6 +2380,11 @@ noneoftheabove(const char *hl_text)
     if (fuzzymatch(hl_text, "none of the above", "\" -_", TRUE)
         || fuzzymatch(hl_text, "(polymorphed)", "\"()", TRUE)
         || fuzzymatch(hl_text, "none of the above (polymorphed)",
+                      "\" -_()", TRUE)
+        /* French equivalents */
+        || fuzzymatch(hl_text, "aucun des précédents", "\" -_", TRUE)
+        || fuzzymatch(hl_text, "(métamorphosé)", "\"()", TRUE)
+        || fuzzymatch(hl_text, "aucun des précédents (métamorphosé)",
                       "\" -_()", TRUE))
         return TRUE;
     return FALSE;
@@ -2533,9 +2580,18 @@ get_hilite(
                 break;
             case BL_TH_TEXTMATCH: /* ANY_STR */
                 txtstr = gb.blstats[idx][fldidx].val;
-                if (fldidx == BL_TITLE)
-                    /* "<name> the <rank-title>", skip past "<name> the " */
-                    txtstr += strlen(svp.plname) + sizeof " the " - sizeof "";
+                if (fldidx == BL_TITLE) {
+                    /* French: "<name> le <rank-title>", skip past
+                       "<name> " and the article (le, la, les, l') */
+                    txtstr += strlen(svp.plname) + sizeof " " - sizeof "";
+                    if (!strncmp(txtstr, "le ", 3)
+                        || !strncmp(txtstr, "la ", 3))
+                        txtstr += 3;
+                    else if (!strncmp(txtstr, "les ", 4))
+                        txtstr += 4;
+                    else if (!strncmp(txtstr, "l'", 2))
+                        txtstr += 2;
+                }
                 if (hl->rel == TXT_VALUE && hl->textmatch[0]) {
                     if (fuzzymatch(hl->textmatch, txtstr, "\" -_", TRUE)) {
                         rule = hl;
@@ -2814,10 +2870,19 @@ staticfn boolean
 parse_status_hl2(char (*s)[QBUFSZ], boolean from_configfile)
 {
     static const char *const aligntxt[] = { "chaotic", "neutral", "lawful" };
+    /* French: displayed alignment values (see bot_via_windowport()) */
+    static const char *const aligntxt_fr[] = {
+        "Chaotique", "Neutre", "Loyal"
+    };
     /* hu_stat[] from eat.c has trailing spaces which foul up comparisons;
        for the "not hungry" case, there's no text hence no way to highlight */
     static const char *const hutxt[] = {
         "Satiated", "", "Hungry", "Weak", "Fainting", "Fainted", "Starved"
+    };
+    /* French versions of hu_stat[] without trailing spaces */
+    static const char *const hutxt_fr[] = {
+        "Rassasié", "", "Affamé", "Faible", "Défaillant", "Évanoui",
+        "Inanition"
     };
     char *tmp, *how;
     int sidx = 0, i = -1, dt = ANY_INVALID;
@@ -2900,18 +2965,25 @@ parse_status_hl2(char (*s)[QBUFSZ], boolean from_configfile)
                 up = TRUE;
             changed = TRUE;
         } else if (fld == BL_CAP
-                   && is_fld_arrayvalues(s[sidx], enc_stat,
-                                         SLT_ENCUMBER, OVERLOADED + 1,
-                                         &kidx)) {
-            txt = enc_stat[kidx];
+                   && (is_fld_arrayvalues(s[sidx], enc_stat_en,
+                                          SLT_ENCUMBER, OVERLOADED + 1,
+                                          &kidx)
+                       || is_fld_arrayvalues(s[sidx], enc_stat,
+                                             SLT_ENCUMBER, OVERLOADED + 1,
+                                             &kidx))) {
+            txt = enc_stat[kidx]; /* store displayed (French) value */
             txtval = TRUE;
         } else if (fld == BL_ALIGN
-                   && is_fld_arrayvalues(s[sidx], aligntxt, 0, 3, &kidx)) {
-            txt = aligntxt[kidx];
+                   && (is_fld_arrayvalues(s[sidx], aligntxt, 0, 3, &kidx)
+                       || is_fld_arrayvalues(s[sidx], aligntxt_fr, 0, 3,
+                                             &kidx))) {
+            txt = aligntxt_fr[kidx]; /* store displayed (French) value */
             txtval = TRUE;
         } else if (fld == BL_HUNGER
-                   && is_fld_arrayvalues(s[sidx], hutxt,
-                                         SATIATED, STARVED + 1, &kidx)) {
+                   && (is_fld_arrayvalues(s[sidx], hutxt,
+                                          SATIATED, STARVED + 1, &kidx)
+                       || is_fld_arrayvalues(s[sidx], hutxt_fr,
+                                             SATIATED, STARVED + 1, &kidx))) {
             txt = hu_stat[kidx];   /* store hu_stat[] val, not hutxt[] */
             txtval = TRUE;
         } else if (!strcmpi(s[sidx], "changed")) {
@@ -3125,7 +3197,7 @@ query_conditions(void)
                  clr, conditions[i].text[0], MENU_ITEMFLAGS_NONE);
     }
 
-    end_menu(tmpwin, "Choose status conditions");
+    end_menu(tmpwin, "Choisissez les états");
 
     res = select_menu(tmpwin, PICK_ANY, &picks);
     destroy_nhwindow(tmpwin);
@@ -3156,8 +3228,10 @@ conditionbitmask2str(unsigned long ul)
 
     for (i = 0; i < SIZE(conditions); i++)
         if ((conditions[i].mask & ul) != 0UL) {
+            /* French: write the canonical English name, as it is used
+               in hilite_status rules (config file format) */
             Sprintf(eos(buf), "%s%s", (first) ? "" : "+",
-                    conditions[i].text[0]);
+                    cond_en_names[i]);
             first = FALSE;
         }
 
@@ -3176,7 +3250,8 @@ match_str2conditionbitmask(const char *str)
     if (str && *str) {
         /* check matches to canonical names */
         for (i = 0; i < SIZE(conditions); i++)
-            if (fuzzymatch(conditions[i].text[0], str, " -_", TRUE)) {
+            if (fuzzymatch(cond_en_names[i], str, " -_", TRUE)
+                || fuzzymatch(conditions[i].text[0], str, " -_", TRUE)) {
                 mask |= conditions[i].mask;
                 nmatches++;
             }
@@ -3692,7 +3767,7 @@ status_hilite_menu_choose_field(void)
                  clr, initblstats[i].fldname, MENU_ITEMFLAGS_NONE);
     }
 
-    end_menu(tmpwin, "Select a hilite field:");
+    end_menu(tmpwin, "Choisissez un champ à mettre en évidence :");
 
     res = select_menu(tmpwin, PICK_ONE, &picks);
     destroy_nhwindow(tmpwin);
@@ -3726,7 +3801,8 @@ status_hilite_menu_choose_behavior(int fld)
     if (fld != BL_CONDITION) {
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_ALWAYS_HILITE;
-        Sprintf(buf, "Always highlight %s", initblstats[fld].fldname);
+        Sprintf(buf, "Toujours mettre en évidence %s",
+                initblstats[fld].fldname);
         add_menu(tmpwin, &nul_glyphinfo, &any, 'a', 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
         nopts++;
@@ -3736,14 +3812,14 @@ status_hilite_menu_choose_behavior(int fld)
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_CONDITION;
         add_menu(tmpwin, &nul_glyphinfo, &any, 'b', 0, ATR_NONE,
-                 clr, "Bitmask of conditions", MENU_ITEMFLAGS_NONE);
+                 clr, "Masque d'états", MENU_ITEMFLAGS_NONE);
         nopts++;
     }
 
     if (fld != BL_CONDITION && fld != BL_VERS) {
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_UPDOWN;
-        Sprintf(buf, "%s value changes", initblstats[fld].fldname);
+        Sprintf(buf, "Changement de valeur de %s", initblstats[fld].fldname);
         add_menu(tmpwin, &nul_glyphinfo, &any, 'c', 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
         nopts++;
@@ -3754,7 +3830,7 @@ status_hilite_menu_choose_behavior(int fld)
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_VAL_ABSOLUTE;
         add_menu(tmpwin, &nul_glyphinfo, &any, 'n', 0, ATR_NONE,
-                 clr, "Number threshold", MENU_ITEMFLAGS_NONE);
+                 clr, "Seuil numérique", MENU_ITEMFLAGS_NONE);
         nopts++;
     }
 
@@ -3762,14 +3838,14 @@ status_hilite_menu_choose_behavior(int fld)
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_VAL_PERCENTAGE;
         add_menu(tmpwin, &nul_glyphinfo, &any, 'p', 0, ATR_NONE,
-                 clr, "Percentage threshold", MENU_ITEMFLAGS_NONE);
+                 clr, "Seuil en pourcentage", MENU_ITEMFLAGS_NONE);
         nopts++;
     }
 
     if (fld == BL_HP) {
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_CRITICALHP;
-        Sprintf(buf,  "Highlight critically low %s",
+        Sprintf(buf,  "Mettre en évidence %s critiquement bas",
                 initblstats[fld].fldname);
         add_menu(tmpwin, &nul_glyphinfo, &any, 'C', 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
@@ -3780,13 +3856,14 @@ status_hilite_menu_choose_behavior(int fld)
         || fld == BL_CAP || fld == BL_HUNGER) {
         any = cg.zeroany;
         any.a_int = onlybeh = BL_TH_TEXTMATCH;
-        Sprintf(buf, "%s text match", initblstats[fld].fldname);
+        Sprintf(buf, "Correspondance de texte pour %s",
+                initblstats[fld].fldname);
         add_menu(tmpwin, &nul_glyphinfo, &any, 't', 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
         nopts++;
     }
 
-    Sprintf(buf, "Select %s field hilite behavior:",
+    Sprintf(buf, "Choisissez le comportement de mise en évidence de %s :",
             initblstats[fld].fldname);
     end_menu(tmpwin, buf);
 
@@ -3825,18 +3902,18 @@ status_hilite_menu_choose_updownboth(
 
     if (ltok) {
         if (str)
-            Sprintf(buf, "%s than %s",
-                    (fld == BL_AC) ? "Better (lower)" : "Less", str);
+            Sprintf(buf, "%s que %s",
+                    (fld == BL_AC) ? "Meilleur (plus bas)" : "Moins", str);
         else
-            Sprintf(buf, "Value goes down");
+            Sprintf(buf, "La valeur baisse");
         any = cg.zeroany;
         any.a_int = 10 + LT_VALUE;
         add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
 
         if (str) {
-            Sprintf(buf, "%s or %s",
-                    str, (fld == BL_AC) ? "better (lower)" : "less");
+            Sprintf(buf, "%s ou %s",
+                    str, (fld == BL_AC) ? "meilleur (plus bas)" : "moins");
             any = cg.zeroany;
             any.a_int = 10 + LE_VALUE;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
@@ -3845,9 +3922,9 @@ status_hilite_menu_choose_updownboth(
     }
 
     if (str)
-        Sprintf(buf, "Exactly %s", str);
+        Sprintf(buf, "Exactement %s", str);
     else
-        Sprintf(buf, "Value changes");
+        Sprintf(buf, "La valeur change");
     any = cg.zeroany;
     any.a_int = 10 + EQ_VALUE;
     add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
@@ -3855,8 +3932,8 @@ status_hilite_menu_choose_updownboth(
 
     if (gtok) {
         if (str) {
-            Sprintf(buf, "%s or %s",
-                    str, (fld == BL_AC) ? "worse (higher)" : "more");
+            Sprintf(buf, "%s ou %s",
+                    str, (fld == BL_AC) ? "pire (plus haut)" : "plus");
             any = cg.zeroany;
             any.a_int = 10 + GE_VALUE;
             add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
@@ -3864,16 +3941,17 @@ status_hilite_menu_choose_updownboth(
         }
 
         if (str)
-            Sprintf(buf, "%s than %s",
-                    (fld == BL_AC) ? "Worse (higher)" : "More", str);
+            Sprintf(buf, "%s que %s",
+                    (fld == BL_AC) ? "Pire (plus haut)" : "Plus", str);
         else
-            Sprintf(buf, "Value goes up");
+            Sprintf(buf, "La valeur monte");
         any = cg.zeroany;
         any.a_int = 10 + GT_VALUE;
         add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE, clr,
                  buf, MENU_ITEMFLAGS_NONE);
     }
-    Sprintf(buf, "Select field %s value:", initblstats[fld].fldname);
+    Sprintf(buf, "Choisissez la valeur du champ %s :",
+            initblstats[fld].fldname);
     end_menu(tmpwin, buf);
 
     res = select_menu(tmpwin, PICK_ONE, &picks);
@@ -3934,7 +4012,7 @@ status_hilite_menu_add(int origfld)
 
  choose_value:
     if (retry++ > 5) {
-        pline("That's enough tries.");
+        pline("Ça suffit, les essais.");
         return FALSE;
     }
     if (behavior == BL_TH_VAL_PERCENTAGE
@@ -3948,8 +4026,8 @@ status_hilite_menu_add(int origfld)
 
         lt_gt_eq = NO_LTEQGT; /* not set up yet */
         inbuf[0] = '\0';
-        Sprintf(buf, "Enter %svalue for %s threshold:",
-                percent ? "percentage " : "",
+        Sprintf(buf, "Entrez la valeur %sdu seuil de %s :",
+                percent ? "en pourcentage " : "",
                 initblstats[fld].fldname);
         getlin(buf, inbuf);
         if (inbuf[0] == '\0' || inbuf[0] == '\033')
@@ -3984,17 +4062,17 @@ status_hilite_menu_add(int origfld)
         }
         if (*inp == '%') {
             if (!percent) {
-                pline("Not expecting a percentage.");
+                pline("Pourcentage non attendu.");
                 goto choose_behavior;
             }
             *inp = '\0'; /* strip '%' [this accepts trailing junk!] */
         } else if (*inp) {
             /* some random characters */
-            pline("\"%s\" is not a recognized number.", inp);
+            pline("\"%s\" n'est pas un nombre reconnu.", inp);
             goto choose_value;
         }
         if (!gotnum) {
-            pline("Is that an invisible number?");
+            pline("Serait-ce un nombre invisible ?");
             goto choose_value;
         }
         op = (lt_gt_eq == LT_VALUE) ? "<"
@@ -4011,7 +4089,7 @@ status_hilite_menu_add(int origfld)
         if (percent) {
             val = aval.a_int;
             if (initblstats[fld].idxmax == -1) {
-                pline("Field '%s' does not support percentage values.",
+                pline("Le champ '%s' n'accepte pas les pourcentages.",
                       initblstats[fld].fldname);
                 behavior = BL_TH_VAL_ABSOLUTE;
                 goto choose_value;
@@ -4025,7 +4103,7 @@ status_hilite_menu_add(int origfld)
                 || (val == 0 && lt_gt_eq == LT_VALUE)
                 || (val == 100 && lt_gt_eq == GT_VALUE)
                 || (val > 100 && (val != 101 || lt_gt_eq != LT_VALUE))) {
-                pline("'%s%d%%' is not a valid percent value.", op, val);
+                pline("'%s%d%%' n'est pas un pourcentage valide.", op, val);
                 goto choose_value;
             }
             /* restore suffix for use in color and attribute prompts */
@@ -4060,23 +4138,23 @@ status_hilite_menu_add(int origfld)
                 goto choose_value;
         }
 
-        Sprintf(colorqry, "Choose a color for when %s is %s%s%s:",
+        Sprintf(colorqry, "Choisissez une couleur pour quand %s vaut %s%s%s :",
                 initblstats[fld].fldname,
-                (lt_gt_eq == LT_VALUE) ? "less than "
-                  : (lt_gt_eq == GT_VALUE) ? "more than "
+                (lt_gt_eq == LT_VALUE) ? "moins de "
+                  : (lt_gt_eq == GT_VALUE) ? "plus de "
                     : "",
                 numstart,
-                (lt_gt_eq == LE_VALUE) ? " or less"
-                  : (lt_gt_eq == GE_VALUE) ? " or more"
+                (lt_gt_eq == LE_VALUE) ? " ou moins"
+                  : (lt_gt_eq == GE_VALUE) ? " ou plus"
                     : "");
-        Sprintf(attrqry, "Choose attribute for when %s is %s%s%s:",
+        Sprintf(attrqry, "Choisissez un attribut pour quand %s vaut %s%s%s :",
                 initblstats[fld].fldname,
-                (lt_gt_eq == LT_VALUE) ? "less than "
-                  : (lt_gt_eq == GT_VALUE) ? "more than "
+                (lt_gt_eq == LT_VALUE) ? "moins de "
+                  : (lt_gt_eq == GT_VALUE) ? "plus de "
                     : "",
                 numstart,
-                (lt_gt_eq == LE_VALUE) ? " or less"
-                  : (lt_gt_eq == GE_VALUE) ? " or more"
+                (lt_gt_eq == LE_VALUE) ? " ou moins"
+                  : (lt_gt_eq == GE_VALUE) ? " ou plus"
                     : "");
 
         hilite.rel = lt_gt_eq;
@@ -4098,16 +4176,16 @@ status_hilite_menu_add(int origfld)
                single choice, skip it altogether and just use 'changed' */
             lt_gt_eq = EQ_VALUE;
         }
-        Sprintf(colorqry, "Choose a color for when %s %s:",
+        Sprintf(colorqry, "Choisissez une couleur pour quand %s %s :",
                 initblstats[fld].fldname,
-                (lt_gt_eq == EQ_VALUE) ? "changes"
-                  : (lt_gt_eq == LT_VALUE) ? "decreases"
-                    : "increases");
-        Sprintf(attrqry, "Choose attribute for when %s %s:",
+                (lt_gt_eq == EQ_VALUE) ? "change"
+                  : (lt_gt_eq == LT_VALUE) ? "diminue"
+                    : "augmente");
+        Sprintf(attrqry, "Choisissez un attribut pour quand %s %s :",
                 initblstats[fld].fldname,
-                (lt_gt_eq == EQ_VALUE) ? "changes"
-                  : (lt_gt_eq == LT_VALUE) ? "decreases"
-                    : "increases");
+                (lt_gt_eq == EQ_VALUE) ? "change"
+                  : (lt_gt_eq == LT_VALUE) ? "diminue"
+                    : "augmente");
         hilite.rel = lt_gt_eq;
     } else if (behavior == BL_TH_CONDITION) {
         cond = query_conditions();
@@ -4117,19 +4195,19 @@ status_hilite_menu_add(int origfld)
             return FALSE;
         }
         Snprintf(colorqry, sizeof(colorqry),
-                "Choose a color for conditions %s:",
+                "Choisissez une couleur pour les états %s :",
                 conditionbitmask2str(cond));
         Snprintf(attrqry, sizeof(attrqry),
-                "Choose attribute for conditions %s:",
+                "Choisissez un attribut pour les états %s :",
                 conditionbitmask2str(cond));
     } else if (behavior == BL_TH_TEXTMATCH) {
         char qry_buf[BUFSZ];
 
-        Sprintf(qry_buf, "%s %s text value to match:",
+        Sprintf(qry_buf, "%s le texte de %s à reconnaître :",
                 (fld == BL_CAP
                  || fld == BL_ALIGN
                  || fld == BL_HUNGER
-                 || fld == BL_TITLE) ? "Choose" : "Enter",
+                 || fld == BL_TITLE) ? "Choisissez" : "Entrez",
                 initblstats[fld].fldname);
         if (fld == BL_CAP) {
             int rv = query_arrayvalue(qry_buf,
@@ -4142,8 +4220,9 @@ status_hilite_menu_add(int origfld)
             hilite.rel = TXT_VALUE;
             Strcpy(hilite.textmatch, enc_stat[rv]);
         } else if (fld == BL_ALIGN) {
+            /* French: must match the displayed alignment values */
             static const char *const aligntxt[] = {
-                "chaotic", "neutral", "lawful"
+                "Chaotique", "Neutre", "Loyal"
             };
             int rv = query_arrayvalue(qry_buf,
                                       aligntxt, 0, 2 + 1);
@@ -4154,9 +4233,10 @@ status_hilite_menu_add(int origfld)
             hilite.rel = TXT_VALUE;
             Strcpy(hilite.textmatch, aligntxt[rv]);
         } else if (fld == BL_HUNGER) {
+            /* French: must match the displayed hu_stat[] values */
             static const char *const hutxt[] = {
-                "Satiated", (char *) 0, "Hungry", "Weak",
-                "Fainting", "Fainted", "Starved"
+                "Rassasié", (char *) 0, "Affamé", "Faible",
+                "Défaillant", "Évanoui", "Inanition"
             };
             int rv = query_arrayvalue(qry_buf, hutxt, SATIATED, STARVED + 1);
 
@@ -4174,7 +4254,7 @@ status_hilite_menu_add(int origfld)
                 Sprintf(mbuf, "\"%s\"", gu.urole.rank[i].m);
                 if (gu.urole.rank[i].f) {
                     Sprintf(fbuf, "\"%s\"", gu.urole.rank[i].f);
-                    Snprintf(obuf, sizeof obuf, "%s or %s",
+                    Snprintf(obuf, sizeof obuf, "%s ou %s",
                             flags.female ? fbuf : mbuf,
                             flags.female ? mbuf : fbuf);
                 } else {
@@ -4194,7 +4274,7 @@ status_hilite_menu_add(int origfld)
                         rolelist[j++] = dupstr(obuf);
                 }
             }
-            rolelist[j++] = dupstr("\"none of the above (polymorphed)\"");
+            rolelist[j++] = dupstr("\"aucun des précédents (métamorphosé)\"");
 
             rv = query_arrayvalue(qry_buf, rolelist, 0, j);
             if (rv >= 0) {
@@ -4219,14 +4299,14 @@ status_hilite_menu_add(int origfld)
             else
                 return FALSE;
         }
-        Sprintf(colorqry, "Choose a color for when %s is '%s':",
+        Sprintf(colorqry, "Choisissez une couleur pour quand %s vaut '%s' :",
                 initblstats[fld].fldname, hilite.textmatch);
-        Sprintf(attrqry, "Choose attribute for when %s is '%s':",
+        Sprintf(attrqry, "Choisissez un attribut pour quand %s vaut '%s' :",
                 initblstats[fld].fldname, hilite.textmatch);
     } else if (behavior == BL_TH_ALWAYS_HILITE) {
-        Sprintf(colorqry, "Choose a color to always hilite %s:",
+        Sprintf(colorqry, "Choisissez une couleur pour toujours mettre en évidence %s :",
                 initblstats[fld].fldname);
-        Sprintf(attrqry, "Choose attribute to always hilite %s:",
+        Sprintf(attrqry, "Choisissez un attribut pour toujours mettre en évidence %s :",
                 initblstats[fld].fldname);
     }
 
@@ -4272,7 +4352,7 @@ status_hilite_menu_add(int origfld)
         tmpattr = hlattr2attrname(atr, attrbuf, BUFSZ);
         if (tmpattr)
             Sprintf(eos(clrbuf), "&%s", tmpattr);
-        pline("Added hilite condition/%s/%s",
+        pline("Mise en évidence ajoutée : condition/%s/%s",
               conditionbitmask2str(cond), clrbuf);
     } else {
         char *p, *q;
@@ -4280,22 +4360,22 @@ status_hilite_menu_add(int origfld)
         hilite.coloridx = clr | (atr << 8);
         hilite.anytype = initblstats[fld].anytype;
 
-        if (fld == BL_TITLE && (p = strstri(hilite.textmatch, " or ")) != 0) {
+        if (fld == BL_TITLE && (p = strstri(hilite.textmatch, " ou ")) != 0) {
             /* split menu choice "male-rank or female-rank" into two distinct
                but otherwise identical rules, "male-rank" and "female-rank" */
             *p = '\0'; /* chop off " or female-rank" */
             /* new rule for male-rank */
             status_hilite_add_threshold(fld, &hilite);
-            pline("Added hilite %s", status_hilite2str(&hilite));
+            pline("Mise en évidence ajoutée : %s", status_hilite2str(&hilite));
             /* transfer female-rank to start of hilite.textmatch buffer */
-            p += sizeof " or " - sizeof "";
+            p += sizeof " ou " - sizeof "";
             q = hilite.textmatch;
             while ((*q++ = *p++) != '\0')
                 continue;
             /* proceed with normal addition of new rule */
         }
         status_hilite_add_threshold(fld, &hilite);
-        pline("Added hilite %s", status_hilite2str(&hilite));
+        pline("Mise en évidence ajoutée : %s", status_hilite2str(&hilite));
     }
     reset_status_hilites();
     return TRUE;
@@ -4390,7 +4470,8 @@ status_hilite_menu_fld(int fld)
             hlstr = hlstr->next;
         }
     } else {
-        Sprintf(buf, "No current hilites for %s", initblstats[fld].fldname);
+        Sprintf(buf, "Aucune mise en évidence pour %s",
+                initblstats[fld].fldname);
         add_menu_str(tmpwin, buf);
     }
 
@@ -4401,7 +4482,8 @@ status_hilite_menu_fld(int fld)
         any = cg.zeroany;
         any.a_int = -1;
         add_menu(tmpwin, &nul_glyphinfo, &any, 'X', 0, ATR_NONE, clr,
-                 "Remove selected hilites", MENU_ITEMFLAGS_NONE);
+                 "Supprimer les mises en évidence choisies",
+                 MENU_ITEMFLAGS_NONE);
     }
 
 #ifndef SCORE_ON_BOTL
@@ -4417,10 +4499,11 @@ status_hilite_menu_fld(int fld)
         any = cg.zeroany;
         any.a_int = -2;
         add_menu(tmpwin, &nul_glyphinfo, &any, 'Z', 0, ATR_NONE,
-                 clr, "Add new hilites", MENU_ITEMFLAGS_NONE);
+                 clr, "Ajouter des mises en évidence", MENU_ITEMFLAGS_NONE);
     }
 
-    Sprintf(buf, "Current %s hilites:", initblstats[fld].fldname);
+    Sprintf(buf, "Mises en évidence actuelles de %s :",
+            initblstats[fld].fldname);
     end_menu(tmpwin, buf);
 
     acted = FALSE;
@@ -4517,7 +4600,7 @@ status_hilite_menu(void)
         any = cg.zeroany;
         any.a_int = -1;
         add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
-                 clr, "View all hilites in config format",
+                 clr, "Voir toutes les mises en évidence au format config",
                  MENU_ITEMFLAGS_NONE);
 
         add_menu_str(tmpwin, "");
@@ -4545,12 +4628,12 @@ status_hilite_menu(void)
             Sprintf(buf, "%-18s ", initblstats[i].fldname);
         }
         if (count)
-            Sprintf(eos(buf), "(%d defined)", count);
+            Sprintf(eos(buf), "(%d définie%s)", count, plur(count));
         add_menu(tmpwin, &nul_glyphinfo, &any, 0, 0, ATR_NONE,
                  clr, buf, MENU_ITEMFLAGS_NONE);
     }
 
-    end_menu(tmpwin, "Status hilites:");
+    end_menu(tmpwin, "Mises en évidence de la ligne d'état :");
     if ((res = select_menu(tmpwin, PICK_ONE, &picks)) > 0) {
         fld = picks->item.a_int - 1;
         if (fld < 0) {

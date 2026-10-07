@@ -2015,7 +2015,8 @@ create_monster(monster *m, struct mkroom *croom)
 
             case M_AP_FURNITURE:
                 for (i = 0; i < MAXPCHARS; i++)
-                    if (!strcmp(defsyms[i].explanation, m->appear_as.str))
+                    if (!strcmp(en_defsym_expl[i], m->appear_as.str)
+                        || !strcmp(defsyms[i].explanation, m->appear_as.str))
                         break;
                 if (i == MAXPCHARS) {
                     impossible("create_monster: can't find feature \"%s\"",
@@ -2028,8 +2029,11 @@ create_monster(monster *m, struct mkroom *croom)
 
             case M_AP_OBJECT:
                 for (i = 0; i < NUM_OBJECTS; i++)
-                    if (OBJ_NAME(objects[i])
-                        && !strcmp(OBJ_NAME(objects[i]), m->appear_as.str))
+                    if ((en_obj_names[i]
+                         && !strcmp(en_obj_names[i], m->appear_as.str))
+                        || (OBJ_NAME(objects[i])
+                            && !strcmp(OBJ_NAME(objects[i]),
+                                       m->appear_as.str)))
                         break;
                 if (i == NUM_OBJECTS) {
                     impossible("create_monster: can't find object \"%s\"",
@@ -2265,7 +2269,15 @@ create_object(object *o, struct mkroom *croom)
     /* set_corpsenm() took care of egg hatch and corpse timers */
 
     if (named) {
-        otmp = oname(otmp, o->name.str, ONAME_LEVEL_DEF);
+        const char *nm = o->name.str, *aname;
+        short atyp = STRANGE_OBJECT;
+
+        /* les fichiers Lua donnent le nom anglais d'origine des artefacts
+           ("The Orb of Detection") : le convertir en nom francais */
+        if ((aname = artifact_name(nm, &atyp, FALSE)) != 0
+            && atyp == otmp->otyp)
+            nm = aname;
+        otmp = oname(otmp, nm, ONAME_LEVEL_DEF);
         if (otmp->otyp == SPE_NOVEL) {
             /* needs to be an existing title */
             (void) lookup_novel(o->name.str, &otmp->novelidx);
@@ -3505,6 +3517,13 @@ find_objtype(lua_State *L, const char *s, char oclass)
         }
 
         /* find by object name */
+        /* VF : les fichiers .lua utilisent les noms anglais d'origine */
+        for (i = 0; i < NUM_OBJECTS; i++) {
+            objname = en_obj_names[i];
+            if ((!class || class == objects[i].oc_class)
+                && objname && !strcmpi(s, objname))
+                return i;
+        }
         for (i = 0; i < NUM_OBJECTS; i++) {
             objname = OBJ_NAME(objects[i]);
             if ((!class || class == objects[i].oc_class)
@@ -3525,6 +3544,11 @@ find_objtype(lua_State *L, const char *s, char oclass)
          */
 
         /* find by object description */
+        for (i = 0; i < NUM_OBJECTS; i++) {
+            objname = en_obj_descrs[i];
+            if (objname && !strcmpi(s, objname))
+                return i;
+        }
         for (i = 0; i < NUM_OBJECTS; i++) {
             objname = OBJ_DESCR(objects[i]);
             if (objname && !strcmpi(s, objname))
@@ -3690,17 +3714,24 @@ lspo_object(lua_State *L)
                              G_NOGEN | G_IGNORE);
             } else {
                 for (i = LOW_PM; i < NUMMONS; i++)
-                    if (!strcmpi(mons[i].pmnames[NEUTRAL], montype)) {
+                    if (!strcmpi(en_mon_names[i][NEUTRAL], montype)
+                        || !strcmpi(mons[i].pmnames[NEUTRAL], montype)) {
                         pm = &mons[i];
                         tmpobj.spe = 0;
                         break;
-                    } else if (mons[i].pmnames[MALE] != 0
-                               && !strcmpi(mons[i].pmnames[MALE], montype)) {
+                    } else if ((en_mon_names[i][MALE] != 0
+                                && !strcmpi(en_mon_names[i][MALE], montype))
+                               || (mons[i].pmnames[MALE] != 0
+                                   && !strcmpi(mons[i].pmnames[MALE],
+                                               montype))) {
                         lflags |= CORPSTAT_MALE;
                         pm = &mons[i];
                         break;
-                    } else if (mons[i].pmnames[FEMALE] != 0
-                               && !strcmpi(mons[i].pmnames[FEMALE], montype)) {
+                    } else if ((en_mon_names[i][FEMALE] != 0
+                                && !strcmpi(en_mon_names[i][FEMALE], montype))
+                               || (mons[i].pmnames[FEMALE] != 0
+                                   && !strcmpi(mons[i].pmnames[FEMALE],
+                                               montype))) {
                         lflags |= CORPSTAT_FEMALE;
                         pm = &mons[i];
                         break;

@@ -1,107 +1,120 @@
 
-                Instructions for installing NetHack 5.0
-			using the new hints system
-                =======================================
+[Traduction française du document d'origine sys/unix/NewInstall.unx.]
 
-For the moment, we are maintaining two ways to configure NetHack.  The
-traditional system, in which Makefiles and includes are edited, and the
-new hints system which should be easier for most users to configure.
+          Instructions d'installation de NetHack 5.0 avec le nouveau
+		     système de fichiers d'indications (hints)
+          ==========================================================
 
-If you are using the traditional configuration system, see Install.unx.
+Pour l'instant, nous maintenons deux façons de configurer NetHack : le
+système traditionnel, dans lequel on modifie les Makefiles et les fichiers
+d'en-tête, et le nouveau système d'indications (hints), qui devrait être plus
+facile à configurer pour la plupart des utilisateurs.
 
-1. Look in the sys/unix/hints directory for a file that matches your system.
-   If there isn't one, build one from the other files; if you need more help
-   see the traditional instructions (in Install.unx) for hints.  When you
-   get it right please submit it to us.
+Si vous utilisez le système de configuration traditionnel, consultez
+Install.unx.
 
-2. Check the hints file for anything that may need to be changed for your
-   installation.  Most of the time little or nothing will need to be changed.
+1. Cherchez dans le répertoire sys/unix/hints un fichier qui correspond à
+   votre système. S'il n'y en a pas, créez-en un à partir des autres
+   fichiers ; si vous avez besoin d'aide supplémentaire, consultez les
+   instructions traditionnelles (dans Install.unx) pour vous guider. Quand
+   vous aurez obtenu un fichier qui fonctionne, merci de nous l'envoyer.
 
-3. Configure and build:
-   "$Top" is the top level source directory (the one with README in it).
+2. Vérifiez dans le fichier d'indications (hints) s'il y a des éléments à
+   modifier pour votre installation. La plupart du temps, il n'y a rien ou
+   presque rien à changer.
+
+3. Configuration et compilation :
+   « $Top » désigne le répertoire racine des sources (celui qui contient
+   README).
 
 	cd $Top/sys/unix
 	sh setup.sh hints/NAME_OF_HINTS_FILE
 	cd ../..
 	make all
 
-   If the build fails, remove all the generated files before retrying the
-   build with: cd $Top; make spotless
+   Si la compilation échoue, supprimez tous les fichiers générés avant de
+   la relancer, avec : cd $Top; make spotless
 
-   See the "User Interface Build Customizations" section below if you want to
-   configure your build with support for interfaces beyond traditional TTY.
+   Consultez la section « Personnalisation de la compilation des interfaces
+   utilisateur » ci-dessous si vous voulez configurer votre compilation pour
+   prendre en charge d'autres interfaces que le TTY traditionnel.
 
-4. Install:
-   Depending on your configuration, this step may or may not need to be done
-   as root; check the hints file.
-   NB: "make install" deletes nethackdir and recreates it from scratch - so
-   if you want the record, logfile, or sysconf files, you must save and
-   restore them manually.
+4. Installation :
+   Selon votre configuration, cette étape doit ou non être effectuée en tant
+   que root ; consultez le fichier d'indications (hints).
+   NB : « make install » supprime nethackdir et le recrée entièrement ; si
+   vous voulez conserver les fichiers record, logfile ou sysconf, vous devez
+   donc les sauvegarder et les restaurer vous-même.
 	cd $Top
 	make install
 
-5. If it all worked, you're done.  If something went wrong, see Install.unx
-   for information about the settings the hints file tried to automate.
+5. Si tout a fonctionné, c'est terminé. En cas de problème, consultez
+   Install.unx pour des informations sur les réglages que le fichier
+   d'indications (hints) a tenté d'automatiser.
 
 
-                =======================================
-                * User Interface Build Customizations *
-                =======================================
+     ==================================================================
+     * Personnalisation de la compilation des interfaces utilisateur  *
+     ==================================================================
 
-NetHack can support multiple user interfaces within the same binary on many
-platforms. The various interface options can be specified by defining specific
-variables, either on the make command line, or by setting environment variables
-prior to the "make all" and "make install" steps. If you don't specify any
-WANT_WIN_* customization, the build will only include traditional tty support.
+Sur de nombreuses plates-formes, NetHack peut prendre en charge plusieurs
+interfaces utilisateur dans un même exécutable. Les différentes interfaces
+se choisissent en définissant certaines variables, soit sur la ligne de
+commande de make, soit sous forme de variables d'environnement définies avant
+les étapes « make all » et « make install ». Si vous ne précisez aucune
+personnalisation WANT_WIN_*, la compilation n'inclura que la prise en charge
+traditionnelle du tty.
 
-As an example, to build a binary with tty + curses + X11 support, you can use
-the following build command:
+Par exemple, pour compiler un exécutable avec prise en charge de tty, curses
+et X11, vous pouvez utiliser les commandes suivantes :
     make WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 all
     make WANT_WIN_TTY=1 WANT_WIN_CURSES=1 WANT_WIN_X11=1 install
 
-To build a binary with tty + curses + X11 + Qt support (that is, all the
-interfaces that are available for unix), you can use the following shorthand
-build command:
+Pour compiler un exécutable avec prise en charge de tty, curses, X11 et Qt
+(c'est-à-dire toutes les interfaces disponibles sous Unix), vous pouvez
+utiliser la forme abrégée suivante :
     make WANT_WIN_ALL=1 all
     make WANT_WIN_ALL=1 install
 
-Alternatively, you can set the variables in the environment first, prior
-to issuing your make commands:
+Vous pouvez aussi définir d'abord les variables dans l'environnement, avant
+de lancer vos commandes make :
     export WANT_WIN_TTY=1
     export WANT_WIN_X11=1
     make all
     make install
 
-That example above will result in a build with support for tty + X11.
+L'exemple ci-dessus produira un exécutable prenant en charge tty et X11.
 
-Note that curses, X11, and Qt will almost certainly require the installation
-of prerequisite packages in order to successfully build with support for
-additional interfaces. See below.
+Notez que curses, X11 et Qt nécessiteront très probablement l'installation
+de paquets prérequis pour pouvoir compiler avec la prise en charge de ces
+interfaces supplémentaires. Voir ci-dessous.
 
 +----------+-------+------------------+-------------------------------------+
-| Platform |Interf.| make variable    |  Prerequisite package               |
+|Plate-    |Interf.| Variable make    |  Paquet prérequis                   |
+|forme     |       |                  |                                     |
 |----------+-------+------------------+-------------------------------------|
-| MacOS    | tty   | WANT_WIN_TTY=1   | none                                |
+| MacOS    | tty   | WANT_WIN_TTY=1   | aucun                               |
 |----------+-------+------------------+-------------------------------------|
-| MacOS    | curses| WANT_WIN_CURSES=1| ncurses development libraries       |
+| MacOS    | curses| WANT_WIN_CURSES=1| bibliothèques de développement      |
+|          |       |                  | ncurses                             |
 |----------+-------+------------------+-------------------------------------|
-| MacOS    | X11   | WANT_WIN_X11=1   | You will need to obtain and         |
-|          |       |                  | install XQuartz if you want X11     |
-|          |       |                  | support in your build.              |
-|          |       |                  | (Attempting to run X11.app  will    |
-|          |       |                  |  describe where to get it)          |
+| MacOS    | X11   | WANT_WIN_X11=1   | Vous devrez vous procurer et        |
+|          |       |                  | installer XQuartz si vous voulez la |
+|          |       |                  | prise en charge de X11.             |
+|          |       |                  | (Lancer X11.app vous indiquera où   |
+|          |       |                  |  le trouver)                        |
 |          |       |                  |                                     |
-|          |       |                  | One possible way:                   |
+|          |       |                  | Une méthode possible :              |
 |          |       |                  |    brew install xquartz             |
 |          |       |                  |    brew install libxft              |
 |          |       |                  |    brew install fontconfig          |
 |          |       |                  |    brew install freetype            |
 |----------+-------+------------------+-------------------------------------|
-| MacOS    | Qt    | WANT_WIN_QT=1    | You will need to obtain and         |
-|          |       |                  | install Qt if you want Qt           |
-|          |       |                  | support in your build.              |
+| MacOS    | Qt    | WANT_WIN_QT=1    | Vous devrez vous procurer et        |
+|          |       |                  | installer Qt si vous voulez la      |
+|          |       |                  | prise en charge de Qt.              |
 |          |       |                  |                                     |
-|          |       |                  | One possible way:                   |
+|          |       |                  | Une méthode possible :              |
 |          |       |                  |    brew install pkg-config          |
 |          |       |                  |    brew install Qt6                 |
 |----------+-------+------------------+-------------------------------------|
@@ -111,28 +124,28 @@ additional interfaces. See below.
 | Linux    | tty   | WANT_WIN_TTY=1   | sudo dnf install make gcc g++       |
 | (Fedora) |       |                  | sudo dnf install ncurses-devel      |
 |----------+-------+------------------+-------------------------------------|
-| Linux    | curses|WANT_WIN_CURSES=1 | If it isn't already included        |
-| (Ubuntu) |       |                  | in your distribution, here is one   |
-|          |       |                  | possible way:                       |
+| Linux    | curses|WANT_WIN_CURSES=1 | Si ce n'est pas déjà inclus dans    |
+| (Ubuntu) |       |                  | votre distribution, voici une       |
+|          |       |                  | méthode possible :                  |
 |          |       |                  |                                     |
 |          |       |                  | sudo apt install libncurses-dev     |
 |----------+-------+------------------+-------------------------------------|
-| Linux    | X11   | WANT_WIN_X11=1   | Here is one possible way to obtain  |
-| (Ubuntu) |       |                  | the required packages:              |
+| Linux    | X11   | WANT_WIN_X11=1   | Voici une méthode possible pour     |
+| (Ubuntu) |       |                  | obtenir les paquets nécessaires :   |
 |          |       |                  |                                     |
 |          |       |                  | sudo apt install libx11-dev         |
 |          |       |                  | sudo apt install libmotif-dev       |
 |          |       |                  | sudo apt install libxaw7-dev        |
 |          |       |                  | sudo apt install xfonts-utils       |
-|          |       |                  |  (That last one is for bdftopcf     |
-|          |       |                  |   and mkfontdir utils)              |
+|          |       |                  |  (ce dernier fournit les utilitaires|
+|          |       |                  |   bdftopcf et mkfontdir)            |
 |          |       |                  |                                     |
 |----------+-------+------------------+-------------------------------------|
-| Linux    | X11   | WANT_WIN_X11=1   | Here is a possible way to obtain    |
-|(Fedora)  |       |                  | all prerequisite packages required  |
-|          |       |                  | (in addition to those needed for    |
-|          |       |                  | tty above) on a fresh installation  |
-|          |       |                  | of Fedora 44 workstation:           |
+| Linux    | X11   | WANT_WIN_X11=1   | Voici une méthode possible pour     |
+|(Fedora)  |       |                  | obtenir tous les paquets prérequis  |
+|          |       |                  | (en plus de ceux nécessaires pour   |
+|          |       |                  | tty ci-dessus) sur une installation |
+|          |       |                  | neuve de Fedora 44 workstation :    |
 |          |       |                  |                                     |
 |          |       |                  | sudo dnf install libX11-devel       |
 |          |       |                  | sudo dnf install libXt-devel        |
@@ -143,16 +156,16 @@ additional interfaces. See below.
 |          |       |                  | sudo dnf install mkfontscale        |
 |          |       |                  |                                     |
 |----------+-------+------------------+-------------------------------------|
-| Linux    | Qt    | WANT_WIN_QT6=1   | Here is one possible way to obtain  |
-| (Ubuntu) |       |                  | the required packages:              |
+| Linux    | Qt    | WANT_WIN_QT6=1   | Voici une méthode possible pour     |
+| (Ubuntu) |       |                  | obtenir les paquets nécessaires :   |
 |          |       |                  |                                     |
 |          |       |                  |sudo apt install qt6-base-dev        |
 |          |       |                  |sudo apt install qt6-multimedia-dev  |
 +----------+-------+------------------+-------------------------------------+
 
-There are other hints file options that are meant to impact your NetHack build
-in various other ways too. A reference list can be found in
-sys/unix/README.hints. 
+D'autres options des fichiers d'indications (hints) permettent aussi d'agir
+de diverses autres manières sur votre compilation de NetHack. Vous en
+trouverez la liste de référence dans sys/unix/README.hints.
 
 # NetHack 5.0  NewInstall.unx       $NHDT-Date: 1652276817 2022/05/11 13:46:57 $  $NHDT-Branch: NetHack-5.0 $:$NHDT-Revision: 1.11 $
 # Copyright (c) 2009 by Kenneth Lorber, Kensington, Maryland

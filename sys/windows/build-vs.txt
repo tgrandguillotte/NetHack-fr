@@ -1,62 +1,69 @@
-Building NetHack using the Visual Studio IDE
+Compilation de NetHack avec l'IDE Visual Studio
 
-Prerequisite Requirements:
+(Traduction française du document d'origine build-vs.txt.)
+
+Prérequis :
 
   o Visual Studio Community
-        A copy of a version of Microsoft Visual Studio Community needs to
-        be installed on your machine. Visual Studio Community can be either
-        the version for Windows 11 x64 for use on machines with
-        Intel/AMD64 processors, or the version for Windows 11 ARM64 for
-        use on machines with ARM64 processors (Snapdragon).
+        Une version de Microsoft Visual Studio Community doit être
+        installée sur votre machine. Il peut s'agir soit de la version pour
+        Windows 11 x64, destinée aux machines à processeur Intel/AMD64,
+        soit de la version pour Windows 11 ARM64, destinée aux machines à
+        processeur ARM64 (Snapdragon).
 
-        You can opt to build for a target x64, or for a target ARM64
-        on either the x64 version of Visual Studio, or on the ARM64
-        version. Versions of Visual Studio, since Visual Studio 26,
-        are able to compile for the native host platform and
-        cross-compile to the other target platform.
+        Vous pouvez choisir de compiler pour une cible x64 ou pour une
+        cible ARM64, aussi bien avec la version x64 de Visual Studio
+        qu'avec la version ARM64. Les versions de Visual Studio, depuis
+        Visual Studio 26, savent compiler pour la plateforme hôte native et
+        faire de la compilation croisée vers l'autre plateforme cible.
 
-        If you want to selectively cross-compile for both x64 and ARM64
-        target types, ensure that the necessary Individual Components for
-        both types of target builds are selected (checked-off) in the
-        Visual Studio Installer Individual Components dialog:
+        Si vous voulez pouvoir faire de la compilation croisée pour les
+        deux types de cibles, x64 et ARM64, assurez-vous que les composants
+        individuels nécessaires aux deux types de cibles sont sélectionnés
+        (cochés) dans la boîte de dialogue Composants individuels de
+        Visual Studio Installer :
 
-        Under Compilers, build tools, and runtimes:
+        Sous Compilateurs, outils de génération et runtimes :
             o MSVC Build Tools for ARM64/ARM64EC (Latest)
             o MSVC Build Tools for x64/x86 (Latest)
 
-        You can use the Visual Studio Installer "Modify" button
-        to add missing Individual Components after installation,
-        if needed.
+        Au besoin, vous pouvez utiliser le bouton « Modifier » de
+        Visual Studio Installer pour ajouter des composants individuels
+        manquants après l'installation.
 
-        See:
+        Voir :
         https://visualstudio.microsoft.com/vs/community/
   o Lua
-        NetHack 5.0 for Windows requires 3rd party Lua source that is not part
-        of the NetHack distribution or repository.
+        NetHack 5.0 pour Windows nécessite les sources de Lua, un projet
+        tiers qui ne fait pas partie de la distribution ni du dépôt de
+        NetHack.
 
-        A windows cmd command procedure for fetching prerequisite sources
-        is available, and can be run as follows from the top of the
-        NetHack source tree to obtain lua:
+        Une procédure de commandes Windows (cmd) permettant de récupérer
+        les sources requises est disponible ; lancez-la comme suit depuis
+        la racine de l'arborescence des sources de NetHack pour obtenir
+        Lua :
             sys\windows\fetch.cmd lua
-  o pdcursesmod (Only required if curses interface support is desired)
-        If you want to include curses interface support in NetHack 5.0 for
-        3rd part pdcursesmod source code is required and is not part of the
-        NetHack distribution or repository.
+  o pdcursesmod (requis seulement si vous voulez l'interface curses)
+        Si vous voulez inclure la prise en charge de l'interface curses
+        dans NetHack 5.0, les sources de pdcursesmod, un projet tiers, sont
+        nécessaires ; elles ne font pas partie de la distribution ni du
+        dépôt de NetHack.
 
-        A windows cmd command procedure for fetching prerequisite
-        sources is available, and can be run as follows from the top of
-        the NetHack source tree to obtain pdcursesmod:
+        Une procédure de commandes Windows (cmd) permettant de récupérer
+        les sources requises est disponible ; lancez-la comme suit depuis
+        la racine de l'arborescence des sources de NetHack pour obtenir
+        pdcursesmod :
             sys\windows\fetch.cmd pdcursesmod
 
-This processes produces a zip file containing two executable
-versions:
+Ce processus produit un fichier zip contenant deux versions
+exécutables :
 
-    a. A TTY and curses version of NetHack in nethack.exe
-    b. A Windows and curses graphical version in nethackw.exe.
+    a. une version TTY et curses de NetHack dans nethack.exe ;
+    b. une version graphique Windows et curses dans nethackw.exe.
 
 
 /---------------------------------------------\
-|    Directories for a Windows NetHack build  |
+|  Répertoires d'une compilation pour Windows |
 \---------------------------------------------/
 
                (NetHack-top)
@@ -78,27 +85,26 @@ versions:
 
 
 /-----------------------------------------------------------\
-| Building And Running Using Visual Studio Community        |
+| Compilation et exécution avec Visual Studio Community     |
 \-----------------------------------------------------------/
 
-When using a version of Visual Studio Community, load the provided solution
-file within the IDE, build the solution.
+Avec une version de Visual Studio Community, chargez dans l'IDE le
+fichier de solution fourni, puis générez la solution.
 
-The Visual Studio NetHack solution file can be found here:
+Le fichier de solution Visual Studio de NetHack se trouve ici :
     sys\windows\vs\NetHack.sln
 
-The steps are:
-    1. Launch the IDE.
-    2. Open the appropriate solution file in sys\windows\vs\NetHack.sln.
-    3. Select the build platform and configuration that you wish
-       to target (x64 or ARM64, and Release or Debug).
-       (Note: If you want to target an ARM64 build from an x64 machine,
-              or target an x64 build from an ARM64 machine, you need to
-              first complete the build for the native machine type target.
-              That's necessary to ensure that host-native versions of
-              uudecode.exe, makedefs.exe, tilemap.exe, tile2bmp.exe and
-              dlb.exe tools are available for execution during the build
-              steps that rely on those tools.)
-    4. From the build menu, select build solution.
-    5. Type F5 to start debugging.
-
+Les étapes sont les suivantes :
+    1. Lancez l'IDE.
+    2. Ouvrez le fichier de solution sys\windows\vs\NetHack.sln.
+    3. Sélectionnez la plateforme et la configuration de génération
+       voulues (x64 ou ARM64, et Release ou Debug).
+       (Remarque : si vous voulez cibler ARM64 depuis une machine x64, ou
+              cibler x64 depuis une machine ARM64, vous devez d'abord
+              mener à bien la compilation pour la cible native de la
+              machine. C'est nécessaire pour que les versions natives de
+              l'hôte des outils uudecode.exe, makedefs.exe, tilemap.exe,
+              tile2bmp.exe et dlb.exe soient disponibles pour les étapes
+              de la compilation qui en dépendent.)
+    4. Dans le menu Générer, choisissez Générer la solution.
+    5. Appuyez sur F5 pour lancer le débogage.

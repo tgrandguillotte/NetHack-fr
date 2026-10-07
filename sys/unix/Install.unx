@@ -1,255 +1,287 @@
-                Instructions for installing NetHack 5.0
-                           on a UNIX system
-                =======================================
-NB: We are gradually replacing this process with the process documented in
-the file NewInstall.unx.
+                Instructions d'installation de NetHack 5.0
+                         sur un système UNIX
+                ==========================================
+[Traduction française du document d'origine sys/unix/Install.unx.]
 
-0.  Read this entire file before starting, and come back to the Notes
-    below if you have any problems.  If you are trying to use X11,
-    also read all of win/X11/Install.X11, or read win/Qt/Install.Qt
-    if you are using Qt or KDE under X11.  For help in controlling
-    and running the game after it is installed, see the '?' command
-    within the game and doc/Guidebook (non-installers want to know
-    about those things too).
+NB : nous remplaçons progressivement cette procédure par celle décrite dans
+le fichier NewInstall.unx.
 
-1.  Make sure all the NetHack files are in the appropriate directory
-    structure.  You should have a main directory with subdirectories
-    dat, doc, include, src, util, sys/share, sys/unix, win/tty, win/X11,
-    and win/Qt.  You may have other subdirectories under sys and win,
-    but they will not affect compilation for a UNIX system.  If you do
-    not follow this structure, the Makefiles will not function properly.
-    The .c files for the main program belong in src, those for utility
-    programs in util, and UNIX-specific ones in sys/unix.  All the .h
-    files belong in include, the documentation in doc, and assorted
-    data files in dat.  Some UNIX versions may also be interested in
-    sys/share's random.c or its lex/yacc output, as explained in note 11.
-    (A more detailed explanation of the directory structure may be found
-    in Files, which should be in the top directory.)
+0.  Lisez ce fichier en entier avant de commencer, et revenez aux Remarques
+    ci-dessous en cas de problème. Si vous voulez utiliser X11, lisez
+    aussi l'intégralité de win/X11/Install.X11, ou bien win/Qt/Install.Qt
+    si vous utilisez Qt ou KDE sous X11. Pour de l'aide sur le pilotage
+    et le fonctionnement du jeu une fois installé, consultez la commande
+    « ? » dans le jeu et doc/Guidebook (ceux qui n'installent pas le jeu
+    voudront aussi connaître ces informations).
 
-2.  Your Makefiles may still be in sys/unix with tags on the end of them.
-    If so, run "sh setup.sh hints/unix" in that directory to
-    distribute the Makefiles to places they can do their work.  (If
-    later official patches change these Makefiles, setup.sh should
-    be rerun to make sure you use the current copies.)
+1.  Vérifiez que tous les fichiers de NetHack sont rangés dans la bonne
+    arborescence. Vous devez avoir un répertoire principal contenant les
+    sous-répertoires dat, doc, include, src, util, sys/share, sys/unix,
+    win/tty, win/X11 et win/Qt. Il peut y avoir d'autres sous-répertoires
+    sous sys et win, mais ils n'influencent pas la compilation pour un
+    système UNIX. Si vous ne respectez pas cette arborescence, les
+    Makefiles ne fonctionneront pas correctement. Les fichiers .c du
+    programme principal vont dans src, ceux des programmes utilitaires dans
+    util, et ceux propres à UNIX dans sys/unix. Tous les fichiers .h vont
+    dans include, la documentation dans doc, et les divers fichiers de
+    données dans dat. Certaines versions d'UNIX pourront aussi avoir besoin
+    du random.c de sys/share ou de sa sortie lex/yacc, comme expliqué dans
+    la remarque 11. (Une explication plus détaillée de l'arborescence se
+    trouve dans Files, qui devrait se trouver dans le répertoire racine.)
 
-3.  Go to the include subdirectory and edit config.h according to the
-    comments to match your system and desired set of features.  Similarly
-    edit unixconf.h.  Please see the "Notes:" section, below, for some
-    configuration hints for particular systems.
+2.  Vos Makefiles se trouvent peut-être encore dans sys/unix, avec des
+    suffixes à la fin de leur nom. Si c'est le cas, lancez
+    « sh setup.sh hints/unix » dans ce répertoire pour répartir les
+    Makefiles aux endroits où ils doivent servir. (Si des correctifs
+    officiels ultérieurs modifient ces Makefiles, relancez setup.sh pour
+    être sûr d'utiliser les versions à jour.)
 
-4.  If you want to, look through system.h.  This file attempts to match the
-    types for system calls and library routines with various flavors of
-    operating systems.  Leaving this file alone is unlikely to cause worse
-    problems than lint errors, but it's worth checking if you get compile
-    errors, especially if you have an unusual system.
+3.  Allez dans le sous-répertoire include et modifiez config.h en suivant
+    les commentaires, pour l'adapter à votre système et à l'ensemble de
+    fonctionnalités souhaité. Modifiez de même unixconf.h. Consultez la
+    section « Remarques : » ci-dessous pour quelques conseils de
+    configuration propres à certains systèmes.
 
-5.  Go to the src subdirectory and look at the top of topten.c.  You may want
-    to change the definitions of PERSMAX and PERS_IS_UID here to get different
-    behavior from the high score list.
+4.  Si vous le souhaitez, parcourez system.h. Ce fichier tente de faire
+    correspondre les types des appels système et des fonctions de
+    bibliothèque aux différentes variantes de systèmes d'exploitation. Ne
+    pas toucher à ce fichier ne devrait pas causer de problème plus grave
+    que des avertissements de lint, mais il vaut la peine de le vérifier en
+    cas d'erreurs de compilation, surtout si votre système est inhabituel.
 
-6.  Edit the top sections of the src and util Makefiles.  (If you are doing
-    a full recompile, or if you got your files from someplace besides the
-    official distribution, type 'touch makedefs.c' to make sure certain files
-    get remade instead of relying on the potentially troublesome timestamps.)
-    Then type 'make' in src and go get a cup of
-    coffee or take a nap, depending on the speed of your system.  You should
-    now have created the game executable.
+5.  Allez dans le sous-répertoire src et regardez le début de topten.c.
+    Vous pouvez y modifier les définitions de PERSMAX et PERS_IS_UID pour
+    changer le comportement de la liste des meilleurs scores.
 
-7.  Go back to the top directory and edit that Makefile, explaining where
-    you want everything to be installed.
+6.  Modifiez les sections du début des Makefiles de src et de util. (Si
+    vous faites une recompilation complète, ou si vos fichiers proviennent
+    d'ailleurs que de la distribution officielle, tapez 'touch makedefs.c'
+    pour vous assurer que certains fichiers seront bien régénérés, plutôt
+    que de vous fier à des horodatages potentiellement problématiques.)
+    Tapez ensuite 'make' dans src et allez prendre un café ou faire une
+    sieste, selon la vitesse de votre système. Vous devriez alors avoir
+    créé l'exécutable du jeu.
 
-    Make sure that you follow the comments about setting HACKDIR -- the
-    installation process will wipe out the contents of the directory you
-    point it at, under the assumption that it's debris from an old version
-    of NetHack.  If this is not the case, you'll want to install somewhere
-    else, or comment out the rm under the install target.
+7.  Revenez au répertoire racine et modifiez son Makefile pour indiquer où
+    vous voulez que tout soit installé.
 
-    The Makefile assumes you want to run NetHack setuid 'games' to cut down
-    on possible tampering; it's fairly straightforward to comment out the
-    appropriate chmod if you don't want that, or to change any of the rest
-    of the procedure.  (Note that if you don't want to run NetHack either
-    setuid or setgid, and people in more than one group will be playing it,
-    you'll need to go back and set FCMASK to 0666 in unixconf.h and let
-    everybody fiddle with the files NetHack creates.)
+    Suivez bien les commentaires concernant le réglage de HACKDIR : la
+    procédure d'installation effacera le contenu du répertoire que vous lui
+    indiquez, en supposant qu'il s'agit des restes d'une ancienne version
+    de NetHack. Si ce n'est pas le cas, installez le jeu ailleurs, ou
+    mettez en commentaire le rm de la cible install.
 
-    If the tbl, nroff or col commands are not available on your system,
-    edit the doc/Makefile and change the GUIDECMD as directed.
+    Le Makefile suppose que vous voulez exécuter NetHack en setuid 'games'
+    pour limiter les risques de manipulation ; il est assez simple de mettre
+    en commentaire le chmod correspondant si vous ne le souhaitez pas, ou de
+    modifier toute autre partie de la procédure. (Notez que si vous ne
+    voulez exécuter NetHack ni en setuid ni en setgid, et que des membres de
+    plusieurs groupes y joueront, vous devrez revenir régler FCMASK à 0666
+    dans unixconf.h et laisser tout le monde manipuler les fichiers créés
+    par NetHack.)
 
-    Type 'make all' from the top directory to set up all the auxiliary
-    files the main executable will use.  Then become root if necessary and
-    type 'make install'.  Everything should now be set.
+    Si les commandes tbl, nroff ou col ne sont pas disponibles sur votre
+    système, modifiez doc/Makefile et changez GUIDECMD comme indiqué.
 
-8.  Read doc/recover.man or doc/recover.txt to learn how to use the recover
-    program.  The recover program can be used in case of a crash to recover
-    a game that was in progress.  The recover command is installed in the
-    HACKDIR by default.
+    Tapez 'make all' depuis le répertoire racine pour mettre en place tous
+    les fichiers auxiliaires qu'utilisera l'exécutable principal. Passez
+    ensuite root si nécessaire et tapez 'make install'. Tout devrait alors
+    être prêt.
 
-9.  If you specified SYSCF (and SYSCF_FILE) in config.h, create the file
-    defined as SYSCF_FILE and fill in any of the following values if you
-    wish to override the compiled-in defaults:
-	WIZARDS= a space-separated list of usernames who can use -D
-		If the first character is '*' then any user can use -D.
-	SUPPORT= one line, probably starting with a verb, telling how to
-		contact your local support person/group for NetHack.  If there
-		is no local support, do not use this line.  Some sample values:
-			call Joan at +1 312 555-1234.
-			email support@example.com
-			visit http://www.example.com/game-support
-	RECOVER= instructions for running recover.  If RECOVER is not
-		available, do not use this line.  Some sample values:
-			To get your game recovered, contact support.
-			Run /usr/local/bin/nh-recover to recover your game.
-			
-		
-    This is a standard config file, so blank lines and lines starting with
-    pound signs are ignored; while other, standard options (such as catname)
-    can be specified in this file, this is considered a bug and may be changed
-    in the future.
+8.  Lisez doc/recover.man ou doc/recover.txt pour apprendre à utiliser le
+    programme recover. Ce programme permet, après un plantage, de récupérer
+    une partie qui était en cours. La commande recover est installée par
+    défaut dans HACKDIR.
 
-Notes:
+9.  Si vous avez défini SYSCF (et SYSCF_FILE) dans config.h, créez le
+    fichier désigné par SYSCF_FILE et renseignez-y les valeurs suivantes
+    si vous voulez remplacer les valeurs par défaut compilées :
+	WIZARDS= liste, séparée par des espaces, des noms d'utilisateurs
+		autorisés à utiliser -D. Si le premier caractère est '*',
+		tout utilisateur peut utiliser -D.
+	SUPPORT= une ligne, commençant sans doute par un verbe, indiquant
+		comment contacter la personne ou le groupe chargé de
+		l'assistance locale pour NetHack. S'il n'y a pas d'assistance
+		locale, n'utilisez pas cette ligne. Quelques exemples :
+			appelez Joan au +1 312 555-1234.
+			écrivez à support@example.com
+			consultez http://www.example.com/game-support
+	RECOVER= instructions pour lancer recover. Si recover n'est pas
+		disponible, n'utilisez pas cette ligne. Quelques exemples :
+			Pour récupérer votre partie, contactez l'assistance.
+			Récupérez votre partie avec /usr/local/bin/nh-recover.
 
-1.  Save files and bones files from previous versions will not work with
-    NetHack 5.0.  Don't bother trying to keep them.
 
-2.  To install an update of this version of NetHack after changing something,
-    type 'make update' from the main directory.  If you created the new
-    version yourself, it should be safe to use 'make update' as long as you
-    did not add, delete, or reorder monsters or objects and you did not change
-    the format of saved level files.  If you did any of these things, you
-    should also remove any saved games and bones levels.  (Trying to use such
-    files often produces amusing but useless confusions on the game's part.)
+    Il s'agit d'un fichier de configuration standard : les lignes vides et
+    celles qui commencent par un dièse sont ignorées. Bien que d'autres
+    options standard (comme catname) puissent être indiquées dans ce
+    fichier, cela est considéré comme un bogue et pourra changer à l'avenir.
 
-3.  If you insisted on doing the final installation by hand, you probably
-    forgot to make a save directory.  If you don't go back and do this, you
-    won't be able to save games.
+Remarques :
 
-4.  If you get unexplained deaths by trickery, you are probably running
-    NetHack on a bunch of workstations, but you have overlooked the NETWORK
-    definition in unixconf.h that is necessary in that configuration.
+1.  Les fichiers de sauvegarde et les fichiers d'ossements (bones) des
+    versions précédentes ne fonctionneront pas avec NetHack 5.0. Inutile
+    d'essayer de les conserver.
 
-5.  If spurious characters appear on the screen while throwing, kicking,
-    zapping, etc., it is likely that you have linked the source to the wrong
-    library or mistakenly defined/undefined TERMINFO.  A number of systems,
-    such as Xenix, support both the termcap and terminfo terminal capability
-    libraries.  In such cases, the TERMINFO definition in unixconf.h and the
-    WINTTYLIB definition in the source Makefile must correspond.
+2.  Pour installer une mise à jour de cette version de NetHack après avoir
+    modifié quelque chose, tapez 'make update' depuis le répertoire
+    principal. Si vous avez créé vous-même la nouvelle version, vous pouvez
+    utiliser 'make update' sans risque tant que vous n'avez pas ajouté,
+    supprimé ou réordonné de monstres ou d'objets, ni modifié le format des
+    fichiers de niveaux sauvegardés. Si vous avez fait l'une de ces
+    modifications, supprimez aussi les parties sauvegardées et les niveaux
+    d'ossements. (Essayer d'utiliser de tels fichiers provoque souvent chez
+    le jeu des confusions amusantes mais inutiles.)
 
-    If your terminal library does not provide suitable delays, NetHack will
-    try to fake its own if you set the nonull option.
+3.  Si vous avez tenu à faire l'installation finale à la main, vous avez
+    probablement oublié de créer un répertoire de sauvegarde. Si vous ne
+    revenez pas le faire, vous ne pourrez pas sauvegarder de parties.
 
-6.  Since NetHack overflows the stock C preprocessors for AT&T 3b1 and 3b2
-    systems ("too many defines"), we are including an alternate preprocessor
-    to allow these folks to compile.  This is the DECUS cpp by Martin Minow,
-    slightly modified by Kevin Darcy to use larger buffers, be less verbose,
-    and handle strange constructs in AT&T's include files.
+4.  Si vous obtenez des morts inexpliquées par « trickery » (tricherie),
+    vous exécutez probablement NetHack sur un ensemble de stations de
+    travail sans avoir défini NETWORK dans unixconf.h, ce qui est
+    nécessaire dans cette configuration.
 
-    To use this preprocessor, unpack the cpp* files found in sys/unix into
-    some handy directory (util will do).  For the AT&T machines mentioned
-    above, nothing needs to be configured; you should get a working cpp by
-    merely typing "make -f makefile.txt".  To get your compiler to use the
-    new cpp, you will have to add to CFLAGS in src/Makefile and util/Makefile.
-    If you put the cpp files in /foo/bar/util, add "-B/foo/bar/util/ -tp"
-    for a 3b1 or "-Yp,/foo/bar/util" for a 3b2.
+5.  Si des caractères parasites apparaissent à l'écran lorsque vous lancez
+    un objet, donnez un coup de pied, utilisez une baguette, etc., vous avez
+    probablement lié les sources à la mauvaise bibliothèque, ou défini (ou
+    non) TERMINFO par erreur. Un certain nombre de systèmes, comme Xenix,
+    prennent en charge à la fois les bibliothèques de capacités de terminal
+    termcap et terminfo. Dans ce cas, la définition de TERMINFO dans
+    unixconf.h et celle de WINTTYLIB dans le Makefile des sources doivent
+    concorder.
 
-    For any other machine whose preprocessor can't handle the NetHack source,
-    you'll have to play it by ear.  The preprocessor has many esoteric
-    configuration options, but most probably you will only need to change
-    the flags in makefile.txt, and then refer to your compiler's documentation
-    to find the appropriate CFLAGS for the NetHack Makefiles.  (The SunOS flag,
-    for instance, would be "-Qpath /foo/bar/util", although the native cpp
-    has no trouble with NetHack.  So much for standardization.)
+    Si votre bibliothèque de terminal ne fournit pas de délais adaptés,
+    NetHack essaiera de les simuler lui-même si vous activez l'option
+    nonull.
 
-7.  If you are trying to compile NetHack on an AT&T 3B that is running an
-    OS earlier than SVR3, you are likely to have problems with overflowing
-    symbol tables.  This can be worked around by editing the source Makefile
-    to make the Sys.3B2 target work more like the SysV-AT target, adding
-    -DDUMB to CFLAGS and DUMB.Setup to the Sys.3B2 dependency line.  The
-    compiler provided with later versions of the OS has a large enough
-    symbol table that it does not need this workaround.
+6.  Comme NetHack dépasse les capacités des préprocesseurs C fournis avec
+    les systèmes AT&T 3b1 et 3b2 (« too many defines »), nous fournissons
+    un préprocesseur de remplacement pour permettre à leurs utilisateurs de
+    compiler. Il s'agit du cpp DECUS de Martin Minow, légèrement modifié
+    par Kevin Darcy pour utiliser des tampons plus grands, être moins
+    bavard et gérer les constructions étranges des fichiers d'en-tête
+    d'AT&T.
 
-8.  If NetHack seems to compile fine, starts up, allows you to pick a
-    character, and then hangs indefinitely, gets a segmentation fault, or
-    traps you in a single room on the first level, you might try changing
-    the schar and uchar definitions in config.h to short ints.  This problem
-    is known to occur on the AT&T 3B series, Silicon Graphics Irises, and
-    IBM systems (PC/RT & RS/6000) running AIX, and may occur on other
-    computers as well.
+    Pour utiliser ce préprocesseur, décompressez les fichiers cpp* présents
+    dans sys/unix dans un répertoire pratique (util fera l'affaire). Pour
+    les machines AT&T citées ci-dessus, aucune configuration n'est
+    nécessaire ; vous devriez obtenir un cpp fonctionnel en tapant
+    simplement « make -f makefile.txt ». Pour que votre compilateur utilise
+    le nouveau cpp, vous devrez compléter CFLAGS dans src/Makefile et
+    util/Makefile. Si vous avez placé les fichiers cpp dans /foo/bar/util,
+    ajoutez « -B/foo/bar/util/ -tp » pour un 3b1 ou « -Yp,/foo/bar/util »
+    pour un 3b2.
 
-    This problem is really most likely caused by having a non-__STDC__
-    compiler with char's unsigned by default.  Since some such compilers
-    don't understand the new "signed" keyword, and others don't have signed
-    characters to use (the 3B2 line falls into this category), "signed"
-    is #ifdefed away for them.  If you are sure your compiler can deal
-    with it, you can add your compiler to the __HC__ case in tradstdc.h.
+    Pour toute autre machine dont le préprocesseur ne supporte pas les
+    sources de NetHack, il vous faudra improviser. Le préprocesseur dispose
+    de nombreuses options de configuration ésotériques, mais vous n'aurez
+    très probablement qu'à modifier les options de makefile.txt, puis à
+    consulter la documentation de votre compilateur pour trouver les CFLAGS
+    à indiquer dans les Makefiles de NetHack. (Pour SunOS, par exemple,
+    l'option serait « -Qpath /foo/bar/util », bien que le cpp natif n'ait
+    aucun mal avec NetHack. Voilà pour la standardisation.)
 
-    Alternatively, if the compiler supports a command line switch for
-    setting the default char type to signed, you could try setting it in
-    the Makefiles.  The appropriate switch for SGI Irises with MIPS C
-    compiler is "-signed" and for RS/6000's with standard cc "-qchars=signed".
-    (SGI machines running IRIX 4.0.x have a compiler close enough to
-    standard to suit NetHack, so you may merely use the suggested flags
-    in the Makefiles.)
+7.  Si vous essayez de compiler NetHack sur un AT&T 3B fonctionnant sous
+    un système antérieur à SVR3, vous risquez d'avoir des problèmes de
+    dépassement des tables de symboles. On peut les contourner en modifiant
+    le Makefile des sources pour que la cible Sys.3B2 fonctionne davantage
+    comme la cible SysV-AT, en ajoutant -DDUMB à CFLAGS et DUMB.Setup à la
+    ligne de dépendances de Sys.3B2. Le compilateur fourni avec les versions
+    ultérieures du système a une table de symboles assez grande pour ne pas
+    avoir besoin de ce contournement.
 
-    Note that at least RS/6000's seem to like changing the default to
-    signed better but there is also a problem:  The lexers created by
-    the standard lex program in AIX may come out faulty when this switch
-    is used (known to happen at least in AIX 3.1.3), so you may have to
-    use an alternative, like flex, which is available at major archive
-    sites (see notes 10 and 11).
+8.  Si NetHack semble se compiler correctement, démarre, vous laisse
+    choisir un personnage, puis se bloque indéfiniment, provoque une erreur
+    de segmentation ou vous enferme dans une seule salle au premier niveau,
+    vous pouvez essayer de remplacer les définitions de schar et uchar dans
+    config.h par des short int. Ce problème est connu sur la série AT&T 3B,
+    les Iris de Silicon Graphics et les systèmes IBM (PC/RT et RS/6000)
+    sous AIX, et peut aussi survenir sur d'autres ordinateurs.
 
-    By AIX 3.2.5, this whole problem should be taken care of automatically
-    (but AIX_31 should still be defined in unixconf.h for other reasons).
+    Ce problème est en réalité le plus souvent dû à un compilateur non
+    __STDC__ dont les char sont non signés par défaut. Comme certains de ces
+    compilateurs ne comprennent pas le nouveau mot-clé « signed » et que
+    d'autres n'ont pas de caractères signés (la gamme 3B2 entre dans cette
+    catégorie), « signed » est neutralisé par #ifdef pour eux. Si vous êtes
+    sûr que votre compilateur le gère, vous pouvez ajouter votre compilateur
+    au cas __HC__ dans tradstdc.h.
 
-9.  Under SCO UNIX, you may have all sorts of complaints about
-    include/obj.h.  Go to the file and uncomment the marked line, working
-    around the fact that SCO's system include files preempt a major
-    NetHack structure name.  Also, there are difficulties with SCO's cc
-    that thus far have been solved only by changing compilers; one report
-    says gcc-NetHack works, and another says rcc-NetHack can be made to
-    work by defining NOTSTDC, applying note 8, and compiling with -tinfo
-    and -xenix.  The cc problems are old enough that a new, working
-    version may have been released by this time.
+    Sinon, si le compilateur accepte une option de ligne de commande pour
+    rendre le type char signé par défaut, vous pouvez essayer de l'indiquer
+    dans les Makefiles. L'option correspondante est « -signed » pour les
+    Iris de SGI avec le compilateur C MIPS, et « -qchars=signed » pour les
+    RS/6000 avec le cc standard. (Les machines SGI sous IRIX 4.0.x ont un
+    compilateur suffisamment proche du standard pour NetHack ; vous pouvez
+    donc vous contenter des options suggérées dans les Makefiles.)
 
-10. Yes, Virginia, you compile NetHack for a NeXT as if it ran UNIX instead
-    of Mach.  Just tell NetHack you're a BSD system (Mach is extremely
-    close to BSD UNIX for traditional system calls, so this is also a
-    likely thing to try for any other programs you want to compile).
+    Notez que les RS/6000, au moins, semblent mieux s'accommoder du
+    changement du type par défaut en signé, mais il y a aussi un problème :
+    les analyseurs lexicaux créés par le programme lex standard d'AIX
+    peuvent être défectueux lorsque cette option est utilisée (cela se
+    produit au moins avec AIX 3.1.3) ; vous devrez donc peut-être utiliser
+    une alternative comme flex, disponible sur les grands sites d'archives
+    (voir les remarques 10 et 11).
 
-    If you get errors when starting nethack warning that "Setuid execution is 
-    not allowed", you might want to re-install using the setgid option instead
-    (see Note 7 above, and the setgid comment in the toplevel Makefile).
+    À partir d'AIX 3.2.5, tout ce problème devrait être réglé
+    automatiquement (mais AIX_31 doit toujours être défini dans unixconf.h
+    pour d'autres raisons).
 
-11. If you are using Solaris 2.x (aka SunOS 5.x) you shouldn't have to
-    do any system configuration -- this is the default.  In case it is
-    messed up, follow these instructions.
+9.  Sous SCO UNIX, vous aurez peut-être toutes sortes de plaintes au sujet
+    d'include/obj.h. Ouvrez ce fichier et décommentez la ligne marquée, afin
+    de contourner le fait que les fichiers d'en-tête système de SCO
+    accaparent un nom de structure important de NetHack. Par ailleurs, le cc
+    de SCO pose des difficultés qui, jusqu'ici, n'ont été résolues qu'en
+    changeant de compilateur ; un rapport indique que gcc-NetHack
+    fonctionne, et un autre que rcc-NetHack peut fonctionner en définissant
+    NOTSTDC, en appliquant la remarque 8 et en compilant avec -tinfo et
+    -xenix. Les problèmes de cc sont assez anciens pour qu'une nouvelle
+    version fonctionnelle soit peut-être sortie depuis.
 
-    Solaris is basically a SVR4 system, not a BSD system.  Therefore, you
-    configure config.h and unixconf.h as per a SVR4 system:
+10. Oui, Virginia, on compile NetHack pour un NeXT comme s'il tournait sous
+    UNIX et non sous Mach. Indiquez simplement à NetHack que vous êtes sur
+    un système BSD (Mach est extrêmement proche de BSD UNIX pour les appels
+    système traditionnels ; c'est donc aussi une piste à essayer pour tout
+    autre programme que vous voulez compiler).
+
+    Si, au démarrage de nethack, vous obtenez des erreurs indiquant
+    « Setuid execution is not allowed », vous pouvez réinstaller en
+    utilisant plutôt l'option setgid (voir l'étape 7 ci-dessus, et le
+    commentaire sur setgid dans le Makefile racine).
+
+11. Si vous utilisez Solaris 2.x (alias SunOS 5.x), vous ne devriez avoir
+    aucune configuration système à faire : c'est la configuration par
+    défaut. Si elle a été déréglée, suivez ces instructions.
+
+    Solaris est fondamentalement un système SVR4, et non un système BSD.
+    Configurez donc config.h et unixconf.h comme pour un système SVR4 :
 
 	config.h: UNIX, TTY_GRAPHICS
 	unixconf.h: SYSV, SVR4, TERMINFO, POSIX_JOB_CONTROL, POSIX_TYPES
 
-    X11_GRAPHICS does work.  You may safely define NETWORK if desired.
-    Other #defines in these files may be defined too, as needed.  Just make
-    sure that the set mentioned here are not misdefined, or your compile
-    will fail (do _not_ define BSD or SUNOS4).
+    X11_GRAPHICS fonctionne. Vous pouvez sans risque définir NETWORK si vous
+    le souhaitez. D'autres #define de ces fichiers peuvent aussi être
+    définis, selon vos besoins. Assurez-vous simplement que ceux mentionnés
+    ici ne sont pas mal définis, sinon votre compilation échouera (ne
+    définissez _pas_ BSD ni SUNOS4).
 
-    Unless you are using gzip you will probably want to define COMPRESS to
-    be "/usr/bin/compress".
+    À moins d'utiliser gzip, vous voudrez probablement définir COMPRESS à
+    "/usr/bin/compress".
 
-    When compiling, make sure that you use the ANSI C SVR4 compatible
-    compiler, /usr/bin/cc, or gcc, but _not_ ucbcc.  The lattermost will
-    not work.  After this, you should get a clean compile.
+    Lors de la compilation, veillez à utiliser le compilateur ANSI C
+    compatible SVR4, /usr/bin/cc, ou gcc, mais _pas_ ucbcc. Ce dernier ne
+    fonctionnera pas. Après cela, la compilation devrait se dérouler sans
+    erreur.
 
-12. If you are trying to cross-compile for another system, see the file
-    Cross-compiling.
+12. Si vous voulez faire une compilation croisée pour un autre système,
+    consultez le fichier Cross-compiling.
 
-13. If you get a compiler warning about 'get_colors()' being implicitly
-    declared, try uncommenting NEED_GET_COLORS_DECL in unixconf.h.
-    If you get a compiler warning about tparm() being implicitly
-    declared, add '#define TPARM_WORKAROUND' to unixconf.h or
-    '-DTPARM_WORKAROUND' to CFLAGS.  (This should not be needed
-    on any modern system.)
+13. Si le compilateur vous avertit que 'get_colors()' est déclarée
+    implicitement, essayez de décommenter NEED_GET_COLORS_DECL dans
+    unixconf.h. Si le compilateur vous avertit que tparm() est déclarée
+    implicitement, ajoutez '#define TPARM_WORKAROUND' à unixconf.h ou
+    '-DTPARM_WORKAROUND' à CFLAGS. (Cela ne devrait être nécessaire sur
+    aucun système moderne.)
 
 # NetHack 5.0  Install.unx       $NHDT-Date: 1577568915 2019/12/28 21:35:15 $  $NHDT-Branch: NetHack-5.0 $:$NHDT-Revision: 1.14 $
 # Copyright (c) 2012 by Kenneth Lorber, Kensington, Maryland

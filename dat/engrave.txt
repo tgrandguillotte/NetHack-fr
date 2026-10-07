@@ -1,93 +1,92 @@
 # NetHack 5.0  engrave.txt       $NHDT-Date: 1596498240 2020/08/03 23:44:00 $  $NHDT-Branch: NetHack-5.0 $:$NHDT-Revision: 1.5 $
 # Copyright (c) 2015 by Pasi Kallinen
 # NetHack may be freely redistributed.  See license for details.
-# Random engravings on the floor
+# Gravures aléatoires sur le sol
 #
 Elbereth
-# trap engravings
-Vlad was here
+# trap engravings (cf. src/mklev.c)
+Vlad est passé par ici
 ad aerarium
 
 # take-offs and other famous engravings
-Owlbreath
+Elbeurk
 Galadriel
-Kilroy was here
-Frodo lives
+Kilroy est passé par ici
+Frodon est vivant
 
 # Journey to the Center of the Earth
 A.S. ->
 <- A.S.
 # Adventure
-You won't get it up the steps
+Vous ne le monterez pas par l'escalier
 # Inferno
 Lasciate ogni speranza o voi ch'entrate.
 # Prisoner
-Well Come
-# God's Final Message to His Creation (from "So Long, and Thanks for All
-# the Fish" by Douglas Adams):
-We apologize for the inconvenience.
-# Thriller
-See you next Wednesday
+Bien Venue
+# replaces a book quotation
+Le créateur vous prie de l'excuser pour la gêne occasionnée.
+# replaces a film running gag
+On se revoit au prochain niveau
 # Smokey Stover
 notary sojak
 
-For a good time call 8?7-5309
+Pour passer du bon temps, appelez le 36 15 YENDOR
 # Various zoos around the world
-Please don't feed the animals.
+Merci de ne pas nourrir les animaux.
 # A palindrome
-Madam, in Eden, I'm Adam.
-# Siskel & Ebert
-Two thumbs up!
+Engage le jeu que je le gagne.
+# critics
+Deux pouces levés !
 # The First C Program
-Hello, World!
+Bonjour, le monde !
 ^?MAIL
 # AOL
-You've got mail!
+Vous avez du courrier !
 ^.
-# Clueless
-As if!
-# 200x incarnation of Dr.Who
-BAD WOLF
+# replaces a film catchphrase
+Même pas en rêve !
+# replaces a TV series reference
+LE LOUP EST PASSÉ
 
 # Gang tag
-Arooo!  Werewolves of Yendor!
+Ahouuu !  Les Loups-garous de Yendor !
 
 # Strategy and pun
-Dig for Victory here
+Creusez ici pour la Victoire
 
 # Pompeii
-Gaius Julius Primigenius was here.  Why are you late?
+Gaius Julius Primigenius est passé par ici.  Pourquoi es-tu en retard ?
 
 # Helpful guiding
-Don't go this way
-Go left --->
-<--- Go right
-X marks the spot
-X <--- You are here.
-Here be dragons
-Save now, and do your homework!
-There was a hole here.  It's gone now.
-The Vibrating Square
-This is a pit!
-This is not the dungeon you are looking for.
-Watch out, there's a gnome with a wand of death behind that door!
+N'allez pas par là
+Allez à gauche --->
+<--- Allez à droite
+X marque l'emplacement
+X <--- Vous êtes ici.
+Ici sont les dragons
+Sauvegardez maintenant, et faites vos devoirs !
+Il y avait un trou ici.  Il n'y est plus.
+Le Carré Vibrant
+Ceci est une fosse !
+Ce donjon n'est pas celui que vous croyez.
+Attention, il y a un gnome avec une baguette de mort derrière cette porte !
 
 # Misc fun
-This square deliberately left blank.
+Cette case a été laissée vide intentionnellement.
 
 # Viking graffiti
-Haermund Hardaxe carved these runes
+Haermund Dure-Hache a gravé ces runes
 
 # Advertising
-Need a light?  Come visit the Minetown branch of Izchak's Lighting Store!
-Snakes on the Astral Plane - Soon in a dungeon near you
-You are the one millionth visitor to this place!  Please wait 200 turns for your wand of wishing.
+Besoin de lumière ?  Visitez l'agence de Minetown du Magasin de Luminaires d'Izchak !
+Des serpents sur le Plan Astral - Bientôt dans un donjon près de chez vous
+Vous êtes le millionième visiteur de ce lieu !  Veuillez patienter 200 tours pour votre baguette de souhait.
 
 # DnD
-Warning, Exploding runes!
+Attention, runes explosives !
 
-# "Whispers Underground" Ben Aaronovitch
-If you can read these words then you are not only a nerd but probably dead.
+# replaces a book quotation
+Si vous arrivez à lire ceci, vous êtes soit un érudit, soit un fantôme.
 
-# Portal
-The cake is a lie
+# replaces a video game quotation
+Le gâteau est au niveau suivant.  Promis.

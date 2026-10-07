@@ -27,9 +27,9 @@ staticfn void center(int, char *);
 static const char *const rip_txt[] = {
     "                       ----------",
     "                      /          \\",
-    "                     /    REST    \\",
-    "                    /      IN      \\",
-    "                   /     PEACE      \\",
+    "                     /   REPOSE   \\",
+    "                    /      EN      \\",
+    "                   /      PAIX      \\",
     "                  /                  \\",
     "                  |                  |", /* Name of player */
     "                  |                  |", /* Amount of $ */
@@ -47,16 +47,16 @@ static const char *const rip_txt[] = {
 static const char *const rip_txt[] = {
     "              ----------                      ----------",
     "             /          \\                    /          \\",
-    "            /    REST    \\                  /    This    \\",
-    "           /      IN      \\                /  release of  \\",
-    "          /     PEACE      \\              /   NetHack is   \\",
-    "         /                  \\            /   dedicated to   \\",
-    "         |                  |            |  the memory of   |",
+    "            /   REPOSE   \\                  /   Cette    \\",
+    "           /      EN      \\                /  version de  \\",
+    "          /      PAIX      \\              /  NetHack est   \\",
+    "         /                  \\            /   dédiée à la    \\",
+    "         |                  |            |   mémoire de     |",
     "         |                  |            |                  |",
     "         |                  |            |  Izchak Miller   |",
     "         |                  |            |   1935 - 1994    |",
     "         |                  |            |                  |",
-    "         |                  |            |     Ascended     |",
+    "         |                  |            |  Monté au ciel   |",
     "         |       1001       |            |                  |",
     "      *  |     *  *  *      | *        * |      *  *  *     | *",
     (" _____)/\\|\\__//(\\/(/\\)/\\//\\/|_)___"
@@ -72,14 +72,52 @@ static const char *const rip_txt[] = {
 #define DEATH_LINE 8 /* *char[] line # for death description */
 #define YEAR_LINE 12 /* *char[] line # for year */
 
+/* number of display columns of a UTF-8 string */
+staticfn int
+rip_cols(const char *s)
+{
+    int n = 0;
+
+    for (; *s; s++)
+        if ((*s & 0xC0) != 0x80)
+            n++;
+    return n;
+}
+
+/* byte offset just past the first 'cols' display columns of s */
+staticfn int
+rip_bytes(const char *s, int cols)
+{
+    int i = 0;
+
+    while (s[i] && cols > 0) {
+        i++;
+        while ((s[i] & 0xC0) == 0x80)
+            i++;
+        cols--;
+    }
+    return i;
+}
+
+/* replace the middle of tombstone line 'line' by text (which may contain
+   multi-byte UTF-8 characters); the line is reallocated as needed */
 staticfn void
 center(int line, char *text)
 {
-    char *ip, *op;
-    ip = text;
-    op = &gr.rip[line][STONE_LINE_CENT - ((strlen(text) + 1) >> 1)];
-    while (*ip)
-        *op++ = *ip++;
+    char *old = gr.rip[line], *nw;
+    int cols = rip_cols(text), start, oldlen = (int) strlen(old);
+
+    start = STONE_LINE_CENT - ((cols + 1) >> 1);
+    if (start < 0)
+        start = 0;
+    if (start + cols > oldlen)
+        cols = oldlen - start;
+    nw = (char *) alloc((unsigned) (oldlen + strlen(text) + 1));
+    (void) memcpy(nw, old, (size_t) start);
+    Strcpy(nw + start, text);
+    Strcat(nw, old + start + cols);
+    free((genericptr_t) old);
+    gr.rip[line] = nw;
 }
 
 void
@@ -116,13 +154,19 @@ genl_outrip(winid tmpwin, int how, time_t when)
     for (line = DEATH_LINE, dpx = buf; line < YEAR_LINE; line++) {
         char tmpchar;
         int i, i0 = (int) strlen(dpx);
+        int lim = rip_bytes(dpx, STONE_LINE_LEN);
 
-        if (i0 > STONE_LINE_LEN) {
-            for (i = STONE_LINE_LEN; (i > 0) && (i0 > STONE_LINE_LEN); --i)
-                if (dpx[i] == ' ')
+        if (rip_cols(dpx) > STONE_LINE_LEN) {
+            boolean found = FALSE;
+
+            for (i = lim; i > 0; --i)
+                if (dpx[i] == ' ') {
                     i0 = i;
-            if (!i)
-                i0 = STONE_LINE_LEN;
+                    found = TRUE;
+                    break;
+                }
+            if (!found)
+                i0 = lim;
         }
         tmpchar = dpx[i0];
         dpx[i0] = 0;
@@ -141,7 +185,7 @@ genl_outrip(winid tmpwin, int how, time_t when)
 
 #ifdef DUMPLOG
     if (tmpwin == 0)
-        dump_forward_putstr(0, 0, "Game over:", TRUE);
+        dump_forward_putstr(0, 0, "Fin de la partie :", TRUE);
     else
 #endif
         putstr(tmpwin, 0, "");

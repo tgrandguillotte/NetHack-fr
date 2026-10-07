@@ -74,7 +74,7 @@ dosh(void)
     if ((comspec = getcomspec())) {
 #ifndef TOS /* TOS has a variety of shells */
         suspend_nhwindows(
-            "To return to NetHack, enter \"exit\" at the system prompt.\n");
+            "Pour revenir à NetHack, tapez \"exit\" à l'invite du système.\n");
 #else
 #if defined(MSDOS) && defined(NO_TERMS)
         grmode = iflags.grmode;
@@ -100,8 +100,8 @@ dosh(void)
 
         if (spawnstat < 0) {
 #endif
-            raw_printf("Can't spawn \"%s\"!", comspec);
-            getreturn("to continue");
+            raw_printf("Impossible de lancer \"%s\" !", comspec);
+            getreturn("pour continuer");
         }
 #ifdef TOS
         /* Some shells (e.g. Gulam) turn the cursor off when they exit */
@@ -118,7 +118,7 @@ dosh(void)
 #endif
         resume_nhwindows();
     } else
-        pline("Can't find %s.", COMSPEC);
+        pline("Impossible de trouver %s.", COMSPEC);
     return 0;
 }
 #endif /* SHELL */
@@ -147,12 +147,12 @@ void
 getreturn(const char *str)
 {
 #ifdef TOS
-    msmsg("Hit <Return> %s.", str);
+    msmsg("Appuyez sur <Entrée> %s.", str);
 #else
 #ifdef CROSS_TO_AMIGA
-    (void) printf("Hit <Enter> %s.", str);
+    (void) printf("Appuyez sur <Entrée> %s.", str);
 #else
-    msmsg("Hit <Enter> %s.", str);
+    msmsg("Appuyez sur <Entrée> %s.", str);
 #endif
 #endif
 #if defined(PC_EARLY_OPTIONS)
@@ -271,7 +271,7 @@ msexit(void)
 #endif
 #ifdef TOS
     if (run_from_desktop)
-        getreturn("to continue"); /* so the user can read the score list */
+        getreturn("pour continuer"); /* so the user can read the score list */
     if (colors_changed)
         restore_colors();
 #endif

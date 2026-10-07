@@ -294,7 +294,7 @@ choose_windows(const char *s)
         windowprocs.win_wait_synch = def_wait_synch;
 
     if (!winchoices[0].procs) {
-        raw_printf("No window types supported?");
+        raw_printf("Aucun type de fenêtre pris en charge ?");
         nh_terminate(EXIT_FAILURE);
     }
     /* 50: arbitrary, no real window_type names are anywhere near that long;
@@ -312,7 +312,7 @@ choose_windows(const char *s)
 
     if (!winchoices[1].procs) {
         config_error_add(
-                     "Window type %s not recognized.  The only choice is: %s",
+                     "Type de fenêtre %s non reconnu.  Seul choix possible : %s",
                          s, winchoices[0].procs->name);
     } else {
         char buf[BUFSZ];
@@ -328,7 +328,7 @@ choose_windows(const char *s)
                     first ? "" : ", ", winchoices[i].procs->name);
             first = FALSE;
         }
-        config_error_add("Window type %s not recognized.  Choices are:  %s",
+        config_error_add("Type de fenêtre %s non reconnu.  Choix possibles :  %s",
                          s, buf);
     }
     if (tmps)
@@ -359,7 +359,7 @@ addto_windowchain(const char *s)
 
     windowprocs.win_raw_print = def_raw_print;
 
-    raw_printf("Window processor %s not recognized.  Choices are:", s);
+    raw_printf("Processeur de fenêtre %s non reconnu.  Choix possibles :", s);
     for (i = 0; winchoices[i].procs; i++) {
         if ('+' != winchoices[i].procs->name[0])
             continue;
@@ -991,31 +991,31 @@ genl_status_update(
             nb = status_vals[idx];
             *nb = '\0';
             if (cond & BL_MASK_STONE)
-                Strcpy(nb = eos(nb), " Stone");
+                Strcpy(nb = eos(nb), " Pétrif");
             if (cond & BL_MASK_SLIME)
-                Strcpy(nb = eos(nb), " Slime");
+                Strcpy(nb = eos(nb), " Gluant");
             if (cond & BL_MASK_STRNGL)
-                Strcpy(nb = eos(nb), " Strngl");
+                Strcpy(nb = eos(nb), " Étrangl");
             if (cond & BL_MASK_FOODPOIS)
-                Strcpy(nb = eos(nb), " FoodPois");
+                Strcpy(nb = eos(nb), " Intox");
             if (cond & BL_MASK_TERMILL)
-                Strcpy(nb = eos(nb), " TermIll");
+                Strcpy(nb = eos(nb), " MalMortel");
             if (cond & BL_MASK_BLIND)
-                Strcpy(nb = eos(nb), " Blind");
+                Strcpy(nb = eos(nb), " Aveugle");
             if (cond & BL_MASK_DEAF)
-                Strcpy(nb = eos(nb), " Deaf");
+                Strcpy(nb = eos(nb), " Sourd");
             if (cond & BL_MASK_STUN)
-                Strcpy(nb = eos(nb), " Stun");
+                Strcpy(nb = eos(nb), " Étourdi");
             if (cond & BL_MASK_CONF)
                 Strcpy(nb = eos(nb), " Conf");
             if (cond & BL_MASK_HALLU)
                 Strcpy(nb = eos(nb), " Hallu");
             if (cond & BL_MASK_LEV)
-                Strcpy(nb = eos(nb), " Lev");
+                Strcpy(nb = eos(nb), " Lévit");
             if (cond & BL_MASK_FLY)
-                Strcpy(nb = eos(nb), " Fly");
+                Strcpy(nb = eos(nb), " Vol");
             if (cond & BL_MASK_RIDE)
-                Strcpy(nb = eos(nb), " Ride");
+                Strcpy(nb = eos(nb), " Monté");
             break;
         default:
             Sprintf(status_vals[idx],
@@ -1544,7 +1544,7 @@ genl_display_file(const char *fname, boolean complain)
 
     if (!f) {
         if (complain) /* send complaint to stdout rather than to stderr */
-            fprintf(stdout, "\nCannot open \"%s\".\n", fname);
+            fprintf(stdout, "\nImpossible d'ouvrir \"%s\".\n", fname);
     } else {
         /* straight copy to stdout, no pagination or other interaction */
         while (dlb_fgets(buf, BUFSZ, f)) {
@@ -1718,20 +1718,21 @@ choose_classes_menu(const char *prompt,
         add_menu_str(win, "");
         any = cg.zeroany;
         any.a_int = (int) ' ';
-        Sprintf(buf, "%c  %s", (char) any.a_int, "All classes of objects");
+        Sprintf(buf, "%c  %s", (char) any.a_int, "Toutes les classes d'objets");
         /* we won't preselect this even if the incoming list is empty;
            having it selected means that it would have to be explicitly
            de-selected in order to select anything else */
         add_menu(win, &nul_glyphinfo, &any, 'A', 0,
                  ATR_NONE, clr, buf, MENU_ITEMFLAGS_SKIPINVERT);
-        if (!strcmp(prompt, "Autopickup what?")) {
+        if (!strcmp(prompt, "Autopickup what?")
+            || !strcmp(prompt, "Ramasser automatiquement quoi ?")) {
             add_menu_str(win,
-                   "Note: when no choices are selected, \"all\" is implied.");
+              "Note : si rien n'est sélectionné, \"tout\" est sous-entendu.");
             /* for 'O', "toggle" should be intuitive; for 'm O', it would
                probably be better to say "Set 'autopickup' to true|false" */
             add_menu_str(win, flags.pickup
-                        ? "Toggle off 'autopickup' to not pick up anything."
-           : "Toggle on 'autopickup' to automatically pick these things up.");
+              ? "Désactivez 'autopickup' pour ne rien ramasser."
+              : "Activez 'autopickup' pour ramasser automatiquement ces objets.");
         }
     }
     end_menu(win, prompt);

@@ -44,7 +44,8 @@ static int nhattr2curses(int);
 
 /* width of a single line in vertical status orientation (one field per line;
    everything but title fits within 30 even with prefix and longest value) */
-#define STATVAL_WIDTH 60 /* overkill; was MAXCO (200), massive overkill */
+#define STATVAL_WIDTH 80 /* was 60 (French labels are longer, UTF-8);
+                          * was MAXCO (200), massive overkill */
 
 void
 curses_status_init(void)
@@ -1197,6 +1198,73 @@ curs_stat_conds(
 RESTORE_WARNING_FORMAT_NONLITERAL
 
 /* status_update() sets up values for horizontal status; do vertical */
+/* number of screen columns of a UTF-8 string */
+static int
+curs_ucols(const char *str)
+{
+    int n = 0;
+
+    for (; *str; ++str)
+        if ((((unsigned char) *str) & 0xC0) != 0x80)
+            ++n;
+    return n;
+}
+
+/* copy 'lbl' to 'out', truncated or padded with spaces to exactly
+   'width' screen columns (printf's "%-*.*s" counts UTF-8 bytes) */
+static void
+curs_pad_label(char *out, const char *lbl, int width)
+{
+    int n = 0;
+
+    for (; *lbl; ++lbl) {
+        if ((((unsigned char) *lbl) & 0xC0) != 0x80 && n++ == width)
+            break;
+        *out++ = *lbl;
+    }
+    for (; n < width; ++n)
+        *out++ = ' ';
+    *out = '\0';
+}
+
+/* French label for a status field in vertical orientation;
+   status_fieldnm[] holds the (untranslated) option keywords */
+static const char *
+curs_status_label(int fldidx)
+{
+    switch ((enum statusfields) fldidx) {
+    case BL_STR:
+        return "force";
+    case BL_DX:
+        return "dextérité";
+    case BL_CO:
+        return "constitution";
+    case BL_IN:
+        return "intelligence";
+    case BL_WI:
+        return "sagesse";
+    case BL_CH:
+        return "charisme";
+    case BL_ALIGN:
+        return "alignement";
+    case BL_SCORE:
+        return "score";
+    case BL_GOLD:
+        return "or";
+    case BL_ENE:
+        return "pouvoir";
+    case BL_AC:
+        return "classe d'armure";
+    case BL_TIME:
+        return "tours";
+    case BL_HP:
+        return "points de vie";
+    default:
+        break;
+    }
+    return status_fieldnm[fldidx];
+}
+
 void
 curs_vert_status_vals(int win_width)
 {
@@ -1228,7 +1296,7 @@ curs_vert_status_vals(int win_width)
                 if ((colon = strchr(text, ':')) != 0)
                     text = colon + 1;
             }
-            lbl = status_fieldnm[fldidx];
+            lbl = curs_status_label(fldidx);
             use_name = TRUE;
             leadingspace[0] = '\0';
             /* classify type of field (labeled or not) and make some fixups */
@@ -1236,17 +1304,17 @@ curs_vert_status_vals(int win_width)
             case BL_XP:
                  /* "experience-level : N" is too long and becomes misleading
                     if value is shown as 'N/experience-points' */
-                lbl = "experience";
+                lbl = "niveau";
                 break;
             case BL_LEVELDESC:
                 /* "dungeon-level" is redundant when value is "Dlvl-N" */
-                lbl = "location";
+                lbl = "lieu";
                 break;
             case BL_HD:
                 /* "HD" is too oscure; 0 actually means 1d4 (so about 1/2);
                    "hit-dice" is obscure too but doesn't stand out as such */
-                lbl = (!strcmp(text, "1") || !strcmp(text, "0")) ? "hit-die"
-                      : "hit-dice";
+                lbl = (!strcmp(text, "1") || !strcmp(text, "0")) ? "dé de vie"
+                      : "dés de vie";
                 break;
             case BL_ALIGN:
                 /* don't want sprintf(": %s") below inserting second space */
@@ -1295,8 +1363,11 @@ curs_vert_status_vals(int win_width)
                 break;
             }
             if (use_name) {
-                Sprintf(status_vals_long[fldidx], "%*.*s: %s%s",
-                        -lbl_width, lbl_width, lbl, leadingspace, text);
+                char padlbl[BUFSZ];
+
+                curs_pad_label(padlbl, lbl, lbl_width);
+                Sprintf(status_vals_long[fldidx], "%s: %s%s",
+                        padlbl, leadingspace, text);
                 *status_vals_long[fldidx] = highc(*status_vals_long[fldidx]);
             } else if (fldidx == BL_VERS && *text) {
                 int txtlen = (int) strlen(text);
@@ -1326,18 +1397,18 @@ curs_vert_status_vals(int win_width)
             /* check whether 'label : value' is too wide; if so, we'll
                shorten the label's allowed width and try again */
             if (use_name) {
-                fld_width = (int) strlen(status_vals_long[fldidx]);
+                fld_width = curs_ucols(status_vals_long[fldidx]);
                 /* each extension field is preceded by its base field in
                    order to append, so base's _vals_long[] has been set */
                 switch ((enum statusfields) fldidx) {
                 case BL_HPMAX:
-                    fld_width += (int) strlen(status_vals_long[BL_HP]);
+                    fld_width += curs_ucols(status_vals_long[BL_HP]);
                     break;
                 case BL_ENEMAX:
-                    fld_width += (int) strlen(status_vals_long[BL_ENE]);
+                    fld_width += curs_ucols(status_vals_long[BL_ENE]);
                     break;
                 case BL_EXP:
-                    fld_width += (int) strlen(status_vals_long[BL_XP]);
+                    fld_width += curs_ucols(status_vals_long[BL_XP]);
                     break;
                 default:
                     break;
